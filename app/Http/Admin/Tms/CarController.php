@@ -820,35 +820,11 @@ class CarController extends CommonController{
                 return $msg;
             }
 
-            if($self_id){
-                $name_where=[
-                    ['self_id','!=',$self_id],
-                    ['car_number','=',$car_number],
-                    ['delete_flag','=','Y'],
-                    ['group_code','=',$group_code]
-                ];
-            }else{
-                $name_where=[
-                    ['car_number','=',$car_number],
-                    ['delete_flag','=','Y'],
-                    ['group_code','=',$group_code]
-                ];
-            }
-
-            $carnumber = TmsCar::where($name_where)->count();
-
-            if ($carnumber>0){
-                $msg['code'] = 308;
-                $msg['msg'] = '车牌号已存在，请重新填写';
-                return $msg;
-            }
-
             $data['car_number']      =$car_number;
             $data['car_id']          =$car_id;
             $data['month']           =$month;
             $data['month_kilo']      =$month_kilo;
             $data['month_fat']       =$month_fat;
-
 
             $wheres['self_id'] = $self_id;
             $old_info=CarCount::where($wheres)->first();
@@ -1001,29 +977,6 @@ class CarController extends CommonController{
             if(empty($group_name)){
                 $msg['code'] = 301;
                 $msg['msg'] = '公司不存在';
-                return $msg;
-            }
-
-            if($self_id){
-                $name_where=[
-                    ['self_id','!=',$self_id],
-                    ['car_number','=',$car_number],
-                    ['delete_flag','=','Y'],
-                    ['group_code','=',$group_code]
-                ];
-            }else{
-                $name_where=[
-                    ['car_number','=',$car_number],
-                    ['delete_flag','=','Y'],
-                    ['group_code','=',$group_code]
-                ];
-            }
-
-            $carnumber = TmsCar::where($name_where)->count();
-
-            if ($carnumber>0){
-                $msg['code'] = 308;
-                $msg['msg'] = '车牌号已存在，请重新填写';
                 return $msg;
             }
 
