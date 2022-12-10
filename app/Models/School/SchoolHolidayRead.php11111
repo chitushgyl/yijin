@@ -1,0 +1,26 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: mac
+ * Date: 2020/4/21
+ * Time: 23:13
+ */
+namespace App\Models\School;
+use  Illuminate\Database\Eloquent\Model;
+class SchoolHolidayRead extends Model{
+    //指定数据库表 如果表名后带s则不需要 不带则需要
+    protected $table = 'school_holiday_read';
+    //创建时间字段定义 自定义命名
+    const CREATED_AT = 'create_time';
+    //更新时间字段定义 自定义命名
+    const UPDATED_AT = 'update_time';
+
+    //是否被自动维护时间戳（自动更新created_at/updated_at字段）
+    public $timestamps = false;
+
+    protected $guarded=[
+       // 'id'
+        //写进去的字段不被注入
+    ];
+
+}
