@@ -42,7 +42,7 @@ class CarServiceController extends CommonController{
         /** 接收中间件参数**/
         $group_info     = $request->get('group_info');//接收中间件产生的参数
         $button_info    = $request->get('anniu');//接收中间件产生的参数
-        
+
         /**接收数据*/
         $num            =$request->input('num')??10;
         $page           =$request->input('page')??1;
@@ -556,28 +556,9 @@ class CarServiceController extends CommonController{
         $info=$details->details($self_id,$table_name,$select);
 
         if($info){
-
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
-            $tms_control_type        =array_column(config('tms.tms_control_type'),'name','key');
-            $tms_car_possess_type    =array_column(config('tms.tms_car_possess_type'),'name','key');
-            // dump($tms_control_type);
-            // dump($info['control']);
-            if ($info->car_possess && !empty($tms_car_possess_type[$info->car_possess])) {
-                $info->car_possess = $tms_car_possess_type[$info->car_possess];
-            }
-            if ($info->control && !empty($tms_control_type[$info->control])) {
-                $info->control = $tms_control_type[$info->control];
-            }
-            if ($info->license){
-                $info->license_show = img_for($info->license,'more');
-            }
-            if ($info->medallion){
-                $info->medallion_show = img_for($info->medallion,'more');
-            }
 
 
-            // dump($tms_control_type[$info['control']]);
-            // dd($tms_car_possess_type);
             $data['info']=$info;
             $log_flag='Y';
             $data['log_flag']=$log_flag;
