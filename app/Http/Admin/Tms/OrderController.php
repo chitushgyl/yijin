@@ -75,13 +75,9 @@ class OrderController extends CommonController{
         return $msg;
     }
 
-    /***    费用明细分页      /tms/order/orderPage
+    /***    订单列表     /tms/order/orderPage
      */
     public function orderPage(Request $request){
-        $tms_order_status_type    =array_column(config('tms.tms_order_status_type'),'pay_status_text','key');
-        $tms_order_type           =array_column(config('tms.tms_order_type'),'name','key');
-        $tms_control_type         =array_column(config('tms.tms_control_type'),'name','key');
-        $tms_order_inco_type         =array_column(config('tms.tms_order_inco_type'),'icon','key');
         /** 接收中间件参数**/
         $group_info     = $request->get('group_info');//接收中间件产生的参数
         $user_info     = $request->get('user_info');//接收中间件产生的参数
@@ -94,7 +90,6 @@ class OrderController extends CommonController{
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
         $company_id     =$request->input('company_id');
-        $type           =$request->input('type');
         $state          =$request->input('order_status');
         $order_status   =$request->input('status') ?? null;
         $listrows       =$num;
@@ -105,7 +100,6 @@ class OrderController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'company_id','value'=>$company_id],
-            ['type'=>'=','name'=>'type','value'=>$type],
             ['type'=>'=','name'=>'order_status','value'=>$state],
         ];
 
@@ -118,19 +112,19 @@ class OrderController extends CommonController{
             case 'all':
                 $data['total']=TmsOrder::where($where)->count(); //总的数据量
                 $data['items']=TmsOrder::where($where);
-//                if ($order_status){
-//                    if ($order_status == 1){
-//                        $data['items'] = $data['items']->where('order_status',3);
-//                    }elseif($order_status == 2){
-//                        $data['items'] = $data['items']->whereIn('order_status',[4,5]);
-//                    }elseif($order_status == 3){
-//                        $data['items'] = $data['items']->where('order_status',6);
-//                    }elseif($order_status == 6){
-//                        $data['items'] = $data['items']->where('order_status',2);
-//                    }else{
-//                        $data['items'] = $data['items']->where('order_status',7);
-//                    }
-//                }
+                if ($order_status){
+                    if ($order_status == 1){
+                        $data['items'] = $data['items']->where('order_status',3);
+                    }elseif($order_status == 2){
+                        $data['items'] = $data['items']->whereIn('order_status',[4,5]);
+                    }elseif($order_status == 3){
+                        $data['items'] = $data['items']->where('order_status',6);
+                    }elseif($order_status == 6){
+                        $data['items'] = $data['items']->where('order_status',2);
+                    }else{
+                        $data['items'] = $data['items']->where('order_status',7);
+                    }
+                }
                 $data['items'] = $data['items']
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();

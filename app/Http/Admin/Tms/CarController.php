@@ -164,7 +164,6 @@ class CarController extends CommonController{
         $tank_validity      =$request->input('tank_validity');//罐检有效期
         $license            =$request->input('license');//行驶证
         $medallion          =$request->input('medallion');//运输证
-        $payment_state      =$request->input('payment_state');//理赔状态
         $insure_price       =$request->input('insure_price');//保险价格
 
         $rules=[
@@ -220,7 +219,7 @@ class CarController extends CommonController{
             $data['weight']            =$weight;
             $data['license']           =img_for($license,'one_in');
             $data['medallion']         =img_for($medallion,'one_in');
-            $data['payment_state']     =$payment_state;
+//            $data['payment_state']     =$payment_state;
             $data['insure_price']      =$insure_price;
 
 
@@ -966,6 +965,7 @@ class CarController extends CommonController{
         $car_id             =$request->input('car_id');//车型
         $arise_time         =$request->input('arise_time');//出险时间
         $price              =$request->input('price');//赔付金额
+        $payment_state      =$request->input('payment_state');//理赔状态
 
 
         $rules=[
@@ -986,9 +986,9 @@ class CarController extends CommonController{
 
             $data['car_number']      =$car_number;
             $data['car_id']          =$car_id;
-            $data['arise_time']           =$arise_time;
-            $data['price']      =$price;
-
+            $data['arise_time']      =$arise_time;
+            $data['price']           =$price;
+            $data['payment_state']   =$payment_state;
             $wheres['self_id'] = $self_id;
             $old_info=CarDanger::where($wheres)->first();
 

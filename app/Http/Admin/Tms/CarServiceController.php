@@ -155,13 +155,13 @@ class CarServiceController extends CommonController{
         $brand              =$request->input('brand');//品牌
         $kilo_num           =$request->input('kilo_num');//公里数
         $service_time       =$request->input('service_time');//维修时间
-        $reason       =$request->input('reason');// 原因
-        $service_price     =$request->input('service_price');//维修价格
-        $service_partne             =$request->input('service_partne');//维修单位
-        $driver_name             =$request->input('driver_name');//驾驶员
-        $contact             =$request->input('contact');//驾驶员联系方式
-        $operator             =$request->input('operator');//经办人
-        $remark      =$request->input('remark');//备注
+        $reason             =$request->input('reason');// 原因
+        $service_price      =$request->input('service_price');//维修价格
+        $service_partne     =$request->input('service_partne');//维修单位
+        $driver_name        =$request->input('driver_name');//驾驶员
+        $contact            =$request->input('contact');//驾驶员联系方式
+        $operator           =$request->input('operator');//经办人
+        $remark             =$request->input('remark');//备注
 
         $rules=[
             'car_number'=>'required',
