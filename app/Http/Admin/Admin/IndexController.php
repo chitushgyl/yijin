@@ -57,7 +57,6 @@ class IndexController extends CommonController{
                 $query->whereIn('id',$menu_id);
             }])->where($where_menu)->select($select)->whereIn('id',$menu_id)->orderBy('sort','asc')->get();
         }
-        dd($menu_info->toArray());
         /** 做一个 还有多少有效期的事情**/
         $now_time   =date('Y-m-d H:i:s',time());
         $startdate  =strtotime($now_time);
