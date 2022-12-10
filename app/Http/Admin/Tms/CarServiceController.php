@@ -42,8 +42,7 @@ class CarServiceController extends CommonController{
         /** 接收中间件参数**/
         $group_info     = $request->get('group_info');//接收中间件产生的参数
         $button_info    = $request->get('anniu');//接收中间件产生的参数
-        $tms_car_possess_type    =array_column(config('tms.tms_car_possess_type'),'name','key');
-        $tms_control_type    	 =array_column(config('tms.tms_control_type'),'name','key');
+        
         /**接收数据*/
         $num            =$request->input('num')??10;
         $page           =$request->input('page')??1;
