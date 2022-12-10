@@ -586,6 +586,8 @@ class CarController extends CommonController{
         $table_name='tms_car';
         $select=['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
             'license','medallion','payment_state','insure_price'];
+        $select1 = [];
+        $select2 = [];
         // $self_id='car_202012291341297595587871';
         $info=$details->details($self_id,$table_name,$select);
 
@@ -730,7 +732,7 @@ class CarController extends CommonController{
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
         $car_number     =$request->input('car_number');
-        $car_id     =$request->input('car_id');
+        $car_id         =$request->input('car_id');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -739,6 +741,7 @@ class CarController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
+            ['type'=>'=','name'=>'car_id','value'=>$car_id],
         ];
 
         $where=get_list_where($search);
@@ -899,6 +902,7 @@ class CarController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
+            ['type'=>'=','name'=>'car_id','value'=>$car_id],
         ];
 
         $where=get_list_where($search);
