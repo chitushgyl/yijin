@@ -235,13 +235,13 @@ Route::group([
     Route::any('/userReward/details','UserRewardController@details');
 
     /**车辆维修记录***/
-    Route::any('/carService/serviceList','CarServiceRewardController@serviceList');
-    Route::any('/carService/servicePage','CarServiceRewardController@servicePage');
-    Route::any('/carService/createService','CarServiceRewardController@createService');
-    Route::any('/carService/addService','CarServiceRewardController@addService');
-    Route::any('/carService/serviceUseFlag','CarServiceRewardController@serviceUseFlag');
-    Route::any('/carService/serviceDelFlag','CarServiceRewardController@serviceDelFlag');
-    Route::any('/carService/details','CarServiceRewardController@details');
+    Route::any('/carService/serviceList','CarServiceController@serviceList');
+    Route::any('/carService/servicePage','CarServiceController@servicePage');
+    Route::any('/carService/createService','CarServiceController@createService');
+    Route::any('/carService/addService','CarServiceController@addService');
+    Route::any('/carService/serviceUseFlag','CarServiceController@serviceUseFlag');
+    Route::any('/carService/serviceDelFlag','CarServiceController@serviceDelFlag');
+    Route::any('/carService/details','CarServiceController@details');
 
 });
 

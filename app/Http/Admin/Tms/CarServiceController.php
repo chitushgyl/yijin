@@ -118,7 +118,7 @@ class CarServiceController extends CommonController{
 
         $select = ['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator',
             'remark','create_time','update_time','use_flag','delete_flag','group_code'];
-        $data['info']=TmsCar::where($where)->select($select)->first();
+        $data['info']=CarService::where($where)->select($select)->first();
 
         if ($data['info']){
 
@@ -315,7 +315,7 @@ class CarServiceController extends CommonController{
             ['use_flag','=','Y'],
             ['group_code','=',$group_code],
         ];
-        $data['info']=TmsCar::where($where)->get();
+        $data['info']=CarService::where($where)->get();
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
@@ -550,7 +550,7 @@ class CarServiceController extends CommonController{
      */
     public function  details(Request $request,Details $details){
         $self_id=$request->input('self_id');
-        $table_name='tms_car';
+        $table_name='car_service';
         $select=['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator',
             'remark','create_time','update_time','use_flag','delete_flag','group_code'];
         // $self_id='car_202012291341297595587871';
