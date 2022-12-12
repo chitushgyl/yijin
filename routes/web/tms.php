@@ -243,6 +243,15 @@ Route::group([
     Route::any('/carService/serviceDelFlag','CarServiceController@serviceDelFlag');
     Route::any('/carService/details','CarServiceController@details');
 
+    /**车辆加油记录***/
+    Route::any('/carOil/carList','CarOilController@carList');
+    Route::any('/carOil/carPage','CarOilController@carPage');
+    Route::any('/carOil/createCar','CarOilController@createCar');
+    Route::any('/carOil/addCar','CarOilController@addCar');
+    Route::any('/carOil/carUseFlag','CarOilController@carUseFlag');
+    Route::any('/carOil/carDelFlag','CarOilController@carDelFlag');
+    Route::any('/carOil/import','CarOilController@import');
+
 });
 
 

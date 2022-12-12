@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Admin\Tms;
 
+use App\Models\Group\SystemGroup;
 use App\Models\Group\SystemUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
@@ -327,9 +328,6 @@ class UserController extends CommonController{
 
         return $msg;
     }
-
-
-
 
 
     /***    拿地址信息     /tms/user/getUser

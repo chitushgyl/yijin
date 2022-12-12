@@ -106,7 +106,12 @@ class OrderController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id'];
+        $select=['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code',
+            'order_status','send_time','send_name','send_tel','send_sheng','send_shi','send_qu','send_sheng_name','send_shi_name','send_qu_name','send_address',
+            'send_address_longitude','send_address_latitude','gather_time','gather_name','gather_tel','gather_sheng','gather_shi','gather_qu','gather_sheng_name',
+            'gather_shi_name','gather_qu_name','gather_address','gather_address_longitude','gather_address_latitude','total_money','good_name','more_money','price',
+            'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number'
+            ];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -218,42 +223,56 @@ class OrderController extends CommonController{
         $input                          =$request->all();
 
 //        /** 接收数据*/
-        $self_id       = $request->input('self_id');
-        $group_code    = $request->input('group_code');
-        $company_id    = $request->input('company_id');
-        $order_type    = $request->input('order_type');
-        $line_id       = $request->input('line_id');
-        $pick_flag     = $request->input('pick_flag');
-        $send_flag     = $request->input('send_flag');
-        $pick_money    = $request->input('pick_money');
-        $send_money    = $request->input('send_money');
-        $price         = $request->input('price');
-        $send_time     = $request->input('send_time') ?? null;
-        $gather_time   = $request->input('gather_time') ??null;
-        $total_money   = $request->input('total_money');
-        $good_name_n   = $request->input('good_name');
-        $good_number_n = $request->input('good_number');
-        $good_weight_n = $request->input('good_weight');
-        $good_volume_n = $request->input('good_volume');
-        $dispatcher    = $request->input('dispatcher')??[];
-        $clod          = $request->input('clod');
-        $more_money    = $request->input('more_money') ? $request->input('more_money') - 0 : null ;
-        $car_type      = $request->input('car_type')??''; //车型
-        $pay_type      = $request->input('pay_type');
-        $remark        = $request->input('remark');
-        $app_flag      = $request->input('app_flag');//app上下单   1 是 2 PC下单
-        $payer         = $request->input('payer');//付款方：发货人 consignor  收货人receiver
-        $kilo          = $request->input('kilometre');
-        if (empty($price)){
-            $price = $request->input('line_price');
-        }
+        $self_id                   = $request->input('self_id');
+        $group_code                = $request->input('group_code');//
+        $company_id                = $request->input('company_id');//客户公司ID
+        $send_name                 = $request->input('send_name');//发货地联系人
+        $send_tel                  = $request->input('send_tel');//发货地人联系方式
+        $send_sheng                = $request->input('send_sheng');//发货省ID
+        $send_shi                  = $request->input('send_shi');//发货市ID
+        $send_qu                   = $request->input('send_qu');//发货区ID
+        $send_sheng_name           = $request->input('send_sheng_name');//发货省
+        $send_shi_name             = $request->input('send_shi_name');//发货市
+        $send_qu_name              = $request->input('send_qu_name');//发货区
+        $send_address              = $request->input('send_address');//详细地址
+        $send_address_longitude    = $request->input('send_address_longitude');//发货 经度
+        $send_address_latitude     = $request->input('send_address_latitude');//发货 纬度
+        $gather_name               = $request->input('gather_name');//卸货地联系人
+        $gather_tel                = $request->input('gather_tel');//联系方式
+        $gather_sheng              = $request->input('gather_sheng');//省ID
+        $gather_shi                = $request->input('gather_shi');//市ID
+        $gather_qu                 = $request->input('gather_qu');//区ID
+        $gather_sheng_name         = $request->input('gather_sheng_name');//省
+        $gather_shi_name           = $request->input('gather_shi_name');//市
+        $gather_qu_name            = $request->input('gather_qu_name');//区
+        $gather_address            = $request->input('gather_address');//详细地址
+        $gather_address_longitude  = $request->input('gather_address_longitude');//经度
+        $gather_address_latitude   = $request->input('gather_address_latitude');//纬度
+        $good_name                 = $request->input('good_name');//物料名称
+        $more_money                = $request->input('more_money');//其他价格
+        $price                     = $request->input('price');//运费
+        $total_money               = $request->input('total_money');//总运费
+        $enter_time                = $request->input('enter_time');//进厂时间
+        $leave_time                = $request->input('leave_time');//出厂时间
+        $order_weight              = $request->input('order_weight');//预约提货量
+        $real_weight               = $request->input('real_weight');//实际提货量
+        $upload_weight             = $request->input('upload_weight');//卸货量
+        $different_weight          = $request->input('different_weight');//装卸货量差
+        $bill_flag                 = $request->input('bill_flag');//开票状态
+        $payment_state             = $request->input('payment_state');//结算状态
+        $odd_number                = $request->input('odd_number');//预约单号
+        $remark                    = $request->input('remark');//备注
 
 
         $rules=[
-            'order_type'=>'required',
+            'good_name'=>'required',
+            'price'=>'required',
+            'order_weight'=>'required',
         ];
         $message=[
-            'order_type.required'=>'必须选择',
+            'good_name.required'=>'请填写物料名称',
+            'price.required'=>'请填写运费',
+            'order_weight.required'=>'请填写预约提货量',
         ];
 
         $validator=Validator::make($input,$rules,$message);
@@ -270,53 +289,62 @@ class OrderController extends CommonController{
                 return $msg;
             }
 
-
-
-
-                if (empty($v['good_name'])) {
-                    $msg['code'] = 306;
-                    $msg['msg'] = '货物名称不能为空！';
-                    return $msg;
-                }
-
-                if (empty($v['good_number']) || $v['good_number'] <= 0) {
-                    $msg['code'] = 307;
-                    $msg['msg'] = '货物件数错误！';
-                    return $msg;
-                }
-
-                if (empty($v['good_weight']) || $v['good_weight'] <= 0) {
-                    $msg['code'] = 308;
-                    $msg['msg'] = '货物重量错误！';
-                    return $msg;
-                }
-
-                if (empty($v['good_volume']) || $v['good_volume'] <= 0) {
-                    $msg['code'] = 309;
-                    $msg['msg'] = '货物体积错误！';
-                    return $msg;
-                }
-
-                if (empty($v['clod'])) {
-                    $msg['code'] = 309;
-                    $msg['msg'] = '请选择温度！';
-                    return $msg;
-                }
-
+            if (empty($good_name)) {
+                $msg['code'] = 306;
+                $msg['msg'] = '货物名称不能为空！';
+                return $msg;
+            }
 
             /** 处理一下发货地址  及联系人 结束**/
 
             /** 开始处理正式的数据*/
-
+            $data['company_id']              = $company_id;
+            $data['send_name']               = $send_name;
+            $data['send_tel']                = $send_tel;
+            $data['send_sheng']              = $send_sheng;
+            $data['send_shi']                = $send_shi;
+            $data['send_qu']                 = $send_qu;
+            $data['send_sheng_name']         = $send_sheng_name;
+            $data['send_shi_name']           = $send_shi_name;
+            $data['send_qu_name']            = $send_qu_name;
+            $data['send_address']            = $send_address;
+            $data['send_address_longitude']  = $send_address_longitude;
+            $data['send_address_latitude']   = $send_address_latitude;
+            $data['gather_name']             = $gather_name;
+            $data['gather_tel']              = $gather_tel;
+            $data['gather_sheng']            = $gather_sheng;
+            $data['gather_shi']              = $gather_shi;
+            $data['gather_qu']               = $gather_qu;
+            $data['gather_sheng_name']       = $gather_sheng_name;
+            $data['gather_shi_name']         = $gather_shi_name;
+            $data['gather_qu_name']          = $gather_qu_name;
+            $data['gather_address']          = $gather_address;
+            $data['gather_address_longitude']= $gather_address_longitude;
+            $data['gather_address_latitude'] = $gather_address_latitude;
+            $data['good_name']               = $good_name;
+            $data['more_money']              = $more_money;
+            $data['price']                   = $price;
+            $data['total_money']             = $total_money;
+            $data['enter_time']              = $enter_time;
+            $data['leave_time']              = $leave_time;
+            $data['order_weight']            = $order_weight;
+            $data['real_weight']             = $real_weight;
+            $data['upload_weight']           = $upload_weight;
+            $data['different_weight']        = $different_weight;
+            $data['bill_flag']               = $bill_flag;
+            $data['payment_state']           = $payment_state;
+            $data['odd_number']              = $odd_number;
+            $data['remark']                  = $remark;
+            $old_info = TmsOrder::where('self_id',$self_id)->first();
 
                     if($old_info){
                         $data['update_time']=$now_time;
-                        $id=TmsOrder::where($wheres)->update($data);
+                        $id=TmsOrder::where('self_id',$self_id)->update($data);
 //
                         $operationing->access_cause='修改订单';
                         $operationing->operation_type='update';
                     }else{
-                        $data['self_id']            = $order_id;
+                        $data['self_id']            = generate_id('order_');
                         $data['group_code']         = $group_info->group_code;
                         $data['group_name']         = $group_info->group_name;
                         $data['create_user_id']     = $user_info->admin_id;
@@ -336,8 +364,6 @@ class OrderController extends CommonController{
 
                     if($id){
                         $msg['code'] = 200;
-                        $msg['order_id'] = $order_id;
-                        $msg['order_id_show'] = substr($order_id,15);
                         $msg['msg'] = "操作成功";
                         return $msg;
                     }else{
@@ -345,9 +371,6 @@ class OrderController extends CommonController{
                         $msg['msg'] = "操作失败";
                         return $msg;
                     }
-
-
-
 
             /***二次效验结束**/
         }else{
@@ -403,34 +426,6 @@ class OrderController extends CommonController{
         return $msg;
     }
 
-    /***    拿去订单数据     /tms/order/getOrder
-     */
-    public function  getOrder(Request $request){
-        /** 接收数据*/
-        $warehouse_id        =$request->input('warehouse_id');
-
-        /*** 虚拟数据**/
-        //$warehouse_id='ware_202006012159456407842832';
-
-        $where=[
-            ['delete_flag','=','Y'],
-            ['use_flag','=','Y'],
-            ['warehouse_id','=',$warehouse_id],
-        ];
-        $select=['self_id','area','group_code','group_name','warehouse_id','warehouse_name','warm_id','warm_name'];
-        //dd($where);
-        $data['wms_warehouse_area']=WmsWarehouseArea::where($where)->select($select)->get();
-        foreach ($data['wms_warehouse_area'] as $k=>$v) {
-            $v->warm_name=warm($v->wmsWarm->warm_name,$v->wmsWarm->min_warm,$v->wmsWarm->max_warm);
-        }
-
-        $msg['code']=200;
-        $msg['msg']="数据拉取成功";
-        $msg['data']=$data;
-
-        //dd($msg);
-        return $msg;
-    }
 
     /***    订单导入     /tms/order/import
      */
@@ -612,10 +607,6 @@ class OrderController extends CommonController{
     /***    订单明细详情     /tms/order/details
      */
     public function  details(Request $request,Details $details){
-        $tms_money_type    =array_column(config('tms.tms_money_type'),'name','key');
-        $tms_order_status_type    =array_column(config('tms.tms_order_status_type'),'pay_status_text','key');
-        $tms_order_type           =array_column(config('tms.tms_order_type'),'name','key');
-        $tms_control_type        =array_column(config('tms.tms_control_type'),'name','key');
         $self_id=$request->input('self_id');
 //        $self_id = 'order_202106231710070766328312';
 
@@ -623,297 +614,19 @@ class OrderController extends CommonController{
             'gather_address','send_address_id','send_contacts_id','send_name','send_tel','send_sheng','send_shi','send_qu','send_address','remark','total_money','price','pick_money','send_money','good_name','good_number','good_weight','good_volume','pick_flag','send_flag','info'
             ,'good_info','clod','line_info','pay_type','pay_state'];
 
-        $list_select=['self_id','order_type','order_status','company_name','dispatch_flag','group_code','group_name','use_flag','on_line_flag','gather_sheng_name','gather_shi_name','gather_qu_name','gather_address','send_sheng_name','send_shi_name'
-            ,'send_qu_name','send_address','total_money','good_info','good_number','good_weight','good_volume','carriage_group_name','on_line_money','line_gather_address_id','line_gather_contacts_id','line_gather_name','line_gather_tel',
-            'line_gather_sheng','line_gather_shi','line_gather_qu','line_gather_sheng_name','line_gather_shi_name','line_gather_qu_name' , 'line_gather_address','remark',
-            'line_gather_address_longitude','line_gather_address_latitude','line_send_address_id','line_send_contacts_id','line_send_name','line_send_tel', 'line_send_sheng','line_send_shi',
-            'line_send_qu','line_send_sheng_name','line_send_shi_name','line_send_qu_name','line_send_address','line_send_address_longitude','line_send_address_latitude','clod','pick_flag','send_flag',
-            'pay_type','order_id','pay_status','pay_time','receiver_type','gather_name','gather_tel','send_name','send_tel','receipt_flag','receiver_id'
-        ];
         $where = [
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
 
-        $select1=['self_id','create_time','create_time','group_name','dispatch_flag','receiver_id','on_line_flag',
-            'gather_sheng_name','gather_shi_name','gather_qu_name','gather_address',
-            'send_sheng_name','send_shi_name','send_qu_name','send_address','order_id',
-            'good_info','good_number','good_weight','good_volume','total_money','on_line_money'];
-
-        $select2 = ['self_id','carriage_id','order_dispatch_id'];
-        $select3 = ['self_id','company_id','company_name','carriage_flag','total_money','carriage_flag'];
-        $select4 = ['carriage_id','car_number','contacts','tel','price','car_id'];
-        $selectList = ['self_id','receipt','order_id','total_user_id','group_code','group_name'];
-        $select5 = ['self_id','tel'];
-        $select6 = ['self_id','group_code','group_name','tel'];
-        $info = TmsOrder::with(['TmsOrderDispatch' => function($query) use($list_select,$selectList,$select1,$select2,$select3,$select4,$select5,$select6){
-            $query->select($list_select);
-            $query->with(['tmsCarriageDispatch'=>function($query)use($select1,$select2,$select3,$select4){
-                $query->where('delete_flag','=','Y');
-                $query->select($select2);
-                $query->with(['tmsCarriage'=>function($query)use($select3){
-                    $query->where('delete_flag','=','Y');
-                    $query->select($select3);
-                }]);
-                $query->with(['tmsCarriageDriver'=>function($query)use($select4){
-                    $query->where('delete_flag','=','Y');
-                    $query->select($select4);
-                }]);
-            }]);
-            $query->with(['userTotal'=>function($query)use($select5) {
-                $query->where('delete_flag','Y');
-                $query->select($select5);
-            }]);
-            $query->with(['systemGroup'=>function($query)use($select6) {
-                $query->where('delete_flag','Y');
-                $query->select($select6);
-            }]);
-            $query->with(['tmsReceipt'=>function($query)use($selectList) {
-                $query->where('delete_flag', '=', 'Y');
-                $query->select($selectList);
-            }]);
-
-        }])->where($where)->select($select)->first();
-
-//        DD($info->toArray());
-
+        $info = TmsOrder::where($where)->select($select)->first();
 
         if($info){
-            $info->order_status_show = $tms_order_status_type[$info->order_status] ?? null;
-            $info->order_type_show   = $tms_order_type[$info->order_type] ??null;
-            if ($info->pay_state == 'Y' && $info->pay_type == 'offline'){
-                $info->pay_state = '已付款';
-            }elseif($info->pay_type == 'online'){
-                $info->pay_state = '已付款';
-            }elseif($info->pay_type == 'offline' && $info->pay_state == 'N'){
-                $info->pay_state = '未付款';
-            }elseif(!$info->pay_type && $info->pay_state == 'N'){
-                $info->pay_state = '未付款';
-            }
-            $receipt_info = [];
-            $receipt_info_list= [];
-            foreach ($info->TmsOrderDispatch as $k =>$v){
-
-                $v->pay_type_show = $tms_pay_type[$v->pay_type]??null;
-                $v->good_info     = json_decode($v->good_info,true);
-                $temperture = json_decode($v->clod,true);
-                foreach ($temperture as $key => $value){
-                    $temperture[$key] = $tms_control_type[$value];
-                }
-                $info->receipt_flag = $v->receipt_flag;
-                $v->temperture = implode(',',$temperture);
-                if ($v->tmsReceipt){
-//                    $info->receipt = json_decode($v->tmsReceipt->receipt,true);
-                    $receipt_info = img_for($v->tmsReceipt->receipt,'more');
-                    $receipt_info_list[] = $receipt_info;
-
-                }
-                $car_list = [];
-                if ($v->tmsCarriageDispatch){
-                    if ($v->tmsCarriageDispatch->tmsCarriageDriver){
-                        foreach ($v->tmsCarriageDispatch->tmsCarriageDriver as $kk => $vv){
-                            $carList['car_id'] = $vv->car_id;
-                            $carList['car_number'] = $vv->car_number;
-                            $carList['tel'] = $vv->tel;
-                            $carList['contacts'] = $vv->contacts;
-                            $car_list[] = $carList;
-                        }
-                        $info->car_info = $car_list;
-                    }
-                    if($v->tmsCarriageDispatch['tmsCarriage'][0]['carriage_flag'] == 'carriers'){
-                        $carriage_where = [
-                            ['type','=','carriers'],
-                            ['self_id','=',$v->tmsCarriageDispatch['tmsCarriage'][0]['company_id']]
-                        ];
-                        $carriage_company = TmsGroup::where($carriage_where)->select('tel','contacts')->first();
-                        $carList['car_id']     = '';
-                        $carList['car_number'] = '';
-                        $carList['tel'] = $carriage_company->tel;
-                        $carList['contacts'] = '';
-                        $car_list[] = $carList;
-                        $info->car_info = $car_list;
-                    }
-                }
-                $order_details11['value'] = '021-59111020';
-                if(!empty($v->userTotal)){
-                    $order_details11['value'] = $v->userTotal->tel;
-                }
-                if(!empty($v->systemGroup)){
-                    $order_details11['value'] = $v->systemGroup->tel;
-                }
-            }
-
-            /** 零担发货收货仓**/
-            $line_info = [];
-            $pick_store_info = [];
-            $send_store_info = [];
-            if($info->line_info){
-                $info->line_info = json_decode($info->line_info,true);
-//                dd($info->line_info);
-                $pick_store['pick_store'] = $info->line_info['send_sheng_name'].$info->line_info['send_shi_name'].$info->line_info['send_qu_name'].$info->line_info['send_address'];
-                $pick_store['contacts']   = $info->line_info['send_name'];
-                $pick_store['tel']   = $info->line_info['send_tel'];
-                $pick_store_info[] = $pick_store;
-                $send_store['send_store'] = $info->line_info['gather_sheng_name'].$info->line_info['gather_shi_name'].$info->line_info['gather_qu_name'].$info->line_info['gather_address'];
-                $send_store['contacts']   = $info->line_info['gather_name'];
-                $send_store['tel']   = $info->line_info['gather_tel'];
-                $send_store_info[] = $send_store;
-                $info->shift_number = $info->line_info['shift_number'];
-                $info->trunking = $info->line_info['trunking'].'天';
-            }
-            $info->pick_store_info = $pick_store_info;
-            $info->send_store_info = $send_store_info;
-            $info->receipt = $receipt_info_list;
-            $order_info              = json_decode($info->info,true);
-            $send_info = [];
-            $gather_info = [];
-            foreach ($order_info as $kkk => $vvv){
-//                dd($vvv);
-                if ($info->pick_flag == 'Y'){
-                    $send['address_info'] = $vvv['send_sheng_name'].$vvv['send_shi_name'].$vvv['send_qu_name'];
-                    $send['contacts']     = $vvv['send_name'];
-                    $send['tel']     = $vvv['send_tel'];
-                    $send_info[] =$send;
-                }
-
-                if ($info->send_flag == 'Y'){
-                    $gather['address_info'] = $vvv['gather_sheng_name'].$vvv['gather_shi_name'].$vvv['gather_qu_name'];
-                    $gather['contacts'] = $vvv['gather_name'];
-                    $gather['tel']  = $vvv['gather_tel'];
-                    $gather['good_number'] = $vvv['good_number'];
-                    $gather['good_weight'] = $vvv['good_weight'];
-                    $gather['good_volume'] = $vvv['good_volume'];
-                    $gather['good_cold']   = $tms_control_type[$vvv['clod']];
-                    $gather['good_name']   = $vvv['good_name'];
-                    $gather_info[] = $gather;
-                }
-                $vvv['clod'] =  $tms_control_type[$vvv['clod']];
-                if ($info->order_type == 'vehicle' || $info->order_type == 'lift'){
-                    $order_info[$kkk]['good_weight'] = ($vvv['good_weight']/1000).'吨';
-                }
-            }
-            $info->info = $order_info;
-//            dd($send_info,$gather_info);
-            $info->send_info = $send_info;
-            $info->gather_info = $gather_info;
-            $info->self_id_show = substr($info->self_id,15);
-            $info->good_info         = json_decode($info->good_info,true);
-            $info->clod              = json_decode($info->clod,true);
             /** 如果需要对数据进行处理，请自行在下面对 $info 进行处理工作*/
             $info->total_money = number_format($info->total_money/100, 2);
             $info->price       = number_format($info->price/100, 2);
-            $info->pick_money  = number_format($info->pick_money/100, 2);
-            $info->send_money  = number_format($info->send_money/100, 2);
-            if ($info->order_type == 'vehicle' || $info->order_type == 'lift'){
-                $info->good_weight = ($info->good_weight/1000).'吨';
-            }
-            $info->color = '#FF7A1A';
-            $info->order_id_show = '订单编号'.$info->self_id_show;
-            $order_details = [];
-            $receipt_list = [];
-            $car_info = [];
-            $order_details1['name'] = '订单金额';
-            $order_details1['value'] = '¥'.$info->total_money;
-            $order_details1['color'] = '#FF7A1A';
-            $order_details2['name'] = '是否付款';
-            $order_details2['value'] = $info->pay_state;
-            $order_details2['color'] = '#FF7A1A';
 
-            if($info->order_status == 3){
-                $order_details11['name'] = '接单人电话';
-                $order_details11['color'] = '#FF7A1A';
-            }
 
-            $order_details4['name'] = '收货时间';
-            $order_details4['value'] = $info->gather_time;
-            $order_details4['color'] = '#000000';
-            if ($info->order_type == 'vehicle' || $info->order_type == 'lcl' || $info->order_type == 'lift'){
-                $order_details3['name'] = '装车时间';
-                $order_details3['value'] = $info->send_time;
-                $order_details3['color'] = '#000000';
-                $order_details5['name'] = '是否装卸';
-                if($info->pick_flag == 'Y'){
-                    $pick_flag_show = '需要装货';
-                }else{
-                    $pick_flag_show = '不需装货';
-                }
-                if ($info->send_flag == 'Y'){
-                    $send_flag_show = '需要卸货';
-                }else{
-                    $send_flag_show = '不需卸货';
-                }
-                $order_details5['value'] = $pick_flag_show.' '.$send_flag_show;
-                $order_details5['color'] = '#000000';
-            }else{
-                $order_details3['name'] = '提货时间';
-                $order_details3['value'] = $info->send_time;
-                $order_details3['color'] = '#000000';
-                $order_details5['name'] = '是否提配';
-                if($info->pick_flag == 'Y'){
-                    $pick_flag_show = '需要提货';
-                }else{
-                    $pick_flag_show = '不需提货';
-                }
-                if ($info->send_flag == 'Y'){
-                    $send_flag_show = '需要配送';
-                }else{
-                    $send_flag_show = '不需配送';
-                }
-                $order_details5['value'] = $pick_flag_show.' '.$send_flag_show;
-                $order_details5['color'] = '#000000';
-            }
-            $order_details6['name'] = '订单备注';
-            $order_details6['value'] = $info->remark;
-            $order_details6['color'] = '#000000';
-            $order_details7['name'] = '班次号';
-            $order_details7['value'] = $info->shift_number;
-            $order_details7['color'] = '#000000';
-            $order_details8['name'] = '时效';
-            $order_details8['value'] = $info->trunking;
-            $order_details8['color'] = '#000000';
-
-            $order_details9['name'] = '运输信息';
-            $order_details9['value'] = $info->car_info;
-            if ($info->tmsOrderDispatch[0]["tmsCarriageDispatch"]){
-                if($info->tmsOrderDispatch[0]["tmsCarriageDispatch"]->tmsCarriage[0]['carriage_flag'] == 'carriers'){
-                    $order_details9['name'] = '调度信息';
-                }
-            }
-
-            $order_details10['name'] = '回单信息';
-            $order_details10['value'] = $info->receipt;
-
-            $order_details[] = $order_details1;
-            $order_details[]= $order_details2;
-
-            if($info->order_status == 3){
-                $order_details[] = $order_details11;
-            }
-
-            if ($info->order_type == 'vehicle' || $info->order_type == 'lcl' || $info->order_type == 'lift'){
-                $order_details[] = $order_details3;
-                $order_details[]= $order_details4;
-                $order_details[]= $order_details5;
-                $order_details[]= $order_details6;
-            }else{
-                $order_details[]= $order_details7;
-                $order_details[]= $order_details8;
-                $order_details[]= $order_details3;
-                $order_details[]= $order_details4;
-                $order_details[]= $order_details5;
-                $order_details[]= $order_details6;
-            }
-            if(!empty($info->car_info)){
-                $car_info[] = $order_details9;
-            }
-            if (!empty($info->receipt)){
-                $receipt_list[] = $order_details10;
-            }
-//            dd($info->toArray());
-            $data['info']=$info;
-            $data['order_details'] = $order_details;
-            $data['receipt_list'] = $receipt_list;
-            $data['car_info'] = $car_info;
             $log_flag='Y';
             $data['log_flag']=$log_flag;
             $log_num='10';
@@ -1027,7 +740,7 @@ class OrderController extends CommonController{
     }
 
     /**
-    确认完成（内部订单） /tms/order/orderDone
+    确认完成 /tms/order/orderDone
      **/
     public function orderDone(Request $request){
         $user_info = $request->get('user_info');//接收中间件产生的参数
