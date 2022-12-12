@@ -178,7 +178,6 @@ class OrderController extends CommonController{
      */
     public function createOrder(Request $request){
         /** 接收数据*/
-//        $data['tms_order_type']          =config('tms.tms_order_type');
         $user_info = $request->get('user_info');//接收中间件产生的参数
         $self_id=$request->input('self_id');
         $where=[

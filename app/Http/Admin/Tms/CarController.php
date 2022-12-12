@@ -341,11 +341,14 @@ class CarController extends CommonController{
         $group_code=$request->input('group_code');
         $car_number=$request->input('car_number');
 //        $input['group_code'] =  $group_code = '1234';
-        $where=[
-            ['delete_flag','=','Y'],
-            ['use_flag','=','Y'],
-            ['car_number','like',$car_number],
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'like','name'=>'car_number','value'=>$car_number],
         ];
+
+        $where=get_list_where($search);
         $select = ['self_id','car_id','car_number'];
         $data['info']=TmsCar::where($where)->$select($select)->get();
 
