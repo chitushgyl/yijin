@@ -349,8 +349,8 @@ class CarController extends CommonController{
         ];
 
         $where=get_list_where($search);
-        $select = ['self_id','car_id','car_number'];
-        $data['info']=TmsCar::where($where)->$select($select)->get();
+        $select = ['self_id','car_number'];
+        $data['info']=TmsCar::where($where)->select($select)->get();
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
