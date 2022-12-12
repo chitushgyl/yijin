@@ -370,9 +370,9 @@ class CarOilController extends CommonController{
             $info_check=[];
             if(array_key_exists('0', $res)){
                 $info_check=$res[0];
+                unset($info_check[0]);
             }
 
-            dd($info_check);
 
             /**  定义一个数组，需要的数据和必须填写的项目
             键 是EXECL顶部文字，
@@ -382,18 +382,17 @@ class CarOilController extends CommonController{
              * 第四个位置为数据库的对应字段
              */
             $shuzu=[
-                'IC卡卡号' =>['Y','Y','10','car_number'],
-                '会员名称' =>['Y','Y','1','car_possess'],
-                '加注金额' =>['Y','Y','64','car_type_name'],
-                '交易时间' =>['Y','Y','16','control'],
-                '地址' =>['N','Y','64','weight'],
-                '体积(立方)' =>['N','Y','64','volam'],
-                '联系人' =>['N','Y','64','contacts'],
-                '联系电话' =>['N','Y','64','tel'],
+                'IC卡卡号' =>['Y','Y','10','ic_number'],
+                '车牌号' =>['Y','Y','20','car_number'],
+                '会员名称' =>['Y','Y','20','car_number'],
+                '加注金额' =>['N','Y','30','total_money'],
+                '加注量' =>['N','Y','30','number'],
+                '单价' =>['N','Y','30','price'],
+                '交易时间' =>['Y','Y','50','add_time'],
+                '地址' =>['N','Y','200','address'],
             ];
             $ret=arr_check($shuzu,$info_check);
 
-             dd($ret);
             if($ret['cando'] == 'N'){
                 $msg['code'] = 304;
                 $msg['msg'] = $ret['msg'];
@@ -423,10 +422,7 @@ class CarOilController extends CommonController{
             $errorNum=50;       //控制错误数据的条数
             $a=2;
 
-            //dump($info_wait);
             /** 现在开始处理$car***/
-            $tms_control_type        =array_column(config('tms.tms_control_type'),'key','name');
-
             foreach($info_wait as $k => $v){
                 if (!check_carnumber($v['car_number'])) {
                     if($abcd<$errorNum){
@@ -436,73 +432,23 @@ class CarOilController extends CommonController{
                     }
                 }
 
-                $where = [
-                    ['delete_flag','=','Y'],
-                    ['group_code','=',$info->group_code],
-                    ['car_number','=',$v['car_number']]
-                ];
-
-                $is_car_info = TmsCar::where($where)->value('group_code');
-
-                if($is_car_info){
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行车辆已存在".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }
-
-                if (!in_array($v['car_possess'],[1,2])) {
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行车辆属性：1或2！".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }
-                $where_car_type = [
-                    ['delete_flag','=','Y'],
-                    ['parame_name','=',$v['car_type_name']]
-                ];
-                $car_type = TmsCarType::where($where_car_type)->select('self_id','parame_name')->first();
-                // dd($car_type);
-                if(!$car_type){
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行车辆类型不存在！".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }
-
-                $control         = $tms_control_type[$v['control']]??null;
-                if(empty($control)){
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行温控类型错误！".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }
-
                 $list=[];
                 if($cando =='Y'){
 
-                    $list['self_id']            =generate_id('car_');
+                    $list['self_id']            = generate_id('oil_');
                     $list['car_number']         = $v['car_number'];
-                    $list['car_possess']        = $v['car_possess'] == 1 ? 'oneself' : 'lease';
-                    $list['weight']             = $v['weight'];
-                    $list['volam']              = $v['volam'];
-                    $list['control']            = $control ;
+                    $list['ic_number']          = $v['ic_number'];
+                    $list['number']             = $v['number'];
+                    $list['price']              = $v['price'];
+                    $list['total_money']        = $v['total_money'];
+                    $list['address']            = $v['address'];
+
                     $list['group_code']         = $info->group_code;
                     $list['group_name']         = $info->group_name;
                     $list['create_user_id']     = $user_info->admin_id;
                     $list['create_user_name']   = $user_info->name;
                     $list['create_time']        =$list['update_time']=$now_time;
                     $list['file_id']            =$file_id;
-                    $list['car_type_id']        =$car_type->self_id;
-                    $list['car_type_name']      =$car_type->parame_name;
-                    $list['contacts']           =$v['contacts'];
-                    $list['tel']                =$v['tel'];
-
-
 
                     $datalist[]=$list;
                 }
@@ -518,7 +464,7 @@ class CarOilController extends CommonController{
                 return $msg;
             }
             $count=count($datalist);
-            $id= TmsCar::insert($datalist);
+            $id= CarOil::insert($datalist);
 
             if($id){
                 $msg['code']=200;
