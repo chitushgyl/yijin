@@ -4,6 +4,7 @@ use App\Http\Controllers\FileController as File;
 use App\Models\Tms\CarCount;
 use App\Models\Tms\CarDanger;
 use App\Models\Tms\CarOil;
+use App\Models\Tms\RoadToll;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
@@ -17,11 +18,11 @@ use App\Models\Group\SystemGroup;
 use App\Models\Tms\TmsCarType;
 use App\Models\Tms\TmsGroup;
 
-class CarOilController extends CommonController{
+class RoadTollCrontroller extends CommonController{
 
-    /***    加油记录列表头部      /tms/carOil/carList
+    /***    过路费记录列表头部      /tms/roadToll/roadList
      */
-    public function  carList(Request $request){
+    public function  roadList(Request $request){
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
 
@@ -38,9 +39,9 @@ class CarOilController extends CommonController{
         return $msg;
     }
 
-    /***    加油记录分页      /tms/carOil/carPage
+    /***    过路费记录分页      /tms/roadToll/roadPage
      */
-    public function carPage(Request $request){
+    public function roadPage(Request $request){
         /** 接收中间件参数**/
         $group_info     = $request->get('group_info');//接收中间件产生的参数
         $button_info    = $request->get('anniu');//接收中间件产生的参数
@@ -63,12 +64,12 @@ class CarOilController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','car_number','car_id','add_time','ic_number','number','price','total_money','remark','create_time','update_time','delete_flag','group_code',
+        $select=['self_id','car_number','car_id','road_time','etc_number','road_price','address','create_time','update_time','delete_flag','group_code',
             'create_user_id','create_user_name'];
         switch ($group_info['group_id']){
             case 'all':
-                $data['total']=CarOil::where($where)->count(); //总的数据量
-                $data['items']=CarOil::where($where)
+                $data['total']=RoadToll::where($where)->count(); //总的数据量
+                $data['items']=RoadToll::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -76,16 +77,16 @@ class CarOilController extends CommonController{
 
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
-                $data['total']=CarOil::where($where)->count(); //总的数据量
-                $data['items']=CarOil::where($where)
+                $data['total']=RoadToll::where($where)->count(); //总的数据量
+                $data['items']=RoadToll::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
 
             case 'more':
-                $data['total']=CarOil::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=CarOil::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['total']=RoadToll::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=RoadToll::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -105,9 +106,9 @@ class CarOilController extends CommonController{
 
 
 
-    /***    新建车辆      /tms/carOil/createCar
+    /***    新建过路费     /tms/roadToll/createRoad
      */
-    public function createCar(Request $request){
+    public function createRoad(Request $request){
         /** 接收数据*/
         $self_id=$request->input('self_id');
 //        $self_id = 'car_20210313180835367958101';
@@ -117,9 +118,9 @@ class CarOilController extends CommonController{
             ['self_id','=',$self_id],
         ];
 
-        $select = ['self_id','car_number','car_id','add_time','ic_number','number','price','total_money','remark','create_time','update_time','delete_flag','group_code',
+        $select = ['self_id','car_number','car_id','road_time','etc_number','road_price','address','create_time','update_time','delete_flag','group_code',
             'create_user_id','create_user_name'];
-        $data['info']=CarOil::where($where)->select($select)->first();
+        $data['info']=RoadToll::where($where)->select($select)->first();
 
         if ($data['info']){
 
@@ -135,13 +136,13 @@ class CarOilController extends CommonController{
     }
 
 
-    /***    新建车辆数据提交      /tms/carOil/addCar
+    /***    新建车辆数据提交      /tms/roadToll/addRoad
      */
-    public function addCar(Request $request){
+    public function addRoad(Request $request){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
-        $table_name     ='tms_car';
-        $operationing->access_cause     ='创建/修改车辆';
+        $table_name     ='road_toll';
+        $operationing->access_cause     ='创建/修改过路费记录';
         $operationing->table            =$table_name;
         $operationing->operation_type   ='create';
         $operationing->now_time         =$now_time;
@@ -154,12 +155,10 @@ class CarOilController extends CommonController{
         $group_code         =$request->input('group_code');
         $car_number         =$request->input('car_number');//车牌号
         $car_id             =$request->input('car_id');//
-        $add_time           =$request->input('add_time');//加油时间
-        $ic_number          =$request->input('ic_number');//IC卡号
-        $number             =$request->input('number');// 加油升数
-        $price              =$request->input('price');//油单价
-        $total_money        =$request->input('total_money');//加油总价
-        $remark             =$request->input('remark');//备注
+        $road_time          =$request->input('road_time');//通行时间
+        $etc_number         =$request->input('etc_number');//etc卡号
+        $road_price         =$request->input('road_price');//过路费/扣费金额
+        $address            =$request->input('address');//出入口
 
 
         $rules=[
@@ -181,34 +180,33 @@ class CarOilController extends CommonController{
 
             $data['car_number']        =$car_number;
             $data['car_id']            =$car_id;
-            $data['add_time']          =$add_time;
-            $data['ic_number']         =$ic_number;
-            $data['number']            =$number;
-            $data['price']             =$price;
-            $data['total_money']       =$total_money;
-            $data['remark']            =$remark;
+            $data['road_time']          =$road_time;
+            $data['etc_number']         =$etc_number;
+            $data['road_price']             =$road_price;
+            $data['address']       =$address;
+
 
 
             $wheres['self_id'] = $self_id;
-            $old_info=CarOil::where($wheres)->first();
+            $old_info=RoadToll::where($wheres)->first();
 
             if($old_info){
                 $data['update_time']=$now_time;
-                $id=CarOil::where($wheres)->update($data);
+                $id=RoadToll::where($wheres)->update($data);
 
-                $operationing->access_cause='修改加油记录';
+                $operationing->access_cause='修改过路费记录';
                 $operationing->operation_type='update';
 
             }else{
-                $data['self_id']            =generate_id('oil_');
+                $data['self_id']            =generate_id('etc_');
                 $data['group_code']         = $group_code;
                 $data['group_name']         = $group_name;
                 $data['create_user_id']     =$user_info->admin_id;
                 $data['create_user_name']   =$user_info->name;
                 $data['create_time']        =$data['update_time']=$now_time;
 
-                $id=CarOil::insert($data);
-                $operationing->access_cause='新建加油记录';
+                $id=RoadToll::insert($data);
+                $operationing->access_cause='新建过路费记录';
                 $operationing->operation_type='create';
 
             }
@@ -243,13 +241,13 @@ class CarOilController extends CommonController{
 
 
 
-    /***    车辆禁用/启用      /tms/carOil/carUseFlag
+    /***    车辆禁用/启用      /tms/roadToll/roadUseFlag
      */
-    public function carUseFlag(Request $request,Status $status){
+    public function roadUseFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='car_oil';
-        $medol_name='CarOil';
+        $table_name='road_toll';
+        $medol_name='RoadToll';
         $self_id=$request->input('self_id');
         $flag='useFlag';
 //        $self_id='car_202012242220439016797353';
@@ -273,13 +271,13 @@ class CarOilController extends CommonController{
 
     }
 
-    /***    车辆删除      /tms/carOil/carDelFlag
+    /***    过路费删除      /tms/roadToll/roadDelFlag
      */
-    public function carDelFlag(Request $request,Status $status){
+    public function roadDelFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='car_oil';
-        $medol_name='CarOil';
+        $table_name='road_toll';
+        $medol_name='RoadToll';
         $self_id=$request->input('self_id');
         $flag='delFlag';
 //        $self_id='car_202012242220439016797353';
@@ -301,30 +299,8 @@ class CarOilController extends CommonController{
         return $msg;
     }
 
-    /***    拿去车辆数据     /tms/car/getCar
-     */
-    public function  getCar(Request $request){
-        $group_code=$request->input('group_code');
-        $car_number=$request->input('car_number');
-//        $input['group_code'] =  $group_code = '1234';
-        $search=[
-            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
-            ['type'=>'all','name'=>'use_flag','value'=>'Y'],
-            ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'like','name'=>'car_number','value'=>$car_number],
-        ];
 
-        $where=get_list_where($search);
-        $select = ['self_id','car_number'];
-        $data['info']=TmsCar::where($where)->select($select)->get();
-
-        $msg['code']=200;
-        $msg['msg']="数据拉取成功";
-        $msg['data']=$data;
-        return $msg;
-    }
-
-    /***    加油记录导入     /tms/carOil/import
+    /***    过路费记录导入     /tms/roadToll/import
      */
     public function import(Request $request){
         $table_name         ='car_oil';
@@ -372,7 +348,6 @@ class CarOilController extends CommonController{
                 $info_check=$res[0];
                 unset($info_check[0]);
             }
-
             /**  定义一个数组，需要的数据和必须填写的项目
             键 是EXECL顶部文字，
              * 第一个位置是不是必填项目    Y为必填，N为不必须，
@@ -381,13 +356,10 @@ class CarOilController extends CommonController{
              * 第四个位置为数据库的对应字段
              */
             $shuzu=[
-                'IC卡卡号' =>['Y','Y','10','ic_number'],
-                '车牌号' =>['N','Y','20','car_number'],
-                '会员名称' =>['Y','Y','20','car_number'],
-                '加注金额' =>['N','Y','30','total_money'],
-                '加注量' =>['N','Y','30','number'],
-                '单价' =>['N','Y','30','price'],
-                '交易时间' =>['Y','Y','50','add_time'],
+                '通行时间' =>['Y','Y','10','road_time'],
+                '车牌号码' =>['Y','Y','20','car_number'],
+                'ETC通行卡卡号' =>['N','Y','30','etc_number'],
+                '扣费金额' =>['Y','Y','30','road_price'],
                 '地址' =>['N','Y','200','address'],
             ];
             $ret=arr_check($shuzu,$info_check);
@@ -433,13 +405,11 @@ class CarOilController extends CommonController{
 
                 $list=[];
                 if($cando =='Y'){
-
                     $list['self_id']            = generate_id('oil_');
-                    $list['car_number']         = $v['car_number'];
-                    $list['ic_number']          = $v['ic_number'];
-                    $list['number']             = $v['number'];
-                    $list['price']              = $v['price'];
-                    $list['total_money']        = $v['total_money'];
+                    $list['car_number']         = strstub($v['car_number'],7);
+                    $list['etc_number']         = $v['ic_number'];
+                    $list['road_time']          = $v['road_time'];
+                    $list['road_price']         = $v['road_price'];
                     $list['address']            = $v['address'];
 
                     $list['group_code']         = $info->group_code;
@@ -463,7 +433,7 @@ class CarOilController extends CommonController{
                 return $msg;
             }
             $count=count($datalist);
-            $id= CarOil::insert($datalist);
+            $id= RoadToll::insert($datalist);
 
             if($id){
                 $msg['code']=200;
@@ -490,12 +460,12 @@ class CarOilController extends CommonController{
 
     }
 
-    /***    车辆详情     /tms/carOil/details
+    /***    车辆详情     /tms/roadToll/details
      */
     public function  details(Request $request,Details $details){
         $self_id=$request->input('self_id');
-        $table_name='tms_car';
-        $select=['self_id','car_number','car_id','add_time','ic_number','number','price','total_money','remark','create_time','update_time','delete_flag','group_code',
+        $table_name='road_toll';
+        $select=['self_id','car_number','car_id','road_time','etc_number','road_price','address','create_time','update_time','delete_flag','group_code',
             'create_user_id','create_user_name'];
 
         // $self_id='car_202012291341297595587871';

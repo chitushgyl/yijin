@@ -22,9 +22,9 @@ use App\Models\Tms\TmsOrder;
 use App\Models\Tms\TmsOrderDispatch;
 use App\Models\Tms\TmsLine;
 use App\Http\Controllers\TmsController as Tms;
-class OrderController extends CommonController{
+class DispatchController extends CommonController{
 
-    /***    订单头部      /tms/order/orderList
+    /***    订单头部      /tms/dispatch/dispatchList
      */
     public function  orderList(Request $request){
         /** 接收中间件参数**/
@@ -75,7 +75,7 @@ class OrderController extends CommonController{
         return $msg;
     }
 
-    /***    订单列表     /tms/order/orderPage
+    /***    订单列表     /tms/dispatch/orderPage
      */
     public function orderPage(Request $request){
         /** 接收中间件参数**/
@@ -111,7 +111,7 @@ class OrderController extends CommonController{
             'send_address_longitude','send_address_latitude','gather_time','gather_name','gather_tel','gather_sheng','gather_shi','gather_qu','gather_sheng_name',
             'gather_shi_name','gather_qu_name','gather_address','gather_address_longitude','gather_address_latitude','total_money','good_name','more_money','price',
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number'
-            ];
+        ];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -337,10 +337,10 @@ class OrderController extends CommonController{
             $data['remark']                  = $remark;
             $old_info = TmsOrder::where('self_id',$self_id)->first();
 
-
             if($old_info){
                 $data['update_time']=$now_time;
                 $id=TmsOrder::where('self_id',$self_id)->update($data);
+//
                 $operationing->access_cause='修改订单';
                 $operationing->operation_type='update';
             }else{
@@ -351,11 +351,7 @@ class OrderController extends CommonController{
                 $data['create_user_name']   = $user_info->name;
                 $data['create_time']        = $data['update_time']=$now_time;
 
-                $order_log['info'] = '创建运单'.','.'运单号：'.$data['order_number'];
-                $order_log['create_time'] = $order_log['update_time'] = $now_time;
-                $order_log['order_id']    = $data['self_id'];
                 $id=TmsOrder::insert($data);
-
 
                 $operationing->access_cause='新建订单';
                 $operationing->operation_type='create';

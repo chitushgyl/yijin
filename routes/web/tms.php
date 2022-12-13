@@ -252,6 +252,15 @@ Route::group([
     Route::any('/carOil/carDelFlag','CarOilController@carDelFlag');
     Route::any('/carOil/import','CarOilController@import');
 
+    /**车辆过路费***/
+    Route::any('/roadToll/roadList','RoadTollController@roadList');
+    Route::any('/roadToll/roadPage','RoadTollController@roadPage');
+    Route::any('/roadToll/createRoad','RoadTollController@createRoad');
+    Route::any('/roadToll/addRoad','RoadTollController@addRoad');
+    Route::any('/roadToll/roadUseFlag','RoadTollController@roadUseFlag');
+    Route::any('/roadToll/roadDelFlag','RoadTollController@roadDelFlag');
+    Route::any('/roadToll/import','RoadTollController@import');
+
 });
 
 
