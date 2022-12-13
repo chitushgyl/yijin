@@ -47,6 +47,7 @@ class UserController extends CommonController{
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
         $name           =$request->input('name');
+        $self_id        =$request->input('self_id');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -55,6 +56,7 @@ class UserController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'name','value'=>$name],
+            ['type'=>'=','name'=>'self_id','value'=>$self_id],
         ];
 
 
