@@ -322,14 +322,14 @@ class CarServiceController extends CommonController{
         return $msg;
     }
 
-    /***    车辆导入     /tms/car/import
+    /***    车辆维修导入     /tms/carService/import
      */
     public function import(Request $request){
-        $table_name         ='tms_car';
+        $table_name         ='car_service';
         $now_time           = date('Y-m-d H:i:s', time());
 
         $operationing       = $request->get('operationing');//接收中间件产生的参数
-        $operationing->access_cause     ='导入创建车辆';
+        $operationing->access_cause     ='导入创建车辆维修记录';
         $operationing->table            =$table_name;
         $operationing->operation_type   ='create';
         $operationing->now_time         =$now_time;
@@ -342,17 +342,15 @@ class CarServiceController extends CommonController{
         $importurl          =$request->input('importurl');
         $group_code         =$request->input('group_code');
         $file_id            =$request->input('file_id');
-//	dump($input);
+
         /****虚拟数据
         $input['importurl']     =$importurl="uploads/import/TMS车辆导入文件范本.xlsx";
         $input['group_code']       =$group_code='1234';
          ***/
         $rules = [
-            'group_code' => 'required',
             'importurl' => 'required',
         ];
         $message = [
-            'group_code.required' => '请选择所属公司',
             'importurl.required' => '请上传文件',
         ];
 
@@ -382,14 +380,12 @@ class CarServiceController extends CommonController{
              * 第四个位置为数据库的对应字段
              */
             $shuzu=[
-                '车牌号' =>['Y','Y','10','car_number'],
-                '车辆属性(1:自有，2:租赁)' =>['Y','Y','1','car_possess'],
-                '车辆类型' =>['Y','Y','64','car_type_name'],
-                '温控类型' =>['Y','Y','16','control'],
-                '承重(kg)' =>['N','Y','64','weight'],
-                '体积(立方)' =>['N','Y','64','volam'],
-                '联系人' =>['N','Y','64','contacts'],
-                '联系电话' =>['N','Y','64','tel'],
+                '修理单位名称' =>['Y','Y','10','service_partne'],
+                '维修日期' =>['Y','Y','64','service_time'],
+                '金额' =>['Y','Y','16','service_price'],
+                '车号' =>['N','Y','64','car_number'],
+                '维修内容' =>['N','Y','64','reason'],
+                '备注' =>['N','Y','64','remark'],
             ];
             $ret=arr_check($shuzu,$info_check);
 
@@ -436,71 +432,24 @@ class CarServiceController extends CommonController{
                     }
                 }
 
-                $where = [
-                    ['delete_flag','=','Y'],
-                    ['group_code','=',$info->group_code],
-                    ['car_number','=',$v['car_number']]
-                ];
-
-                $is_car_info = TmsCar::where($where)->value('group_code');
-
-                if($is_car_info){
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行车辆已存在".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }
-
-                if (!in_array($v['car_possess'],[1,2])) {
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行车辆属性：1或2！".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }
-                $where_car_type = [
-                    ['delete_flag','=','Y'],
-                    ['parame_name','=',$v['car_type_name']]
-                ];
-                $car_type = TmsCarType::where($where_car_type)->select('self_id','parame_name')->first();
-                // dd($car_type);
-                if(!$car_type){
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行车辆类型不存在！".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }
-
-                $control         = $tms_control_type[$v['control']]??null;
-                if(empty($control)){
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行温控类型错误！".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }
-
                 $list=[];
                 if($cando =='Y'){
 
-                    $list['self_id']            =generate_id('car_');
+                    $list['self_id']            =generate_id('service_');
                     $list['car_number']         = $v['car_number'];
-                    $list['car_possess']        = $v['car_possess'] == 1 ? 'oneself' : 'lease';
-                    $list['weight']             = $v['weight'];
-                    $list['volam']              = $v['volam'];
-                    $list['control']            = $control ;
+                    $list['service_partne']     = $v['service_partne'];
+                    $list['service_time']       = $v['service_time'];
+                    $list['service_price']      = $v['service_price'];
+                    $list['reason']             = $v['reason'];
+                    $list['remark']             = $v['remark'];
+
                     $list['group_code']         = $info->group_code;
                     $list['group_name']         = $info->group_name;
                     $list['create_user_id']     = $user_info->admin_id;
                     $list['create_user_name']   = $user_info->name;
                     $list['create_time']        =$list['update_time']=$now_time;
                     $list['file_id']            =$file_id;
-                    $list['car_type_id']        =$car_type->self_id;
-                    $list['car_type_name']      =$car_type->parame_name;
-                    $list['contacts']           =$v['contacts'];
-                    $list['tel']                =$v['tel'];
+
 
 
 
@@ -518,7 +467,7 @@ class CarServiceController extends CommonController{
                 return $msg;
             }
             $count=count($datalist);
-            $id= TmsCar::insert($datalist);
+            $id= CarService::insert($datalist);
 
             if($id){
                 $msg['code']=200;
