@@ -434,8 +434,6 @@ class CarServiceController extends CommonController{
 
             //dump($info_wait);
             /** 现在开始处理$car***/
-            $tms_control_type        =array_column(config('tms.tms_control_type'),'key','name');
-
             foreach($info_wait as $k => $v){
                 if (!check_carnumber($v['car_number'])) {
                     if($abcd<$errorNum){
