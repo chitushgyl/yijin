@@ -11,14 +11,6 @@ class CompanyController extends Controller{
      *
      */
     public function  create($business_type,$user_info,$group_code,$group_name,$now_time,$authority_list){
-
-        $capital_data['self_id']        = generate_id('capital_');
-        $capital_data['total_user_id']  = null;
-        $capital_data['group_code']    =$group_code;
-        $capital_data['group_name']    =$group_name;
-        $capital_data['update_time']    =$now_time;
-        UserCapital::insert($capital_data);						//写入用户资金表
-
         if($business_type=='SHOP'){
             $where=[
                 ['level','=',1],

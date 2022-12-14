@@ -70,12 +70,12 @@ class AttestationController extends Controller{
         //$data['user_number'] 		=$user_number;
 
         //添加公司资金表
-        $capital_data['self_id']        = generate_id('capital_');
-        $capital_data['total_user_id']  = null;
-        $capital_data['group_code']    =$group_code;
-        $capital_data['group_name']    =$data['group_name'];
-        $capital_data['update_time']    =$now_time;
-        UserCapital::insert($capital_data);						//写入用户资金表
+//        $capital_data['self_id']        = generate_id('capital_');
+//        $capital_data['total_user_id']  = null;
+//        $capital_data['group_code']    =$group_code;
+//        $capital_data['group_name']    =$data['group_name'];
+//        $capital_data['update_time']    =$now_time;
+//        UserCapital::insert($capital_data);						//写入用户资金表
 
         $id=SystemGroup::insert($data);
 
@@ -146,56 +146,6 @@ class AttestationController extends Controller{
         $account['create_user_name'] = '系统管理员';
         $admin = SystemAdmin::insert($account);
 
-        /**绑定身份**/
-        $identity['self_id']            = generate_id('identity_');
-        $identity['total_user_id']      =$user_info->total_user_id;
-        if ($info['type'] == 'TMS3PL'){
-            $identity['type']               ='TMS3PL';
-        }else{
-            $identity['type']               ='company';
-        }
-
-        $identity['create_user_id']     ='1234';
-        $identity['create_user_name']   = '共享平台';
-        $identity['group_code']         =$group_code;
-        $identity['group_name']         =$info['name'];
-        $identity['admin_login']        =$info['tel'];
-        $identity['total_user_id']      =$info['total_user_id'];
-        $identity['atte_state']         = 'W';
-        $identity['create_time']       = $identity['update_time'] = $now_time;
-        $user_identity=UserIdentity::insert($identity);
-
-        /***切换身份**/
-        $switch = 'Y';//是否默认切换身份 Y是 N不
-        if($switch == 'Y'){
-            $where = [
-                ['default_flag','=','Y'],
-                ['delete_flag','=','Y'],
-                ['total_user_id','=',$info['total_user_id']]
-            ];
-            $user_update['default_flag'] = 'N';
-            $user_update['update_time'] = $now_time;
-            UserIdentity::where($where)->update($user_update);
-
-            $arr['default_flag'] = 'Y';
-            $arr['update_time'] = $now_time;
-            $id=UserIdentity::where('self_id','=',$identity['self_id'])->update($arr);
-
-            /** 第三步，如果这个切换的属性是SPL的，帮他完成一次后台的登录**/
-            $user_token=null;
-            if($info['type'] =='TMS3PL' || $info['type'] == 'company'){
-                $user_token					 =md5($account['self_id'].$now_time);
-                $reg_place                   ='CT_H5';
-                $token_data['self_id']       = generate_id('login_');
-                $token_data["login"]         = $info['login_account'];
-                $token_data["user_id"]         = $account['self_id'];
-                $token_data['type']          = 'after';
-                $token_data['login_status']  = 'SU';
-                $token_data["user_token"]    = $user_token;
-                $token_data["create_time"]   = $token_data["update_time"] = $now_time;
-                $id=LogLogin::insert($token_data);
-            }
-        }
     }
 
 
