@@ -1,9 +1,6 @@
 <?php
 namespace App\Http\Admin\Tms;
 use App\Http\Controllers\FileController as File;
-use App\Models\Tms\CarCount;
-use App\Models\Tms\CarDanger;
-use App\Models\Tms\CarOil;
 use App\Models\Tms\RoadToll;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
@@ -15,8 +12,7 @@ use App\Http\Controllers\StatusController as Status;
 use App\Http\Controllers\DetailsController as Details;
 use App\Models\Tms\TmsCar;
 use App\Models\Group\SystemGroup;
-use App\Models\Tms\TmsCarType;
-use App\Models\Tms\TmsGroup;
+
 
 class RoadTollCrontroller extends CommonController{
 
