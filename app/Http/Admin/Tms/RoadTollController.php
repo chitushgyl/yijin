@@ -14,7 +14,7 @@ use App\Models\Tms\TmsCar;
 use App\Models\Group\SystemGroup;
 
 
-class RoadTollCrontroller extends CommonController{
+class RoadTollController extends CommonController{
 
     /***    过路费记录列表头部      /tms/roadToll/roadList
      */
