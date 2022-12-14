@@ -62,7 +62,7 @@ class CarServiceController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator',
-            'remark','create_time','update_time','use_flag','delete_flag','group_code'];
+            'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=CarService::where($where)->count(); //总的数据量
@@ -116,7 +116,7 @@ class CarServiceController extends CommonController{
         ];
 
         $select = ['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator',
-            'remark','create_time','update_time','use_flag','delete_flag','group_code'];
+            'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view'];
         $data['info']=CarService::where($where)->select($select)->first();
 
         if ($data['info']){
@@ -152,9 +152,12 @@ class CarServiceController extends CommonController{
         $car_number         =$request->input('car_number');//车牌号
         $car_id             =$request->input('car_id');
         $brand              =$request->input('brand');//品牌
+        $fittings           =$request->input('fittings');//配件名称
         $kilo_num           =$request->input('kilo_num');//公里数
         $service_time       =$request->input('service_time');//维修时间
+        $warranty_time      =$request->input('warranty_time');//保修期
         $reason             =$request->input('reason');// 原因
+        $service_view       =$request->input('service_view');//详细记录
         $service_price      =$request->input('service_price');//维修价格
         $service_partne     =$request->input('service_partne');//维修单位
         $driver_name        =$request->input('driver_name');//驾驶员
@@ -183,10 +186,14 @@ class CarServiceController extends CommonController{
             $data['car_id']            =$car_id;
             $data['brand']             =$brand;
             $data['kilo_num']          =$kilo_num;
+            $data['fittings']          =$fittings;
             $data['service_time']      =$service_time;
+            $data['warranty_time']     =$warranty_time;
             $data['reason']            =$reason;
-            $data['service_price']     =$service_price;
+            $data['service_view']      =$service_view;
             $data['service_partne']    =$service_partne;
+            $data['service_price']     =$service_price;
+
             $data['driver_name']       =$driver_name;
             $data['contact']           =$contact;
             $data['operator']          =$operator;
@@ -379,11 +386,18 @@ class CarServiceController extends CommonController{
              * 第四个位置为数据库的对应字段
              */
             $shuzu=[
-                '修理单位名称' =>['Y','Y','50','service_partne'],
-                '维修日期' =>['Y','Y','50','service_time'],
-                '金额' =>['Y','Y','16','service_price'],
-                '车号' =>['N','Y','30','car_number'],
-                '维修内容' =>['N','Y','200','reason'],
+                '车牌号' =>['Y','Y','30','car_number'],
+                '品牌' =>['Y','Y','30','brand'],
+                '公里数' =>['Y','Y','30','kilo_num'],
+                '配件名称' =>['Y','Y','30','fittings'],
+                '保养/维修时间' =>['Y','Y','50','service_time'],
+                '保修期' =>['Y','Y','50','warranty_time'],
+                '原因' =>['Y','Y','50','reason'],
+                '详细记录' =>['Y','Y','255','service_view'],
+                '保养/维修单位' =>['Y','Y','50','service_partne'],
+                '保养/维修金额' =>['Y','Y','50','service_price'],
+                '经办人' =>['Y','Y','50','operator'],
+                '司机' =>['Y','Y','50','driver_name'],
                 '备注' =>['N','Y','200','remark'],
             ];
             $ret=arr_check($shuzu,$info_check);
@@ -434,12 +448,19 @@ class CarServiceController extends CommonController{
                 $list=[];
                 if($cando =='Y'){
 
-                    $list['self_id']            =generate_id('service_');
+                    $list['self_id']            = generate_id('service_');
                     $list['car_number']         = $v['car_number'];
-                    $list['service_partne']     = $v['service_partne'];
+                    $list['brand']              = $v['brand'];
+                    $list['kilo_num']           = $v['kilo_num'];
+                    $list['fittings']           = $v['fittings'];
                     $list['service_time']       = $v['service_time'];
-                    $list['service_price']      = $v['service_price'];
+                    $list['warranty_time']      = $v['warranty_time'];
                     $list['reason']             = $v['reason'];
+                    $list['service_view']       = $v['service_view'];
+                    $list['service_partne']     = $v['service_partne'];
+                    $list['service_price']      = $v['service_price'];
+                    $list['operator']           = $v['operator'];
+                    $list['driver_name']        = $v['driver_name'];
                     $list['remark']             = $v['remark'];
 
                     $list['group_code']         = $info->group_code;
@@ -499,7 +520,7 @@ class CarServiceController extends CommonController{
         $self_id=$request->input('self_id');
         $table_name='car_service';
         $select=['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator',
-            'remark','create_time','update_time','use_flag','delete_flag','group_code'];
+            'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view'];
         // $self_id='car_202012291341297595587871';
         $info=$details->details($self_id,$table_name,$select);
 
