@@ -317,10 +317,11 @@ class RoadTollController extends CommonController{
         $group_code         =$request->input('group_code');
         $file_id            =$request->input('file_id');
 
-        /****虚拟数据
-        $input['importurl']     =$importurl="uploads/import/TMS车辆导入文件范本.xlsx";
+//        /****虚拟数据
+        $input['importurl']     =$importurl="uploads/import/通行记录.xls";
         $input['group_code']       =$group_code='1234';
-         ***/
+        $input['file_id']       =$file_id='1234';
+//         ***/
         $rules = [
             'importurl' => 'required',
         ];
@@ -342,8 +343,8 @@ class RoadTollController extends CommonController{
             $info_check=[];
             if(array_key_exists('0', $res)){
                 $info_check=$res[0];
-                unset($info_check[0]);
             }
+
             /**  定义一个数组，需要的数据和必须填写的项目
             键 是EXECL顶部文字，
              * 第一个位置是不是必填项目    Y为必填，N为不必须，
@@ -352,14 +353,14 @@ class RoadTollController extends CommonController{
              * 第四个位置为数据库的对应字段
              */
             $shuzu=[
-                '通行时间' =>['Y','Y','10','road_time'],
+                '通行时间' =>['Y','Y','20','road_time'],
                 '车牌号码' =>['Y','Y','20','car_number'],
                 'ETC通行卡卡号' =>['N','Y','30','etc_number'],
                 '扣费金额' =>['Y','Y','30','road_price'],
-                '地址' =>['N','Y','200','address'],
+                '出入口站点' =>['N','Y','200','address'],
             ];
             $ret=arr_check($shuzu,$info_check);
-//            dd($ret);
+
             if($ret['cando'] == 'N'){
                 $msg['code'] = 304;
                 $msg['msg'] = $ret['msg'];
@@ -391,19 +392,19 @@ class RoadTollController extends CommonController{
 
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
-                if (!check_carnumber($v['car_number'])) {
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行车牌号错误！".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }
+//                if (!check_carnumber($v['car_number'])) {
+//                    if($abcd<$errorNum){
+//                        $strs .= '数据中的第'.$a."行车牌号错误！".'</br>';
+//                        $cando='N';
+//                        $abcd++;
+//                    }
+//                }
 
                 $list=[];
                 if($cando =='Y'){
-                    $list['self_id']            = generate_id('oil_');
-                    $list['car_number']         = strstub($v['car_number'],7);
-                    $list['etc_number']         = $v['ic_number'];
+                    $list['self_id']            = generate_id('etc_');
+                    $list['car_number']         = substr($v['car_number'],0,9);
+                    $list['etc_number']         = $v['etc_number'];
                     $list['road_time']          = $v['road_time'];
                     $list['road_price']         = $v['road_price'];
                     $list['address']            = $v['address'];

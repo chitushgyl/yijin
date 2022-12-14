@@ -370,7 +370,6 @@ class CarOilController extends CommonController{
             $info_check=[];
             if(array_key_exists('0', $res)){
                 $info_check=$res[0];
-                unset($info_check[0]);
             }
 
             /**  定义一个数组，需要的数据和必须填写的项目

@@ -242,6 +242,7 @@ Route::group([
     Route::any('/carService/serviceUseFlag','CarServiceController@serviceUseFlag');
     Route::any('/carService/serviceDelFlag','CarServiceController@serviceDelFlag');
     Route::any('/carService/details','CarServiceController@details');
+    Route::any('/carService/import','CarServiceController@import');
 
     /**车辆加油记录***/
     Route::any('/carOil/carList','CarOilController@carList');

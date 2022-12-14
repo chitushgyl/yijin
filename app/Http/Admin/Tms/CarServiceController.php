@@ -371,7 +371,6 @@ class CarServiceController extends CommonController{
             }
 
 
-
             /**  定义一个数组，需要的数据和必须填写的项目
             键 是EXECL顶部文字，
              * 第一个位置是不是必填项目    Y为必填，N为不必须，
@@ -380,12 +379,12 @@ class CarServiceController extends CommonController{
              * 第四个位置为数据库的对应字段
              */
             $shuzu=[
-                '修理单位名称' =>['Y','Y','10','service_partne'],
-                '维修日期' =>['Y','Y','64','service_time'],
+                '修理单位名称' =>['Y','Y','50','service_partne'],
+                '维修日期' =>['Y','Y','50','service_time'],
                 '金额' =>['Y','Y','16','service_price'],
-                '车号' =>['N','Y','64','car_number'],
-                '维修内容' =>['N','Y','64','reason'],
-                '备注' =>['N','Y','64','remark'],
+                '车号' =>['N','Y','30','car_number'],
+                '维修内容' =>['N','Y','200','reason'],
+                '备注' =>['N','Y','200','remark'],
             ];
             $ret=arr_check($shuzu,$info_check);
 

@@ -112,7 +112,7 @@ function arr_check($shuzu,$arr){
     $new_array      =[];
     if($arr){
         /**  效验数据顶部是不是完整***/
-        $tital_check=array_filter($arr[1]);
+        $tital_check=array_filter($arr[0]);
         $check= array_flip($tital_check);
         $new=[];
         foreach ($shuzu as $k => $v){
@@ -128,7 +128,7 @@ function arr_check($shuzu,$arr){
         }
         /**  效验数据的必填以及重复，以及长度***/
         if($cando == 'Y'){
-            $a=3;
+            $a=2;
             $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
             $errorNum=50;       //控制错误数据的条数
             $list=[];
