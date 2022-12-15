@@ -50,6 +50,7 @@ class GoodController extends CommonController{
         $good_name      =$request->input('good_name');
         $company_name   =$request->input('company_name');
         $external_sku_id   =$request->input('external_sku_id');
+        $good_type   =$request->input('good_type');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -61,12 +62,13 @@ class GoodController extends CommonController{
             ['type'=>'like','name'=>'good_name','value'=>$good_name],
             ['type'=>'like','name'=>'company_name','value'=>$company_name],
             ['type'=>'like','name'=>'external_sku_id','value'=>$external_sku_id],
+            ['type'=>'=','name'=>'good_type','value'=>$good_type],
         ];
 
         $where=get_list_where($search);
 
         $select=['self_id','use_flag','good_name','good_english_name','external_sku_id','wms_unit','wms_target_unit','wms_scale','wms_spec',
-            'wms_length','wms_wide','wms_high','wms_weight','wms_out_unit','company_name','group_name','period_value','period','sale_price'];
+            'wms_length','wms_wide','wms_high','wms_weight','wms_out_unit','company_name','group_name','period_value','period','sale_price','good_type'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -125,8 +127,7 @@ class GoodController extends CommonController{
     /***    新建商品      /wms/good/createGood
      */
     public function createGood(Request $request){
-        $data['period'] = config('wms.period');
-
+        $data['type'] = config('wms.good_type');
         /** 接收数据*/
         $self_id=$request->input('self_id');
         $where=[
@@ -161,43 +162,14 @@ class GoodController extends CommonController{
         /** 接收数据*/
         $self_id            =$request->input('self_id');
         $company_id         =$request->input('company_id');
-        $external_sku_id    =$request->input('external_sku_id');
-        $good_name          =$request->input('good_name');
-        $good_english_name  =$request->input('good_english_name');
-        $wms_unit           =$request->input('wms_unit');
-        $wms_target_unit    =$request->input('wms_target_unit');
-        $wms_scale          =$request->input('wms_scale');
-        $wms_spec           =$request->input('wms_spec');
-        $wms_length         =$request->input('wms_length');
-        $wms_wide           =$request->input('wms_wide');
-        $wms_high           =$request->input('wms_high');
-        $wms_weight         =$request->input('wms_weight');
-        $wms_out_unit       =$request->input('wms_out_unit');
-        $period             =$request->input('period');
-        $period_value       =$request->input('period_value');
+        $external_sku_id    =$request->input('external_sku_id');//商品标号
+        $good_name          =$request->input('good_name');//产品名称
+        $wms_unit           =$request->input('wms_unit');//单位
+        $wms_spec           =$request->input('wms_spec');//规格
         $sale_price         =$request->input('sale_price');//单价
 
 
-        /*** 虚拟数据
-        $input['self_id']           =$self_id='good_202007011336328472133661';
-        $input['company_id']              =$company_id='group_202011191136288171616970';
-        $input['external_sku_id']      =$external_sku_id='1212112111212';
-        $input['good_name']             =$good_name='天通苑';
-        $input['wms_unit']              =$wms_unit='常温';
-        $input['wms_target_unit']              =$wms_target_unit='12';
-        $input['wms_scale']              =$wms_scale='15';
-        $input['wms_spec']              =$wms_spec='常温';
-        $input['wms_length']              =$wms_length='12';
-        $input['wms_wide']              =$wms_wide='15';
-        $input['wms_high']              =$wms_high='常温';
-        $input['wms_weight']              =$wms_weight='12';
-        $input['wms_out_unit']              =$wms_out_unit='15';
-        $input['sale_price']              =$wms_out_unit='15';
-         ***/
-
-        //dd($input);
         $rules=[
-            'company_id'=>'required',
             'external_sku_id'=>'required',
             'good_name'=>'required',
             'wms_unit'=>'required',
@@ -206,7 +178,6 @@ class GoodController extends CommonController{
 //            'period_value'=>'required',
         ];
         $message=[
-            'company_id.required'=>'请选择业务公司',
             'external_sku_id.required'=>'请输入商品编号',
             'good_name.required'=>'请填写商品名称',
             'wms_unit.required'=>'请填写入库单位',
@@ -220,60 +191,40 @@ class GoodController extends CommonController{
 
         if($validator->passes()){
             //判断external_sku_id  不能重复
-//包装不能重复
+
             if($self_id){
                 $name_where=[
                     ['external_sku_id','=',trim($external_sku_id)],
                     ['self_id','!=',$self_id],
-                    ['company_id','=',$company_id],
                     ['delete_flag','=','Y'],
                 ];
             }else{
                 $name_where=[
                     ['external_sku_id','=',trim($external_sku_id)],
-                    ['company_id','=',$company_id],
                     ['delete_flag','=','Y'],
                 ];
             }
             $name_count = ErpShopGoodsSku::where($name_where)->count();            //检查名字是不是重复
 
-            //DD($name_count);
             if($name_count > 0){
                 $msg['code'] = 301;
                 $msg['msg'] = '商品编号重复';
                 return $msg;
             }
 
-
-
             $where_goods=[
                 ['delete_flag','=','Y'],
                 ['use_flag','=','Y'],
-                ['self_id','=',$company_id],
+                ['self_id','=',$user_info->group_code],
             ];
 
-            $info2 = WmsGroup::where($where_goods)->select('company_name','group_code','group_name')->first();
-            if (empty($info2)) {
-                $msg['code'] = 301;
-                $msg['msg'] = '业务公司不存在';
-                return $msg;
-            }
+            $info2 = SystemGroup::where($where_goods)->select('self_id','group_code','group_name')->first();
 
 
             $data['external_sku_id']    = $external_sku_id;
             $data['good_name']          = $good_name;
-            $data['good_english_name']  = $good_english_name;
             $data['wms_unit']           = $wms_unit;
-            $data['wms_target_unit']    = $wms_target_unit;
-            $data['wms_scale']          = $wms_scale;
-            $data['wms_spec']           = $wms_spec;
-            $data['wms_length']         = $wms_length;
-            $data['wms_wide']           = $wms_wide;
-            $data['wms_high']           = $wms_high;
-            $data['wms_weight']         = $wms_weight;
-            $data['wms_out_unit']       = $wms_out_unit;
-            $data['period']             = $period;
-            $data['period_value']       = $period_value;
+            $data['wms_spec']           = $wms_spec;//规格
             $data['type']               = 'wms';
             $data['sale_price']         = $sale_price;
 
@@ -450,19 +401,10 @@ class GoodController extends CommonController{
              */
 
             $shuzu=[
-                '商品编号' =>['Y','N','64','external_sku_id'],
-                '商品名称' =>['Y','Y','255','good_name'],
-                '商品英文名称' =>['N','Y','255','good_english_name'],
+                '产品编号' =>['Y','N','64','external_sku_id'],
+                '产品名称' =>['Y','Y','255','good_name'],
                 '规格' =>['N','Y','50','wms_spec'],
                 '主计量单位' =>['Y','Y','10','wms_unit'],
-                '单位换算' =>['N','Y','10','wms_target_unit'],
-                '换算标准' =>['N','Y','20','wms_scale'],
-                '箱长（cm）' =>['N','Y','20','wms_length'],
-                '箱宽（cm）' =>['N','Y','20','wms_wide'],
-                '箱高（cm）' =>['N','Y','20','wms_high'],
-                '箱重（kg）' =>['N','Y','20','wms_weight'],
-                '有效期' =>['N','Y','5','period_value'],
-                '有效期单位' =>['N','Y','10','period'],
             ];
 
             $ret=arr_check($shuzu,$info_check);
@@ -480,14 +422,6 @@ class GoodController extends CommonController{
                 ['self_id','=',$company_id],
             ];
 
-            $info = WmsGroup::where($where_check)->select('self_id','company_name','group_name','group_code')->first();
-
-            if(empty($info)){
-                $msg['code'] = 302;
-                $msg['msg'] = '业务公司不存在';
-                return $msg;
-            }
-
 
             /** 二次效验结束**/
 
@@ -501,13 +435,7 @@ class GoodController extends CommonController{
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
 
-                if(!array_key_exists($v['period'], $period)){
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行有效期单位不存在，请您输入：天，月，年".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }
+
 
                 $where['delete_flag'] = 'Y';
                 $where['external_sku_id']=$v['external_sku_id'];
@@ -528,30 +456,17 @@ class GoodController extends CommonController{
                     $list['self_id']            =generate_id('sku_');
                     $list['external_sku_id']    = $v['external_sku_id'];
                     $list['good_name']          = $v['good_name'];
-                    $list['good_english_name']  = $v['good_english_name'];
                     $list['wms_unit']           = $v['wms_unit'];
-                    $list['wms_target_unit']    = $v['wms_target_unit'];
-                    $list['wms_scale']          = $v['wms_scale'];
                     $list['wms_spec']           = $v['wms_spec'];
-                    $list['wms_length']         = $v['wms_length'];
-                    $list['wms_wide']           = $v['wms_wide'];
-                    $list['wms_high']           = $v['wms_high'];
-                    $list['wms_weight']         = $v['wms_weight'];
-//                    $list['wms_out_unit']       = $v[4];
-                    $list['period_value']       = $v['period_value'];
-                    $list['period']             = $period[$v['period']];
                     $list['type']               = 'wms';
-                    $list['company_id']         = $info->self_id;
-                    $list['company_name']       = $info->company_name;
-                    $list['group_code']         = $info->group_code;
-                    $list['group_name']         = $info->group_name;
+                    $list['group_code']         = $user_info->group_code;
+                    $list['group_name']         = $user_info->group_name;
                     $list['create_user_id']     =$user_info->admin_id;
                     $list['create_user_name']   =$user_info->name;
                     $list['create_time']        =$list['update_time']=date('Y-m-d H:i:s',time());
                     $list['file_id']            =$file_id;
                     $datalist[]=$list;
                 }
-
 
                 $a++;
             }
@@ -595,7 +510,7 @@ class GoodController extends CommonController{
      */
     public function getGood(Request $request){
         /** 接收数据*/
-        $company_id       =$request->input('company_id');
+        $company_id       =$request->input('group_code');
 
         /*** 虚拟数据**/
         //$warehouse_id='ware_202006012159456407842832';
@@ -604,11 +519,11 @@ class GoodController extends CommonController{
             ['delete_flag','=','Y'],
             ['use_flag','=','Y'],
             ['type','=','wms'],
-            ['company_id','=',$company_id],
+            ['group_code','=',$company_id],
         ];
 
         //dd($where);
-        $data['info']=ErpShopGoodsSku::where($where)->select('self_id','external_sku_id','good_name','wms_spec','wms_unit')->get();
+        $data['info']=ErpShopGoodsSku::where($where)->select('self_id','external_sku_id','good_name','wms_spec','wms_unit','group_code','group_name')->get();
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
@@ -733,7 +648,7 @@ class GoodController extends CommonController{
 
         $self_id=$request->input('self_id');
         $table_name='erp_shop_goods_sku';
-        $select=['self_id','group_code','group_name','use_flag','create_user_name','create_time','sale_price',
+        $select=['self_id','group_code','group_name','use_flag','create_user_name','create_time','sale_price','good_type',
             'good_name','good_english_name','external_sku_id','wms_unit','wms_target_unit','wms_scale','wms_spec','wms_length','wms_wide','wms_high','wms_weight','wms_out_unit','company_name','period_value','period'];
         //$self_id='group_202009282038310201863384';
         $info=$details->details($self_id,$table_name,$select);

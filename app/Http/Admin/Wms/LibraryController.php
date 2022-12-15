@@ -678,60 +678,34 @@ class LibraryController extends CommonController{
         $company_id         =$request->input('company_id');
         $library_sige       =json_decode($request->input('library_sige'), true);
         $voucher            = json_decode($request->input('voucher'),true);
-	//dd($library_sige);
+
         /*** 虚拟数据
         $input['group_code']=$group_code='1234';
-        $input['warehouse_id']=$warehouse_id='warehouse_202012101404020866257838';
-        $input['company_id']=$company_id='group_202012101432459216751837';
+        $input['warehouse_id']=$warehouse_id='warehouse_20221215135058787296124';
         $input['library_sige']=$library_sige=[
             '0'=>[
-                'sku_id'=>'good_202012101444191651472251',
-                'warehouse_sign_id'=>'sign_202012101505370895284778',
-                'production_date'=>'2019-02-05',
-                'expire_time'=>'2019-02-05',
+                'sku_id'=>'sku_20221215133003146952872',
                 'now_num'=>'21',
                 'can_use'=>'Y',
-            ],
-
-           '1'=>[
-               'sku_id'=>'good_202012101444191619887872',
-               'warehouse_sign_id'=>'sign_202012101505370864669875',
-               'production_date'=>'2019-02-05',
-               'expire_time'=>'2019-02-05',
-               'now_num'=>'21',
-               'can_use'=>'Y',
-            ],
-            '2'=>[
-                'sku_id'=>'good_202012101444191619887872',
-                'warehouse_sign_id'=>'sign_202012101505370864669875',
-                'production_date'=>'2019-02-05',
-                'expire_time'=>'2019-02-05',
-                'now_num'=>'21',
-                'can_use'=>'Y',
-            ],
-
+            ]
          ];
          **/
         $rules=[
             'group_code'=>'required',
             'warehouse_id'=>'required',
-            'company_id'=>'required',
             'library_sige'=>'required',
         ];
         $message=[
             'group_code.required'=>'请填写公司',
             'warehouse_id.required'=>'请填写仓库',
-            'company_id.required'=>'请填写业务公司',
-            'library_sige.required'=>'商品必须',
+            'library_sige.required'=>'请选择商品',
         ];
         $validator=Validator::make($input,$rules,$message);
         if($validator->passes()){
             //二次效验！！！！
-            $rulesssss=['sku_id'=>'商品名称','production_date'=>'开始有效期','expire_time'=>'到期时间','now_num'=>'商品数量','can_use'=>'是否可用'];
-
+            $rulesssss=['sku_id'=>'商品名称','now_num'=>'商品数量','can_use'=>'是否可用'];
             $rule=array_keys($rulesssss);
             $rule_count=count($rule);
-
 
             $msg['msg']=null;
             $cando='Y';
@@ -746,45 +720,28 @@ class LibraryController extends CommonController{
                     //说明缺少参数
                     $msg['code']=302;
                     $msg['msg']='模板数组缺少必要参数';
-                    //dd($msg);
                     return $msg;
                 }
-
                 /**效验必填项目**/
                 foreach($rulesssss as $kk => $vv){
-					if($kk !='expire_time'){
-						if($v[$kk]){
-							if(in_array($kk,['now_num'])){
-								if($v[$kk]<0){
-									$cando='N';
-									$msg['msg'].=$abcs.": ".$vv." 必须大于0</br>";
-									$abcs++;
-								}
-							}
-						}else{
-							$cando='N';
-							$msg['msg'].=$abcs.": ".$vv." 缺失</br>";
-							$abcs++;
-						}
-					}
-
-                }
-                /*** 这里还要加一个开始时间和结束时间的比较***/
-                if($v['production_date'] && $v['expire_time']){
-                        if($v['production_date'] > $v['expire_time']){
-                            $ahf=$k +1;
-                            $cando='N';
-                            $msg['msg'].=$abcs.": 第".$ahf." 行的有效期日期不正确，请检查</br>";
-                            $abcs++;
+                    if($v[$kk]){
+                        if(in_array($kk,['now_num'])){
+                            if($v[$kk]<0){
+                                $cando='N';
+                                $msg['msg'].=$abcs.": ".$vv." 必须大于0</br>";
+                                $abcs++;
+                            }
                         }
+                    }else{
+                        $cando='N';
+                        $msg['msg'].=$abcs.": ".$vv." 缺失</br>";
+                        $abcs++;
+                    }
                 }
-
             }
-
 
             if($cando=='N'){
                 $msg['code']=303;
-                //dd($msg);
                 return $msg;
             }
 
@@ -801,22 +758,6 @@ class LibraryController extends CommonController{
                 return $msg;
             }
 
-            $where_pack2=[
-                ['delete_flag','=','Y'],
-                ['self_id','=', $company_id],
-            ];
-            $company_select=['self_id','company_name',
-                'preentry_type','preentry_price','out_type','out_price','storage_type','storage_price','total_type','total_price'];
-
-            $company_info = WmsGroup::where($where_pack2)->select($company_select)->first();
-
-            if(empty($company_info)){
-                $msg['code'] = 305;
-                $msg['msg'] = '业务公司不存在';
-                return $msg;
-            }
-
-
 
             /** 开始制作数据了*/
             $datalist=[];       //初始化数组为空
@@ -828,16 +769,13 @@ class LibraryController extends CommonController{
             $seld=generate_id('SID_');
             $bulk=0;
             $weight=0;
-//dump($library_sige);
             $a=2;
+
             foreach($library_sige as $k => $v){
-                //dump($v);
-                //$where100['company_id']=$company_id;
                 $where100['self_id']=$v['sku_id'];
                 //查询商品是不是存在
                 $goods_select=['self_id','external_sku_id','company_id','company_name','good_name','good_english_name','wms_target_unit','wms_scale','wms_unit','wms_spec',
                     'wms_length','wms_wide','wms_high','wms_weight','period','period_value'];
-					//dump($goods_select);
 
                 $getGoods=ErpShopGoodsSku::where($where100)->select($goods_select)->first();
 
@@ -847,100 +785,6 @@ class LibraryController extends CommonController{
                         $cando='N';
                         $abcd++;
                     }
-                }
-
-//dump($getGoods);
-                //$where2k['warehouse_id']=$warehouse_id;
-                $where2k['self_id']=$v['warehouse_sign_id'];
-                $warehouse_select=['warehouse_id','warehouse_name','self_id','area_id','area','row','column','tier','group_code','group_name'];
-                $getWmsWarehouse=WmsWarehouseSign::where($where2k)->select($warehouse_select)->first();
-
-//dd($getWmsWarehouse);
-//                if(empty($getWmsWarehouse)){
-//                    if($abcd<$errorNum){
-//                        $strs .= '数据中的第'.$a."行库位不存在".'</br>';
-//                        $cando='N';
-//                        $abcd++;
-//                    }
-//                }
-
-                /** 计算商品的有效期**/
-                $expire_time=null;
-                if($v['expire_time']){
-                    $expire_time=$v['expire_time'];
-                }else{
-                    if($getGoods->period_value && $getGoods->period){
-                        $abcccc='+'.$getGoods->period_value.' '.$getGoods->period;
-
-						//dump($abcccc);
-                        $expire_time       =date('Y-m-d',strtotime($abcccc,strtotime($v['production_date'])));
-                    }else{
-                        if($abcd<$errorNum){
-                            $strs .= '数据中的第'.$a."行数据无到期时间".'</br>';
-                            $cando='N';
-                            $abcd++;
-                        }
-                    }
-                }
-
-				//dd($expire_time);
-
-				$list=[];
-                if($cando == 'Y'){
-//                    $pull[]=$getWmsWarehouse->self_id;
-                    $pull[] = '';
-
-		    //dd($getGoods->toArray());
-                    $list["self_id"]            =generate_id('LSID_');
-                    $list["order_id"]           =$seld;
-                    $list["sku_id"]             =$getGoods->self_id;
-                    $list["external_sku_id"]    =$getGoods->external_sku_id;
-                    $list["company_id"]         =$getGoods->company_id;
-                    $list["company_name"]       =$getGoods->company_name;
-                    $list["good_name"]          =$getGoods->good_name;
-                    $list["good_english_name"]  =$getGoods->good_english_name;
-                    $list["good_target_unit"]   =$getGoods->wms_target_unit;
-                    $list["good_scale"]         =$getGoods->wms_scale;
-                    $list["good_unit"]          =$getGoods->wms_unit;
-                    $list["wms_length"]         =$getGoods->wms_length;
-                    $list["wms_wide"]           =$getGoods->wms_wide;
-                    $list["wms_high"]           =$getGoods->wms_high;
-                    $list["wms_weight"]         =$getGoods->wms_weight;
-                    $list["good_info"]          =json_encode($getGoods,JSON_UNESCAPED_UNICODE);
-//                    $list["warehouse_id"]       =$getWmsWarehouse->warehouse_id;
-//                    $list["warehouse_name"]     =$getWmsWarehouse->warehouse_name;
-//                    $list['warehouse_sign_id']  =$getWmsWarehouse->self_id;
-//                    $list['area_id']            =$getWmsWarehouse->area_id;
-//                    $list['area']               =$getWmsWarehouse->area;
-//                    $list['row']                =$getWmsWarehouse->row;
-//                    $list['column']             =$getWmsWarehouse->column;
-//                    $list['tier']               =$getWmsWarehouse->tier;
-                    $list["production_date"]    =$v['production_date'];
-                    $list["expire_time"]        =$expire_time;
-                    $list['spec']               =$getGoods->wms_spec;
-                    $list['initial_num']        =$v['now_num'];
-                    $list['now_num']            =$v['now_num'];
-                    $list['storage_number']     =$v['now_num'];
-//                    $list["group_code"]         =$getWmsWarehouse->group_code;
-//                    $list["group_name"]         =$getWmsWarehouse->group_name;
-                    $list["group_code"]         =$warehouse_info->group_code;
-                    $list["group_name"]         =$warehouse_info->group_name;
-
-                    $list['create_time']        =$now_time;
-                    $list["update_time"]        =$now_time;
-                    $list['create_user_id']     = $user_info->admin_id;
-                    $list['create_user_name']   = $v['name'];
-                    $list["grounding_status"]   ='N';
-                    $list["good_remark"]        =$v['good_remark'];
-                    $list["good_lot"]           =$v['good_lot'];
-                    $list["in_library_state"]     =$v['in_library_state'];
-
-                    $list['bulk']               = $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
-                    $list['weight']             = $getGoods->wms_weight*$v['now_num'];
-                    $bulk+=  $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
-                    $weight+=  $getGoods->wms_weight*$v['now_num'];
-
-                    $datalist[]=$list;
                 }
                 $a++;
             }
@@ -968,8 +812,6 @@ class LibraryController extends CommonController{
             $data["warehouse_name"]     =$warehouse_info->warehouse_name;
             $data['count']              =$count;
             $data['type']               ='preentry';
-            $data['company_id']         =$company_info->self_id;
-            $data["company_name"]       =$company_info->company_name;
             $data["pull_count"]         =$pull_count;
             $data['check_user_id']      = $user_info->admin_id;
             $data['check_user_name']    = $user_info->name;
@@ -988,7 +830,7 @@ class LibraryController extends CommonController{
             if($id){
                 WmsLibrarySige::insert($datalist);
                 $change->change($datalist,'preentry');
-                $money->moneyCompute($data,$datalist,$now_time,$company_info,$user_info,'in');
+//                $money->moneyCompute($data,$datalist,$now_time,$company_info,$user_info,'in');
                 //计算费用
 
 

@@ -135,7 +135,7 @@ class CarOilController extends CommonController{
     }
 
 
-    /***    新建车辆数据提交      /tms/carOil/addCar
+    /***    新建车辆加油数据提交      /tms/carOil/addCar
      */
     public function addCar(Request $request){
         $operationing   = $request->get('operationing');//接收中间件产生的参数

@@ -159,18 +159,6 @@ class WarehouseController extends CommonController{
         $longitude          =$request->input('longitude');
         $dimensionality     =$request->input('dimensionality');
 
-        /*** 虚拟数据
-        $input['self_id']           =$self_id='good_202007011336328472133661';
-        $input['group_code']        =$group_code='1234';
-        $input['warehouse_name']    =$warehouse_name='优惠券名称';
-        $input['warehouse_address']           =$warehouse_address='good_202007011336328472133661';
-        $input['warehouse_tel']        =$warehouse_tel='1234';
-        $input['warehouse_contacts']    =$warehouse_contacts='优惠券名称';
-        $input['explain']           =$explain='good_202007011336328472133661';
-        $input['longitude']        =$longitude='1234';
-        $input['dimensionality']    =$dimensionality='优惠券名称';
-         **/
-
         $rules=[
             'group_code'=>'required',
             'warehouse_name'=>'required',
