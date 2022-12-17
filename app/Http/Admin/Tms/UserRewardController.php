@@ -145,6 +145,7 @@ class UserRewardController extends CommonController{
 
         /** 接收数据*/
         $self_id                 =$request->input('self_id');
+        $user_id                 =$request->input('user_id');
         $car_id                  =$request->input('car_id');//
         $car_number              =$request->input('car_number');// 车牌号
         $violation_address       =$request->input('violation_address');//违章地址
@@ -178,6 +179,7 @@ class UserRewardController extends CommonController{
             }
 
             $data['car_id']                 =$car_id;
+            $data['user_id']                =$user_id;
             $data['car_number']             =$car_number;
             $data['violation_address']      =$violation_address;
             $data['violation_connect']      =$violation_connect;
