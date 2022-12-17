@@ -1382,7 +1382,7 @@ class LibraryController extends CommonController{
         }
     }
 
-    /***获取产品库存**/
+//    /***获取产品库存**/  wms/library/getLibrarySige
     public function getLibrarySige(Request $request){
         /** 接收数据*/
         $sku_id       =$request->input('sku_id');
