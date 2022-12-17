@@ -165,11 +165,15 @@ class OrderController extends CommonController{
 
 //        /***
         $input['warehouse_id'] = $warehouse_id = 'warehouse_20221215135058787296124';
+        $input['car_num'] = $car_num = '485615612';
+        $input['picker'] = $picker = '12345';
+        $input['operator'] = $operator = '1234';
+        $input['purchase'] = $purchase = '123';
         $input['goods']=$goods=[
         '0'=>[
         'sku_id'=>'sku_202212171207283772516693',
         'can_use'=>'Y',
-        'num'=>31,
+        'num'=>29,
         'wms_unit'=>'',
         'price'=>'200',
         'total_price'=>6200,
@@ -183,7 +187,7 @@ class OrderController extends CommonController{
             'goods' => 'required',
         ];
         $message = [
-            'goods.required' => '请选择公司',
+            'goods.required' => '请选择要出库的产品',
         ];
         $validator = Validator::make($input, $rules, $message);
 
@@ -215,6 +219,7 @@ class OrderController extends CommonController{
             $order_2['picker']              =$picker;
             $order_2['operator']            =$operator;
             $order_2['purchase']            =$purchase;
+            $order_2['status']              =2;
 
             $list=[];
             foreach($goods as $k =>$v){
@@ -228,7 +233,6 @@ class OrderController extends CommonController{
 
                 //dd($vv);
                 $list['self_id']            =generate_id('list_');
-
                 $list['good_name']          = $sku_info->good_name;
                 $list['spec']               = $sku_info->wms_spec;
                 $list['num']                = $v['num'];
@@ -248,60 +252,12 @@ class OrderController extends CommonController{
 
             }
 
-            $count=count($goods);
             WmsOutOrderList::insert($datalist);
             $id= WmsOutOrder::insert($order_2);
-            /**修改库存wms_library_sige**/
 
-            $where2 = [
-                ['sku_id', '=', $v['sku_id']],
-                ['now_num', '>', 0],
-                ['delete_flag', '=', 'Y'],
-                ['create_time', '>', substr($now_time, 0, -9)]
-            ];
-
-
-
-            $resssss = WmsLibraryChange::where($where2)->orderBy('create_time', 'asc')->get()->toArray();
-//            dd($resssss);
-            //dd($resssss);
-            if ($resssss) {
-                $totalNum = array_sum(array_column($resssss, 'now_num'));
-                $numds = $v['num'] - $totalNum;
-                dump($numds);
-                if ($numds > 0) {
-                    //表示缺货$numds
-                    $xiugai["quehuo"] = "Y";
-                    $xiugai["quehuo_num"] = $numds;
-
-                    $infos = self::dataInsert($xiugai,$v,$resssss,$now_time,$user_info,$change,$datalist);
-                    $datalist = $infos['datalist'];
-
-                } else {
-                    $xiugai["quehuo"] = "N";
-                    $xiugai["quehuo_num"] = 0;
-
-                    $infos = self::dataInsert($xiugai,$v,$resssss,$now_time,$user_info,$change,$datalist);
-
-                    $datalist = $infos['datalist'];
-                }
-
-
-            } else {
-                $xiugai['quehuo'] = 'Y';
-                $xiugai['quehuo_num'] = $v['num'];
-                $infos = self::dataInsert($xiugai,$v,$resssss,$now_time,$user_info,$change,$datalist);
-                $datalist = $infos['datalist'];
-            }
-
-            /***计算费用 进费用表 每种产品数量*产品单价***/
-
-
-            /**库存变化 修改wms_library_change表 **/
             if($id){
                 $msg['code']=200;
-                /** 告诉用户，你一共导入了多少条数据，其中比如插入了多少条，修改了多少条！！！*/
-                $msg['msg']='操作成功，您一共导入'.$count.'条数据';
+                $msg['msg']='操作成功!';
 
                 return $msg;
             }else{
