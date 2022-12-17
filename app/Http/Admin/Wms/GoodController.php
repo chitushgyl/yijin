@@ -161,37 +161,29 @@ class GoodController extends CommonController{
 
         /** 接收数据*/
         $self_id            =$request->input('self_id');
-        $company_id         =$request->input('company_id');
-        $external_sku_id    =$request->input('external_sku_id');//商品标号
+        $external_sku_id    =$request->input('external_sku_id');//商品编号
         $good_name          =$request->input('good_name');//产品名称
         $wms_unit           =$request->input('wms_unit');//单位
         $wms_spec           =$request->input('wms_spec');//规格
         $sale_price         =$request->input('sale_price');//单价
+        $type               =$request->input('type');//产品类型 //办公  车用
 
 
         $rules=[
             'external_sku_id'=>'required',
             'good_name'=>'required',
             'wms_unit'=>'required',
-            //'wms_out_unit'=>'required',
-//            'period'=>'required',
-//            'period_value'=>'required',
         ];
         $message=[
             'external_sku_id.required'=>'请输入商品编号',
             'good_name.required'=>'请填写商品名称',
             'wms_unit.required'=>'请填写入库单位',
-            //'wms_out_unit.required'=>'商品规格不能为空',
-//            'period.required'=>'请选择有效期单位',
-//            'period_value.required'=>'请输入有效期时间',
         ];
         $validator=Validator::make($input,$rules,$message);
 
         //操作的表
 
         if($validator->passes()){
-            //判断external_sku_id  不能重复
-
             if($self_id){
                 $name_where=[
                     ['external_sku_id','=',trim($external_sku_id)],
@@ -208,7 +200,7 @@ class GoodController extends CommonController{
 
             if($name_count > 0){
                 $msg['code'] = 301;
-                $msg['msg'] = '商品编号重复';
+                $msg['msg'] = '产品编号重复';
                 return $msg;
             }
 
@@ -227,6 +219,7 @@ class GoodController extends CommonController{
             $data['wms_spec']           = $wms_spec;//规格
             $data['type']               = 'wms';
             $data['sale_price']         = $sale_price;
+            $data['good_type']          = $type;
 
             $wheres['self_id'] = $self_id;
             $old_info=ErpShopGoodsSku::where($wheres)->first();
@@ -243,8 +236,6 @@ class GoodController extends CommonController{
             }else{
 
                 $data['self_id']=generate_id('sku_');		//优惠券表ID
-                $data['company_id'] = $company_id;
-                $data['company_name'] = $info2->company_name;
                 $data['group_code'] = $info2->group_code;
                 $data['group_name'] = $info2->group_name;
                 $data['create_user_id']=$user_info->admin_id;

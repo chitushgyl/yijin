@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Admin\Wms;
-use App\Models\Wms\WmsLibraryChange;
+use App\Http\Controllers\WmschangeController as Change;use App\Models\Wms\WmsLibraryChange;
+use App\Models\Wms\WmsOutSige;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\DB;
@@ -140,7 +141,7 @@ class OrderController extends CommonController{
     /**
      * 手动添加出库订单
      * */
-    public function outOrder(Request $request){
+    public function outOrder(Request $request,Change $change){
         $user_info          = $request->get('user_info');//接收中间件产生的参数
         $now_time           = date('Y-m-d H:i:s', time());
         $table_name         ='wms_out_order';
@@ -161,29 +162,32 @@ class OrderController extends CommonController{
         $operator           = $request->input('operator');
         $purchase           = $request->input('purchase');
 
-        /***
+
+//        /***
+        $input['warehouse_id'] = $warehouse_id = 'warehouse_20221215135058787296124';
         $input['goods']=$goods=[
         '0'=>[
-        'sku_id'=>'good_202012101444191651472251',
-        'warehouse_sign_id'=>'sign_202012101505370895284778',
-        'production_date'=>'2019-02-05',
-        'expire_time'=>'2019-02-05',
-        'now_num'=>'21',
+        'sku_id'=>'sku_202212171207283772516693',
         'can_use'=>'Y',
+        'num'=>31,
+        'wms_unit'=>'',
+        'price'=>'200',
+        'total_price'=>6200,
+        'remark'=>'0.2',
+        'out_library_state'=>'',
+
         ],
         ];
-         * **/
+//         * **/
         $rules = [
-            'company_id' => 'required',
+            'goods' => 'required',
         ];
         $message = [
-            'company_id.required' => '请选择公司',
+            'goods.required' => '请选择公司',
         ];
         $validator = Validator::make($input, $rules, $message);
 
         if ($validator->passes()) {
-
-
             $where_warehouse=[
                 ['delete_flag','=','Y'],
                 ['self_id','=',$warehouse_id],
@@ -207,13 +211,17 @@ class OrderController extends CommonController{
             $order_2['create_user_name']    =$user_info->name;
             $order_2['create_time']         =$order_2['update_time']            =$now_time;
             $order_2['delivery_time']       =$delivery_time;
+            $order_2['car_num']             =$car_num;
+            $order_2['picker']              =$picker;
+            $order_2['operator']            =$operator;
+            $order_2['purchase']            =$purchase;
 
             $list=[];
             foreach($goods as $k =>$v){
 
                 $where_sku=[
                     ['delete_flag','=','Y'],
-                    ['external_sku_id','=',$v['external_sku_id']],
+                    ['self_id','=',$v['sku_id']],
                 ];
                 $select_ErpShopGoodsSku=['self_id','group_code','group_name','external_sku_id','wms_unit','good_name','wms_spec'];
                 $sku_info = ErpShopGoodsSku::where($where_sku)->select($select_ErpShopGoodsSku)->first();
@@ -229,11 +237,9 @@ class OrderController extends CommonController{
                 $list['group_name']         = $sku_info->group_name;
                 $list['order_id']           = $order_2['self_id'];
                 $list['sku_id']             = $sku_info->self_id;
-                $list['external_sku_id']    = $sku_info->external_sku_id;
                 $list['create_user_id']     = $user_info->admin_id;
                 $list['create_user_name']   = $user_info->name;
                 $list['create_time']        = $list['update_time']=$now_time;
-                $list['sanitation']         = $v['sanitation'];
                 $list['price']              = $v['price'];
                 $list['total_price']        = $v['total_price'];
                 $list['remarks']            = $v['remark'];
@@ -245,7 +251,50 @@ class OrderController extends CommonController{
             $count=count($goods);
             WmsOutOrderList::insert($datalist);
             $id= WmsOutOrder::insert($order_2);
-            //计算费用 进费用表 每种产品数量*产品单价
+            /**修改库存wms_library_sige**/
+
+            $where2 = [
+                ['sku_id', '=', $v['sku_id']],
+                ['now_num', '>', 0],
+                ['delete_flag', '=', 'Y'],
+                ['create_time', '>', substr($now_time, 0, -9)]
+            ];
+
+
+
+            $resssss = WmsLibraryChange::where($where2)->orderBy('create_time', 'asc')->get()->toArray();
+//            dd($resssss);
+            //dd($resssss);
+            if ($resssss) {
+                $totalNum = array_sum(array_column($resssss, 'now_num'));
+                $numds = $v['num'] - $totalNum;
+                dump($numds);
+                if ($numds > 0) {
+                    //表示缺货$numds
+                    $xiugai["quehuo"] = "Y";
+                    $xiugai["quehuo_num"] = $numds;
+
+                    $infos = self::dataInsert($xiugai,$v,$resssss,$now_time,$user_info,$change,$datalist);
+                    $datalist = $infos['datalist'];
+
+                } else {
+                    $xiugai["quehuo"] = "N";
+                    $xiugai["quehuo_num"] = 0;
+
+                    $infos = self::dataInsert($xiugai,$v,$resssss,$now_time,$user_info,$change,$datalist);
+
+                    $datalist = $infos['datalist'];
+                }
+
+
+            } else {
+                $xiugai['quehuo'] = 'Y';
+                $xiugai['quehuo_num'] = $v['num'];
+                $infos = self::dataInsert($xiugai,$v,$resssss,$now_time,$user_info,$change,$datalist);
+                $datalist = $infos['datalist'];
+            }
+
+            /***计算费用 进费用表 每种产品数量*产品单价***/
 
 
             /**库存变化 修改wms_library_change表 **/
@@ -271,6 +320,117 @@ class OrderController extends CommonController{
             $msg['code'] = 300;
             return $msg;
         }
+
+    }
+
+    public static function dataInsert($xiugai,$data,$resssss,$now_time,$user_info,$change,$datalist){
+
+        $xiugai["update_time"]            =$now_time;
+
+//        $where['self_id']                 =$data['self_id'];
+//        WmsOutOrderList::where($where)->update($xiugai);
+        $wms_out_sige=[];
+        $wms_library_sige=[];
+        $wms_library_change=[];
+        $number=$data['num'];
+
+        /*** 出库的时候，需要写那几个地方，第一个地方，需要写入
+         *  wms_out_sige     需要写入wms_library_change
+         **  需要改变  wms_library_sige  中的实际库存
+         */
+        $int_cold_num = 0;
+        $int_freeze_num = 0;
+        $int_normal_num = 0;
+        //dump($data);dd($resssss);
+        if($resssss){
+            foreach($resssss as $kk=>$vv){
+                if($number > 0){
+                    //dd($vv);
+                    if($number - $vv['now_num']  > 0){
+                        $shiji_number=$vv['now_num'];
+
+                    }else{
+                        $shiji_number=$number;
+                    }
+                    //dd($vv);
+                    /** wms_out_sige   表的数据制作**/
+                    $outSigeId=generate_id("SOUTID_");
+                    $out['self_id']             =$outSigeId;
+//                    $out['order_id']            =$data['order_id'];
+//                    $out['order_list_id']       =$data['self_id'];
+                    $out['library_sige_id']     =$vv['self_id'];
+                    $out['warehouse_sign_id']   =$vv['warehouse_sign_id'];
+                    $out['num']                 =$shiji_number;
+                    $out['sku_id']              =$vv['sku_id'];
+                    $out['external_sku_id']     =$vv['external_sku_id'];
+
+                    $out['good_name']           =$vv['good_name'];
+                    $out['good_english_name']   =$vv['good_english_name'];
+                    $out['good_info']           =$vv['good_info'];
+                    $out['spec']                =$vv['spec'];
+                    $out['good_target_unit']    =$vv['good_target_unit'];
+                    $out['good_scale']          =$vv['good_scale'];
+                    $out['good_unit']           =$vv['good_unit'];
+                    $out['group_code']          =$vv['group_code'];
+                    $out['group_name']          =$vv['group_name'];
+                    $out['warehouse_id']        =$vv['warehouse_id'];
+                    $out['warehouse_name']      =$vv['warehouse_name'];
+                    $out['company_id']          =$vv['company_id'];
+                    $out['company_name']        =$vv['company_name'];
+                    $out['shiji_num']           =$shiji_number;
+                    $out['create_user_id']      =$user_info->admin_id;
+                    $out["create_user_name"]    =$user_info->name;
+                    $out["create_time"]         =$now_time;
+                    $out["update_time"]         =$now_time;
+
+                    $out['price']               =$data['price'];
+                    $out['total_price']         =$data['price']*$shiji_number;
+
+
+                    $wms_out_sige[]=$out;
+                    /** wms_out_sige   表的数据制作**/
+                    $library_sige['self_id']=$vv['self_id'];
+                    $library_sige['yuan_num']=$vv['now_num'];
+                    $library_sige['chuku_number']=$shiji_number;
+                    $wms_library_sige[]=$library_sige;
+
+                    /** wms_library_change   表的数据制作**/
+
+                    //DUMP($wms_out_sige);
+                    $library_change=$out;
+                    $library_change['initial_num']          =$vv['now_num'];
+                    $library_change['create_user_id']       =$user_info->admin_id;
+                    $library_change["create_user_name"]     =$user_info->name;
+                    $library_change["create_time"]          =$now_time;
+                    $library_change["update_time"]          =$now_time;
+                    $library_change["good_lot"]             =$vv['good_lot'];
+
+                    //DD($library_change);
+                    $wms_library_change[]=$library_change;
+
+                    $xxx=$out;
+                    $xxx['now_num']=$vv['now_num']-$number;
+                    $datalist[]=$xxx;
+
+                    $number -=  $vv['now_num'];
+                }
+
+            }
+
+            WmsOutSige::insert($wms_out_sige);
+
+            $change->change($wms_library_change,'out');
+            foreach ($wms_library_sige as $k => $v){
+                $where21['self_id']=$v['self_id'];
+
+                $librarySignUpdate['now_num']           =$v['yuan_num']-$v['chuku_number'];
+                $librarySignUpdate['update_time']       =$now_time;
+                WmsLibrarySige::where($where21)->update($librarySignUpdate);
+            }
+
+        }
+        $infos['datalist']=$datalist;
+        return $infos;
 
     }
 

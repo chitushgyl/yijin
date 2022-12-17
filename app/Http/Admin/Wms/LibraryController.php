@@ -93,7 +93,6 @@ class LibraryController extends CommonController{
         $page               =$request->input('page')??1;
         $use_flag           =$request->input('use_flag');
 		$group_code			=$request->input('group_code');
-        $company_id       	=$request->input('company_id');
         $warehouse_id     	=$request->input('warehouse_id');
         $grounding_status   =$request->input('grounding_status');
         $order_status       =$request->input('order_status');
@@ -104,7 +103,6 @@ class LibraryController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'all','name'=>'grounding_status','value'=>$grounding_status],
-            ['type'=>'like','name'=>'company_id','value'=>$company_id],
             ['type'=>'like','name'=>'warehouse_id','value'=>$warehouse_id],
 			['type'=>'like','name'=>'group_code','value'=>$group_code],
 			['type'=>'=','name'=>'order_status','value'=>$order_status],
@@ -112,8 +110,8 @@ class LibraryController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','order_status','grounding_status','group_name','group_code','warehouse_name','warehouse_id','storehouse_user_name','check_user_name','count','type','company_name','company_id','create_user_name',
-            'check_time','create_time'];
+        $select=['self_id','order_status','grounding_status','group_name','group_code','warehouse_name','warehouse_id','count','type','create_user_name',
+            'check_time','create_time','accepted','purchase','operator'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -381,20 +379,11 @@ class LibraryController extends CommonController{
                     $list["production_date"]    =$v['production_date'];
                     $list["expire_time"]        =$expire_time;
                     $list["good_info"]          =json_encode($getGoods,JSON_UNESCAPED_UNICODE);
-//                    $list["warehouse_id"]       =$getWmsWarehouse->warehouse_id;
-//                    $list["warehouse_name"]     =$getWmsWarehouse->warehouse_name;
-//                    $list['warehouse_sign_id']  =$getWmsWarehouse->self_id;
-//                    $list['area_id']            =$getWmsWarehouse->area_id;
-//                    $list['area']               =$getWmsWarehouse->area;
-//                    $list['row']                =$getWmsWarehouse->row;
-//                    $list['column']             =$getWmsWarehouse->column;
-//                    $list['tier']               =$getWmsWarehouse->tier;
+
                     $list['initial_num']        =$v['now_num'];
                     $list['now_num']            =$v['now_num'];
                     $list['storage_number']     =$v['now_num'];
                     $list['in_library_state']   ='normal';
-//                    $list["group_code"]         =$getWmsWarehouse->group_code;
-//                    $list["group_name"]         =$getWmsWarehouse->group_name;
                     $list["group_code"]         =$warehouse_info->group_code;
                     $list["group_name"]         =$warehouse_info->group_name;
                     $list['create_time']        =$now_time;
@@ -666,22 +655,21 @@ class LibraryController extends CommonController{
         $now_time           =date('Y-m-d H:i:s',time());
         $table_name         ='wms_library_order';
 
-        $operationing->access_cause='手工入库';
+        $operationing->access_cause='入库';
         $operationing->operation_type='create';
         $operationing->table=$table_name;
         $operationing->now_time=$now_time;
 
         $input=$request->all();
         /** 接收数据*/
-        //dd($input);
         $warehouse_id       =$request->input('warehouse_id');//仓库ID
         $library_sige       = json_decode($request->input('library_sige'), true);//产品信息
-        $purchase           = json_decode($request->input('purchase'), true);//采购商/供应商
-        $operator           = json_decode($request->input('operator'), true);//经办人
-        $accepted           = json_decode($request->input('accepted'), true);//验收人
-        $voucher            = json_decode($request->input('voucher'),true);
-	//dd($library_sige);
-//        /*** 虚拟数据
+        $purchase           = $request->input('purchase');//采购商/供应商
+        $operator           = $request->input('operator');//经办人
+        $accepted           = $request->input('accepted');//验收人
+        $voucher            = json_decode($request->input('voucher'),true);//凭证
+
+        /*** 虚拟数据
         $input['group_code']=$group_code='1234';
         $input['warehouse_id']=$warehouse_id='warehouse_20221215135058787296124';
         $input['purchase']=$purchase='12345';
@@ -689,12 +677,13 @@ class LibraryController extends CommonController{
         $input['accepted']=$accepted='123';
         $input['library_sige']=$library_sige=[
             '0'=>[
-                'sku_id'=>'sku_20221215133003146952872',
-                'now_num'=>'21',
+                'sku_id'=>'sku_202212171207283772516693',
+                'now_num'=>'30',
                 'can_use'=>'Y',
+                'good_remark'=>'Y',
             ]
          ];
-//         **/
+         **/
         $rules=[
             'group_code'=>'required',
             'warehouse_id'=>'required',
@@ -707,50 +696,6 @@ class LibraryController extends CommonController{
         ];
         $validator=Validator::make($input,$rules,$message);
         if($validator->passes()){
-            //二次效验！！！！
-            $rulesssss=['sku_id'=>'商品名称','now_num'=>'商品数量','can_use'=>'是否可用'];
-            $rule=array_keys($rulesssss);
-            $rule_count=count($rule);
-
-            $msg['msg']=null;
-            $cando='Y';
-            $abcs=1;
-            foreach($library_sige as $k => $v){
-                $art222=array_keys($v);
-                //取一个交集出来，然后比较长度
-                $result=array_intersect($rule,$art222);
-                $result_count=count($result);
-
-                if($rule_count != $result_count){
-                    //说明缺少参数
-                    $msg['code']=302;
-                    $msg['msg']='模板数组缺少必要参数';
-                    return $msg;
-                }
-                dump($rulesssss);
-                /**效验必填项目**/
-                foreach($rulesssss as $kk => $vv){
-                    if($v[$kk]){
-                        if(in_array($kk,['now_num'])){
-                            if($v[$kk]<0){
-                                $cando='N';
-                                $msg['msg'].=$abcs.": ".$vv." 必须大于0</br>";
-                                $abcs++;
-                            }
-                        }
-                    }else{
-                        $cando='N';
-                        $msg['msg'].=$abcs.": ".$vv." 缺失</br>";
-                        $abcs++;
-                    }
-                }
-            }
-
-            if($cando=='N'){
-                $msg['code']=303;
-                return $msg;
-            }
-
             /** 开始检查其他数据对不对    **/
             $where_pack=[
                 ['delete_flag','=','Y'],
@@ -764,118 +709,67 @@ class LibraryController extends CommonController{
                 return $msg;
             }
 
-
             /** 开始制作数据了*/
             $datalist=[];       //初始化数组为空
-            $cando='Y';         //错误数据的标记
-            $strs='';           //错误提示的信息拼接  当有错误信息的时候，将$cando设定为N，就是不允许执行数据库操作
-            $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
-            $errorNum=50;       //控制错误数据的条数
-            $pull=[];
             $seld=generate_id('SID_');
-            $bulk=0;
-            $weight=0;
-            $a=2;
 
             foreach($library_sige as $k => $v){
                 $where100['self_id']=$v['sku_id'];
                 //查询商品是不是存在
-                $goods_select=['self_id','external_sku_id','company_id','company_name','good_name','good_english_name','wms_target_unit','wms_scale','wms_unit','wms_spec',
-                    'wms_length','wms_wide','wms_high','wms_weight','period','period_value'];
+                $goods_select=['self_id','external_sku_id','good_name','good_english_name','wms_target_unit','wms_scale','wms_unit','wms_spec',
+                    'period','period_value'];
 
                 $getGoods=ErpShopGoodsSku::where($where100)->select($goods_select)->first();
-
-                if(empty($getGoods)){
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行商品不存在".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }
-
-
 				$list=[];
-                if($cando == 'Y'){
-                    $pull[] = '';
 
-                    $list["self_id"]            =generate_id('LSID_');
-                    $list["order_id"]           =$seld;
-                    $list["sku_id"]             =$getGoods->self_id;
-                    $list["external_sku_id"]    =$getGoods->external_sku_id;
-                    $list["company_id"]         =$getGoods->company_id;
-                    $list["company_name"]       =$getGoods->company_name;
-                    $list["good_name"]          =$getGoods->good_name;
-                    $list["good_english_name"]  =$getGoods->good_english_name;
-                    $list["good_target_unit"]   =$getGoods->wms_target_unit;
-                    $list["good_scale"]         =$getGoods->wms_scale;
-                    $list["good_unit"]          =$getGoods->wms_unit;
-                    $list["wms_length"]         =$getGoods->wms_length;
-                    $list["wms_wide"]           =$getGoods->wms_wide;
-                    $list["wms_high"]           =$getGoods->wms_high;
-                    $list["wms_weight"]         =$getGoods->wms_weight;
-                    $list["good_info"]          =json_encode($getGoods,JSON_UNESCAPED_UNICODE);
-
-                    $list["production_date"]    =$v['production_date'];
-                    $list['spec']               =$getGoods->wms_spec;
-                    $list['initial_num']        =$v['now_num'];
-                    $list['now_num']            =$v['now_num'];
-                    $list['storage_number']     =$v['now_num'];
-
-                    $list["group_code"]         =$user_info->group_code;
-                    $list["group_name"]         =$user_info->group_name;
-                    $list['create_time']        =$now_time;
-                    $list["update_time"]        =$now_time;
-                    $list['create_user_id']     = $user_info->admin_id;
-                    $list['create_user_name']   = $v['name'];
-                    $list["grounding_status"]   ='N';
-                    $list["good_remark"]        =$v['good_remark'];
-                    $list["good_lot"]           =$v['good_lot'];
-                    $list["in_library_state"]     =$v['in_library_state'];
-
-                    $list['bulk']               = $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
-                    $list['weight']             = $getGoods->wms_weight*$v['now_num'];
-                    $bulk+=  $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
-                    $weight+=  $getGoods->wms_weight*$v['now_num'];
-
-                    $datalist[]=$list;
-                }
-                $a++;
-            }
-
-            if($cando == 'N'){
-                $msg['code'] = 306;
-                $msg['msg'] = $strs;
-                return $msg;
+				$list["self_id"]            =generate_id('LSID_');
+				$list["order_id"]           =$seld;
+				$list["sku_id"]             =$getGoods->self_id;
+				$list["external_sku_id"]    =$getGoods->external_sku_id;
+				$list["good_name"]          =$getGoods->good_name;
+				$list["good_english_name"]  =$getGoods->good_english_name;
+				$list["good_target_unit"]   =$getGoods->wms_target_unit;
+				$list["good_scale"]         =$getGoods->wms_scale;
+				$list["good_unit"]          =$getGoods->wms_unit;
+				$list["good_info"]          =json_encode($getGoods,JSON_UNESCAPED_UNICODE);
+				$list['spec']               =$getGoods->wms_spec;
+				$list['initial_num']        =$v['now_num'];
+				$list['now_num']            =$v['now_num'];
+				$list['storage_number']     =$v['now_num'];
+				$list["group_code"]         =$user_info->group_code;
+				$list["group_name"]         =$user_info->group_name;
+				$list['create_time']        =$now_time;
+				$list["update_time"]        =$now_time;
+				$list["create_user_id"]     =$user_info->admin_id;
+				$list["create_user_name"]   =$user_info->name;
+				$list["grounding_status"]   ='Y';
+				$list["good_remark"]        =$v['good_remark'];
+				$list["use_flag"]           ='N';
+				$datalist[]=$list;
             }
 
             $count=count($datalist);
 
-            $pull=array_unique($pull);
-            $pull_count=count($pull);
-
             $data['self_id']            =$seld;
-            $data['create_user_id']     = $user_info->admin_id;
-            $data['create_user_name']   = $user_info->name;
             $data['create_time']        =$now_time;
             $data["update_time"]        =$now_time;
-            $data["grounding_status"]   ='N';
+            $data["grounding_status"]   ='Y';
             $data["group_code"]         =$warehouse_info->group_code;
             $data["group_name"]         =$warehouse_info->group_name;
+            $data["create_user_id"]     =$user_info->admin_id;
+            $data["create_user_name"]   =$user_info->name;
             $data["warehouse_id"]       =$warehouse_id;
             $data["warehouse_name"]     =$warehouse_info->warehouse_name;
             $data['count']              =$count;
             $data['type']               ='preentry';
 
-            $data["pull_count"]         =$pull_count;
             $data['check_time']         =$now_time;
-            $data['bulk']               =$bulk;
-            $data['weight']             =$weight;
             $data['voucher']            =img_for($voucher,'in');
-            $data['order_status']       = 'S';
+            $data['order_status']       = 'W';
             $data['purchase']           =$purchase;
             $data['operator']           =$operator;
             $data['accepted']           =$accepted;
-           //dd($data);
+
             $id=WmsLibraryOrder::insert($data);
 
             $operationing->table_id=$data['self_id'];
@@ -883,12 +777,11 @@ class LibraryController extends CommonController{
             $operationing->new_info=$data;
 
             if($id){
+                WmsLibrarySige::insert($datalist);
                 $change->change($datalist,'preentry');
-//                $money->moneyCompute($data,$datalist,$now_time,$company_info,$user_info,'in');
-                //计算费用
 
                 $msg['code']=200;
-                $msg['msg']='操作成功，您一共手工入库'.$count.'条数据，共计'.$pull_count.'托盘';
+                $msg['msg']='操作成功';
 
                 return $msg;
             }else{
@@ -979,7 +872,7 @@ class LibraryController extends CommonController{
     }
 
     /**
-     * 待入库
+     * 入库审核
      * 修改order_status 入库订单状态 W
      * */
     public function wait_library(Request $request){
@@ -1012,14 +905,15 @@ class LibraryController extends CommonController{
             $data['order_status'] = $order_status;
             $update['use_flag'] = 'Y';
             $update['update_time'] = $now_time;
-            $id =  WmsLibraryOrder::whereIn('self_id',explode(',',$self_id))->update($data);
-            WmsLibraryChange::whereIn('order_id',explode(',',$self_id))->update($update);
-
-            if($id){
+            DB::beginTransaction();
+            try{
+                $id =  WmsLibraryOrder::whereIn('self_id',explode(',',$self_id))->update($data);
+                WmsLibraryChange::whereIn('order_id',explode(',',$self_id))->update($update);
+                WmsLibrarySige::whereIn('order_id',explode(',',$self_id))->update($update);
                 $msg['code'] = 200;
                 $msg['msg'] = '操作成功';
                 return $msg;
-            }else{
+            }catch(\Exception $e){
                 $msg['code'] = 301;
                 $msg['msg'] = '操作失败！';
                 return $msg;
