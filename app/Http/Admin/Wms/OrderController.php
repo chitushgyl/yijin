@@ -47,7 +47,6 @@ class OrderController extends CommonController{
         $num                = $request->input('num') ?? 10;
         $page               = $request->input('page') ?? 1;
         $use_flag           = $request->input('use_flag');
-        $company_name       =$request->input('company_name');
         $warehouse_name     =$request->input('warehouse_name');
         $total_flag         =$request->input('total_flag');
         $status            =$request->input('status');
@@ -58,7 +57,7 @@ class OrderController extends CommonController{
             ['type' => '=', 'name' => 'delete_flag', 'value' => 'Y'],
             ['type' => 'all', 'name' => 'use_flag', 'value' => $use_flag],
             ['type'=>'all','name'=>'total_flag','value'=>$total_flag],
-            ['type'=>'like','name'=>'company_name','value'=>$company_name],
+
             ['type'=>'like','name'=>'warehouse_name','value'=>$warehouse_name],
             ['type'=>'=','name'=>'status','value'=>$status],
         ];
@@ -154,12 +153,14 @@ class OrderController extends CommonController{
 
         /** 接收数据*/
         $input              = $request->all();
-        $company_id         = $request->input('company_id');
         $warehouse_id       = $request->input('warehouse_id');
-        $shop_id            = $request->input('shop_id');
         $goods              = json_decode($request->input('goods'),true);
         $delivery_time      = $request->input('delivery_time');
-        $recipt_code      = $request->input('recipt_code');
+        $car_num            = $request->input('car_num');
+        $picker             = $request->input('picker');
+        $operator           = $request->input('operator');
+        $purchase           = $request->input('purchase');
+
         /***
         $input['goods']=$goods=[
         '0'=>[
@@ -174,28 +175,14 @@ class OrderController extends CommonController{
          * **/
         $rules = [
             'company_id' => 'required',
-            'shop_id' => 'required',
         ];
         $message = [
             'company_id.required' => '请选择公司',
-            'shop_id.required' => '请选择门店',
         ];
         $validator = Validator::make($input, $rules, $message);
 
         if ($validator->passes()) {
-            $where_company=[
-                ['delete_flag','=','Y'],
-                ['self_id','=',$company_id],
-            ];
-            $group_info = WmsGroup::where($where_company)->select('company_name','group_name','group_code')->first();
-            //dump($group_info);
-            if(empty($group_info)){
-                $msg['code'] = 302;
-                $msg['msg'] = '公司不存在';
-                return $msg;
-            }
 
-            //dump($group_info);
 
             $where_warehouse=[
                 ['delete_flag','=','Y'],
@@ -209,22 +196,13 @@ class OrderController extends CommonController{
                 return $msg;
             }
 
-            $shop_info = WmsShop::where('self_id',$shop_id)->select('self_id','external_id','name','contacts','address','tel','group_code','group_name','company_id','company_name')->first();
 
             $order_2['self_id']             =generate_id('order_');
-            $order_2['shop_id']             =$shop_info->self_id;
-            $order_2['shop_external_id']    =$shop_info->external_id;
-            $order_2['shop_name']           =$shop_info->name;
-            $order_2['shop_contacts']       =$shop_info->contacts;
-            $order_2['shop_address']        =$shop_info->address;
-            $order_2['shop_tel']            =$shop_info->tel;
-            $order_2['group_code']          =$shop_info->group_code;
-            $order_2['group_name']          =$shop_info->group_name;
+            $order_2['group_code']          =$user_info->group_code;
+            $order_2['group_name']          =$user_info->group_name;
             $order_2['count']               =count($goods);
             $order_2['warehouse_id']        =$warehouse_info->self_id;
             $order_2['warehouse_name']      =$warehouse_info->warehouse_name;
-            $order_2['company_id']          =$shop_info->company_id;
-            $order_2['company_name']        =$shop_info->company_name;
             $order_2['create_user_id']      =$user_info->admin_id;
             $order_2['create_user_name']    =$user_info->name;
             $order_2['create_time']         =$order_2['update_time']            =$now_time;
@@ -236,15 +214,13 @@ class OrderController extends CommonController{
                 $where_sku=[
                     ['delete_flag','=','Y'],
                     ['external_sku_id','=',$v['external_sku_id']],
-                    ['company_id','=',$company_id],
                 ];
                 $select_ErpShopGoodsSku=['self_id','group_code','group_name','external_sku_id','wms_unit','good_name','wms_spec'];
                 $sku_info = ErpShopGoodsSku::where($where_sku)->select($select_ErpShopGoodsSku)->first();
 
                 //dd($vv);
                 $list['self_id']            =generate_id('list_');
-                $list['shop_id']            = $shop_id;
-                $list['shop_name']          = $shop_info->name;
+
                 $list['good_name']          = $sku_info->good_name;
                 $list['spec']               = $sku_info->wms_spec;
                 $list['num']                = $v['num'];
@@ -258,8 +234,6 @@ class OrderController extends CommonController{
                 $list['create_user_name']   = $user_info->name;
                 $list['create_time']        = $list['update_time']=$now_time;
                 $list['sanitation']         = $v['sanitation'];
-                $list['recipt_code']        = $recipt_code;
-                $list['shop_code']          = $shop_info->shop_code;
                 $list['price']              = $v['price'];
                 $list['total_price']        = $v['total_price'];
                 $list['remarks']            = $v['remark'];
@@ -271,7 +245,10 @@ class OrderController extends CommonController{
             $count=count($goods);
             WmsOutOrderList::insert($datalist);
             $id= WmsOutOrder::insert($order_2);
+            //计算费用 进费用表 每种产品数量*产品单价
 
+
+            /**库存变化 修改wms_library_change表 **/
             if($id){
                 $msg['code']=200;
                 /** 告诉用户，你一共导入了多少条数据，其中比如插入了多少条，修改了多少条！！！*/

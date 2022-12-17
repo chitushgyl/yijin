@@ -674,14 +674,19 @@ class LibraryController extends CommonController{
         $input=$request->all();
         /** 接收数据*/
         //dd($input);
-        $warehouse_id       =$request->input('warehouse_id');
-        $company_id         =$request->input('company_id');
-        $library_sige       =json_decode($request->input('library_sige'), true);
+        $warehouse_id       =$request->input('warehouse_id');//仓库ID
+        $library_sige       = json_decode($request->input('library_sige'), true);//产品信息
+        $purchase           = json_decode($request->input('purchase'), true);//采购商/供应商
+        $operator           = json_decode($request->input('operator'), true);//经办人
+        $accepted           = json_decode($request->input('accepted'), true);//验收人
         $voucher            = json_decode($request->input('voucher'),true);
-
-        /*** 虚拟数据
+	//dd($library_sige);
+//        /*** 虚拟数据
         $input['group_code']=$group_code='1234';
         $input['warehouse_id']=$warehouse_id='warehouse_20221215135058787296124';
+        $input['purchase']=$purchase='12345';
+        $input['operator']=$operator='1234';
+        $input['accepted']=$accepted='123';
         $input['library_sige']=$library_sige=[
             '0'=>[
                 'sku_id'=>'sku_20221215133003146952872',
@@ -689,7 +694,7 @@ class LibraryController extends CommonController{
                 'can_use'=>'Y',
             ]
          ];
-         **/
+//         **/
         $rules=[
             'group_code'=>'required',
             'warehouse_id'=>'required',
@@ -722,6 +727,7 @@ class LibraryController extends CommonController{
                     $msg['msg']='模板数组缺少必要参数';
                     return $msg;
                 }
+                dump($rulesssss);
                 /**效验必填项目**/
                 foreach($rulesssss as $kk => $vv){
                     if($v[$kk]){
@@ -786,6 +792,53 @@ class LibraryController extends CommonController{
                         $abcd++;
                     }
                 }
+
+
+				$list=[];
+                if($cando == 'Y'){
+                    $pull[] = '';
+
+                    $list["self_id"]            =generate_id('LSID_');
+                    $list["order_id"]           =$seld;
+                    $list["sku_id"]             =$getGoods->self_id;
+                    $list["external_sku_id"]    =$getGoods->external_sku_id;
+                    $list["company_id"]         =$getGoods->company_id;
+                    $list["company_name"]       =$getGoods->company_name;
+                    $list["good_name"]          =$getGoods->good_name;
+                    $list["good_english_name"]  =$getGoods->good_english_name;
+                    $list["good_target_unit"]   =$getGoods->wms_target_unit;
+                    $list["good_scale"]         =$getGoods->wms_scale;
+                    $list["good_unit"]          =$getGoods->wms_unit;
+                    $list["wms_length"]         =$getGoods->wms_length;
+                    $list["wms_wide"]           =$getGoods->wms_wide;
+                    $list["wms_high"]           =$getGoods->wms_high;
+                    $list["wms_weight"]         =$getGoods->wms_weight;
+                    $list["good_info"]          =json_encode($getGoods,JSON_UNESCAPED_UNICODE);
+
+                    $list["production_date"]    =$v['production_date'];
+                    $list['spec']               =$getGoods->wms_spec;
+                    $list['initial_num']        =$v['now_num'];
+                    $list['now_num']            =$v['now_num'];
+                    $list['storage_number']     =$v['now_num'];
+
+                    $list["group_code"]         =$user_info->group_code;
+                    $list["group_name"]         =$user_info->group_name;
+                    $list['create_time']        =$now_time;
+                    $list["update_time"]        =$now_time;
+                    $list['create_user_id']     = $user_info->admin_id;
+                    $list['create_user_name']   = $v['name'];
+                    $list["grounding_status"]   ='N';
+                    $list["good_remark"]        =$v['good_remark'];
+                    $list["good_lot"]           =$v['good_lot'];
+                    $list["in_library_state"]     =$v['in_library_state'];
+
+                    $list['bulk']               = $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
+                    $list['weight']             = $getGoods->wms_weight*$v['now_num'];
+                    $bulk+=  $getGoods->wms_length*$getGoods->wms_wide*$getGoods->wms_high*$v['now_num'];
+                    $weight+=  $getGoods->wms_weight*$v['now_num'];
+
+                    $datalist[]=$list;
+                }
                 $a++;
             }
 
@@ -812,14 +865,16 @@ class LibraryController extends CommonController{
             $data["warehouse_name"]     =$warehouse_info->warehouse_name;
             $data['count']              =$count;
             $data['type']               ='preentry';
+
             $data["pull_count"]         =$pull_count;
-            $data['check_user_id']      = $user_info->admin_id;
-            $data['check_user_name']    = $user_info->name;
             $data['check_time']         =$now_time;
             $data['bulk']               =$bulk;
             $data['weight']             =$weight;
             $data['voucher']            =img_for($voucher,'in');
             $data['order_status']       = 'S';
+            $data['purchase']           =$purchase;
+            $data['operator']           =$operator;
+            $data['accepted']           =$accepted;
            //dd($data);
             $id=WmsLibraryOrder::insert($data);
 
@@ -828,11 +883,9 @@ class LibraryController extends CommonController{
             $operationing->new_info=$data;
 
             if($id){
-                WmsLibrarySige::insert($datalist);
                 $change->change($datalist,'preentry');
 //                $money->moneyCompute($data,$datalist,$now_time,$company_info,$user_info,'in');
                 //计算费用
-
 
                 $msg['code']=200;
                 $msg['msg']='操作成功，您一共手工入库'.$count.'条数据，共计'.$pull_count.'托盘';
@@ -1433,6 +1486,31 @@ class LibraryController extends CommonController{
             }
             return $msg;
         }
+    }
+
+    /***获取产品库存**/
+    public function getLibrarySige(Request $request){
+        /** 接收数据*/
+        $sku_id       =$request->input('sku_id');
+        /*** 虚拟数据**/
+        //$sku_id='ware_202006012159456407842832';
+
+        $where=[
+            ['delete_flag','=','Y'],
+            ['use_flag','=','Y'],
+            ['can_use','=','Y'],
+            ['sku_id','=',$sku_id],
+            ['now_num','>',0],
+        ];
+
+        //dd($where);
+        $data['info']=WmsLibrarySige::where($where)->sum('now_num');
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+
+        //dd($msg);
+        return $msg;
     }
 
 

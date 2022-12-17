@@ -108,7 +108,7 @@ class UserRewardController extends CommonController{
     /***    添加员工奖惩记录    /tms/userReward/createUserReward
      */
     public function createUserReward(Request $request){
-        $data['tms_control_type']        =config('tms.department_type');
+        $data['department_type']        =config('tms.department_type');
         /** 接收数据*/
         $self_id=$request->input('self_id');
         $where=[

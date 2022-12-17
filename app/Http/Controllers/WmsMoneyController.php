@@ -74,7 +74,7 @@ class WmsMoneyController extends Controller{
             $money_list=[];
 
             foreach ($datalist as $k => $v){
-				//dd($v);
+
                 $list['self_id']                =generate_id('mlist_');
                 $list['warehouse_id']           =$v['warehouse_id'];
                 $list['warehouse_name']         =$v['warehouse_name'];
