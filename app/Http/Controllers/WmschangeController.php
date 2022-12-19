@@ -6,9 +6,11 @@ class WmschangeController extends Controller{
      */
     public function change($datalist,$type){
         $data=[];
+        $payment = [];
         foreach ($datalist as $k => $v){
 
             $list=[];
+            $money=[];
             $list["self_id"]            =generate_id('change_');
             if($type != 'preentry'){
                 $list["warehouse_id"]       =$v['warehouse_id'];
@@ -74,13 +76,14 @@ class WmschangeController extends Controller{
                     $list['initial_num']        =$v['initial_num'];             //66
                     $list['change_num']         =$v['shiji_num'];
                     $list['now_num']            =$v['initial_num']-$v['shiji_num'];
-                    $list['use_flag']           ='N';
                     break;
 
             }
+            $money['total_price'] =  $list['change_num']*$v['price'];
+            $payment[] =  $money;
             $data[]=$list;
         }
-
+        dd($payment);
         WmsLibraryChange::insert($data);
 
 

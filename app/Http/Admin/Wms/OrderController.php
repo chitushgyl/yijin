@@ -986,6 +986,7 @@ class OrderController extends CommonController{
 //                                $datalist = $infos['datalist'];
 
                             } else {
+
                                 $infos = self::dataInsert($v,$resssss,$now_time,$user_info,$change,$datalist);
                                 $datalist = $infos['datalist'];
 
