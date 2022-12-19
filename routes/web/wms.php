@@ -248,9 +248,9 @@ Route::group([
     Route::any('/history/historyPage', 'HistoryController@historyPage');
 
 
-    /**商品查询**/
-    Route::any('/goodquery/goodqueryList', 'GoodqueryController@goodqueryList');
-    Route::any('/goodquery/goodqueryPage', 'GoodqueryController@goodqueryPage');
+    /**商品查询 库存**/
+    Route::any('/count/countList', 'CountController@countList');
+    Route::any('/count/countPage', 'CountController@countPage');
 
     /**库位查询**/
     Route::any('/warehousequery/warehousequeryList', 'WarehousequeryController@warehousequeryList');
