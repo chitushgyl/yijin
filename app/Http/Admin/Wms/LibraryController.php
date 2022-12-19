@@ -889,6 +889,7 @@ class LibraryController extends CommonController{
         $input              = $request->all();
         $self_id = $request->input('self_id');
         $order_status = $request->input('order_status');
+
 //        $sign_id = $input('sign_id');//数组
         //第一步，验证数据
         $rules=[
@@ -908,12 +909,14 @@ class LibraryController extends CommonController{
             DB::beginTransaction();
             try{
                 $id =  WmsLibraryOrder::whereIn('self_id',explode(',',$self_id))->update($data);
-                WmsLibraryChange::whereIn('order_id',explode(',',$self_id))->update($update);
-                WmsLibrarySige::whereIn('order_id',explode(',',$self_id))->update($update);
+                $a = WmsLibraryChange::whereIn('order_id',explode(',',$self_id))->update($update);
+                $b = WmsLibrarySige::whereIn('order_id',explode(',',$self_id))->update($update);
+                DB::commit();
                 $msg['code'] = 200;
                 $msg['msg'] = '操作成功';
                 return $msg;
             }catch(\Exception $e){
+               DB::rollBack();
                 $msg['code'] = 301;
                 $msg['msg'] = '操作失败！';
                 return $msg;
