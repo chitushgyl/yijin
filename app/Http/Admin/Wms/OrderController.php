@@ -918,11 +918,9 @@ class OrderController extends CommonController{
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
         $user_info          = $request->get('user_info');                //接收中间件产生的参数
-        $table_name='wms_out_order';
-        $medol_name='WmsOutOrder';
         $order_id=$request->input('self_id');
-        $flag='delFlag';
-        //$self_id='group_202007311841426065800243';
+        $order_id=["order_202212171611413592429427"];
+
         /**循环处理数据**/
 
             $where=[
@@ -965,6 +963,7 @@ class OrderController extends CommonController{
 
                 DB::beginTransaction();
                 try {
+                    $datalist= [];
                     foreach ($order_do as $k => $v) {
                         $where2 = [
                                 ['sku_id', '=', $v['sku_id']],
@@ -1068,8 +1067,8 @@ class OrderController extends CommonController{
                     /** wms_out_sige   表的数据制作**/
                     $outSigeId=generate_id("SOUTID_");
                     $out['self_id']             =$outSigeId;
-//                    $out['order_id']            =$data['order_id'];
-//                    $out['order_list_id']       =$data['self_id'];
+                    $out['order_id']            =$data['order_id'];
+                    $out['order_list_id']       =$data['self_id'];
                     $out['library_sige_id']     =$vv['self_id'];
                     $out['warehouse_sign_id']   =$vv['warehouse_sign_id'];
                     $out['num']                 =$shiji_number;
@@ -1087,8 +1086,6 @@ class OrderController extends CommonController{
                     $out['group_name']          =$vv['group_name'];
                     $out['warehouse_id']        =$vv['warehouse_id'];
                     $out['warehouse_name']      =$vv['warehouse_name'];
-                    $out['company_id']          =$vv['company_id'];
-                    $out['company_name']        =$vv['company_name'];
                     $out['shiji_num']           =$shiji_number;
                     $out['create_user_id']      =$user_info->admin_id;
                     $out["create_user_name"]    =$user_info->name;
@@ -1116,6 +1113,7 @@ class OrderController extends CommonController{
                     $library_change["create_time"]          =$now_time;
                     $library_change["update_time"]          =$now_time;
                     $library_change["good_lot"]             =$vv['good_lot'];
+                    $library_change["order_id"]             =$vv['good_lot'];
 
                     //DD($library_change);
                     $wms_library_change[]=$library_change;
