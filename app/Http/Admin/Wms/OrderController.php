@@ -51,13 +51,14 @@ class OrderController extends CommonController{
         $use_flag           = $request->input('use_flag');
         $warehouse_name     = $request->input('warehouse_name');
         $status             = $request->input('status');
+        $total_flag             = $request->input('total_flag');
         $listrows           = $num;
         $firstrow           = ($page - 1) * $listrows;
 
         $search = [
             ['type' => '=', 'name' => 'delete_flag', 'value' => 'Y'],
             ['type' => 'all', 'name' => 'use_flag', 'value' => $use_flag],
-            ['type'=>'all','name'=>'total_flag','value'=>'N'],
+            ['type'=>'all','name'=>'total_flag','value'=>$total_flag],
             ['type'=>'like','name'=>'warehouse_name','value'=>$warehouse_name],
             ['type'=>'=','name'=>'status','value'=>$status],
         ];

@@ -83,7 +83,7 @@ class WmschangeController extends Controller{
             $payment[] = $money;
             $data[]=$list;
         }
-
+        /***出入库时要保存费用**/
         WmsLibraryChange::insert($data);
 
 
