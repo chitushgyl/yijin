@@ -512,20 +512,8 @@ class GoodController extends CommonController{
             ['type','=','wms'],
             ['group_code','=',$company_id],
         ];
-
-        $select1 = ['self_id','sku_id','now_num'];
-        //dd($where);
-        $data['info']=ErpShopGoodsSku::with(['wmsLibrarySige' => function($query) use($select1){
-            $where1 = [
-                ['delete_flag','=','Y'],
-                ['use_flag','=','Y'],
-                ['can_use','=','Y'],
-                ['now_num','>',0],
-            ];
-            $query->where($where1);
-            $query->select($select1);
-            $query->sum('now_num');
-        }])->where($where)->select('self_id','sale_price','external_sku_id','good_name','wms_spec','wms_unit','group_code','group_name')->get();
+        
+        $data['info']=ErpShopGoodsSku::where($where)->select('self_id','sale_price','external_sku_id','good_name','wms_spec','wms_unit','group_code','group_name')->get();
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
