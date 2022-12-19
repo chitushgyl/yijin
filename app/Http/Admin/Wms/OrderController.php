@@ -979,26 +979,22 @@ class OrderController extends CommonController{
                             $numds = $v['num'] - $totalNum;
 
                             if ($numds > 0) {
-                                //表示缺货$numds
-                                $xiugai["quehuo"] = "Y";
-                                $xiugai["quehuo_num"] = $numds;
-
-                                $infos = self::dataInsert($xiugai,$v,$resssss,$now_time,$user_info,$change,$datalist);
-                                $datalist = $infos['datalist'];
+                                $msg['code']=301;
+                                $msg['msg']='库存不足！';
+                                return $msg;
+//                                $infos = self::dataInsert($v,$resssss,$now_time,$user_info,$change,$datalist);
+//                                $datalist = $infos['datalist'];
 
                             } else {
-                                $xiugai["quehuo"] = "N";
-                                $xiugai["quehuo_num"] = 0;
-                                $infos = self::dataInsert($xiugai,$v,$resssss,$now_time,$user_info,$change,$datalist);
+                                $infos = self::dataInsert($v,$resssss,$now_time,$user_info,$change,$datalist);
                                 $datalist = $infos['datalist'];
 
                             }
 
                         } else {
-                            $xiugai['quehuo'] = 'Y';
-                            $xiugai['quehuo_num'] = $v['num'];
-                            $infos = self::dataInsert($xiugai,$v,$resssss,$now_time,$user_info,$change,$datalist);
-                            $datalist = $infos['datalist'];
+                            $msg['code']=301;
+                            $msg['msg']='暂时无货，请稍后重试！';
+                            return $msg;
                         }
                     }
 
@@ -1034,12 +1030,8 @@ class OrderController extends CommonController{
         return $msg;
     }
 
-    public static function dataInsert($xiugai,$data,$resssss,$now_time,$user_info,$change,$datalist){
+    public static function dataInsert($data,$resssss,$now_time,$user_info,$change,$datalist){
 
-        $xiugai["update_time"]            =$now_time;
-
-//        $where['self_id']                 =$data['self_id'];
-//        WmsOutOrderList::where($where)->update($xiugai);
         $wms_out_sige=[];
         $wms_library_sige=[];
         $wms_library_change=[];
