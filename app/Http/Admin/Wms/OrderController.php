@@ -919,7 +919,7 @@ class OrderController extends CommonController{
         $operationing = $request->get('operationing');//接收中间件产生的参数
         $user_info          = $request->get('user_info');                //接收中间件产生的参数
         $order_id=$request->input('self_id');
-        $order_id=["order_202212171611413592429427"];
+//        $order_id=["order_202212171611413592429427"];
 
         /**循环处理数据**/
 
