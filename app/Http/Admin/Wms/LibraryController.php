@@ -1400,13 +1400,10 @@ class LibraryController extends CommonController{
             ['now_num','>',0],
         ];
 
-        //dd($where);
         $data['info']=WmsLibrarySige::where($where)->sum('now_num');
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
-
-        //dd($msg);
         return $msg;
     }
 
