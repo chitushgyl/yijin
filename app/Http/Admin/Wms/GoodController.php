@@ -512,15 +512,16 @@ class GoodController extends CommonController{
             ['type','=','wms'],
             ['group_code','=',$company_id],
         ];
-        $where1 = [
-            ['delete_flag','=','Y'],
-            ['use_flag','=','Y'],
-            ['can_use','=','Y'],
-            ['now_num','>',0],
-        ];
+
         $select1 = ['self_id','sku_id','now_num'];
         //dd($where);
-        $data['info']=ErpShopGoodsSku::with(['wmsLibrarySige' => function($query) use($select1,$where1){
+        $data['info']=ErpShopGoodsSku::with(['wmsLibrarySige' => function($query) use($select1){
+            $where1 = [
+                ['delete_flag','=','Y'],
+                ['use_flag','=','Y'],
+                ['can_use','=','Y'],
+                ['now_num','>',0],
+            ];
             $query->where($where1);
             $query->select($select1);
             $query->sum('now_num');

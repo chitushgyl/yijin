@@ -18,7 +18,7 @@ class WmsLibrarySige extends Model{
 
     //指定主键字段 默认为id
     //protected $primaryKey = 'id';
-    
+
     //删除时间字段定义 自定义命名
     //const DELETED_AT = 'updated_at';
     //创建时间字段定义 自定义命名
