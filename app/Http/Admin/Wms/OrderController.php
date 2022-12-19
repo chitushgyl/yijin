@@ -930,7 +930,7 @@ class OrderController extends CommonController{
 
             ];
             $select = ['self_id','status','count','total_flag','warehouse_id','warehouse_name','group_code','group_name'];
-            $select2 = ['self_id','good_name','spec','num','order_id','sku_id','external_sku_id','sanitation','recipt_code','shop_code','price','total_price'];
+            $select2 = ['self_id','good_name','spec','num','order_id','sku_id','external_sku_id','price','total_price'];
             $order = WmsOutOrder::with(['wmsOutOrderList' => function($query) use($select2){
                 $query->select($select2);
                 $query->where('delete_flag','=','Y');
