@@ -65,7 +65,7 @@ class OrderController extends CommonController{
         $where = get_list_where($search);
 
         $select = ['self_id','status','count','total_flag','create_time','create_user_name',
-            'fuhe_flag','file_id','company_name','warehouse_name','group_name'];
+            'fuhe_flag','file_id','warehouse_name','group_name'];
 
         switch ($group_info['group_id']) {
             case 'all':
