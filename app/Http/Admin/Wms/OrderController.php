@@ -64,7 +64,7 @@ class OrderController extends CommonController{
 
         $where = get_list_where($search);
 
-        $select = ['self_id','status','count','total_flag','shop_id','shop_external_id','shop_name','create_time','create_user_name',
+        $select = ['self_id','status','count','total_flag','create_time','create_user_name',
             'fuhe_flag','file_id','company_name','warehouse_name','group_name'];
 
         switch ($group_info['group_id']) {
@@ -914,7 +914,7 @@ class OrderController extends CommonController{
     /**
      * 出库审核
      * */
-    public function outOrderDone(Request $request){
+    public function outOrderDone(Request $request,Change $change){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
         $user_info          = $request->get('user_info');                //接收中间件产生的参数

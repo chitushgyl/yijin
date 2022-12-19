@@ -225,7 +225,6 @@ class OrderController extends CommonController{
 //        /** 接收数据*/
         $self_id                   = $request->input('self_id');
         $group_code                = $request->input('group_code');//
-        $company_id                = $request->input('company_id');//客户公司ID
         $send_name                 = $request->input('send_name');//发货地联系人
         $send_tel                  = $request->input('send_tel');//发货地人联系方式
         $send_sheng                = $request->input('send_sheng');//发货省ID
@@ -298,7 +297,6 @@ class OrderController extends CommonController{
             /** 处理一下发货地址  及联系人 结束**/
 
             /** 开始处理正式的数据*/
-            $data['company_id']              = $company_id;
             $data['send_name']               = $send_name;
             $data['send_tel']                = $send_tel;
             $data['send_sheng']              = $send_sheng;
@@ -345,6 +343,7 @@ class OrderController extends CommonController{
                 $operationing->operation_type='update';
             }else{
                 $data['self_id']            = generate_id('order_');
+                $data['order_number']       = generate_id('');
                 $data['group_code']         = $group_info->group_code;
                 $data['group_name']         = $group_info->group_name;
                 $data['create_user_id']     = $user_info->admin_id;
