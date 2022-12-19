@@ -486,7 +486,7 @@ class LibraryController extends CommonController{
         $wms_order_type      = config('wms.wms_order_type');
         $wms_order_type_show  =array_column($wms_order_type,'name','key');
     //抓取他需要待审核的数据多少
-        $select=['self_id','grounding_status','group_name','warehouse_name','company_name','create_user_name','count','create_time','type'];
+        $select=['self_id','grounding_status','group_name','warehouse_name','company_name','create_user_name','count','create_time','type','purchase','operator','accepted'];
         $where=[
             ['delete_flag','=','Y'],
             ['grounding_status','=', 'N'],
@@ -531,7 +531,7 @@ class LibraryController extends CommonController{
             ['self_id','=', $self_id],
         ];
         $sigeSelect=['order_id','external_sku_id','good_name','spec','production_date','expire_time','now_num','area','row','column','tier','good_unit','good_target_unit','good_scale'];
-        $select=['self_id','warehouse_name','company_name','type','voucher'];
+        $select=['self_id','warehouse_name','company_name','type','voucher','purchase','operator','accepted'];
         $data['info']=WmsLibraryOrder::with(['wmsLibrarySige' => function($query)use($sigeSelect){
             $query->select($sigeSelect);
         }])->where($where)
@@ -818,7 +818,8 @@ class LibraryController extends CommonController{
             ['delete_flag','=','Y'],
         ];
 
-        $select=['self_id','grounding_status','order_status','type','create_user_name','create_time','group_name','check_time','grounding_status','count','voucher','type','warehouse_id','warehouse_name'];
+        $select=['self_id','grounding_status','order_status','type','create_user_name','create_time','group_name','check_time','grounding_status','count',
+            'purchase','operator','accepted','voucher','type','warehouse_id','warehouse_name'];
 
 		$WmsLibrarySigeSelect=[
             'self_id','grounding_status','in_library_state','grounding_type','good_remark','good_lot','order_id','external_sku_id','good_name','spec',

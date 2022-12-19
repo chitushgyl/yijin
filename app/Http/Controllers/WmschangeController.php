@@ -79,11 +79,11 @@ class WmschangeController extends Controller{
                     break;
 
             }
-            $money['total_price'] =  $list['change_num']*$v['price'];
-            $payment[] =  $money;
+            $money['total_price'] = $list['change_num']*$v['price'];
+            $payment[] = $money;
             $data[]=$list;
         }
-        dd($payment);
+
         WmsLibraryChange::insert($data);
 
 
