@@ -162,7 +162,7 @@ class OrderController extends CommonController{
         $purchase           = $request->input('purchase');
 
 
-//        /***
+        /***
         $input['warehouse_id'] = $warehouse_id = 'warehouse_20221215135058787296124';
         $input['car_num'] = $car_num = '485615612';
         $input['picker'] = $picker = '12345';
@@ -181,7 +181,7 @@ class OrderController extends CommonController{
 
         ],
         ];
-//         * **/
+         * **/
         $rules = [
             'goods' => 'required',
         ];
