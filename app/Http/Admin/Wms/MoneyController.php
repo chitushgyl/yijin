@@ -273,8 +273,11 @@ class MoneyController extends CommonController{
     }
 
     /**
-     * 添加费用
+     * 添加费用  wms/money/addMoney
      * */
+    public function addMoney(Request $request){
+
+    }
 
 }
 ?>

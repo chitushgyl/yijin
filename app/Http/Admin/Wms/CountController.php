@@ -61,7 +61,7 @@ class CountController extends CommonController{
         $where=get_list_where($search);
         $where1 = get_list_where($search1);
         $select=['self_id','good_name','good_english_name','wms_unit','wms_target_unit','wms_scale','wms_spec',
-            'group_name','use_flag','company_name','external_sku_id'];
+            'group_name','use_flag','external_sku_id'];
 
         $Signselect=['sku_id','production_date','expire_time','can_use','warehouse_name','area','row','column','tier','now_num','warehouse_sign_id'];
 //        dd($select);
