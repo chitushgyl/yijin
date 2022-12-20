@@ -108,7 +108,7 @@ class CountController extends CommonController{
         foreach ($data['items'] as $k=>$v) {
             $v->count=0;
             foreach ($v->wmsLibrarySige as $kk=>$vv) {
-                $vv->sign=$vv->area.'-'.$vv->row.'-'.$vv->column.'-'.$vv->tier;
+
                 $vv->good_describe =unit_do($v->wms_unit , $v->wms_target_unit, $v->wms_scale, $vv->now_num);
                 $v->count +=$vv->now_num;
             }

@@ -79,8 +79,8 @@ class WmschangeController extends Controller{
                     break;
 
             }
-            $money['total_price'] = $list['change_num']*$v['price'];
-            $payment[] = $money;
+//            $money['total_price'] = $list['change_num']*$v['price'];
+//            $payment[] = $money;
             $data[]=$list;
         }
         /***出入库时要保存费用**/
