@@ -35,15 +35,13 @@ class HistoryController  extends CommonController{
         $warehouse_id     	=$request->input('warehouse_id');
         $sku_id    			=$request->input('sku_id');
 		$external_sku_id    =$request->input('external_sku_id');
-        $group_code          =$request->input('group_code');
-		$company_id			 =$request->input('company_id');
-		$warehouse_sign_id	 =$request->input('warehouse_sign_id');
-        $company_name	 =$request->input('company_name');
-        $warehouse_name	 =$request->input('warehouse_name');
-        $good_name	 =$request->input('good_name');
-
-        $listrows       =$num;
-        $firstrow       =($page-1)*$listrows;
+        $group_code         =$request->input('group_code');
+        $warehouse_name	    =$request->input('warehouse_name');
+        $good_name	        =$request->input('good_name');
+        $start_time			=$request->input('start_time');
+        $end_time	        =$request->input('end_time');
+        $listrows           =$num;
+        $firstrow           =($page-1)*$listrows;
 
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
@@ -51,18 +49,17 @@ class HistoryController  extends CommonController{
             ['type'=>'like','name'=>'warehouse_id','value'=>$warehouse_id],
             ['type'=>'like','name'=>'sku_id','value'=>$sku_id],
 			['type'=>'like','name'=>'external_sku_id','value'=>$external_sku_id],
-			['type'=>'like','name'=>'company_id','value'=>$company_id],
             ['type'=>'like','name'=>'group_code','value'=>$group_code],
-			['type'=>'like','name'=>'warehouse_sign_id','value'=>$warehouse_sign_id],
-			['type'=>'like','name'=>'company_name','value'=>$company_name],
 			['type'=>'like','name'=>'warehouse_name','value'=>$warehouse_name],
 			['type'=>'like','name'=>'good_name','value'=>$good_name],
+			['type'=>'>=','name'=>'create_time','value'=>$start_time],
+			['type'=>'<','name'=>'create_time','value'=>$end_time],
         ];
 
         $where=get_list_where($search);
 
-        $select=['self_id','group_code','group_name','warehouse_name','warehouse_id','warehouse_sign_id','company_id','company_name','type','create_user_name','create_user_id',
-				'external_sku_id','sku_id','good_name','spec','area','row','column','tier','good_lot','produce_time','expire_time','library_sige_id',
+        $select=['self_id','group_code','group_name','warehouse_name','warehouse_id','type','create_user_name','create_user_id',
+				'external_sku_id','sku_id','good_name','spec','good_lot','produce_time','expire_time','library_sige_id',
 				'initial_num','now_num','change_num','describe','good_unit','good_target_unit','good_scale'];
 
         switch ($group_info['group_id']){
@@ -95,7 +92,6 @@ class HistoryController  extends CommonController{
 
         foreach ($data['items'] as $k=>$v) {
 			$abc=unit_do($v->good_unit , $v->good_target_unit, $v->good_scale, $v->change_num);
-//            dump($v->good_unit);dump($v->good_target_unit);dump($v->good_scale);dump($v->change_num);
 			$v->type_show=$wms_order_type_show[$v->type]??null;
             if($v->area && $v->row && $v->column){
                 $v->sign=$v->area.'-'.$v->row.'-'.$v->column.'-'.$v->tier;

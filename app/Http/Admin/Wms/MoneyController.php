@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Admin\Wms;
+use App\Models\Tms\TmsMoney;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
@@ -52,13 +53,13 @@ class MoneyController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','type','group_code','group_name','warehouse_id','warehouse_name','time','create_user_name','create_time','use_flag','company_name','company_id',
-                'payee_affirm_flag','payment_affirm_flag','settle_flag','settle_id','money'];
+        $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name',
+            'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state'];
 
         switch ($group_info['group_id']){
             case 'all':
-                $data['total']=WmsMoney::where($where)->count(); //总的数据量
-                $data['items']=WmsMoney::where($where)
+                $data['total']=TmsMoney::where($where)->count(); //总的数据量
+                $data['items']=TmsMoney::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -66,16 +67,16 @@ class MoneyController extends CommonController{
 
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
-                $data['total']=WmsMoney::where($where)->count(); //总的数据量
-                $data['items']=WmsMoney::where($where)
+                $data['total']=TmsMoney::where($where)->count(); //总的数据量
+                $data['items']=TmsMoney::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
 
             case 'more':
-                $data['total']=WmsMoney::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=WmsMoney::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['total']=TmsMoney::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=TmsMoney::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -84,7 +85,6 @@ class MoneyController extends CommonController{
         //dd($data['items']->toArray());
 
         foreach ($data['items'] as $k=>$v) {
-            $v->money = number_format($v->money/100, 2);
             $v->total_show=$wms_money_type_show[$v->type]??null;
             $v->button_info=$button_info;
 
