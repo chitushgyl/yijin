@@ -125,17 +125,17 @@ class MoneyController extends CommonController{
         }])->where($where)->select($select)->first();
         //DD($info->toArray());
 
-        
+
 
         if($info){
 
-			
+
 			foreach ($info->WmsMoneyList as $k=>$v){
 				$v->sign                =$v->area.'-'.$v->row.'-'.$v->column.'-'.$v->tier;
 				$v->good_describe      =unit_do($v->good_unit , $v->good_target_unit, $v->good_scale, $v->num);
 			}
-		
-		
+
+
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
             $info->total_show=$wms_money_type_show[$info->type];
             $info->money = number_format($info->money/100, 2);
@@ -271,6 +271,10 @@ class MoneyController extends CommonController{
             return $msg;
         }
     }
+
+    /**
+     * 添加费用
+     * */
 
 }
 ?>

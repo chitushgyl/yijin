@@ -572,10 +572,10 @@ class OrderController extends CommonController{
             ['self_id','=',$self_id],
             ['delete_flag','=','Y'],
         ];
-        $order_select = ['self_id','shop_id','shop_name','status','create_user_name','create_time','group_name','warehouse_name','company_name','total_flag','total_time',
+        $order_select = ['self_id','status','create_user_name','create_time','group_name','warehouse_name','total_flag','total_time',
             'picker','operator','purchase','car_num','delivery_time'];
-        $order_list_select= ['self_id','good_name','good_unit','spec','sanitation','num','order_id','external_sku_id','quehuo','quehuo_num','sanitation','remarks','price','total_price','out_library_state'];
-        $wms_out_sige_select= ['order_list_id','num','area','row','column','tier','production_date','expire_time','good_unit','good_target_unit','good_scale','good_english_name'];
+        $order_list_select= ['self_id','good_name','good_unit','spec','num','order_id','external_sku_id','remarks','price','total_price','out_library_state'];
+        $wms_out_sige_select= ['order_list_id','num','good_unit','good_target_unit','good_scale','good_english_name'];
 
         $info=wmsOutOrder::with(['wmsOutOrderList'=>function($query)use($order_list_select,$wms_out_sige_select){
             $query->where('delete_flag','=','Y');
@@ -596,7 +596,6 @@ class OrderController extends CommonController{
                     $v->out_library_state_show  = $out_store_status[$v->out_library_state] ?? null;
                 if($v->quehuo == 'Y'){
                     $data['quehuo_flag']         ='Y';
-                    $list2['shop_name']          =$info->shop_name;
                     $list2['external_sku_id']    =$v->external_sku_id;
                     $list2['good_name']          =$v->good_name;
                     $list2['spec']               =$v->spec;
@@ -608,7 +607,6 @@ class OrderController extends CommonController{
                 if($v->wmsOutSige){
                     $data['out_flag']        ='Y';
                     foreach ($v->wmsOutSige as $kk => $vv){
-                        $list['shop_name']          =$info->shop_name;
                         $list['external_sku_id']    =$v->external_sku_id;
                         $list['good_name']          =$v->good_name;
 						$list['good_english_name']  =$vv->good_english_name;
@@ -616,8 +614,6 @@ class OrderController extends CommonController{
                         $list['num']                =$vv->num;
                         $list['good_unit']          =$vv->good_unit;
                         $list['sign']               =$vv->area.'-'.$vv->row.'-'.$vv->column.'-'.$vv->tier;
-                        $list['production_date']    =$vv->production_date;
-                        $list['expire_time']        =$vv->expire_time;
                         $list['good_describe']      =unit_do($vv->good_unit , $vv->good_target_unit, $vv->good_scale, $vv->num);
                         //dd($vv->toArray());
                         $out_list[]=$list;
