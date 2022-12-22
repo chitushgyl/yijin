@@ -25,7 +25,7 @@ class MoneyController extends CommonController{
     /***    费用明细分页      /wms/money/moneyPage
      */
     public function moneyPage(Request $request){
-        $wms_money_type_show    =array_column(config('tms.money_type'),'name','key');
+        $money_type_show    =array_column(config('tms.money_type'),'name','key');
         /** 接收中间件参数**/
         $group_info     = $request->get('group_info');//接收中间件产生的参数
         $button_info    = $request->get('anniu');//接收中间件产生的参数
@@ -85,11 +85,29 @@ class MoneyController extends CommonController{
 
 
         foreach ($data['items'] as $k=>$v) {
-            $v->total_show=$wms_money_type_show[$v->type]??null;
+            $v->total_show=$money_type_show[$v->type]??null;
             $v->button_info=$button_info;
 
             }
 
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        //dd($msg);
+        return $msg;
+    }
+
+    public function createMoney(Request $request){
+        $data['type'] = config('tms.money_type');
+        /** 接收数据*/
+        $self_id=$request->input('self_id');
+        $where=[
+            ['delete_flag','=','Y'],
+            ['self_id','=',$self_id],
+        ];
+
+        $data['info']=TmsMoney::where($where)->first();
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
