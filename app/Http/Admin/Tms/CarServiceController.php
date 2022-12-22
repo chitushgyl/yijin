@@ -2,6 +2,7 @@
 namespace App\Http\Admin\Tms;
 use App\Http\Controllers\FileController as File;
 use App\Models\Tms\CarService;
+use App\Models\Tms\TmsMoney;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
@@ -199,6 +200,16 @@ class CarServiceController extends CommonController{
             $data['operator']          =$operator;
             $data['remark']            =$remark;
 
+            /**保存费用**/
+            if ($service_price){
+                $money['pay_type']           = 'fuel';
+                $money['money']              = $service_price;
+                $money['pay_state']          = 'Y';
+                $money['car_id']             = $car_id;
+                $money['car_number']         = $car_number;
+                $money['process_state']      = 'Y';
+            }
+
             $wheres['self_id'] = $self_id;
             $old_info=CarService::where($wheres)->first();
 
@@ -218,6 +229,9 @@ class CarServiceController extends CommonController{
                 $data['create_time']        =$data['update_time']=$now_time;
 
                 $id=CarService::insert($data);
+                if($service_price){
+                    TmsMoney::insert($money);
+                }
                 $operationing->access_cause='新建车辆维修';
                 $operationing->operation_type='create';
 

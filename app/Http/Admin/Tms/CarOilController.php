@@ -4,6 +4,7 @@ use App\Http\Controllers\FileController as File;
 use App\Models\Tms\CarCount;
 use App\Models\Tms\CarDanger;
 use App\Models\Tms\CarOil;
+use App\Models\Tms\TmsMoney;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
@@ -138,6 +139,7 @@ class CarOilController extends CommonController{
     /***    新建车辆加油数据提交      /tms/carOil/addCar
      */
     public function addCar(Request $request){
+        $money_type     =array_column(config('tms.money_type'),'name','key');
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ='tms_car';
@@ -160,7 +162,6 @@ class CarOilController extends CommonController{
         $price              =$request->input('price');//油单价
         $total_money        =$request->input('total_money');//加油总价
         $remark             =$request->input('remark');//备注
-
 
         $rules=[
             'car_number'=>'required',
@@ -188,6 +189,13 @@ class CarOilController extends CommonController{
             $data['total_money']       =$total_money;
             $data['remark']            =$remark;
 
+            /**保存费用**/
+            $money['pay_type']           = 'fuel';
+            $money['money']              = $price;
+            $money['pay_state']          = 'Y';
+            $money['car_id']             = $car_id;
+            $money['car_number']         = $car_number;
+            $money['process_state']      = 'Y';
 
             $wheres['self_id'] = $self_id;
             $old_info=CarOil::where($wheres)->first();
@@ -195,7 +203,6 @@ class CarOilController extends CommonController{
             if($old_info){
                 $data['update_time']=$now_time;
                 $id=CarOil::where($wheres)->update($data);
-
                 $operationing->access_cause='修改加油记录';
                 $operationing->operation_type='update';
 
@@ -208,6 +215,7 @@ class CarOilController extends CommonController{
                 $data['create_time']        =$data['update_time']=$now_time;
 
                 $id=CarOil::insert($data);
+                TmsMoney::insert($money);
                 $operationing->access_cause='新建加油记录';
                 $operationing->operation_type='create';
 

@@ -3,6 +3,7 @@ namespace App\Http\Admin\Tms;
 
 use App\Models\Group\SystemGroup;
 use App\Models\Group\SystemUser;
+use App\Models\Tms\TmsMoney;
 use App\Models\User\UserReward;
 use App\User;
 use Illuminate\Http\Request;
@@ -192,6 +193,20 @@ class UserRewardController extends CommonController{
             $data['safe_flag']              =$safe_flag;
             $data['safe_reward']            =$safe_reward;
 
+            /**保存费用**/
+            if ($payment || $late_fee || $safe_reward){
+                if ($safe_reward){
+                    $money['money']              = $safe_reward;
+                }else{
+                    $money['money']              = $payment;
+                }
+            }
+            $money['pay_type']           = 'fuel';
+            $money['pay_state']          = 'Y';
+            $money['car_id']             = $car_id;
+            $money['car_number']         = $car_number;
+            $money['process_state']      = 'Y';
+
             $wheres['self_id'] = $self_id;
             $old_info=UserReward::where($wheres)->first();
             if($old_info){
@@ -211,6 +226,8 @@ class UserRewardController extends CommonController{
                 $data['group_name']         =$group_name;
 
                 $id=UserReward::insert($data);
+                $money['create_time']        =$money['update_time']=$now_time;
+                TmsMoney::insert($money);
                 $operationing->access_cause='添加员工奖惩记录';
                 $operationing->operation_type='create';
 

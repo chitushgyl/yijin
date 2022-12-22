@@ -25,7 +25,7 @@ class MoneyController extends CommonController{
     /***    费用明细分页      /wms/money/moneyPage
      */
     public function moneyPage(Request $request){
-        $wms_money_type_show    =array_column(config('wms.wms_money_type'),'name','key');
+        $wms_money_type_show    =array_column(config('tms.money_type'),'name','key');
         /** 接收中间件参数**/
         $group_info     = $request->get('group_info');//接收中间件产生的参数
         $button_info    = $request->get('anniu');//接收中间件产生的参数
@@ -35,9 +35,9 @@ class MoneyController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-		$company_id     =$request->input('company_id');
-		$warehouse_id     =$request->input('warehouse_id');
         $type           =$request->input('type');
+        $start_time     =$request->input('start_time');
+        $end_time       =$request->input('end_time');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -45,9 +45,9 @@ class MoneyController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
-			['type'=>'=','name'=>'company_id','value'=>$company_id],
-			['type'=>'=','name'=>'warehouse_id','value'=>$warehouse_id],
             ['type'=>'=','name'=>'type','value'=>$type],
+            ['type'=>'>=','name'=>'create_time','value'=>$start_time],
+            ['type'=>'<','name'=>'create_time','value'=>$end_time],
         ];
 
 
@@ -60,7 +60,7 @@ class MoneyController extends CommonController{
             case 'all':
                 $data['total']=TmsMoney::where($where)->count(); //总的数据量
                 $data['items']=TmsMoney::where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
@@ -69,7 +69,7 @@ class MoneyController extends CommonController{
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=TmsMoney::where($where)->count(); //总的数据量
                 $data['items']=TmsMoney::where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
@@ -77,12 +77,12 @@ class MoneyController extends CommonController{
             case 'more':
                 $data['total']=TmsMoney::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=TmsMoney::where($where)->whereIn('group_code',$group_info['group_code'])
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
         }
-        //dd($data['items']->toArray());
+
 
         foreach ($data['items'] as $k=>$v) {
             $v->total_show=$wms_money_type_show[$v->type]??null;
@@ -276,7 +276,171 @@ class MoneyController extends CommonController{
      * 添加费用  wms/money/addMoney
      * */
     public function addMoney(Request $request){
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='erp_shop_goods_sku';
 
+        $operationing->access_cause     ='创建/修改商品';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+
+        $user_info = $request->get('user_info');//接收中间件产生的参数
+        $input              =$request->all();
+
+        /** 接收数据*/
+        $self_id            =$request->input('self_id');
+        $pay_type           =$request->input('pay_type');//费用类型
+        $money              =$request->input('money');//费用
+        $pay_state          =$request->input('pay_state');//结算状态
+        $car_id             =$request->input('car_id');//车辆ID
+        $car_number         =$request->input('car_number');//车牌号
+        $user_id            =$request->input('user_id');//人员ID
+        $user_name          =$request->input('user_name');//人员名称
+        $process_state      =$request->input('process_state');//审核状态
+
+
+        $rules=[
+            'pay_type'=>'required',
+            'money'=>'required',
+        ];
+        $message=[
+            'pay_type.required'=>'请选择费用类型',
+            'money.required'=>'请填写费用',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+
+        //操作的表
+
+        if($validator->passes()){
+
+            $data['pay_type']           = $pay_type;
+            $data['money']              = $money;
+            $data['pay_state']          = $pay_state;
+            $data['car_id']             = $car_id;//规格
+            $data['car_number']         = $car_number;
+            $data['user_id']            = $user_id;
+            $data['user_name']          = $user_name;
+            $data['process_state']      = $process_state;
+
+            $wheres['self_id'] = $self_id;
+            $old_info=TmsMoney::where($wheres)->first();
+
+            if($old_info){
+                $data['update_time']        = $now_time;
+                $id=TmsMoney::where($wheres)->update($data);
+
+                $operationing->access_cause='修改费用';
+                $operationing->operation_type='update';
+
+
+            }else{
+                $data['self_id']            = generate_id('money_');
+                $data['group_code']         = $user_info->group_code;
+                $data['group_name']         = $user_info->group_name;
+                $data['create_user_id']     = $user_info->admin_id;
+                $data['create_user_name']   = $user_info->name;
+                $data['create_time']=$data['update_time']=$now_time;
+                $id=TmsMoney::insert($data);
+                $operationing->access_cause='新建费用';
+                $operationing->operation_type='create';
+
+            }
+
+            $operationing->table_id=$old_info?$self_id:$data['self_id'];
+            $operationing->old_info=$old_info;
+            $operationing->new_info=$data;
+
+            if($id){
+                $msg['code'] = 200;
+                $msg['msg'] = "操作成功";
+                return $msg;
+            }else{
+                $msg['code'] = 302;
+                $msg['msg'] = "操作失败";
+                return $msg;
+            }
+
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
+    }
+
+    /**
+     * 费用审核
+     * */
+    public function moneyState(Request $request){
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='tms_money';
+
+        $operationing->access_cause     ='创建/修改商品';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+
+        $user_info = $request->get('user_info');//接收中间件产生的参数
+        $input              =$request->all();
+
+        /** 接收数据*/
+        $self_id            =$request->input('self_id');
+        $process_state      =$request->input('process_state');//审核状态
+
+        $rules=[
+            'self_id'=>'required',
+            'process_state'=>'required',
+
+        ];
+        $message=[
+            'self_id.required'=>'请选择费用条目！',
+            'process_state.required'=>'请选择审核结果',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+
+        //操作的表
+        if($validator->passes()){
+            $wheres['self_id'] = $self_id;
+            $old_info=TmsMoney::where($wheres)->first();
+
+            $data['process_state'] = $process_state;
+            $data['update_time']   = $now_time;
+            $id = TmsMoney::where('self_id',$self_id)->update($data);
+
+            $operationing->access_cause='费用审核';
+            $operationing->operation_type='create';
+            $operationing->table_id=$old_info?$self_id:$data['self_id'];
+            $operationing->old_info=$old_info;
+            $operationing->new_info=$data;
+
+            if($id){
+                $msg['code'] = 200;
+                $msg['msg'] = "操作成功";
+                return $msg;
+            }else{
+                $msg['code'] = 302;
+                $msg['msg'] = "操作失败";
+                return $msg;
+            }
+
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
     }
 
 }
