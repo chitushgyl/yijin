@@ -191,7 +191,7 @@ class CarOilController extends CommonController{
 
             /**保存费用**/
             $money['pay_type']           = 'fuel';
-            $money['money']              = $price;
+            $money['money']              = $total_money;
             $money['pay_state']          = 'Y';
             $money['car_id']             = $car_id;
             $money['car_number']         = $car_number;
