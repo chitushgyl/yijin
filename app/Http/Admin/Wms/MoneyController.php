@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Admin\Wms;
 use App\Models\Tms\TmsMoney;
+use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
@@ -326,7 +327,7 @@ class MoneyController extends CommonController{
             'pay_type.required'=>'请选择费用类型',
             'money.required'=>'请填写费用',
         ];
-        $validator=Validator::make($input,$rules,$message);
+        $validator=Validated::make($input,$rules,$message);
 
         //操作的表
 
