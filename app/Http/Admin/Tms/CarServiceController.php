@@ -202,7 +202,7 @@ class CarServiceController extends CommonController{
 
             /**保存费用**/
             if ($service_price){
-                $money['pay_type']           = 'fuel';
+                $money['pay_type']           = 'repair';
                 $money['money']              = $service_price;
                 $money['pay_state']          = 'Y';
                 $money['car_id']             = $car_id;
@@ -227,6 +227,7 @@ class CarServiceController extends CommonController{
                 $data['create_user_id']     =$user_info->admin_id;
                 $data['create_user_name']   =$user_info->name;
                 $data['create_time']        =$data['update_time']=$now_time;
+                $money['create_time']       =$money['update_time']=$now_time;
 
                 $id=CarService::insert($data);
                 if($service_price){

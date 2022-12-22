@@ -2,6 +2,7 @@
 namespace App\Http\Admin\Tms;
 use App\Http\Controllers\FileController as File;
 use App\Models\Tms\RoadToll;
+use App\Models\Tms\TmsMoney;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
@@ -176,12 +177,18 @@ class RoadTollController extends CommonController{
 
             $data['car_number']        =$car_number;
             $data['car_id']            =$car_id;
-            $data['road_time']          =$road_time;
-            $data['etc_number']         =$etc_number;
-            $data['road_price']             =$road_price;
-            $data['address']       =$address;
+            $data['road_time']         =$road_time;
+            $data['etc_number']        =$etc_number;
+            $data['road_price']        =$road_price;
+            $data['address']           =$address;
 
-
+            /**保存费用**/
+            $money['pay_type']           = 'road';
+            $money['money']              = $road_price;
+            $money['pay_state']          = 'Y';
+            $money['car_id']             = $car_id;
+            $money['car_number']         = $car_number;
+            $money['process_state']      = 'Y';
 
             $wheres['self_id'] = $self_id;
             $old_info=RoadToll::where($wheres)->first();
@@ -200,8 +207,10 @@ class RoadTollController extends CommonController{
                 $data['create_user_id']     =$user_info->admin_id;
                 $data['create_user_name']   =$user_info->name;
                 $data['create_time']        =$data['update_time']=$now_time;
+                $money['create_time']       =$money['update_time']=$now_time;
 
                 $id=RoadToll::insert($data);
+                TmsMoney::insert($money);
                 $operationing->access_cause='新建过路费记录';
                 $operationing->operation_type='create';
 

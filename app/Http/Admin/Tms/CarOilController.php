@@ -213,6 +213,7 @@ class CarOilController extends CommonController{
                 $data['create_user_id']     =$user_info->admin_id;
                 $data['create_user_name']   =$user_info->name;
                 $data['create_time']        =$data['update_time']=$now_time;
+                $money['create_time']       =$money['update_time']=$now_time;
 
                 $id=CarOil::insert($data);
                 TmsMoney::insert($money);

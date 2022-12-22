@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Admin\Wms;
+use App\Models\Tms\TmsMoney;
 use App\Models\Wms\WmsLibraryChange;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
@@ -406,9 +407,8 @@ class LibraryController extends CommonController{
                     $weight+=  $getGoods->wms_weight*$v['now_num'];
                     $datalist[]=$list;
 
+
                 }
-
-
 
                 $a++;
             }
@@ -756,6 +756,13 @@ class LibraryController extends CommonController{
 				$list["good_remark"]        =$v['good_remark'];
 				$list["use_flag"]           ='N';
 				$datalist[]=$list;
+
+                /**保存费用**/
+//                $money['pay_type']           = 'fuel';
+//                $money['money']              = $v['now_num']*$v['price'];
+//                $money['pay_state']          = 'Y';
+//                $money['process_state']      = 'Y';
+//                $moneyList[] = $money;
             }
 
             $count=count($datalist);
@@ -781,7 +788,7 @@ class LibraryController extends CommonController{
             $data['accepted']           =$accepted;
 
             $id=WmsLibraryOrder::insert($data);
-
+            TmsMoney::insert($moneyList);
             $operationing->table_id=$data['self_id'];
             $operationing->old_info=null;
             $operationing->new_info=$data;

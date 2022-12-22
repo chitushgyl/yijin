@@ -112,7 +112,6 @@ class MoneyController extends CommonController{
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
-        //dd($msg);
         return $msg;
     }
 
@@ -121,7 +120,7 @@ class MoneyController extends CommonController{
     /***    费用明细详情     /wms/money/details
      */
     public function  details(Request $request,Details $details){
-        $wms_money_type_show    =array_column(config('wms.wms_money_type'),'name','key');
+        $wms_money_type_show    =array_column(config('tms.money_type'),'name','key');
         $self_id=$request->input('self_id');
         //$self_id='money_202012231738203885359374';
         $table_name='wms_money';

@@ -201,7 +201,7 @@ class UserRewardController extends CommonController{
                     $money['money']              = $payment;
                 }
             }
-            $money['pay_type']           = 'fuel';
+            $money['pay_type']           = 'reward';
             $money['pay_state']          = 'Y';
             $money['car_id']             = $car_id;
             $money['car_number']         = $car_number;
@@ -219,8 +219,8 @@ class UserRewardController extends CommonController{
 
             }else{
                 $data['self_id']            =generate_id('reward_');
-//                $data['create_user_id']     =$user_info->admin_id;
-//                $data['create_user_name']   =$user_info->name;
+                $data['create_user_id']     =$user_info->admin_id;
+                $data['create_user_name']   =$user_info->name;
                 $data['create_time']        =$data['update_time']=$now_time;
                 $data['group_code']         =$group_code;
                 $data['group_name']         =$group_name;
