@@ -14,6 +14,7 @@ class MoneyController extends CommonController{
      */
     public function  moneyList(Request $request){
         $data['page_info']      =config('page.listrows');
+        $data['type'] = config('tms.money_type');
         $data['button_info']    =$request->get('anniu');
 
         $msg['code']=200;
@@ -26,7 +27,7 @@ class MoneyController extends CommonController{
      */
     public function moneyPage(Request $request){
         $money_type_show    =array_column(config('tms.money_type'),'name','key');
-        $type = config('tms.money_type');
+
         /** 接收中间件参数**/
         $group_info     = $request->get('group_info');//接收中间件产生的参数
         $button_info    = $request->get('anniu');//接收中间件产生的参数
@@ -94,7 +95,6 @@ class MoneyController extends CommonController{
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
-        $msg['type']=$type;
         $msg['data']=$data;
         //dd($msg);
         return $msg;
