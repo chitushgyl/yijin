@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Admin\Wms;
 use App\Models\Tms\TmsMoney;
-use Illuminate\Auth\Events\Validated;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
