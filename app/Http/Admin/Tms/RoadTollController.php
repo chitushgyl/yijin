@@ -49,6 +49,9 @@ class RoadTollController extends CommonController{
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
         $car_number     =$request->input('car_number');
+        $start_time     =$request->input('start_time');
+        $end_time     =$request->input('end_time');
+        $etc_number     =$request->input('etc_number');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -57,6 +60,9 @@ class RoadTollController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
+            ['type'=>'>=','name'=>'create_time','value'=>$start_time],
+            ['type'=>'<','name'=>'create_time','value'=>$end_time],
+            ['type'=>'like','name'=>'create_time','value'=>$etc_number],
         ];
 
         $where=get_list_where($search);

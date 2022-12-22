@@ -52,6 +52,9 @@ class CarOilController extends CommonController{
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
         $car_number     =$request->input('car_number');
+        $ic_number     =$request->input('ic_number');
+        $start_time     =$request->input('start_time');
+        $end_time     =$request->input('end_time');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -60,6 +63,9 @@ class CarOilController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
+            ['type'=>'like','name'=>'ic_number','value'=>$ic_number],
+            ['type'=>'>=','name'=>'create_time','value'=>$start_time],
+            ['type'=>'<','name'=>'ic_number','value'=>$end_time],
         ];
 
         $where=get_list_where($search);
