@@ -7,7 +7,7 @@ use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\DetailsController as Details;
 use App\Models\Wms\WmsMoney;
-
+use Illuminate\Support\Facades\Validator;
 
 class MoneyController extends CommonController{
 
