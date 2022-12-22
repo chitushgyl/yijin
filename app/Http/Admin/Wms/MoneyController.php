@@ -37,7 +37,9 @@ class MoneyController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-        $type           =$request->input('type');
+        $car_number     =$request->input('car_number');
+        $user_name      =$request->input('user_name');
+        $type           =$request->input('pay_type');
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
         $listrows       =$num;
@@ -47,7 +49,9 @@ class MoneyController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'=','name'=>'type','value'=>$type],
+            ['type'=>'=','name'=>'pay_type','value'=>$type],
+            ['type'=>'=','name'=>'car_number','value'=>$car_number],
+            ['type'=>'=','name'=>'user_name','value'=>$user_name],
             ['type'=>'>=','name'=>'create_time','value'=>$start_time],
             ['type'=>'<','name'=>'create_time','value'=>$end_time],
         ];
