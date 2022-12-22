@@ -85,7 +85,7 @@ class MoneyController extends CommonController{
 
 
         foreach ($data['items'] as $k=>$v) {
-            $v->total_show=$money_type_show[$v->pay_type]??null;
+            $v->pay_type=$money_type_show[$v->pay_type]??null;
             $v->button_info=$button_info;
 
             }
