@@ -326,7 +326,7 @@ class MoneyController extends CommonController{
             'pay_type.required'=>'请选择费用类型',
             'money.required'=>'请填写费用',
         ];
-        $validator=Validated::make($input,$rules,$message);
+        $validator=Validator::make($input,$rules,$message);
 
         //操作的表
 
