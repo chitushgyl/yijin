@@ -62,7 +62,7 @@ class RoadTollController extends CommonController{
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
             ['type'=>'>=','name'=>'create_time','value'=>$start_time],
             ['type'=>'<','name'=>'create_time','value'=>$end_time],
-            ['type'=>'like','name'=>'create_time','value'=>$etc_number],
+            ['type'=>'like','name'=>'etc_number','value'=>$etc_number],
         ];
 
         $where=get_list_where($search);
