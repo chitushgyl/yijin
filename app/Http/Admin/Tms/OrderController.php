@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Admin\Tms;
 use App\Models\Tms\AppSettingParam;
+use App\Models\Tms\OrderLog;
 use App\Models\Tms\TmsCarType;
 use App\Models\Tms\TmsLittleOrder;
 use App\Models\Tms\TmsOrderCost;
@@ -349,11 +350,12 @@ class OrderController extends CommonController{
                 $data['create_user_id']     = $user_info->admin_id;
                 $data['create_user_name']   = $user_info->name;
                 $data['create_time']        = $data['update_time']=$now_time;
-
-                $order_log['info'] = '创建运单'.','.'运单号：'.$data['order_number'];
+                $order_log['self_id'] = generate_id('log_');
+                $order_log['info'] = '创建运单:'.'预约单号'.$data['odd_number'].','.'运单号：'.$data['order_number'];
                 $order_log['create_time'] = $order_log['update_time'] = $now_time;
                 $order_log['order_id']    = $data['self_id'];
                 $id=TmsOrder::insert($data);
+                OrderLog::insert($order_log);
 
 
                 $operationing->access_cause='新建订单';
@@ -390,6 +392,273 @@ class OrderController extends CommonController{
 
     }
 
+    /**
+     * 调度  tms/order/dispatchOrder
+     * */
+    public function dispatchOrder(Request $request){
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='tms_order';
+
+        $operationing->access_cause     ='调度订单';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='update';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='update';
+        $user_info = $request->get('user_info');//接收中间件产生的参数
+        $input                          =$request->all();
+
+//        /** 接收数据*/
+        $order_id                  = $request->input('order_id');//订单ID
+        $car_number                = $request->input('car_number');//车牌号
+        $car_id                    = $request->input('car_id');//车辆ID
+        $car_conact                = $request->input('car_conact');//联系人
+        $car_tel                   = $request->input('car_tel');//联系方式
+
+
+        $rules=[
+            'order_id'=>'required',
+            'car_number'=>'required',
+        ];
+        $message=[
+            'order_id.required'=>'请选择要调度的订单',
+            'car_number.required'=>'请选择车辆',
+        ];
+
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()) {
+
+            $data['car_number']               = $car_number;
+            $data['car_id']                   = $car_id;
+            $data['car_conact']               = $car_conact;
+            $data['car_tel']                  = $car_tel;
+            $data['order_status']             = 2;
+            $data['create_time']              = $data['update_time'] = $now_time;
+            $old_info = TmsOrder::where('self_id',$order_id)->select('self_id','order_status','gather_shi_name','send_shi_name')->first();
+
+            TmsOrder::where('self_id',$order_id)->update($data);
+            $order_log['self_id'] = generate_id('log_');
+            $order_log['info'] = '调度运单:'.'预约单号'.$data['odd_number'].','.'车牌号：'.$data['car_number'].',联系人：'.$data['car_conact'].',联系方式：'.$data['car_tel'];
+            $order_log['create_time'] = $order_log['update_time'] = $now_time;
+            $order_log['order_id']    = $data['self_id'];
+            $order_log['state']       = 2;
+            $id=TmsOrder::insert($data);
+            OrderLog::insert($order_log);
+
+            $operationing->access_cause='调度订单';
+            $operationing->operation_type='update';
+            $operationing->table_id=$old_info?$order_id:$data['self_id'];
+            $operationing->old_info=$old_info;
+            $operationing->new_info=$data;
+            if($id){
+                $msg['code'] = 200;
+                $msg['msg'] = "操作成功";
+                return $msg;
+            }else{
+                $msg['code'] = 302;
+                $msg['msg'] = "操作失败";
+                return $msg;
+            }
+             }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
+
+    }
+
+    /**
+     * 装货
+     * */
+    public function pickOrder(Request $request){
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='tms_order';
+
+        $operationing->access_cause     ='调度订单';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='update';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='update';
+        $user_info = $request->get('user_info');//接收中间件产生的参数
+        $input                          =$request->all();
+
+//        /** 接收数据*/
+        $order_id                  = $request->input('order_id');//订单ID
+        $real_weight               = $request->input('real_weight');//实际装货量
+
+
+        $rules=[
+            'order_id'=>'required',
+            'real_weight'=>'required',
+        ];
+        $message=[
+            'order_id.required'=>'请选择要调度的订单',
+            'real_weight.required'=>'请填写实际装货量',
+        ];
+
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()) {
+
+
+            $data['real_weight']              = $real_weight;
+            $data['order_status']             = 3;
+            $data['create_time']              = $data['update_time'] = $now_time;
+            $old_info = TmsOrder::where('self_id',$order_id)->select('self_id','odd_number','car_number','order_status','gather_shi_name','send_shi_name','real_weight')->first();
+
+            TmsOrder::where('self_id',$order_id)->update($data);
+            $order_log['self_id'] = generate_id('log_');
+            $order_log['info'] = '装货:'.'预约单号'.$old_info->odd_number.','.'车牌号：'.$old_info->car_number;
+            $order_log['create_time'] = $order_log['update_time'] = $now_time;
+            $order_log['order_id']    = $data['self_id'];
+            $order_log['state']       = 3;
+            $id=TmsOrder::insert($data);
+            OrderLog::insert($order_log);
+
+            $operationing->access_cause='装货,预约单号：'.$old_info->odd_number;
+            $operationing->operation_type='update';
+            $operationing->table_id=$old_info?$order_id:$data['self_id'];
+            $operationing->old_info=$old_info;
+            $operationing->new_info=$data;
+            if($id){
+                $msg['code'] = 200;
+                $msg['msg'] = "操作成功";
+                return $msg;
+            }else{
+                $msg['code'] = 302;
+                $msg['msg'] = "操作失败";
+                return $msg;
+            }
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
+    }
+
+    /**
+     * 卸货
+     * */
+    public function upOrder(Request $request){
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='tms_order';
+
+        $operationing->access_cause     ='调度订单';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='update';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='update';
+        $user_info = $request->get('user_info');//接收中间件产生的参数
+        $input                          =$request->all();
+
+//        /** 接收数据*/
+        $order_id                  = $request->input('order_id');//订单ID
+        $upload_weight               = $request->input('upload_weight');//实际卸货量
+
+
+        $rules=[
+            'order_id'=>'required',
+            'upload_weight'=>'required',
+        ];
+        $message=[
+            'order_id.required'=>'请选择要调度的订单',
+            'upload_weight.required'=>'请填写实际卸货量',
+        ];
+
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()) {
+            $old_info = TmsOrder::where('self_id',$order_id)->select('self_id','odd_number','car_number','order_status','gather_shi_name','send_shi_name','upload_weight','real_weight')->first();
+
+            $data['upload_weight']              = $upload_weight;
+            $data['order_status']               = 5;
+            $data['different_weight']           = $old_info->real_weight - $upload_weight;
+            $data['create_time']                = $data['update_time'] = $now_time;
+            TmsOrder::where('self_id',$order_id)->update($data);
+            $order_log['self_id'] = generate_id('log_');
+            $order_log['info'] = '卸货:'.'预约单号'.$old_info->odd_number.','.'车牌号：'.$old_info->car_number;
+            $order_log['create_time'] = $order_log['update_time'] = $now_time;
+            $order_log['order_id']    = $data['self_id'];
+            $order_log['state']       = 6;
+            $id=TmsOrder::insert($data);
+            OrderLog::insert($order_log);
+
+            $operationing->access_cause='卸货,预约单号：'.$old_info->odd_number;
+            $operationing->operation_type='update';
+            $operationing->table_id=$old_info?$order_id:$data['self_id'];
+            $operationing->old_info=$old_info;
+            $operationing->new_info=$data;
+            if($id){
+                $msg['code'] = 200;
+                $msg['msg'] = "操作成功";
+                return $msg;
+            }else{
+                $msg['code'] = 302;
+                $msg['msg'] = "操作失败";
+                return $msg;
+            }
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
+    }
+
+    /**
+     * 上传回单
+     * */
+    public function uploadReceipt(Request $request){
+
+    }
+
+    /**
+     * 获取日志记录
+     * */
+    public function getOrderLog(Request $request){
+        /** 接收数据*/
+        $order_type    =array_column(config('tms.order_log_type'),'name','key');
+        $self_id=$request->input('order_id');
+//        $self_id = 'car_20210313180835367958101';
+
+        $where=[
+            ['delete_flag','=','Y'],
+            ['order_id','=',$self_id],
+        ];
+
+        $select = ['self_id','order_id','info','state','create_time','create_user_id','create_user_name','group_code',
+           ];
+        $data['info']=OrderLog::where($where)->select($select)->get();
+
+        if ($data['info']){
+            foreach($data['info'] as $k =>$v){
+                $v->type_show=$order_type[$v->state]??null;
+            }
+        }
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+//        dd($msg);
+        return $msg;
+    }
 
 
     /***    订单删除     /tms/order/orderDelFlag
@@ -746,87 +1015,51 @@ class OrderController extends CommonController{
     确认完成 /tms/order/orderDone
      **/
     public function orderDone(Request $request){
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='tms_order';
+
+        $operationing->access_cause     ='调度订单';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='update';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='update';
         $user_info = $request->get('user_info');//接收中间件产生的参数
-        $input         = $request->all();
-        $now_time    = date('Y-m-d H:i:s',time());
-        $self_id     = $request->input('self_id');
-        $rules = [
-            'self_id'=>'required',
-        ];
-        $message = [
-            'self_id.required'=>'请选择订单',
-        ];
-        /**虚拟数据
-        $input['self_id']       = $self_id       = 'order_202102251709515094516145';
-         **/
+        $input                          =$request->all();
 
-        $validator = Validator::make($input,$rules,$message);
+//        /** 接收数据*/
+        $order_id                  = $request->input('order_id');//订单ID
+        $upload_weight               = $request->input('upload_weight');//实际卸货量
+
+
+        $rules=[
+            'order_id'=>'required',
+        ];
+        $message=[
+            'order_id.required'=>'请选择要调度的订单',
+        ];
+
+        $validator=Validator::make($input,$rules,$message);
         if($validator->passes()) {
-            $where = [
-                ['self_id','=',$self_id],
-                ['order_status','!=',7]
-            ];
-            $select = ['self_id','order_status','total_money'];
-            $order = TmsOrder::where($where)->select($select)->first();
-            if ($order->order_status != 5){
-                $msg['code'] = 301;
-                $msg['msg'] = '请等待司机确认！';
-                return $msg;
-            }
-            if ($order->order_status == 6){
-                $msg['code'] = 301;
-                $msg['msg'] = '订单已完成';
-                return $msg;
-            }
-            $update['update_time'] = $now_time;
-            $update['order_status'] = 6;
-            $id = TmsOrder::where($where)->update($update);
+            $old_info = TmsOrder::where('self_id',$order_id)->select('self_id','odd_number','order_status','gather_shi_name','send_shi_name','upload_weight','real_weight','car_number')->first();
 
-            /** 查找所有的运输单 修改运输状态**/
-            $TmsOrderDispatch = TmsOrderDispatch::where('order_id',$self_id)->select('self_id')->get();
-            if ($TmsOrderDispatch){
-                $dispatch_list = array_column($TmsOrderDispatch->toArray(),'self_id');
-                $orderStatus = TmsOrderDispatch::where('delete_flag','=','Y')->whereIn('self_id',$dispatch_list)->update($update);
+            $data['order_status']               = 6;
+            $data['different_weight']           = $old_info->real_weight - $upload_weight;
+            $data['create_time']                = $data['update_time'] = $now_time;
+            TmsOrder::where('self_id',$order_id)->update($data);
+            $order_log['self_id'] = generate_id('log_');
+            $order_log['info'] = '签收:'.'预约单号'.$old_info->odd_number.','.'车牌号：'.$old_info->car_number;
+            $order_log['create_time'] = $order_log['update_time'] = $now_time;
+            $order_log['order_id']    = $data['self_id'];
+            $order_log['state']       = 7;
+            $id=TmsOrder::insert($data);
+            OrderLog::insert($order_log);
 
-                /*** 订单完成后，如果订单是在线支付，添加运费到承接司机或3pl公司余额 **/
-                if ($orderStatus){
-//                    if ($order->pay_type == 'online'){
-//                        dd($dispatch_list);
-                    foreach ($dispatch_list as $key => $value){
-
-                        $carriage_order = TmsOrderDispatch::where('self_id','=',$value)->first();
-                        $idit = substr($carriage_order->receiver_id,0,5);
-                        if ($idit == 'user_'){
-                            $wallet_where = [
-                                ['total_user_id','=',$carriage_order->receiver_id]
-                            ];
-                            $data['wallet_type'] = 'user';
-                            $data['total_user_id'] = $carriage_order->receiver_id;
-                        }else{
-                            $wallet_where = [
-                                ['group_code','=',$carriage_order->receiver_id]
-                            ];
-                            $data['wallet_type'] = '3PLTMS';
-                            $data['group_code'] = $carriage_order->receiver_id;
-                        }
-                        $wallet = UserCapital::where($wallet_where)->select(['self_id','money','wait_money'])->first();
-
-                        $money['money'] = $wallet->money + $carriage_order->on_line_money;
-                        $money['wait_money'] = $wallet->wait_money - $carriage_order->on_line_money;
-                        $data['money'] = $carriage_order->on_line_money;
-                        if ($carriage_order->group_code == $carriage_order->receiver_id){
-                            $money['money'] = $wallet->money + $carriage_order->total_money;
-                            $money['wait_money'] = $wallet->wait_money - $carriage_order->total_money;
-                            $data['money'] = $carriage_order->total_money;
-                        }
-
-                        $money['update_time'] = $now_time;
-                        UserCapital::where($wallet_where)->update($money);
-                    }
-
-                }
-            }
-
+            $operationing->access_cause='签收,预约单号：'.$old_info->odd_number;
+            $operationing->operation_type='update';
+            $operationing->table_id=$old_info?$order_id:$data['self_id'];
+            $operationing->old_info=$old_info;
+            $operationing->new_info=$data;
             if($id){
                 $msg['code'] = 200;
                 $msg['msg'] = "操作成功";
@@ -838,11 +1071,11 @@ class OrderController extends CommonController{
             }
         }else{
             //前端用户验证没有通过
-            $erro = $validator->errors()->all();
-            $msg['code'] = 300;
-            $msg['msg']  = null;
-            foreach ($erro as $k => $v) {
-                $kk = $k+1;
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
                 $msg['msg'].=$kk.'：'.$v.'</br>';
             }
             return $msg;
