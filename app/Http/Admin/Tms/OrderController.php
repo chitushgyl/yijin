@@ -437,13 +437,12 @@ class OrderController extends CommonController{
             $data['create_time']              = $data['update_time'] = $now_time;
             $old_info = TmsOrder::where('self_id',$order_id)->select('self_id','order_status','gather_shi_name','send_shi_name','odd_number')->first();
 
-            TmsOrder::where('self_id',$order_id)->update($data);
+            $id = TmsOrder::where('self_id',$order_id)->update($data);
             $order_log['self_id'] = generate_id('log_');
             $order_log['info'] = '调度运单:'.'预约单号'.$old_info->odd_number.','.'车牌号：'.$data['car_number'].',联系人：'.$data['car_conact'].',联系方式：'.$data['car_tel'];
             $order_log['create_time'] = $order_log['update_time'] = $now_time;
             $order_log['order_id']    = $order_id;
             $order_log['state']       = 2;
-            $id=TmsOrder::insert($data);
             OrderLog::insert($order_log);
 
             $operationing->access_cause='调度订单';
@@ -513,13 +512,13 @@ class OrderController extends CommonController{
             $data['create_time']              = $data['update_time'] = $now_time;
             $old_info = TmsOrder::where('self_id',$order_id)->select('self_id','odd_number','car_number','order_status','gather_shi_name','send_shi_name','real_weight')->first();
 
-            TmsOrder::where('self_id',$order_id)->update($data);
+            $id = TmsOrder::where('self_id',$order_id)->update($data);
             $order_log['self_id'] = generate_id('log_');
             $order_log['info'] = '装货:'.'预约单号'.$old_info->odd_number.','.'车牌号：'.$old_info->car_number;
             $order_log['create_time'] = $order_log['update_time'] = $now_time;
             $order_log['order_id']    = $order_id;
             $order_log['state']       = 3;
-            $id=TmsOrder::insert($data);
+
             OrderLog::insert($order_log);
 
             $operationing->access_cause='装货,预约单号：'.$old_info->odd_number;
@@ -587,13 +586,12 @@ class OrderController extends CommonController{
             $data['order_status']               = 5;
             $data['different_weight']           = $old_info->real_weight - $upload_weight;
             $data['create_time']                = $data['update_time'] = $now_time;
-            TmsOrder::where('self_id',$order_id)->update($data);
+            $id = TmsOrder::where('self_id',$order_id)->update($data);
             $order_log['self_id'] = generate_id('log_');
             $order_log['info'] = '卸货:'.'预约单号'.$old_info->odd_number.','.'车牌号：'.$old_info->car_number;
             $order_log['create_time'] = $order_log['update_time'] = $now_time;
             $order_log['order_id']    = $order_id;
             $order_log['state']       = 6;
-            $id=TmsOrder::insert($data);
             OrderLog::insert($order_log);
 
             $operationing->access_cause='卸货,预约单号：'.$old_info->odd_number;
@@ -883,9 +881,12 @@ class OrderController extends CommonController{
         $self_id=$request->input('self_id');
 //        $self_id = 'order_202106231710070766328312';
 
-        $select = ['self_id','group_code','group_name','company_name','create_user_name','create_time','use_flag','order_type','order_status','gather_address_id','gather_contacts_id','gather_name','gather_tel','gather_sheng','gather_shi','gather_qu','gather_time','send_time',
-            'gather_address','send_address_id','send_contacts_id','send_name','send_tel','send_sheng','send_shi','send_qu','send_address','remark','total_money','price','pick_money','send_money','good_name','good_number','good_weight','good_volume','pick_flag','send_flag','info'
-            ,'good_info','clod','line_info','pay_type','pay_state'];
+        $select = ['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code',
+            'order_status','send_time','send_name','send_tel','send_sheng','send_shi','send_qu','send_sheng_name','send_shi_name','send_qu_name','send_address',
+            'send_address_longitude','send_address_latitude','gather_time','gather_name','gather_tel','gather_sheng','gather_shi','gather_qu','gather_sheng_name',
+            'gather_shi_name','gather_qu_name','gather_address','gather_address_longitude','gather_address_latitude','total_money','good_name','more_money','price',
+            'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number'
+        ];
 
         $where = [
             ['delete_flag','=','Y'],
@@ -1045,13 +1046,13 @@ class OrderController extends CommonController{
 
             $data['order_status']               = 6;
             $data['create_time']                = $data['update_time'] = $now_time;
-            TmsOrder::where('self_id',$order_id)->update($data);
+            $id = TmsOrder::where('self_id',$order_id)->update($data);
             $order_log['self_id'] = generate_id('log_');
             $order_log['info'] = '签收:'.'预约单号'.$old_info->odd_number.','.'车牌号：'.$old_info->car_number;
             $order_log['create_time'] = $order_log['update_time'] = $now_time;
             $order_log['order_id']    = $order_id;
             $order_log['state']       = 7;
-            $id=TmsOrder::insert($data);
+
             OrderLog::insert($order_log);
 
             $operationing->access_cause='签收,预约单号：'.$old_info->odd_number;
