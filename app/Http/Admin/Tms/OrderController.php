@@ -440,14 +440,14 @@ class OrderController extends CommonController{
             $order_log['self_id'] = generate_id('log_');
             $order_log['info'] = '调度运单:'.'预约单号'.$old_info->odd_number.','.'车牌号：'.$data['car_number'].',联系人：'.$data['car_conact'].',联系方式：'.$data['car_tel'];
             $order_log['create_time'] = $order_log['update_time'] = $now_time;
-            $order_log['order_id']    = $data['order_id'];
+            $order_log['order_id']    = $order_id;
             $order_log['state']       = 2;
             $id=TmsOrder::insert($data);
             OrderLog::insert($order_log);
 
             $operationing->access_cause='调度订单';
             $operationing->operation_type='update';
-            $operationing->table_id=$old_info?$order_id:$data['order_id'];
+            $operationing->table_id=$old_info?$order_id:$order_id;
             $operationing->old_info=$old_info;
             $operationing->new_info=$data;
             if($id){
