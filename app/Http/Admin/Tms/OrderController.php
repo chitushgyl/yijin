@@ -516,7 +516,7 @@ class OrderController extends CommonController{
             $order_log['self_id'] = generate_id('log_');
             $order_log['info'] = '装货:'.'预约单号'.$old_info->odd_number.','.'车牌号：'.$old_info->car_number;
             $order_log['create_time'] = $order_log['update_time'] = $now_time;
-            $order_log['order_id']    = $data['self_id'];
+            $order_log['order_id']    = $order_id;
             $order_log['state']       = 3;
             $id=TmsOrder::insert($data);
             OrderLog::insert($order_log);
@@ -590,7 +590,7 @@ class OrderController extends CommonController{
             $order_log['self_id'] = generate_id('log_');
             $order_log['info'] = '卸货:'.'预约单号'.$old_info->odd_number.','.'车牌号：'.$old_info->car_number;
             $order_log['create_time'] = $order_log['update_time'] = $now_time;
-            $order_log['order_id']    = $data['self_id'];
+            $order_log['order_id']    = $order_id;
             $order_log['state']       = 6;
             $id=TmsOrder::insert($data);
             OrderLog::insert($order_log);
