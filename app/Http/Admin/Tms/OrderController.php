@@ -447,7 +447,7 @@ class OrderController extends CommonController{
 
             $operationing->access_cause='调度订单';
             $operationing->operation_type='update';
-            $operationing->table_id=$old_info?$order_id:$data['self_id'];
+            $operationing->table_id=$old_info?$order_id:$data['order_id'];
             $operationing->old_info=$old_info;
             $operationing->new_info=$data;
             if($id){
