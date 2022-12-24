@@ -130,6 +130,7 @@ Route::group([
 	Route::any('/order/pickOrder','OrderController@pickOrder');
 	Route::any('/order/upOrder','OrderController@upOrder');
 	Route::any('/order/uploadReceipt','OrderController@uploadReceipt');
+	Route::any('/order/dispatchOrder','OrderController@dispatchOrder');
 
     Route::group([
         "middleware"=>['daily'],
