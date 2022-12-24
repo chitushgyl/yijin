@@ -434,11 +434,11 @@ class OrderController extends CommonController{
             $data['car_tel']                  = $car_tel;
             $data['order_status']             = 2;
             $data['create_time']              = $data['update_time'] = $now_time;
-            $old_info = TmsOrder::where('self_id',$order_id)->select('self_id','order_status','gather_shi_name','send_shi_name')->first();
+            $old_info = TmsOrder::where('self_id',$order_id)->select('self_id','order_status','gather_shi_name','send_shi_name','odd_number')->first();
 
             TmsOrder::where('self_id',$order_id)->update($data);
             $order_log['self_id'] = generate_id('log_');
-            $order_log['info'] = '调度运单:'.'预约单号'.$data['odd_number'].','.'车牌号：'.$data['car_number'].',联系人：'.$data['car_conact'].',联系方式：'.$data['car_tel'];
+            $order_log['info'] = '调度运单:'.'预约单号'.$old_info->odd_number.','.'车牌号：'.$data['car_number'].',联系人：'.$data['car_conact'].',联系方式：'.$data['car_tel'];
             $order_log['create_time'] = $order_log['update_time'] = $now_time;
             $order_log['order_id']    = $data['self_id'];
             $order_log['state']       = 2;
