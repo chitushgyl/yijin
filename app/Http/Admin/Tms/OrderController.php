@@ -1029,7 +1029,6 @@ class OrderController extends CommonController{
 
 //        /** 接收数据*/
         $order_id                  = $request->input('order_id');//订单ID
-        $upload_weight               = $request->input('upload_weight');//实际卸货量
 
 
         $rules=[
@@ -1044,20 +1043,19 @@ class OrderController extends CommonController{
             $old_info = TmsOrder::where('self_id',$order_id)->select('self_id','odd_number','order_status','gather_shi_name','send_shi_name','upload_weight','real_weight','car_number')->first();
 
             $data['order_status']               = 6;
-            $data['different_weight']           = $old_info->real_weight - $upload_weight;
             $data['create_time']                = $data['update_time'] = $now_time;
             TmsOrder::where('self_id',$order_id)->update($data);
             $order_log['self_id'] = generate_id('log_');
             $order_log['info'] = '签收:'.'预约单号'.$old_info->odd_number.','.'车牌号：'.$old_info->car_number;
             $order_log['create_time'] = $order_log['update_time'] = $now_time;
-            $order_log['order_id']    = $data['self_id'];
+            $order_log['order_id']    = $order_id;
             $order_log['state']       = 7;
             $id=TmsOrder::insert($data);
             OrderLog::insert($order_log);
 
             $operationing->access_cause='签收,预约单号：'.$old_info->odd_number;
             $operationing->operation_type='update';
-            $operationing->table_id=$old_info?$order_id:$data['self_id'];
+            $operationing->table_id=$old_info?$order_id:$order_id;
             $operationing->old_info=$old_info;
             $operationing->new_info=$data;
             if($id){
