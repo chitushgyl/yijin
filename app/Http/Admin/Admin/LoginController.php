@@ -27,7 +27,7 @@ class LoginController extends Controller{
 
         $group_info->company_image_url=img_for($group_info->company_image_url,'more');
         $msg['code']=200;
-        $msg['msg']="数据拉取成功";
+        $msg['msg']="登录成功";
         $msg['data']=$group_info;
 
         return $msg;
@@ -61,7 +61,7 @@ class LoginController extends Controller{
             'pwd.required'=>'密码输入为空',
         ];
 
-        
+
         $validator=Validator::make($input,$rules,$message);
        //dump($input);
         if($validator->passes()){
