@@ -80,6 +80,7 @@ class OrderController extends CommonController{
      */
     public function orderPage(Request $request){
         /** 接收中间件参数**/
+        $order_type    =array_column(config('tms.order_type'),'name','key');
         $group_info     = $request->get('group_info');//接收中间件产生的参数
         $user_info     = $request->get('user_info');//接收中间件产生的参数
         $button_info    = $request->get('anniu');//接收中间件产生的参数
@@ -168,7 +169,7 @@ class OrderController extends CommonController{
 
         }
         foreach ($data['items'] as $k=>$v) {
-
+            $v->order_type_show=$order_type[$v->order_status]??null;
         }
 
 //        dd($data['items']);
