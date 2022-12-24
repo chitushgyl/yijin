@@ -6,6 +6,7 @@ use App\Models\Tms\TmsCarType;
 use App\Models\Tms\TmsLittleOrder;
 use App\Models\Tms\TmsOrderCost;
 use App\Models\Tms\TmsOrderMoney;
+use App\Models\Tms\TmsReceipt;
 use App\Models\User\UserCapital;
 use App\Models\User\UserWallet;
 use Illuminate\Http\Request;
@@ -622,10 +623,91 @@ class OrderController extends CommonController{
     }
 
     /**
-     * 上传回单
+     * 上传回单  /tms/order/uploadReceipt
      * */
     public function uploadReceipt(Request $request){
+        $user_info = $request->get('user_info');//接收中间件产生的参数
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='tms_receipt';
 
+        $operationing->access_cause     ='上传回单';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='add';
+
+        $input              =$request->all();
+        //dd($input);
+        /** 接收数据*/
+        $order_id            =$request->input('order_id');
+        $receipt             =$request->input('receipt');
+
+
+        /*** 虚拟数据
+        $input['order_id']           =$order_id='dispatch_202103191711247168432433';
+        $input['receipt']              =$receipt=[['url'=>'https://bloodcity.oss-cn-beijing.aliyuncs.com/images/2021-03-20/829b89fa038d26bc6af59a76f16794c5.jpg','width'=>'','height'=>'']];
+         **/
+        $rules=[
+            'order_id'=>'required',
+            'receipt'=>'required',
+        ];
+        $message=[
+            'order_id.required'=>'请选择运输单',
+            'receipt.required'=>'请选择要上传的回单',
+        ];
+
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()) {
+            $where=[
+                ['delete_flag','=','Y'],
+                ['self_id','=',$order_id],
+            ];
+            $select=['self_id','create_time','create_time','group_name','dispatch_flag','gather_sheng_name','gather_shi_name','gather_qu_name',
+                'gather_address','order_status','send_sheng_name','send_shi_name','send_qu_name','send_address','total_money',
+              ];
+            $wait_info=TmsOrder::where($where)->select($select)->first();
+            if(!in_array($wait_info->order_status,[5,6])){
+                $msg['code']=301;
+                $msg['msg']='请确认订单已送达';
+                return $msg;
+            }
+            $data['self_id'] = generate_id('receipt_');
+            $data['receipt'] = img_for($receipt,'in');
+            $data['order_id'] = $order_id;
+            $data['create_time'] = $data['update_time'] = $now_time;
+            $data['group_code']  = $user_info->group_code;
+            $data['group_name']  = $user_info->group_name;
+
+            $id=TmsReceipt::insert($data);
+
+            $order_update['receipt_flag'] = 'Y';
+            $order_update['update_time']  = $now_time;
+            TmsOrder::where($where)->update($order_update);
+            $operationing->old_info = (object)$wait_info;
+            $operationing->table_id = $order_id;
+            $operationing->new_info=$data;
+
+            if($id){
+                $msg['code'] = 200;
+                $msg['msg'] = "上传成功";
+                return $msg;
+            }else{
+                $msg['code'] = 302;
+                $msg['msg'] = "上传失败";
+                return $msg;
+            }
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
     }
 
     /**
