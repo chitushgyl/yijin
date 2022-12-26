@@ -978,9 +978,11 @@ class OrderController extends CommonController{
         $info = TmsOrder::where($where)->select($select)->first();
 
         if($info){
+            $order_type    =array_column(config('tms.order_type'),'name','key');
             /** 如果需要对数据进行处理，请自行在下面对 $info 进行处理工作*/
             $info->total_money = number_format($info->total_money/100, 2);
             $info->price       = number_format($info->price/100, 2);
+            $info->order_type_show = $order_type[$info->order_status]??null;
 
 
             $log_flag='Y';
