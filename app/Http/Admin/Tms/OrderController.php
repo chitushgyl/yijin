@@ -983,13 +983,16 @@ class OrderController extends CommonController{
             'gather_shi_name','gather_qu_name','gather_address','gather_address_longitude','gather_address_latitude','total_money','good_name','more_money','price',
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number'
         ];
-
+        $select1 = ['self_id','receipt','order_id','total_user_id','group_code','group_name'];
         $where = [
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
 
-        $info = TmsOrder::where($where)->select($select)->first();
+        $info = TmsOrder::with(['tmsReceipt'=>function($query)use($select1){
+            $query->where('delete_flag','=','Y');
+            $query->select($select1);
+        }])->where($where)->select($select)->first();
 
         if($info){
             $order_type    =array_column(config('tms.order_type'),'name','key');
@@ -997,7 +1000,10 @@ class OrderController extends CommonController{
             $info->total_money = $info->total_money;
             $info->price       = $info->price;
             $info->order_type_show = $order_type[$info->order_status]??null;
-
+            if ($info->tmsReceipt){
+                $receipt_info = img_for($info->tmsReceipt->receipt,'more');
+                $info->receipt = $receipt_info;
+            }
 
             $log_flag='Y';
             $data['log_flag']=$log_flag;
