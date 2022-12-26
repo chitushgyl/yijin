@@ -66,10 +66,13 @@ class CarController extends CommonController{
 
         $select=['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
             'license','medallion','payment_state','insure_price','create_time','update_time','use_flag','delete_flag'];
+        $select1 = ['self_id','parame_name'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsCar::where($where)->count(); //总的数据量
-                $data['items']=TmsCar::where($where)
+                $data['items']=TmsCar::with(['TmsCarType' => function($query) use($select1){
+                    $query->select($select1);
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -78,7 +81,9 @@ class CarController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=TmsCar::where($where)->count(); //总的数据量
-                $data['items']=TmsCar::where($where)
+                $data['items']=TmsCar::with(['TmsCarType' => function($query) use($select1){
+                    $query->select($select1);
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
@@ -86,7 +91,9 @@ class CarController extends CommonController{
 
             case 'more':
                 $data['total']=TmsCar::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=TmsCar::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['items']=TmsCar::with(['TmsCarType' => function($query) use($select1){
+                    $query->select($select1);
+                }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
