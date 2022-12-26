@@ -356,6 +356,8 @@ class OrderController extends CommonController{
                 $order_log['info'] = '创建运单:'.'预约单号'.$data['odd_number'].','.'运单号：'.$data['order_number'];
                 $order_log['create_time'] = $order_log['update_time'] = $now_time;
                 $order_log['order_id']    = $data['self_id'];
+                $order_log['group_code']    = $group_info->group_code;
+                $order_log['group_name']    = $group_info->group_name;
                 $order_log['create_user_id']       = $user_info->admin_id;
                 $order_log['create_user_name']     = $user_info->admin_name;
                 $id=TmsOrder::insert($data);
@@ -446,6 +448,8 @@ class OrderController extends CommonController{
             $order_log['create_time'] = $order_log['update_time'] = $now_time;
             $order_log['order_id']    = $order_id;
             $order_log['state']       = 2;
+            $order_log['group_code']    = $user_info->group_code;
+            $order_log['group_name']    = $user_info->group_name;
             $order_log['create_user_id']       = $user_info->admin_id;
             $order_log['create_user_name']     = $user_info->admin_name;
             OrderLog::insert($order_log);
@@ -523,6 +527,8 @@ class OrderController extends CommonController{
             $order_log['create_time'] = $order_log['update_time'] = $now_time;
             $order_log['order_id']    = $order_id;
             $order_log['state']       = 3;
+            $order_log['group_code']    = $user_info->group_code;
+            $order_log['group_name']    = $user_info->group_name;
             $order_log['create_user_id']       = $user_info->admin_id;
             $order_log['create_user_name']     = $user_info->admin_name;
             OrderLog::insert($order_log);
@@ -598,6 +604,8 @@ class OrderController extends CommonController{
             $order_log['create_time'] = $order_log['update_time'] = $now_time;
             $order_log['order_id']    = $order_id;
             $order_log['state']       = 6;
+            $order_log['group_code']    = $user_info->group_code;
+            $order_log['group_name']    = $user_info->group_name;
             $order_log['create_user_id']       = $user_info->admin_id;
             $order_log['create_user_name']     = $user_info->admin_name;
             OrderLog::insert($order_log);
@@ -1144,6 +1152,8 @@ class OrderController extends CommonController{
             $order_log['create_time'] = $order_log['update_time'] = $now_time;
             $order_log['order_id']    = $order_id;
             $order_log['state']       = 7;
+            $order_log['group_code']    = $user_info->group_code;
+            $order_log['group_name']    = $user_info->group_name;
             $order_log['create_user_id']       = $user_info->admin_id;
             $order_log['create_user_name']          = $user_info->admin_name;
             OrderLog::insert($order_log);
