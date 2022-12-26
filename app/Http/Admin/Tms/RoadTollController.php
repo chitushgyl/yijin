@@ -213,6 +213,11 @@ class RoadTollController extends CommonController{
                 $data['create_user_id']     =$user_info->admin_id;
                 $data['create_user_name']   =$user_info->name;
                 $data['create_time']        =$data['update_time']=$now_time;
+                $money['self_id']            = generate_id('money');
+                $money['group_code']         = $group_code;
+                $money['group_name']         = $group_name;
+                $money['create_user_id']     = $user_info->admin_id;
+                $money['create_user_name']   = $user_info->name;
                 $money['create_time']       =$money['update_time']=$now_time;
 
                 $id=RoadToll::insert($data);

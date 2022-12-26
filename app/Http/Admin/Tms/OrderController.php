@@ -678,9 +678,8 @@ class OrderController extends CommonController{
                 ['delete_flag','=','Y'],
                 ['self_id','=',$order_id],
             ];
-            $select=['self_id','create_time','create_time','group_name','dispatch_flag','gather_sheng_name','gather_shi_name','gather_qu_name',
-                'gather_address','order_status','send_sheng_name','send_shi_name','send_qu_name','send_address','total_money',
-              ];
+            $select=['self_id','create_time','create_time','group_name','gather_sheng_name','gather_shi_name','gather_qu_name',
+                'gather_address','order_status','send_sheng_name','send_shi_name','send_qu_name','send_address','total_money'];
             $wait_info=TmsOrder::where($where)->select($select)->first();
             if(!in_array($wait_info->order_status,[5,6])){
                 $msg['code']=301;
