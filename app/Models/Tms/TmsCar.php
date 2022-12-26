@@ -54,7 +54,7 @@ class TmsCar extends Model{
     public function tmsCarType(){
         //参数：关联模型名称，外键，主键
         //如果主键是id可以省略
-        return $this->hasOne('App\Models\Tms\TmsCarType','self_id','car_type_id');
+        return $this->hasOne('App\Models\Tms\TmsCarType','self_id','car_type');
     }
 
 
