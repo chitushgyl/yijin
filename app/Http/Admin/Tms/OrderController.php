@@ -988,6 +988,7 @@ class OrderController extends CommonController{
             $log_num='10';
             $data['log_num']=$log_num;
             $data['log_data']=null;
+            $data['info']=$info;
 
             if($log_flag =='Y'){
                 $data['log_data']=$details->change($self_id,$log_num);
