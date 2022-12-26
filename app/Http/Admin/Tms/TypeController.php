@@ -164,8 +164,8 @@ class TypeController extends CommonController{
                 $data['create_user_id']     =$user_info->admin_id;
                 $data['create_user_name']   =$user_info->name;
                 $data['create_time']        =$data['update_time']=$now_time;
-                $data['group_code']         = '1234';
-                $data['group_name']         = '平台方';
+                $data['group_code']         = $user_info->group_code;
+                $data['group_name']         = $user_info->group_name;
                 $id=TmsCarType::insert($data);
                 $operationing->access_cause='新建车辆类型';
                 $operationing->operation_type='create';
