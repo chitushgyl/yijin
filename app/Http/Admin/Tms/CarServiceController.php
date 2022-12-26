@@ -237,6 +237,12 @@ class CarServiceController extends CommonController{
 
                 $id=CarService::insert($data);
                 if($service_price){
+                    $money['self_id']            = generate_id('money');
+                    $money['group_code']         = $group_code;
+                    $money['group_name']         = $group_name;
+                    $money['create_user_id']     = $user_info->admin_id;
+                    $money['create_user_name']   = $user_info->name;
+                    $money['create_time']        =$money['update_time']=$now_time;
                     TmsMoney::insert($money);
                 }
                 $operationing->access_cause='新建车辆维修';
