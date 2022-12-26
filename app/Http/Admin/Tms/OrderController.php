@@ -357,7 +357,7 @@ class OrderController extends CommonController{
                 $order_log['create_time'] = $order_log['update_time'] = $now_time;
                 $order_log['order_id']    = $data['self_id'];
                 $order_log['create_user_id']       = $user_info->admin_id;
-                $order_log['create_name']          = $user_info->admin_name;
+                $order_log['create_user_name']     = $user_info->admin_name;
                 $id=TmsOrder::insert($data);
                 OrderLog::insert($order_log);
 
@@ -447,7 +447,7 @@ class OrderController extends CommonController{
             $order_log['order_id']    = $order_id;
             $order_log['state']       = 2;
             $order_log['create_user_id']       = $user_info->admin_id;
-            $order_log['create_name']          = $user_info->admin_name;
+            $order_log['create_user_name']     = $user_info->admin_name;
             OrderLog::insert($order_log);
 
             $operationing->access_cause='调度订单';
@@ -524,7 +524,7 @@ class OrderController extends CommonController{
             $order_log['order_id']    = $order_id;
             $order_log['state']       = 3;
             $order_log['create_user_id']       = $user_info->admin_id;
-            $order_log['create_name']          = $user_info->admin_name;
+            $order_log['create_user_name']     = $user_info->admin_name;
             OrderLog::insert($order_log);
 
             $operationing->access_cause='装货,预约单号：'.$old_info->odd_number;
@@ -599,7 +599,7 @@ class OrderController extends CommonController{
             $order_log['order_id']    = $order_id;
             $order_log['state']       = 6;
             $order_log['create_user_id']       = $user_info->admin_id;
-            $order_log['create_name']          = $user_info->admin_name;
+            $order_log['create_user_name']     = $user_info->admin_name;
             OrderLog::insert($order_log);
 
             $operationing->access_cause='卸货,预约单号：'.$old_info->odd_number;
@@ -1145,7 +1145,7 @@ class OrderController extends CommonController{
             $order_log['order_id']    = $order_id;
             $order_log['state']       = 7;
             $order_log['create_user_id']       = $user_info->admin_id;
-            $order_log['create_name']          = $user_info->admin_name;
+            $order_log['create_user_name']          = $user_info->admin_name;
             OrderLog::insert($order_log);
 
             $operationing->access_cause='签收,预约单号：'.$old_info->odd_number;
