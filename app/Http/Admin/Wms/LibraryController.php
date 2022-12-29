@@ -788,7 +788,7 @@ class LibraryController extends CommonController{
             $data['accepted']           =$accepted;
 
             $id=WmsLibraryOrder::insert($data);
-            TmsMoney::insert($moneyList);
+//            TmsMoney::insert($moneyList);
             $operationing->table_id=$data['self_id'];
             $operationing->old_info=null;
             $operationing->new_info=$data;
