@@ -62,8 +62,8 @@ class UserController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
-        ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name'];
+        $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','safe_reward',
+        'group_insurance','use_flag','delete_flag','create_time','update_time','group_code','group_name'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=SystemUser::where($where)->count(); //总的数据量
@@ -577,7 +577,7 @@ class UserController extends CommonController{
      */
     public function  details(Request $request,Details $details){
         $self_id=$request->input('self_id');
-        $table_name='tms_address_contact';
+        $table_name='system_user';
         $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
             ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name'];
         // $self_id='address_202012301359512962811465';
