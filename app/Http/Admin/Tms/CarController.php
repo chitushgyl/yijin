@@ -102,7 +102,8 @@ class CarController extends CommonController{
 
         foreach ($data['items'] as $k=>$v) {
             $v->button_info=$button_info;
-
+            $v->medallion     =img_for($v->medallion,'no_json');
+            $v->license       =img_for($v->license,'no_json');
         }
 
         $msg['code']=200;
@@ -605,7 +606,8 @@ class CarController extends CommonController{
         if($info){
 
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
-
+            $info->medallion     =img_for($info->medallion,'no_json');
+            $info->license       =img_for($info->license,'no_json');
             $data['info']=$info;
             $log_flag='Y';
             $data['log_flag']=$log_flag;

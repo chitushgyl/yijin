@@ -595,6 +595,11 @@ class UserController extends CommonController{
 
         if($info){
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
+            $info->driver_license     =img_for($info->driver_license,'no_json');
+            $info->nvq                =img_for($info->nvq,'no_json');
+            $info->contract           =img_for($info->contract,'no_json');
+            $info->identity_front     =img_for($info->identity_front,'no_json');
+            $info->identity_back      =img_for($info->identity_back,'no_json');
             $data['info']=$info;
             $log_flag='Y';
             $data['log_flag']=$log_flag;
