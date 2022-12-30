@@ -59,15 +59,17 @@ class UserController extends CommonController{
             ['type'=>'=','name'=>'self_id','value'=>$self_id],
         ];
 
-
         $where=get_list_where($search);
 
         $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','safe_reward',
         'group_insurance','use_flag','delete_flag','create_time','update_time','group_code','group_name'];
+        $select1 = ['self_id','section_name'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=SystemUser::where($where)->count(); //总的数据量
-                $data['items']=SystemUser::where($where)
+                $data['items']=SystemUser::with(['SystemSection' => function($query) use($select1){
+                    $query->select($select1);
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -76,7 +78,9 @@ class UserController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=SystemUser::where($where)->count(); //总的数据量
-                $data['items']=SystemUser::where($where)
+                $data['items']=SystemUser::with(['SystemSection' => function($query) use($select1){
+                    $query->select($select1);
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
@@ -84,7 +88,9 @@ class UserController extends CommonController{
 
             case 'more':
                 $data['total']=SystemUser::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=SystemUser::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['items']=SystemUser::with(['SystemSection' => function($query) use($select1){
+                    $query->select($select1);
+                }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';

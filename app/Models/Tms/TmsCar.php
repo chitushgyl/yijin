@@ -57,5 +57,43 @@ class TmsCar extends Model{
         return $this->hasOne('App\Models\Tms\TmsCarType','self_id','car_type');
     }
 
+    public function tmsCarOil(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Tms\CarOil','car_number','car_number');
+    }
+
+    public function tmsCarService(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Tms\CarService','car_number','car_number');
+    }
+
+    public function tmsCarRoad(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Tms\RoadToll','car_number','car_number');
+    }
+
+    public function tmsCarDanger(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Tms\CarDanger','car_number','car_number');
+    }
+
+    public function tmsCarCount(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Tms\CarCount','car_number','car_number');
+    }
+
+    public function tmsOrder(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Tms\TmsOrder','car_number','car_number');
+    }
+
+
+
 
 }

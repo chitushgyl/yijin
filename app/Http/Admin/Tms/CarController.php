@@ -1061,8 +1061,68 @@ class CarController extends CommonController{
     }
 
     /**
-     *
+     * 查询车辆详情
      * */
+    public function getCarView(Request $request){
+        $group_code=$request->input('group_code');
+        $car_number=$request->input('car_number');
+
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'like','name'=>'car_number','value'=>$car_number],
+        ];
+
+        $where=get_list_where($search);
+        $select = ['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
+            'license','medallion','payment_state','insure_price'];
+        $select1 = ['self_id','car_number','car_id','add_time','ic_number','number','price','total_money','remark','create_time','update_time','delete_flag','group_code',
+            'create_user_id','create_user_name'];
+        $select2 = ['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator',
+            'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view'];
+        $select3 = ['self_id','car_number','car_id','road_time','etc_number','road_price','address','create_time','update_time','delete_flag','group_code',
+            'create_user_id','create_user_name'];
+        $select4 = ['self_id','car_id','car_number','month','month_kilo','month_fat','create_time','update_time','use_flag','delete_flag','group_code'];
+        $select5=['self_id','car_id','car_number','arise_time','price','create_time','update_time','use_flag','delete_flag','group_code'];
+        $select6=[''];
+        $select7=[''];
+
+        $data['info']=TmsCar::with(['TmsCarType' => function($query) use($select7){
+            $query->select($select7);
+        }])
+            ->with(['TmsCarType' => function($query) use($select7){
+                $query->select($select7);
+            }])
+            ->with(['TmsCarType' => function($query) use($select7){
+                $query->select($select7);
+            }])
+            ->with(['TmsCarType' => function($query) use($select7){
+                $query->select($select7);
+            }])
+            ->with(['TmsCarType' => function($query) use($select7){
+                $query->select($select7);
+            }])
+            ->with(['TmsCarType' => function($query) use($select7){
+                $query->select($select7);
+            }])
+            ->with(['TmsCarType' => function($query) use($select7){
+                $query->select($select7);
+            }])
+            ->with(['TmsCarType' => function($query) use($select7){
+                $query->select($select7);
+            }])
+            ->with(['TmsCarType' => function($query) use($select7){
+                $query->select($select7);
+            }])
+
+        ->where($where)->select($select)->get();
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
 
 
 

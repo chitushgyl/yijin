@@ -51,7 +51,11 @@ class SystemUser extends Model{
         //写进去的字段不被注入
     ];
 
-
+    public function SystemSection(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasOne('App\Models\Group\SystemSection','self_id','department');
+    }
 
 
 
