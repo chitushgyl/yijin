@@ -166,7 +166,7 @@ class GoodController extends CommonController{
         $wms_unit           =$request->input('wms_unit');//单位
         $wms_spec           =$request->input('wms_spec');//规格
         $sale_price         =$request->input('sale_price');//单价
-        $type               =$request->input('type');//产品类型 //办公  车用
+        $type               =$request->input('good_type');//产品类型 //办公  车用
 
 
         $rules=[

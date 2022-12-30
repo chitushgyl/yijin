@@ -100,7 +100,11 @@ class UserController extends CommonController{
 
         foreach ($data['items'] as $k=>$v) {
             $v->button_info=$button_info;
-
+            $v->driver_license     =img_for($v->driver_license,'no_json');
+            $v->nvq                =img_for($v->nvq,'no_json');
+            $v->contract           =img_for($v->contract,'no_json');
+            $v->identity_front     =img_for($v->identity_front,'no_json');
+            $v->identity_back      =img_for($v->identity_back,'no_json');
         }
 
         $msg['code']=200;

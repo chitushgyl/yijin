@@ -65,10 +65,13 @@ class UserRewardController extends CommonController{
 
         $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name'];
+        $select1=['self_id','name'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=UserReward::where($where)->count(); //总的数据量
-                $data['items']=UserReward::where($where)
+                $data['items']=UserReward::with(['systemUser' => function($query) use($select1){
+                    $query->select($select1);
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -77,7 +80,9 @@ class UserRewardController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=UserReward::where($where)->count(); //总的数据量
-                $data['items']=UserReward::where($where)
+                $data['items']=UserReward::with(['systemUser' => function($query) use($select1){
+                    $query->select($select1);
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
@@ -85,7 +90,9 @@ class UserRewardController extends CommonController{
 
             case 'more':
                 $data['total']=UserReward::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=UserReward::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['items']=UserReward::with(['systemUser' => function($query) use($select1){
+                    $query->select($select1);
+                }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -569,7 +576,11 @@ class UserRewardController extends CommonController{
         $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name'];
         // $self_id='address_202012301359512962811465';
+        $select1 = ['self_id','name'];
         $info=$details->details($self_id,$table_name,$select);
+        $info = UserReward::with(['systemUser' => function($query) use($select1){
+            $query->select($select1);
+        }])->where('self_id',$self_id)->select($select)->first();
 
         if($info){
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
