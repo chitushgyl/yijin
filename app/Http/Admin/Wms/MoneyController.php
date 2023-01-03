@@ -50,8 +50,8 @@ class MoneyController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'pay_type','value'=>$type],
-            ['type'=>'=','name'=>'car_number','value'=>$car_number],
-            ['type'=>'=','name'=>'user_name','value'=>$user_name],
+            ['type'=>'like','name'=>'car_number','value'=>$car_number],
+            ['type'=>'like','name'=>'user_name','value'=>$user_name],
             ['type'=>'>=','name'=>'create_time','value'=>$start_time],
             ['type'=>'<','name'=>'create_time','value'=>$end_time],
         ];
