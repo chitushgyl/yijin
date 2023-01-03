@@ -321,6 +321,7 @@ class MoneyController extends CommonController{
         $user_id            =$request->input('user_id');//人员ID
         $user_name          =$request->input('user_name');//人员名称
         $process_state      =$request->input('process_state');//审核状态
+        $create_time        =$request->input('create_time');//审核状态
 
 
         $rules=[
@@ -346,6 +347,7 @@ class MoneyController extends CommonController{
             $data['user_name']          = $user_name;
             $data['process_state']      = $process_state;
 
+
             $wheres['self_id'] = $self_id;
             $old_info=TmsMoney::where($wheres)->first();
 
@@ -363,7 +365,12 @@ class MoneyController extends CommonController{
                 $data['group_name']         = $user_info->group_name;
                 $data['create_user_id']     = $user_info->admin_id;
                 $data['create_user_name']   = $user_info->name;
-                $data['create_time']=$data['update_time']=$now_time;
+                if ($create_time){
+                    $data['create_time']=$data['update_time']=$create_time;
+                }else{
+                    $data['create_time']=$data['update_time']=$now_time;
+                }
+
                 $id=TmsMoney::insert($data);
                 $operationing->access_cause='新建费用';
                 $operationing->operation_type='create';
