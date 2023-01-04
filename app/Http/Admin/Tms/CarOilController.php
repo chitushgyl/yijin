@@ -71,7 +71,7 @@ class CarOilController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','car_number','car_id','add_time','ic_number','number','price','total_money','remark','create_time','update_time','delete_flag','group_code',
-            'create_user_id','create_user_name'];
+            'create_user_id','create_user_name','use_flag'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=CarOil::where($where)->count(); //总的数据量
