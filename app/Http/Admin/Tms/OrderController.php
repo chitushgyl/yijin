@@ -467,6 +467,11 @@ class OrderController extends CommonController{
             $order_log['create_user_name']     = $user_info->admin_name;
             OrderLog::insert($order_log);
 
+            $money['car_id']     = $car_id;
+            $money['car_number'] = $car_number;
+            $money['update_time'] = $now_time;
+            TmsMoney::where('order_id',$order_id)->update($money);
+
             $operationing->access_cause='调度订单';
             $operationing->operation_type='update';
             $operationing->table_id=$old_info?$order_id:$order_id;
