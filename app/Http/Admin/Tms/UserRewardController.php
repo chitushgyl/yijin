@@ -49,7 +49,7 @@ class UserRewardController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-        $car_number     =$request->input('car_name');
+        $car_number     =$request->input('car_number');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
