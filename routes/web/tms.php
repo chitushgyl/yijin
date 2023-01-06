@@ -270,6 +270,15 @@ Route::group([
     Route::any('/roadToll/roadDelFlag','RoadTollController@roadDelFlag');
     Route::any('/roadToll/import','RoadTollController@import');
 
+    /**车辆事故记录***/
+    Route::any('/accident/accidentList','RoadTollController@accidentList');
+    Route::any('/accident/accidentPage','RoadTollController@accidentPage');
+    Route::any('/accident/createAccident','RoadTollController@createAccident');
+    Route::any('/accident/addAccident','RoadTollController@addAccident');
+    Route::any('/accident/roadUseFlag','RoadTollController@roadUseFlag');
+    Route::any('/accident/roadDelFlag','RoadTollController@roadDelFlag');
+    Route::any('/accident/import','RoadTollController@import');
+
 });
 
 

@@ -144,7 +144,6 @@ class UserController extends CommonController{
             $data['info']->contract_back      =img_for($data['info']->contract_back,'no_json');
             $data['info']->license_back       =img_for($data['info']->license_back,'no_json');
             $data['info']->work_license       =img_for($data['info']->work_license,'more');
-            $data['info']->type               =$user_type[$data['info']->type]??null;
         }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";

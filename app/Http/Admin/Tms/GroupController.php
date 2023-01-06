@@ -66,7 +66,7 @@ class GroupController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','company_name','create_user_name','type','group_name','company_name',
-            'cost_type','contacts','address','tel','use_flag','group_code'];
+            'cost_type','contacts','address','tel','use_flag','group_code','bank','bank_number'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -162,6 +162,8 @@ class GroupController extends CommonController{
         $address            =$request->input('address');
         $type               =$request->input('type');
         $cost_type          =$request->input('cost_type');
+        $bank               =$request->input('bank');
+        $bank_number        =$request->input('bank_number');
 
         /*** 虚拟数据
         $input['self_id']           =$self_id='group_202006040950004008768595';
@@ -202,6 +204,8 @@ class GroupController extends CommonController{
             $data['address']                    = $address;
             $data['tel']                        = $tel;
             $data['cost_type']      		    =$cost_type;
+            $data['bank']      		            =$bank;
+            $data['bank_number']      		    =$bank_number;
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsGroup::where($wheres)->first();
@@ -244,7 +248,7 @@ class GroupController extends CommonController{
                 $data['create_user_name']   =$user_info->name;
                 $data['create_time']        =$data['update_time']=$now_time;
 				$data['type']      		     =$type;
-			
+
                 $id=TmsGroup::insert($data);
                 $operationing->access_cause='新建业务公司';
                 $operationing->operation_type='create';
