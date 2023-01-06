@@ -178,15 +178,9 @@ class GroupController extends CommonController{
 ***/
 //        dd($input);
         $rules=[
-            'group_code'=>'required',
-            'type'=>'required',
-            'cost_type'=>'required',
             'company_name'=>'required',
         ];
         $message=[
-            'group_code.required'=>'请选择所属公司',
-            'type.required'=>'请选择客户类型',
-            'cost_type.required'=>'请选择结算方式',
             'company_name.required'=>'客户名称不能为空',
         ];
         $validator=Validator::make($input,$rules,$message);
