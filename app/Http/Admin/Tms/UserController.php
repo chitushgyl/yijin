@@ -38,6 +38,7 @@ class UserController extends CommonController{
      */
     public function userPage(Request $request){
         /** 接收中间件参数**/
+        $user_type    =array_column(config('tms.user_type'),'name','key');
         $group_info     = $request->get('group_info');//接收中间件产生的参数
         $button_info    = $request->get('anniu');//接收中间件产生的参数
 
@@ -48,6 +49,7 @@ class UserController extends CommonController{
         $group_code     =$request->input('group_code');
         $name           =$request->input('name');
         $self_id        =$request->input('self_id');
+        $type           =$request->input('type');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -57,12 +59,13 @@ class UserController extends CommonController{
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'name','value'=>$name],
             ['type'=>'=','name'=>'self_id','value'=>$self_id],
+            ['type'=>'=','name'=>'type','value'=>$type],
         ];
 
         $where=get_list_where($search);
 
         $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','safe_reward',
-        'group_insurance','use_flag','delete_flag','create_time','update_time','group_code','group_name'];
+        'group_insurance','use_flag','delete_flag','create_time','update_time','group_code','group_name','type'];
         $select1 = ['self_id','section_name'];
         switch ($group_info['group_id']){
             case 'all':
@@ -105,6 +108,10 @@ class UserController extends CommonController{
             $v->contract           =img_for($v->contract,'no_json');
             $v->identity_front     =img_for($v->identity_front,'no_json');
             $v->identity_back      =img_for($v->identity_back,'no_json');
+            $v->contract_back      =img_for($v->contract_back,'no_json');
+            $v->license_back       =img_for($v->license_back,'no_json');
+            $v->work_license       =img_for($v->work_license,'more');
+            $v->type               =$user_type[$v->type]??null;
         }
 
         $msg['code']=200;
@@ -118,14 +125,15 @@ class UserController extends CommonController{
     /***    添加员工    /tms/user/createUser
      */
     public function createUser(Request $request){
+        $data['type']    =config('tms.user_type');
         /** 接收数据*/
         $self_id=$request->input('self_id');
         $where=[
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
-            ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name'];
+        $select=['self_id','type','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
+            ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','contract_back','license_back','work_license'];
         $data['info']=SystemUser::where($where)->select($select)->first();
 
         $msg['code']=200;
@@ -173,6 +181,10 @@ class UserController extends CommonController{
         $identity_front          =$request->input('identity_front');//身份证正面
         $identity_back           =$request->input('identity_back');//身份证反面
         $group_code              =$request->input('group_code');
+        $type                    =$request->input('type');
+        $license_back            =$request->input('license_back');//驾驶证反面
+        $contract_back           =$request->input('contract_back');//合同反面
+        $work_license            =$request->input('work_license');//岗位证件
 
 
 
@@ -212,11 +224,14 @@ class UserController extends CommonController{
             $data['nvq']                  =img_for($nvq,'one_in');
             $data['safe_flag']            =$safe_flag;
             $data['safe_reward']          =$safe_reward;
-            $data['contract']             =$contract;
+            $data['contract']             =img_for($contract,'one_in');
             $data['group_insurance']      =$group_insurance;
             $data['identity_front']       =img_for($identity_front,'one_in');
             $data['identity_back']        =img_for($identity_back,'one_in');
-
+            $data['type']                 =$type;
+            $data['license_back']         =img_for($license_back,'one_in');
+            $data['contract_back']        =img_for($contract_back,'one_in');
+            $data['work_license']         =img_for($work_license,'in');
 
             $wheres['self_id'] = $self_id;
             $old_info=SystemUser::where($wheres)->first();
@@ -357,7 +372,7 @@ class UserController extends CommonController{
         return $msg;
     }
 
-    /***    地址导入     /tms/address/import
+    /***    员工导入     /tms/user/import
      */
     public function import(Request $request){
         $table_name         ='tms_address_contact';
@@ -581,10 +596,12 @@ class UserController extends CommonController{
     /***    员工详情     /tms/user/details
      */
     public function  details(Request $request,Details $details){
+        $user_type    =array_column(config('tms.user_type'),'name','key');
         $self_id=$request->input('self_id');
         $table_name='system_user';
         $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
-            ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name'];
+            ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type',
+            'contract_back','license_back','work_license'];
         // $self_id='address_202012301359512962811465';
         $info=$details->details($self_id,$table_name,$select);
 
@@ -595,6 +612,10 @@ class UserController extends CommonController{
             $info->contract           =img_for($info->contract,'no_json');
             $info->identity_front     =img_for($info->identity_front,'no_json');
             $info->identity_back      =img_for($info->identity_back,'no_json');
+            $info->contract_back      =img_for($info->contract_back,'no_json');
+            $info->license_back       =img_for($info->license_back,'no_json');
+            $info->work_license       =img_for($info->work_license,'more');
+            $info->type               =$user_type[$info->type]??null;
             $data['info']=$info;
             $log_flag='Y';
             $data['log_flag']=$log_flag;
@@ -619,7 +640,7 @@ class UserController extends CommonController{
 
     }
 
-    /***    地址导出     /tms/address/execl
+    /***    人员导出     /tms/user/execl
      */
     public function execl(Request $request,File $file){
         $user_info  = $request->get('user_info');//接收中间件产生的参数
@@ -700,6 +721,13 @@ class UserController extends CommonController{
             $msg['code']=300;
             return $msg;
         }
+
+    }
+
+    /**
+     * 打印  tms/user/printUser
+     * */
+    public function printUser(Request $request){
 
     }
 

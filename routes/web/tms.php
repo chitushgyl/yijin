@@ -229,6 +229,9 @@ Route::group([
     Route::any('/user/userDelFlag','UserController@userDelFlag');
     Route::any('/user/getUser','UserController@getUser');
     Route::any('/user/details','UserController@details');
+    Route::any('/user/import','UserController@import');
+    Route::any('/user/execl','UserController@execl');
+    Route::any('/user/printUser','UserController@printUser');
 
     /**员工奖惩记录**/
     Route::any('/userReward/userRewardList','UserRewardController@userRewardList');
