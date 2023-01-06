@@ -109,9 +109,9 @@ class AccidentController extends CommonController{
 
 
 
-    /***    新建车辆维修      /tms/carService/createService
+    /***    新建车辆维修      /tms/accident/createAccident
      */
-    public function createService(Request $request){
+    public function createAccident(Request $request){
         /** 接收数据*/
         $self_id=$request->input('self_id');
 //        $self_id = 'car_20210313180835367958101';
@@ -121,9 +121,9 @@ class AccidentController extends CommonController{
             ['self_id','=',$self_id],
         ];
 
-        $select = ['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator',
-            'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view'];
-        $data['info']=CarService::where($where)->select($select)->first();
+        $select = ['self_id','car_number','car_id','falt_time','falt_name','falt_address','falt_price','create_user_id','create_user_name',
+            'remark','create_time','update_time','use_flag','delete_flag','group_code'];
+        $data['info']=CarAccident::where($where)->select($select)->first();
 
         if ($data['info']){
 

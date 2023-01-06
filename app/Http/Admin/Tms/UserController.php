@@ -624,7 +624,7 @@ class UserController extends CommonController{
             $info->contract_back      =img_for($info->contract_back,'no_json');
             $info->license_back       =img_for($info->license_back,'no_json');
             $info->work_license       =img_for($info->work_license,'more');
-            $info->type               =$user_type[$info->type]??null;
+            $info->type_show               =$user_type[$info->type]??null;
             $data['info']=$info;
             $log_flag='Y';
             $data['log_flag']=$log_flag;
