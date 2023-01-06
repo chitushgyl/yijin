@@ -271,13 +271,13 @@ Route::group([
     Route::any('/roadToll/import','RoadTollController@import');
 
     /**车辆事故记录***/
-    Route::any('/accident/accidentList','RoadTollController@accidentList');
-    Route::any('/accident/accidentPage','RoadTollController@accidentPage');
-    Route::any('/accident/createAccident','RoadTollController@createAccident');
-    Route::any('/accident/addAccident','RoadTollController@addAccident');
-    Route::any('/accident/roadUseFlag','RoadTollController@roadUseFlag');
-    Route::any('/accident/roadDelFlag','RoadTollController@roadDelFlag');
-    Route::any('/accident/import','RoadTollController@import');
+    Route::any('/accident/accidentList','AccidentTollController@accidentList');
+    Route::any('/accident/accidentPage','AccidentTollController@accidentPage');
+    Route::any('/accident/createAccident','AccidentTollController@createAccident');
+    Route::any('/accident/addAccident','AccidentTollController@addAccident');
+    Route::any('/accident/accidentUseFlag','AccidentTollController@accidentUseFlag');
+    Route::any('/accident/accidentDelFlag','AccidentTollController@accidentDelFlag');
+    Route::any('/accident/import','AccidentTollController@import');
 
 });
 

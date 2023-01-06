@@ -49,7 +49,6 @@ class AccidentController extends CommonController{
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
         $car_number     =$request->input('car_number');
-        $driver_name     =$request->input('driver_name');
         $start_time     =$request->input('start_time');
         $end_time     =$request->input('end_time');
         $listrows       =$num;
@@ -60,9 +59,8 @@ class AccidentController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
-            ['type'=>'like','name'=>'driver_name','value'=>$driver_name],
-            ['type'=>'>=','name'=>'create_time','value'=>$start_time],
-            ['type'=>'<','name'=>'create_time','value'=>$end_time],
+            ['type'=>'>=','name'=>'falt_time','value'=>$start_time],
+            ['type'=>'<','name'=>'falt_time','value'=>$end_time],
         ];
 
         $where=get_list_where($search);
@@ -157,18 +155,11 @@ class AccidentController extends CommonController{
         $group_code         =$request->input('group_code');
         $car_number         =$request->input('car_number');//车牌号
         $car_id             =$request->input('car_id');
-        $brand              =$request->input('brand');//品牌
-        $fittings           =$request->input('fittings');//配件名称
-        $kilo_num           =$request->input('kilo_num');//公里数
-        $service_time       =$request->input('service_time');//维修时间
-        $warranty_time      =$request->input('warranty_time');//保修期
+        $falt_time          =$request->input('falt_time');//事故时间
+        $falt_name          =$request->input('falt_name');//事故当事人
+        $falt_address       =$request->input('falt_address');//事故发生地
+        $falt_price         =$request->input('falt_price');//损失金额
         $reason             =$request->input('reason');// 原因
-        $service_view       =$request->input('service_view');//详细记录
-        $service_price      =$request->input('service_price');//维修价格
-        $service_partne     =$request->input('service_partne');//维修单位
-        $driver_name        =$request->input('driver_name');//驾驶员
-        $contact            =$request->input('contact');//驾驶员联系方式
-        $operator           =$request->input('operator');//经办人
         $remark             =$request->input('remark');//备注
 
         $rules=[
@@ -190,25 +181,17 @@ class AccidentController extends CommonController{
 
             $data['car_number']        =$car_number;
             $data['car_id']            =$car_id;
-            $data['brand']             =$brand;
-            $data['kilo_num']          =$kilo_num;
-            $data['fittings']          =$fittings;
-            $data['service_time']      =$service_time;
-            $data['warranty_time']     =$warranty_time;
+            $data['falt_time']         =$falt_time;
+            $data['falt_name']         =$falt_name;
+            $data['falt_address']      =$falt_address;
+            $data['falt_price']        =$falt_price;
             $data['reason']            =$reason;
-            $data['service_view']      =$service_view;
-            $data['service_partne']    =$service_partne;
-            $data['service_price']     =$service_price;
-
-            $data['driver_name']       =$driver_name;
-            $data['contact']           =$contact;
-            $data['operator']          =$operator;
             $data['remark']            =$remark;
 
             /**保存费用**/
-            if ($service_price){
+            if ($falt_price){
                 $money['pay_type']           = 'repair';
-                $money['money']              = $service_price;
+                $money['money']              = $falt_price;
                 $money['pay_state']          = 'Y';
                 $money['car_id']             = $car_id;
                 $money['car_number']         = $car_number;
@@ -216,34 +199,34 @@ class AccidentController extends CommonController{
             }
 
             $wheres['self_id'] = $self_id;
-            $old_info=CarService::where($wheres)->first();
+            $old_info=CarAccident::where($wheres)->first();
 
             if($old_info){
                 $data['update_time']=$now_time;
-                $id=CarService::where($wheres)->update($data);
+                $id=CarAccident::where($wheres)->update($data);
 
-                $operationing->access_cause='修改车辆维修';
+                $operationing->access_cause='修改车辆事故记录';
                 $operationing->operation_type='update';
 
             }else{
-                $data['self_id']            =generate_id('service_');
+                $data['self_id']            =generate_id('falt_');
                 $data['group_code']         = $group_code;
                 $data['group_name']         = $group_name;
                 $data['create_user_id']     =$user_info->admin_id;
                 $data['create_user_name']   =$user_info->name;
                 $data['create_time']        =$data['update_time']=$now_time;
 
-                $id=CarService::insert($data);
-                if($service_price){
+                $id=CarAccident::insert($data);
+                if($falt_price){
                     $money['self_id']            = generate_id('money');
                     $money['group_code']         = $group_code;
                     $money['group_name']         = $group_name;
                     $money['create_user_id']     = $user_info->admin_id;
                     $money['create_user_name']   = $user_info->name;
-                    $money['create_time']        =$money['update_time']=$service_time;
+                    $money['create_time']        =$money['update_time']=$falt_time;
                     TmsMoney::insert($money);
                 }
-                $operationing->access_cause='新建车辆维修';
+                $operationing->access_cause='新建车辆事故记录';
                 $operationing->operation_type='create';
 
             }
@@ -278,13 +261,13 @@ class AccidentController extends CommonController{
 
 
 
-    /***    车辆维修禁用/启用      /tms/carService/serviceUseFlag
+    /***    车辆维修禁用/启用      /tms/accident/accidentUseFlag
      */
-    public function serviceUseFlag(Request $request,Status $status){
+    public function accidentUseFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='car_service';
-        $medol_name='CarService';
+        $table_name='car_accident';
+        $medol_name='CarAccident';
         $self_id=$request->input('self_id');
         $flag='useFlag';
 //        $self_id='car_202012242220439016797353';
@@ -308,13 +291,13 @@ class AccidentController extends CommonController{
 
     }
 
-    /***    车辆维修删除      /tms/carService/serviceDelFlag
+    /***    车辆维修删除      /tms/accident/accidentDelFlag
      */
-    public function serviceDelFlag(Request $request,Status $status){
+    public function accidentDelFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='car_service';
-        $medol_name='CarService';
+        $table_name='car_accident';
+        $medol_name='CarAccident';
         $self_id=$request->input('self_id');
         $flag='delFlag';
 //        $self_id='car_202012242220439016797353';
@@ -541,9 +524,9 @@ class AccidentController extends CommonController{
      */
     public function  details(Request $request,Details $details){
         $self_id=$request->input('self_id');
-        $table_name='car_service';
-        $select=['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator',
-            'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view'];
+        $table_name='car_accident';
+        $select=['self_id','car_number','car_id','falt_time','falt_name','falt_address','falt_price','create_user_id','create_user_name',
+            'remark','create_time','update_time','use_flag','delete_flag','group_code'];
         // $self_id='car_202012291341297595587871';
         $info=$details->details($self_id,$table_name,$select);
 
