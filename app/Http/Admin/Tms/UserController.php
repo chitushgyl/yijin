@@ -135,7 +135,17 @@ class UserController extends CommonController{
         $select=['self_id','type','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
             ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','contract_back','license_back','work_license'];
         $data['info']=SystemUser::where($where)->select($select)->first();
-
+        if($data['info']){
+            $data['info']->driver_license     =img_for($data['info']->driver_license,'no_json');
+            $data['info']->nvq                =img_for($data['info']->nvq,'no_json');
+            $data['info']->contract           =img_for($data['info']->contract,'no_json');
+            $data['info']->identity_front     =img_for($data['info']->identity_front,'no_json');
+            $data['info']->identity_back      =img_for($data['info']->identity_back,'no_json');
+            $data['info']->contract_back      =img_for($data['info']->contract_back,'no_json');
+            $data['info']->license_back       =img_for($data['info']->license_back,'no_json');
+            $data['info']->work_license       =img_for($data['info']->work_license,'more');
+            $data['info']->type               =$user_type[$data['info']->type]??null;
+        }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
