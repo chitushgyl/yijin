@@ -36,8 +36,6 @@ class GroupController extends CommonController{
      */
     public function groupPage(Request $request){
         /** 接收中间件参数**/
-        $tms_group_type    =array_column(config('tms.tms_group_type'),'name','key');
-        $tms_cost_type    =array_column(config('tms.tms_cost_type'),'name','key');
         $group_info         = $request->get('group_info');//接收中间件产生的参数
         $button_info        = $request->get('anniu');//接收中间件产生的参数
 
@@ -51,7 +49,6 @@ class GroupController extends CommonController{
         $contacts       =$request->input('contacts');
         $tel            =$request->input('tel');
         $company_name   =$request->input('company_name');
-        $normal         =$request->input('normal');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -64,7 +61,6 @@ class GroupController extends CommonController{
             ['type'=>'like','name'=>'company_name','value'=>$company_name],
             ['type'=>'like','name'=>'contacts','value'=>$contacts],
             ['type'=>'like','name'=>'tel','value'=>$tel],
-            ['type'=>'=','name'=>'normal','value'=>$normal]
         ];
 
         $where=get_list_where($search);
@@ -121,9 +117,7 @@ class GroupController extends CommonController{
     /***    业务公司创建      /tms/group/createGroup
      */
     public function createGroup(Request $request){
-		$data['tms_group_type']    =config('tms.tms_group_type');
-		$data['tms_cost_type']     =config('tms.tms_cost_type');
-        $tms_cost_type           =array_column(config('tms.tms_cost_type'),'name','key');
+
         /** 接收数据*/
         $self_id=$request->input('self_id');
 //        $self_id = 'company_202101151011516789650525';
@@ -134,7 +128,6 @@ class GroupController extends CommonController{
         $data['info']=TmsGroup::where($where)->first();
         if ($data['info']){
             if ($data['info']->type != 'driver'){
-                $data['info']->cost_type_show = $tms_cost_type[$data['info']->cost_type];
             }
         }
         $msg['code']=200;
@@ -169,7 +162,6 @@ class GroupController extends CommonController{
         $address            =$request->input('address');
         $type               =$request->input('type');
         $cost_type          =$request->input('cost_type');
-        $normal             =$request->input('normal');// 'N'普通承运公司 ‘S' 落地配公司
 
         /*** 虚拟数据
         $input['self_id']           =$self_id='group_202006040950004008768595';
@@ -180,7 +172,7 @@ class GroupController extends CommonController{
         $input['address']          =$address  ='pull';
         $input['type']             =$type  ='客户';
         $input['cost_type']        =$cost_type  ='月结';
-        $input['normal']           = $normal = 'S';
+
 ***/
 //        dd($input);
         $rules=[
@@ -252,7 +244,7 @@ class GroupController extends CommonController{
                 $data['create_user_name']   =$user_info->name;
                 $data['create_time']        =$data['update_time']=$now_time;
 				$data['type']      		     =$type;
-				$data['normal']             = $normal;
+			
                 $id=TmsGroup::insert($data);
                 $operationing->access_cause='新建业务公司';
                 $operationing->operation_type='create';
