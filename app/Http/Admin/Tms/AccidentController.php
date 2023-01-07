@@ -136,9 +136,9 @@ class AccidentController extends CommonController{
     }
 
 
-    /***    新建车辆维修数据提交      /tms/carService/addService
+    /***    新建车辆维修数据提交      /tms/accident/addAccident
      */
-    public function addService(Request $request){
+    public function addAccident(Request $request){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ='tms_car';
