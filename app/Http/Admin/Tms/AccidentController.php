@@ -17,9 +17,9 @@ use App\Models\Group\SystemGroup;
 
 class AccidentController extends CommonController{
 
-    /***    车辆事故列表头部      /tms/accident/AccidentList
+    /***    车辆事故列表头部      /tms/accident/accidentList
      */
-    public function  AccidentList(Request $request){
+    public function  accidentList(Request $request){
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
 
