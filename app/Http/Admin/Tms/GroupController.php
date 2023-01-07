@@ -211,6 +211,7 @@ class GroupController extends CommonController{
                    ['type','=',$type],
                    ['company_name','=',$company_name],
                    ['self_id','!=',$self_id],
+                   ['delete_flag','=','Y'],
 
                 ];
                 $group_check=TmsGroup::where($where_check)->first();
