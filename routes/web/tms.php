@@ -279,6 +279,15 @@ Route::group([
     Route::any('/accident/accidentDelFlag','AccidentController@accidentDelFlag');
     Route::any('/accident/import','AccidentController@import');
 
+    /***考核记录**/
+    Route::any('/examine/examineList','ExamineController@examineList');
+    Route::any('/examine/examinePage','ExamineController@examinePage');
+    Route::any('/examine/createExamine','ExamineController@createExamine');
+    Route::any('/examine/addExamine','ExamineController@addExamine');
+    Route::any('/examine/examineUseFlag','ExamineController@examineUseFlag');
+    Route::any('/examine/examineDelFlag','ExamineController@examineDelFlag');
+    Route::any('/examine/import','ExamineController@import');
+
 });
 
 

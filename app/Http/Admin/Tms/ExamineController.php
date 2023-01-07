@@ -1,10 +1,9 @@
 <?php
 namespace App\Http\Admin\Tms;
 use App\Http\Controllers\FileController as File;
-use App\Models\Tms\CarCount;
-use App\Models\Tms\CarDanger;
-use App\Models\Tms\CarOil;
+use App\Models\Tms\CarAccident;
 use App\Models\Tms\TmsMoney;
+use App\Models\Tms\UserExamine;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
@@ -15,14 +14,13 @@ use App\Http\Controllers\StatusController as Status;
 use App\Http\Controllers\DetailsController as Details;
 use App\Models\Tms\TmsCar;
 use App\Models\Group\SystemGroup;
-use App\Models\Tms\TmsCarType;
-use App\Models\Tms\TmsGroup;
 
-class CarOilController extends CommonController{
 
-    /***    加油记录列表头部      /tms/carOil/carList
+class ExamineController extends CommonController{
+
+    /***    车辆事故列表头部      /tms/examine/examineList
      */
-    public function  carList(Request $request){
+    public function  examineList(Request $request){
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
 
@@ -39,9 +37,9 @@ class CarOilController extends CommonController{
         return $msg;
     }
 
-    /***    加油记录分页      /tms/carOil/carPage
+    /***    车辆事故分页      /tms/examine/examinePage
      */
-    public function carPage(Request $request){
+    public function examinePage(Request $request){
         /** 接收中间件参数**/
         $group_info     = $request->get('group_info');//接收中间件产生的参数
         $button_info    = $request->get('anniu');//接收中间件产生的参数
@@ -51,8 +49,7 @@ class CarOilController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-        $car_number     =$request->input('car_number');
-        $ic_number     =$request->input('ic_number');
+        $user_name     =$request->input('user_name');
         $start_time     =$request->input('start_time');
         $end_time     =$request->input('end_time');
         $listrows       =$num;
@@ -62,20 +59,16 @@ class CarOilController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'like','name'=>'car_number','value'=>$car_number],
-            ['type'=>'like','name'=>'ic_number','value'=>$ic_number],
-            ['type'=>'>=','name'=>'create_time','value'=>$start_time],
-            ['type'=>'<','name'=>'ic_number','value'=>$end_time],
         ];
 
         $where=get_list_where($search);
 
-        $select=['self_id','car_number','car_id','add_time','ic_number','number','price','total_money','remark','create_time','update_time','delete_flag','group_code',
-            'create_user_id','create_user_name','use_flag'];
+        $select=['self_id','user_id','user_name','absence_duty','fine_price','fine_time','reward_price','reward_time','create_user_id','create_user_name',
+            'remark','create_time','update_time','use_flag','delete_flag','group_code'];
         switch ($group_info['group_id']){
             case 'all':
-                $data['total']=CarOil::where($where)->count(); //总的数据量
-                $data['items']=CarOil::where($where)
+                $data['total']=UserExamine::where($where)->count(); //总的数据量
+                $data['items']=UserExamine::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -83,16 +76,16 @@ class CarOilController extends CommonController{
 
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
-                $data['total']=CarOil::where($where)->count(); //总的数据量
-                $data['items']=CarOil::where($where)
+                $data['total']=UserExamine::where($where)->count(); //总的数据量
+                $data['items']=UserExamine::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
 
             case 'more':
-                $data['total']=CarOil::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=CarOil::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['total']=UserExamine::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=UserExamine::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -112,9 +105,9 @@ class CarOilController extends CommonController{
 
 
 
-    /***    新建车辆      /tms/carOil/createCar
+    /***    新建车辆维修      /tms/examine/createExamine
      */
-    public function createCar(Request $request){
+    public function createExamine(Request $request){
         /** 接收数据*/
         $self_id=$request->input('self_id');
 //        $self_id = 'car_20210313180835367958101';
@@ -124,9 +117,9 @@ class CarOilController extends CommonController{
             ['self_id','=',$self_id],
         ];
 
-        $select = ['self_id','car_number','car_id','add_time','ic_number','number','price','total_money','remark','create_time','update_time','delete_flag','group_code',
-            'create_user_id','create_user_name'];
-        $data['info']=CarOil::where($where)->select($select)->first();
+        $select = ['self_id','user_id','user_name','absence_duty','fine_price','fine_time','reward_price','reward_time','create_user_id','create_user_name',
+            'remark','create_time','update_time','use_flag','delete_flag','group_code'];
+        $data['info']=UserExamine::where($where)->select($select)->first();
 
         if ($data['info']){
 
@@ -135,17 +128,15 @@ class CarOilController extends CommonController{
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
-//        dd($msg);
         return $msg;
 
 
     }
 
 
-    /***    新建车辆加油数据提交      /tms/carOil/addCar
+    /***    新建车辆维修数据提交      /tms/examine/addExamine
      */
-    public function addCar(Request $request){
-        $money_type     =array_column(config('tms.money_type'),'name','key');
+    public function addExamine(Request $request){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ='tms_car';
@@ -160,13 +151,13 @@ class CarOilController extends CommonController{
         /** 接收数据*/
         $self_id            =$request->input('self_id');
         $group_code         =$request->input('group_code');
-        $car_number         =$request->input('car_number');//车牌号
-        $car_id             =$request->input('car_id');//
-        $add_time           =$request->input('add_time');//加油时间
-        $ic_number          =$request->input('ic_number');//IC卡号
-        $number             =$request->input('number');// 加油升数
-        $price              =$request->input('price');//油单价
-        $total_money        =$request->input('total_money');//加油总价
+        $user_name          =$request->input('user_name');//员工名称
+        $user_id            =$request->input('user_id');
+        $fine_time          =$request->input('fine_time');//罚款时间
+        $fine_price         =$request->input('fine_price');//罚款金额
+        $reward_price       =$request->input('reward_price');//奖励金额
+        $reward_time        =$request->input('reward_time');//奖励日期
+        $absence_duty       =$request->input('absence_duty');// 缺勤日期
         $remark             =$request->input('remark');//备注
 
         $rules=[
@@ -186,50 +177,62 @@ class CarOilController extends CommonController{
                 return $msg;
             }
 
-            $data['car_number']        =$car_number;
-            $data['car_id']            =$car_id;
-            $data['add_time']          =$add_time;
-            $data['ic_number']         =$ic_number;
-            $data['number']            =$number;
-            $data['price']             =$price;
-            $data['total_money']       =$total_money;
-            $data['remark']            =$remark;
+            $data['user_name']           =$user_name;
+            $data['user_id']             =$user_id;
+            $data['fine_time']           =$fine_time;
+            $data['fine_price']          =$fine_price;
+            $data['reward_time']         =$reward_time;
+            $data['reward_price']        =$reward_price;
+            $data['absence_duty']        =$absence_duty;
+            $data['remark']              =$remark;
 
             /**保存费用**/
-            $money['pay_type']           = 'fuel';
-            $money['money']              = $total_money;
-            $money['pay_state']          = 'Y';
-            $money['car_id']             = $car_id;
-            $money['car_number']         = $car_number;
-            $money['process_state']      = 'Y';
-            $money['type_state']         = 'out';
+            if ($fine_price ||$reward_price){
+                $money['pay_type']           = 'other';
+                if($fine_price){
+                    $money['money']              = $fine_price;
+                    $money['type_state']         = 'out';
+                    $money['create_time']        = $money['update_time']=$fine_time;
+                }
+                if ($reward_price){
+                    $money['money']              = $reward_price;
+                    $money['type_state']         = 'in';
+                    $money['create_time']        = $money['update_time']=$reward_time;
+                }
+                $money['pay_state']          = 'Y';
+                $money['user_id']             = $user_id;
+                $money['user_name']         = $user_name;
+                $money['process_state']      = 'Y';
+            }
 
             $wheres['self_id'] = $self_id;
-            $old_info=CarOil::where($wheres)->first();
+            $old_info=UserExamine::where($wheres)->first();
 
             if($old_info){
                 $data['update_time']=$now_time;
-                $id=CarOil::where($wheres)->update($data);
-                $operationing->access_cause='修改加油记录';
+                $id=UserExamine::where($wheres)->update($data);
+
+                $operationing->access_cause='修改考核记录';
                 $operationing->operation_type='update';
 
             }else{
-                $data['self_id']            =generate_id('oil_');
+                $data['self_id']            =generate_id('mine_');
                 $data['group_code']         = $group_code;
                 $data['group_name']         = $group_name;
                 $data['create_user_id']     =$user_info->admin_id;
                 $data['create_user_name']   =$user_info->name;
                 $data['create_time']        =$data['update_time']=$now_time;
-                $money['self_id']            = generate_id('money');
-                $money['group_code']         = $group_code;
-                $money['group_name']         = $group_name;
-                $money['create_user_id']     = $user_info->admin_id;
-                $money['create_user_name']   = $user_info->name;
-                $money['create_time']        =$money['update_time']=$add_time;
 
-                $id=CarOil::insert($data);
-                TmsMoney::insert($money);
-                $operationing->access_cause='新建加油记录';
+                $id=UserExamine::insert($data);
+                if($fine_price ||$reward_price){
+                    $money['self_id']            = generate_id('money');
+                    $money['group_code']         = $group_code;
+                    $money['group_name']         = $group_name;
+                    $money['create_user_id']     = $user_info->admin_id;
+                    $money['create_user_name']   = $user_info->name;
+                    TmsMoney::insert($money);
+                }
+                $operationing->access_cause='新建考核记录';
                 $operationing->operation_type='create';
 
             }
@@ -264,13 +267,13 @@ class CarOilController extends CommonController{
 
 
 
-    /***    车辆禁用/启用      /tms/carOil/carUseFlag
+    /***    车辆维修禁用/启用      /tms/examine/examineUseFlag
      */
-    public function carUseFlag(Request $request,Status $status){
+    public function examineUseFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='car_oil';
-        $medol_name='CarOil';
+        $table_name='user_examine';
+        $medol_name='UserExamine';
         $self_id=$request->input('self_id');
         $flag='useFlag';
 //        $self_id='car_202012242220439016797353';
@@ -294,13 +297,13 @@ class CarOilController extends CommonController{
 
     }
 
-    /***    车辆删除      /tms/carOil/carDelFlag
+    /***    车辆维修删除      /tms/examine/examineDelFlag
      */
-    public function carDelFlag(Request $request,Status $status){
+    public function examineDelFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='car_oil';
-        $medol_name='CarOil';
+        $table_name='user_examine';
+        $medol_name='UserExamine';
         $self_id=$request->input('self_id');
         $flag='delFlag';
 //        $self_id='car_202012242220439016797353';
@@ -322,22 +325,17 @@ class CarOilController extends CommonController{
         return $msg;
     }
 
-    /***    拿去车辆数据     /tms/car/getCar
+    /***    拿去车辆维修数据     /tms/carService/getService
      */
-    public function  getCar(Request $request){
+    public function  getService(Request $request){
         $group_code=$request->input('group_code');
-        $car_number=$request->input('car_number');
-//        $input['group_code'] =  $group_code = '1234';
-        $search=[
-            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
-            ['type'=>'all','name'=>'use_flag','value'=>'Y'],
-            ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'like','name'=>'car_number','value'=>$car_number],
+        //$input['group_code'] =  $group_code = '1234';
+        $where=[
+            ['delete_flag','=','Y'],
+            ['use_flag','=','Y'],
+            ['group_code','=',$group_code],
         ];
-
-        $where=get_list_where($search);
-        $select = ['self_id','car_number'];
-        $data['info']=TmsCar::where($where)->select($select)->get();
+        $data['info']=CarService::where($where)->get();
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
@@ -345,14 +343,14 @@ class CarOilController extends CommonController{
         return $msg;
     }
 
-    /***    加油记录导入     /tms/carOil/import
+    /***    车辆维修导入     /tms/carService/import
      */
     public function import(Request $request){
-        $table_name         ='car_oil';
+        $table_name         ='car_service';
         $now_time           = date('Y-m-d H:i:s', time());
 
         $operationing       = $request->get('operationing');//接收中间件产生的参数
-        $operationing->access_cause     ='导入加油记录';
+        $operationing->access_cause     ='导入创建车辆维修记录';
         $operationing->table            =$table_name;
         $operationing->operation_type   ='create';
         $operationing->now_time         =$now_time;
@@ -393,6 +391,7 @@ class CarOilController extends CommonController{
                 $info_check=$res[0];
             }
 
+
             /**  定义一个数组，需要的数据和必须填写的项目
             键 是EXECL顶部文字，
              * 第一个位置是不是必填项目    Y为必填，N为不必须，
@@ -401,17 +400,23 @@ class CarOilController extends CommonController{
              * 第四个位置为数据库的对应字段
              */
             $shuzu=[
-                'IC卡卡号' =>['Y','Y','10','ic_number'],
-                '车牌号' =>['N','Y','20','car_number'],
-                '会员名称' =>['Y','Y','20','car_number'],
-                '加注金额' =>['N','Y','30','total_money'],
-                '加注量' =>['N','Y','30','number'],
-                '单价' =>['N','Y','30','price'],
-                '交易时间' =>['Y','Y','50','add_time'],
-                '地址' =>['N','Y','200','address'],
+                '车牌号' =>['Y','Y','30','car_number'],
+                '品牌' =>['Y','Y','30','brand'],
+                '公里数' =>['Y','Y','30','kilo_num'],
+                '配件名称' =>['Y','Y','30','fittings'],
+                '保养/维修时间' =>['Y','Y','50','service_time'],
+                '保修期' =>['Y','Y','50','warranty_time'],
+                '原因' =>['Y','Y','50','reason'],
+                '详细记录' =>['Y','Y','255','service_view'],
+                '保养/维修单位' =>['Y','Y','50','service_partne'],
+                '保养/维修金额' =>['Y','Y','50','service_price'],
+                '经办人' =>['Y','Y','50','operator'],
+                '司机' =>['Y','Y','50','driver_name'],
+                '备注' =>['N','Y','200','remark'],
             ];
             $ret=arr_check($shuzu,$info_check);
-//            dd($ret);
+
+            // dump($ret);
             if($ret['cando'] == 'N'){
                 $msg['code'] = 304;
                 $msg['msg'] = $ret['msg'];
@@ -441,6 +446,7 @@ class CarOilController extends CommonController{
             $errorNum=50;       //控制错误数据的条数
             $a=2;
 
+            //dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
                 if (!check_carnumber($v['car_number'])) {
@@ -454,13 +460,20 @@ class CarOilController extends CommonController{
                 $list=[];
                 if($cando =='Y'){
 
-                    $list['self_id']            = generate_id('oil_');
+                    $list['self_id']            = generate_id('service_');
                     $list['car_number']         = $v['car_number'];
-                    $list['ic_number']          = $v['ic_number'];
-                    $list['number']             = $v['number'];
-                    $list['price']              = $v['price'];
-                    $list['total_money']        = $v['total_money'];
-                    $list['address']            = $v['address'];
+                    $list['brand']              = $v['brand'];
+                    $list['kilo_num']           = $v['kilo_num'];
+                    $list['fittings']           = $v['fittings'];
+                    $list['service_time']       = $v['service_time'];
+                    $list['warranty_time']      = $v['warranty_time'];
+                    $list['reason']             = $v['reason'];
+                    $list['service_view']       = $v['service_view'];
+                    $list['service_partne']     = $v['service_partne'];
+                    $list['service_price']      = $v['service_price'];
+                    $list['operator']           = $v['operator'];
+                    $list['driver_name']        = $v['driver_name'];
+                    $list['remark']             = $v['remark'];
 
                     $list['group_code']         = $info->group_code;
                     $list['group_name']         = $info->group_name;
@@ -468,6 +481,9 @@ class CarOilController extends CommonController{
                     $list['create_user_name']   = $user_info->name;
                     $list['create_time']        =$list['update_time']=$now_time;
                     $list['file_id']            =$file_id;
+
+
+
 
                     $datalist[]=$list;
                 }
@@ -483,7 +499,7 @@ class CarOilController extends CommonController{
                 return $msg;
             }
             $count=count($datalist);
-            $id= CarOil::insert($datalist);
+            $id= CarService::insert($datalist);
 
             if($id){
                 $msg['code']=200;
@@ -510,19 +526,19 @@ class CarOilController extends CommonController{
 
     }
 
-    /***    车辆详情     /tms/carOil/details
+    /***    车辆详情     /tms/carService/details
      */
     public function  details(Request $request,Details $details){
         $self_id=$request->input('self_id');
-        $table_name='tms_car';
-        $select=['self_id','car_number','car_id','add_time','ic_number','number','price','total_money','remark','create_time','update_time','delete_flag','group_code',
-            'create_user_id','create_user_name'];
-
+        $table_name='car_accident';
+        $select=['self_id','car_number','car_id','falt_time','falt_name','falt_address','falt_price','create_user_id','create_user_name',
+            'remark','create_time','update_time','use_flag','delete_flag','group_code'];
         // $self_id='car_202012291341297595587871';
         $info=$details->details($self_id,$table_name,$select);
 
         if($info){
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
+
 
             $data['info']=$info;
             $log_flag='Y';
@@ -533,7 +549,9 @@ class CarOilController extends CommonController{
 
             if($log_flag =='Y'){
                 $data['log_data']=$details->change($self_id,$log_num);
+
             }
+            // dd($data);
 
             $msg['code']=200;
             $msg['msg']="数据拉取成功";
@@ -556,7 +574,7 @@ class CarOilController extends CommonController{
         /** 接收数据*/
         $group_code     =$request->input('group_code');
 //        $group_code  =$input['group_code']   ='group_202012251449437824125582';
-
+        //dd($group_code);
         $rules=[
             'group_code'=>'required',
         ];
@@ -646,8 +664,6 @@ class CarOilController extends CommonController{
         }
 
     }
-
-
 
 }
 ?>

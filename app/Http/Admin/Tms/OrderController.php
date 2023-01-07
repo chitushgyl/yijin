@@ -371,6 +371,7 @@ class OrderController extends CommonController{
                 $money['pay_state']              = 'Y';
                 $money['order_id']               = $data['self_id'];
                 $money['process_state']          = 'Y';
+                $money['type_state']             = 'in';
                 $money['group_code']             = $group_code;
 //                $money['group_name']             = $group_name;
                 $money['create_user_id']         = $user_info->admin_id;

@@ -214,6 +214,7 @@ class CarServiceController extends CommonController{
                 $money['car_id']             = $car_id;
                 $money['car_number']         = $car_number;
                 $money['process_state']      = 'Y';
+                $money['type_state']         = 'out';
             }
 
             $wheres['self_id'] = $self_id;
