@@ -369,12 +369,13 @@ class UserController extends CommonController{
     public function  getUser(Request $request){
         $group_code=$request->input('group_code');
         // $company_id='company_202012281339503129654415';
-        $where=[
-            ['delete_flag','=','Y'],
-            ['group_code','=',$group_code],
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
         ];
-        $select=['self_id','name'];
 
+        $where=get_list_where($search);
+        $select=['self_id','name'];
         $data['info']=SystemUser::where($where)->select($select)->get();
 
         $msg['code']=200;
@@ -616,6 +617,7 @@ class UserController extends CommonController{
         $input      =$request->all();
         /** 接收数据*/
         $group_code     =$request->input('group_code');
+        $ids            =$request->input('ids');
         // $group_code  =$input['group_code']   ='1234';
         //dd($group_code);
         $rules=[
@@ -638,7 +640,7 @@ class UserController extends CommonController{
             $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','safe_reward',
                 'use_flag','delete_flag','create_time','update_time','group_code','group_name','type',
                 ];
-            $info=TmsAddressContact::where($where)->orderBy('create_time', 'desc')->select($select)->get();
+            $info=SystemUser::where($where)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头
