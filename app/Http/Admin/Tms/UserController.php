@@ -403,7 +403,6 @@ class UserController extends CommonController{
         /** 接收数据*/
         $input              =$request->all();
         $importurl          =$request->input('importurl');
-        $company_id         =$request->input('company_id');
         $file_id            =$request->input('file_id');
         //
         /****虚拟数据
@@ -491,6 +490,12 @@ class UserController extends CommonController{
                 }else{
                     $type = 'manager';
                 }
+
+                if($v['social_flag'] == '是'){
+                    $social_flag = 'Y';
+                }else{
+                    $social_flag = 'N';
+                }
                 $list=[];
                 if($cando =='Y'){
                     $list['self_id']                 = generate_id('user_');
@@ -504,7 +509,7 @@ class UserController extends CommonController{
                     $list['now_address']             = $v['now_address'];
                     $list['salary']                  = $v['salary'];
                     $list['create_time']             = $list['update_time']=$now_time;
-                    $list['social_flag']             = $v['social_flag'];
+                    $list['social_flag']             = $social_flag;
                     $list['leave_time']              = $v['leave_time'];
                     $list['live_cost']               = $v['live_cost'];
                     $list['file_id']                 = $file_id;
@@ -630,7 +635,9 @@ class UserController extends CommonController{
             ];
             $where=get_list_where($search);
 
-            $select=['self_id','sheng_name','company_name','shi_name','qu_name','address','contacts','tel'];
+            $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','safe_reward',
+                'use_flag','delete_flag','create_time','update_time','group_code','group_name','type',
+                ];
             $info=TmsAddressContact::where($where)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
