@@ -388,17 +388,11 @@ class CarController extends CommonController{
         $importurl          =$request->input('importurl');
         $group_code         =$request->input('group_code');
         $file_id            =$request->input('file_id');
-//	dump($input);
-        /****虚拟数据
-        $input['importurl']     =$importurl="uploads/import/TMS车辆导入文件范本.xlsx";
-        $input['group_code']       =$group_code='1234';
-         ***/
+
         $rules = [
-            'group_code' => 'required',
             'importurl' => 'required',
         ];
         $message = [
-            'group_code.required' => '请选择所属公司',
             'importurl.required' => '请上传文件',
         ];
 
@@ -429,13 +423,19 @@ class CarController extends CommonController{
              */
             $shuzu=[
                '车牌号' =>['Y','Y','10','car_number'],
-               '车辆属性(1:自有，2:租赁)' =>['Y','Y','1','car_possess'],
-               '车辆类型' =>['Y','Y','64','car_type_name'],
-               '温控类型' =>['Y','Y','16','control'],
-               '承重(kg)' =>['N','Y','64','weight'],
-               '体积(立方)' =>['N','Y','64','volam'],
-               '联系人' =>['N','Y','64','contacts'],
-               '联系电话' =>['N','Y','64','tel'],
+               '车型' =>['Y','Y','1','car_type'],
+               '车架号' =>['N','Y','64','carframe_num'],
+               '罐体介质' =>['N','Y','16','crock_medium'],
+               '罐体容积' =>['N','Y','64','volume'],
+               '罐检到期日期' =>['N','Y','64','tank_validity'],
+               '核载吨位' =>['N','Y','64','weight'],
+               '行驶证到期日期' =>['Y','Y','64','license_date'],
+               '运输证到期日期' =>['Y','Y','64','medallion_date'],
+               '保险' =>['N','Y','64','insure'],
+               '保险金额' =>['N','Y','64','insure_price'],
+               '交强险有效期' =>['N','Y','64','compulsory'],
+               '商业险有效期' =>['N','Y','64','commercial'],
+               '承运险有效期' =>['N','Y','64','carrier'],
                 ];
             $ret=arr_check($shuzu,$info_check);
 
@@ -498,16 +498,16 @@ class CarController extends CommonController{
                     }
                 }
 
-                if (!in_array($v['car_possess'],[1,2])) {
+                if (!in_array($v['insure'],['有','无'])) {
                     if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行车辆属性：1或2！".'</br>';
+                        $strs .= '数据中的第'.$a."行车辆属性：有或无！".'</br>';
                         $cando='N';
                         $abcd++;
                     }
                 }
                 $where_car_type = [
                     ['delete_flag','=','Y'],
-                    ['parame_name','=',$v['car_type_name']]
+                    ['parame_name','=',$v['car_type']]
                 ];
                 $car_type = TmsCarType::where($where_car_type)->select('self_id','parame_name')->first();
                 // dd($car_type);
@@ -519,36 +519,30 @@ class CarController extends CommonController{
                     }
                 }
 
-				$control         = $tms_control_type[$v['control']]??null;
-                if(empty($control)){
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行温控类型错误！".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }
-
                 $list=[];
                 if($cando =='Y'){
 
-                    $list['self_id']            =generate_id('car_');
+                    $list['self_id']            = generate_id('car_');
                     $list['car_number']         = $v['car_number'];
-                    $list['car_possess']        = $v['car_possess'] == 1 ? 'oneself' : 'lease';
+                    $list['car_type']           = $car_type->self_id;
+                    $list['carframe_num']       = $v['carframe_num'];
+                    $list['crock_medium']       = $v['crock_medium'];
+                    $list['license_date']       = $v['license_date'] ;
+                    $list['medallion_date']     = $v['medallion_date'];
+                    $list['remark']             = $v['remark'];
                     $list['weight']             = $v['weight'];
-                    $list['volam']              = $v['volam'];
-                    $list['control']            = $control ;
+                    $list['volume']             = $v['volume'];
+                    $list['insure']             = $v['insure'];
+                    $list['insure_price']       = $v['insure_price'];
+                    $list['compulsory']         = $v['compulsory'];
+                    $list['commercial']         = $v['commercial'];
+                    $list['carrier']            = $v['carrier'];
                     $list['group_code']         = $info->group_code;
                     $list['group_name']         = $info->group_name;
                     $list['create_user_id']     = $user_info->admin_id;
                     $list['create_user_name']   = $user_info->name;
-                    $list['create_time']        =$list['update_time']=$now_time;
-                    $list['file_id']            =$file_id;
-                    $list['car_type_id']        =$car_type->self_id;
-                    $list['car_type_name']      =$car_type->parame_name;
-                    $list['contacts']           =$v['contacts'];
-                    $list['tel']                =$v['tel'];
-
-
+                    $list['create_time']        = $list['update_time']=$now_time;
+                    $list['file_id']            = $file_id;
 
                     $datalist[]=$list;
                 }
@@ -660,51 +654,54 @@ class CarController extends CommonController{
             $where=get_list_where($search);
 
             $select=['self_id','car_number','car_possess','weight','volam','control','car_type_name','contacts','tel','remark'];
-            $info=TmsCar::where($where)->orderBy('create_time', 'desc')->select($select)->get();
+            $select1 = ['self_id'];
+            $info=TmsCar::with(['TmsCarType' => function($query) use($select1){
+                $query->select($select1);
+            }])->where($where)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头
                 $row = [[
                     "id"=>'ID',
                     "car_number"=>'车牌号',
-                    "car_type_name"=>'车辆类型',
-                    "car_possess"=>'属性',
-                    "control"=>'温控',
-                    "weight"=>'承重(kg)',
-                    "volam"=>'体积(立方)',
-                    "contacts"=>'联系人',
-                    "tel"=>'联系电话',
+                    "car_type"=>'车型',
+                    "carframe_num"=>'车架号',
+                    "crock_medium"=>'罐体介质',
+                    "volume"=>'罐体容积',
+                    "tank_validity"=>'罐检到期日期',
+                    "weight"=>'核载吨位',
+                    "license_date"=>'行驶证到期日期',
+                    "medallion_date"=>'运输证到期日期',
+                    "insure"=>'保险',
+                    "insure_price"=>'保险金额',
+                    "compulsory"=>'交强险有效期',
+                    "commercial"=>'商业险有效期',
+                    "carrier"=>'承运险有效期',
                     "remark"=>'备注'
                 ]];
 
                 /** 现在根据查询到的数据去做一个导出的数据**/
                 $data_execl=[];
-                $tms_control_type = array_column(config('tms.tms_control_type'),'name','key');
-                $tms_car_possess_type = array_column(config('tms.tms_car_possess_type'),'name','key');
+
 
                 foreach ($info as $k=>$v){
                     $list=[];
 
                     $list['id']=($k+1);
-                    $list['car_number']=$v->car_number;
-                    $list['car_type_name']=$v->car_type_name;
-                    $control = '';
-                    $car_possess = '';
-                    if (!empty($tms_control_type[$v['control']])) {
-                        $control = $tms_control_type[$v['control']];
-                    }
-
-                    if (!empty($tms_car_possess_type[$v['car_possess']])) {
-                        $car_possess = $tms_car_possess_type[$v['car_possess']];
-                    }
-                    $list['car_possess']=$car_possess;
-                    $list['control']    =$control;
-                    $list['weight']     =$v->weight;
-                    $list['volam']      =$v->volam;
-                    $list['contacts']   =$v->contacts;
-                    $list['tel']        =$v->tel;
-                    $list['remark']     =$v->remark;
-
+                    $list['car_number']         = $v['car_number'];
+                    $list['car_type']           = $info->TmsCarType->self_id;
+                    $list['carframe_num']       = $v['carframe_num'];
+                    $list['crock_medium']       = $v['crock_medium'];
+                    $list['license_date']       = $v['license_date'] ;
+                    $list['medallion_date']     = $v['medallion_date'];
+                    $list['weight']             = $v['weight'];
+                    $list['volume']             = $v['volume'];
+                    $list['insure']             = $v['insure'];
+                    $list['insure_price']       = $v['insure_price'];
+                    $list['compulsory']         = $v['compulsory'];
+                    $list['commercial']         = $v['commercial'];
+                    $list['carrier']            = $v['carrier'];
+                    $list['remark']             = $v['remark'];
                     $data_execl[]=$list;
                 }
                 /** 调用EXECL导出公用方法，将数据抛出来***/

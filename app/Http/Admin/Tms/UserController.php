@@ -640,34 +640,52 @@ class UserController extends CommonController{
             $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','safe_reward',
                 'use_flag','delete_flag','create_time','update_time','group_code','group_name','type',
                 ];
-            $info=SystemUser::where($where)->orderBy('create_time', 'desc')->select($select)->get();
+            $select1 = ['self_id','section_name'];
+            $info=SystemUser::with(['SystemSection' => function($query) use($select1){
+                $query->select($select1);
+            }])->where($where)->whereIn('self_id',explode(',',$ids))->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头
                 $row = [[
                     "id"=>'ID',
-                    "company_name"=>'业务往来公司',
-                    "sheng_name"=>'省份',
-                    "shi_name"=>'城市',
-                    "qu_name"=>'区县',
-                    "address"=>'详细地址',
-                    "contacts"=>'联系人',
-                    "tel"=>'联系电话',
+                    "name"=>'姓名',
+                    "department"=>'部门',
+                    "type"=>'职务',
+                    "education_background"=>'学历',
+                    "identity_num"=>'身份证号',
+                    "live_cost"=>'住宿费',
+                    "entry_time"=>'入职时间',
+                    "now_address"=>'现居地',
+                    "tel"=>'联系方式',
+                    "salary"=>'工资',
+                    "social_flag"=>'是否参加社保',
+                    "leave_time"=>'离职时间',
                 ]];
-
                 /** 现在根据查询到的数据去做一个导出的数据**/
                 $data_execl=[];
                 foreach ($info as $k=>$v){
                     $list=[];
-
+                    if ($v->type == '司机'){
+                        $type = 'driver';
+                    }elseif($v->type == '押运员'){
+                        $type = 'cargo';
+                    }else{
+                        $type = 'manager';
+                    }
                     $list['id']=($k+1);
-                    $list['company_name']=$v->company_name;
-                    $list['sheng_name']=$v->sheng_name;
-                    $list['shi_name']=$v->shi_name;
-                    $list['qu_name']=$v->qu_name;
-                    $list['address']=$v->address;
-                    $list['contacts']=$v->address;
-                    $list['tel']=$v->address;
+                    $list['name']=$v->name;
+                    $list['department']=$v->SystemSection->section_name;
+                    $list['type']=$type;
+                    $list['education_background']=$v->education_background;
+                    $list['identity_num']=$v->identity_num;
+                    $list['live_cost']=$v->live_cost;
+                    $list['entry_time']=$v->entry_time;
+                    $list['now_address']=$v->now_address;
+                    $list['tel']=$v->tel;
+                    $list['salary']=$v->salary;
+                    $list['social_flag']=$v->social_flag;
+                    $list['leave_time']=$v->leave_time;
 
                     $data_execl[]=$list;
                 }
@@ -700,7 +718,182 @@ class UserController extends CommonController{
      * 打印  tms/user/printUser
      * */
     public function printUser(Request $request){
+        $operationing       = $request->get('operationing');//接收中间件产生的参数
+        $now_time           =date('Y-m-d H:i:s',time());
+        $table_name         ='null';
 
+        $operationing->access_cause='打印分拣单';
+        $operationing->operation_type='create';
+        $operationing->table=$table_name;
+        $operationing->now_time=$now_time;
+
+        $self_id=$request->input('self_id');
+
+        $where=[
+            ['self_id','=',$self_id],
+            ['delete_flag','=','Y'],
+        ];
+
+
+        $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','safe_reward',
+            'use_flag','delete_flag','create_time','update_time','group_code','group_name','type',
+        ];
+        $select1 = ['self_id','section_name'];
+        $info=SystemUser::with(['SystemSection' => function($query) use($select1){
+            $query->select($select1);
+        }])->where($where)->whereIn('self_id',explode(',',$ids))
+           ->orderBy('create_time', 'desc')
+           ->select($select)
+           ->get();
+
+
+        $tms_control_type        =array_column(config('tms.tms_control_type'),'name','key');
+        $info=WmsTotal::with(['wmsOutOrder' => function($query)use($order_select,$order_list_select,$wms_out_sige_select,$good_select,$group_select,$shop_select){
+            $query->where('delete_flag','=','Y');
+            $query->select($order_select);
+            $query->with(['wmsOutOrderList' => function($query)use($order_list_select){
+                $query->select($order_list_select);
+                $query->where('delete_flag','=','Y');
+            }]);
+            $query->with(['wmsShop' => function($query)use($shop_select){
+                $query->select($shop_select);
+                $query->where('delete_flag','=','Y');
+            }]);
+            $query->with(['wmsOutSige' => function($query)use($wms_out_sige_select,$good_select){
+                $query->where('delete_flag','=','Y');
+                $query->select($wms_out_sige_select);
+                $query->orderBy('area','asc')
+                    ->with(['wmsGoods' => function($query)use($good_select){
+                        $query->where('delete_flag','=','Y');
+                        $query->select($good_select);
+                    }]);
+            }]);
+        }])
+            ->with(['wmsGroup' => function($query)use($group_select){
+                $query->where('delete_flag','=','Y');
+                $query->select($group_select);
+            }])
+            ->where($where)
+            ->select($total_select)->first();
+
+//dd($info->toArray());
+
+
+        if($info){
+
+            $out_list=[];
+
+            foreach ($info->wmsOutOrder as $k => $v){
+
+                $quhuo=[];
+                $abc=[];
+                //DUMP($v->ToArray());
+                foreach ($v->wmsOutOrderList as $kk => $vv){
+                    // DUMP($vv->ToArray());
+                    $abc['order_id']=$v->self_id;
+                    $abc['shop_external_id']=$v->shop_external_id;
+                    $abc['shop_name']=$v->shop_name;
+                    $abc['create_time']=$v->create_time;
+                    $abc['total_time']=$v->total_time;
+                    $abc['delivery_time']=$v->delivery_time;
+                    $abc['recipt_code']=$vv->recipt_code;
+                    $abc['shop_code']=$vv->shop_code;
+                    $abc['shop_address']=$v->shop_address;
+                    $abc['contact_tel']=$v->shop_contacts.'  '.$v->shop_tel;
+                    $abc['pay_type']=$info->wmsGroup->pay_type;
+                    $abc['warehouse_name']=$v->warehouse_name;
+                    $abc['company_name']=$v->company_name;
+                    $abc['line_code']=$v->wmsShop->line_code;
+                    $abc['shop_num']=$v->wmsShop->external_id;
+
+//dump($abc);
+                    if($vv->quehuo == 'Y'){
+                        $list2['external_sku_id']    =$vv->external_sku_id;
+                        $list2['good_name']          =$vv->good_name;
+                        $list2['spec']               =$vv->spec;
+                        $list2['num']                =$vv->quehuo_num;
+
+
+                        $quhuo[]=$list2;
+                        $abc['quhuo']=$quhuo;
+                        $abc['quhuo_flag']='Y';
+                    }else{
+                        $abc['quhuo']=null;
+                        $abc['quhuo_flag']='N';
+                    }
+
+                }
+                $int_cold_num = 0;
+                $int_freeze_num = 0;
+                $int_normal_num = 0;
+
+                if($v->wmsOutSige){
+                    $abc['out_flag']='Y';
+                    $order=[];
+                    foreach ($v->wmsOutSige as $kkk => $vvv){
+                        $list['shop_name']          =$vvv->shop_name;
+                        $list['external_sku_id']    =$vvv->external_sku_id;
+                        $list['good_name']          =$vvv->good_name;
+                        $list['good_english_name']  =$vvv->good_english_name;
+                        $list['spec']               =$vvv->spec;
+                        $list['num']                =$vvv->num;
+                        $warehouseType = WmsWarehouseArea::with(['wmsWarm' => function ($query){
+                            $query->select(['self_id','control']);
+                        }])->where('self_id',$vvv->area_id)->select(['self_id','warm_id'])->first();
+                        if ($warehouseType->wmsWarm->control == 'freeze'){
+                            if($vvv->good_unit == '箱'){
+                                $int_cold_num += $vvv->num;
+                            }
+                        }elseif ($warehouseType->wmsWarm->control == 'refrigeration'){
+                            if($vvv->good_unit == '箱'){
+                                $int_freeze_num += $vvv->num;
+                            }
+                        }elseif($warehouseType->wmsWarm->control == 'normal'){
+                            if($vvv->good_unit == '箱'){
+                                $int_normal_num += $vvv->num;
+                            }
+                        }
+                        $list['good_unit']          =$vvv->good_unit;
+                        $list['sign']               =$vvv->area.'-'.$vvv->row.'-'.$vvv->column.'-'.$vvv->tier;
+                        $list['production_date']    =$vvv->production_date;
+                        $list['expire_time']        =$vvv->expire_time;
+                        $list['good_describe']      =unit_do($vvv->good_unit , $vvv->good_target_unit, $vvv->good_scale, $vvv->num);
+                        $list['price']              =$vvv->price;
+                        $list['total_money']        =(float)$vvv->price * $vvv->num;
+                        $list['control']            = $tms_control_type[$warehouseType->wmsWarm->control]?? null;
+                        $order[]=$list;
+                        $abc['info']=$order;
+
+                    }
+                    $abc['int_cold']=$int_cold_num;
+                    $abc['int_freeze']=$int_freeze_num;
+                    $abc['int_normal']=$int_normal_num;
+                    $out_list[]=$abc;
+
+                }else{
+                    $abc['out_flag']='N';
+                    $abc['info']=$order;
+
+                }
+
+            }
+
+            $operationing->table_id=$self_id;
+            $operationing->old_info=null;
+            $operationing->new_info=null;
+
+
+
+            $msg['code']=200;
+            $msg['msg']="数据拉取成功";
+            $msg['data']=$out_list;
+            return $msg;
+
+        }else{
+            $msg['code']=300;
+            $msg['msg']="没有查询到数据";
+            return $msg;
+        }
     }
 
 }
