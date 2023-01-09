@@ -3,7 +3,7 @@ namespace App\Http\Admin\Tms;
 use App\Http\Controllers\FileController as File;
 use App\Models\Tms\CarAccident;
 use App\Models\Tms\TmsMoney;
-use App\Models\Tms\UserExamine;
+use App\Models\User\UserExamine;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
