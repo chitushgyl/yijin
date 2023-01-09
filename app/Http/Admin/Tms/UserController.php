@@ -2,6 +2,7 @@
 namespace App\Http\Admin\Tms;
 
 use App\Models\Group\SystemGroup;
+use App\Models\Group\SystemSection;
 use App\Models\Group\SystemUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
@@ -446,7 +447,7 @@ class UserController extends CommonController{
                 '职务' =>['Y','Y','30','type'],
                 '学历' =>['Y','Y','64','education_background'],
                 '身份证号' =>['Y','Y','64','identity_num'],
-                '住宿费' =>['Y','Y','64','tel'],
+                '住宿费' =>['Y','Y','64','live_cost'],
                 '入职时间' =>['Y','Y','64','entry_time'],
                 '现居地' =>['Y','Y','64','now_address'],
                 '联系方式' =>['Y','Y','64','tel'],
@@ -477,29 +478,40 @@ class UserController extends CommonController{
             // dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
-
+                $where=[
+                    ['delete_flag','=','Y'],
+                    ['department','=',$v['department']],
+                    ['group_code','=',$user_info->group_code],
+                ];
+                $section = SystemSection::where($where)->select('self_id','section_name','group_code')->first();
+                if ($v['type'] == '司机'){
+                    $type = 'driver';
+                }elseif($v['type'] == '押运员'){
+                    $type = 'cargo';
+                }else{
+                    $type = 'manager';
+                }
                 $list=[];
                 if($cando =='Y'){
-                    $list['self_id']            =generate_id('user_');
-                    $list['sheng_name']         = $v['sheng_name'];
-                    $list['qu_name']            = $v['qu_name'];
-                    $list['shi_name']           = $v['shi_name'];
-                    $list['sheng']              = $address_info->sysAddress->sysAddress->id;
-                    $list['shi']                = $address_info->sysAddress->id;
-                    $list['qu']                 = $address_info->id;
-                    $list['address']            = $v['address'];
-                    $list['longitude']          = $location ? $location['lng'] : '';
-                    $list['dimensionality']     = $location ? $location['lat'] : '';
-                    $list['group_code']         = $info->group_code;
-                    $list['group_name']         = $info->group_name;
-                    $list['create_user_id']     = $user_info->admin_id;
-                    $list['create_user_name']   = $user_info->name;
-                    $list['create_time']        =$list['update_time']=$now_time;
-                    $list['company_id']         = $info->self_id;
-                    $list['company_name']       = $info->company_name;
-                    $list['contacts']           = $v['contacts'];
-                    $list['tel']                = $v['tel'];
-                    $list['file_id']            =$file_id;
+                    $list['self_id']                 = generate_id('user_');
+                    $list['name']                    = $v['name'];
+                    $list['department']              = $section->self_id;
+                    $list['type']                    = $type;
+                    $list['education_background']    = $v['education_background'];
+                    $list['dimensionality']          = $v['identity_num'];
+                    $list['tel']                     = $v['tel'];
+                    $list['entry_time']              = $v['entry_time'];
+                    $list['now_address']             = $v['now_address'];
+                    $list['salary']                  = $v['salary'];
+                    $list['create_time']             = $list['update_time']=$now_time;
+                    $list['social_flag']             = $v['social_flag'];
+                    $list['leave_time']              = $v['leave_time'];
+                    $list['live_cost']               = $v['live_cost'];
+                    $list['file_id']                 = $file_id;
+                    $list['group_code']              = $user_info->group_code;
+                    $list['group_name']              = $user_info->group_name;
+                    $list['create_user_id']          = $user_info->create_user_id;
+                    $list['create_user_name']        = $user_info->create_user_name;
                     $datalist[]=$list;
                 }
                 $a++;
@@ -517,7 +529,7 @@ class UserController extends CommonController{
                 return $msg;
             }
             $count=count($datalist);
-            $id= TmsAddressContact::insert($datalist);
+            $id= SystemUser::insert($datalist);
 
             if($id){
                 $msg['code']=200;
