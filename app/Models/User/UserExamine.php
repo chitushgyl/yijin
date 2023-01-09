@@ -5,7 +5,7 @@
  * Date: 2020/4/21
  * Time: 23:13
  */
-namespace App\Models\Tms;
+namespace App\Models\User;
 use  Illuminate\Database\Eloquent\Model;
 class UserExamine extends Model{
     //软删除
