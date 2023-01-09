@@ -161,10 +161,10 @@ class ExamineController extends CommonController{
         $remark             =$request->input('remark');//备注
 
         $rules=[
-            'car_number'=>'required',
+            'user_name'=>'required',
         ];
         $message=[
-            'car_number.required'=>'车牌号必须填写',
+            'user_name.required'=>'请填写员工姓名！',
         ];
 
         $validator=Validator::make($input,$rules,$message);

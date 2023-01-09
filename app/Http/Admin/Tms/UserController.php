@@ -194,6 +194,7 @@ class UserController extends CommonController{
         $license_back            =$request->input('license_back');//驾驶证反面
         $contract_back           =$request->input('contract_back');//合同反面
         $work_license            =$request->input('work_license');//岗位证件
+        $salary                  =$request->input('salary');//工资
 
 
 
@@ -241,6 +242,7 @@ class UserController extends CommonController{
             $data['license_back']         =img_for($license_back,'one_in');
             $data['contract_back']        =img_for($contract_back,'one_in');
             $data['work_license']         =img_for($work_license,'in');
+            $data['salary']               =$salary;
 
             $wheres['self_id'] = $self_id;
             $old_info=SystemUser::where($wheres)->first();
@@ -405,14 +407,11 @@ class UserController extends CommonController{
         //
         /****虚拟数据
         $input['importurl']     =$importurl="uploads/import/TMS地址导入文件范本.xlsx";
-        $input['company_id']       =$company_id='company_202012291153523141320375';
          ***/
         $rules = [
-            'company_id' => 'required',
             'importurl' => 'required',
         ];
         $message = [
-            'company_id.required' => '请选择业务公司',
             'importurl.required' => '请上传文件',
         ];
         $validator = Validator::make($input, $rules, $message);
@@ -442,15 +441,20 @@ class UserController extends CommonController{
              * 第四个位置为数据库的对应字段
              */
             $shuzu=[
-                '省份' =>['Y','Y','64','sheng_name'],
-                '城市' =>['Y','Y','64','shi_name'],
-                '区县' =>['Y','Y','64','qu_name'],
-                '详细地址' =>['Y','Y','64','address'],
-                '联系人' =>['Y','Y','64','contacts'],
-                '联系电话' =>['Y','Y','64','tel'],
+                '姓名' =>['Y','Y','30','name'],
+                '部门' =>['Y','Y','64','department'],
+                '职务' =>['Y','Y','30','type'],
+                '学历' =>['Y','Y','64','education_background'],
+                '身份证号' =>['Y','Y','64','identity_num'],
+                '住宿费' =>['Y','Y','64','tel'],
+                '入职时间' =>['Y','Y','64','entry_time'],
+                '现居地' =>['Y','Y','64','now_address'],
+                '联系方式' =>['Y','Y','64','tel'],
+                '工资' =>['N','Y','64','salary'],
+                '是否参加社保' =>['N','Y','64','social_flag'],
+                '离职时间' =>['N','Y','64','leave_time'],
             ];
             $ret=arr_check($shuzu,$info_check);
-
 
             // dump($ret);
             if($ret['cando'] == 'N'){
@@ -460,20 +464,7 @@ class UserController extends CommonController{
             }
 
             $info_wait=$ret['new_array'];
-            $where_check=[
-                ['delete_flag','=','Y'],
-                ['self_id','=',$company_id],
-            ];
 
-            $info= TmsGroup::where($where_check)->select('self_id','company_name','group_code','group_name')->first();
-            // dd($info->toArray());
-            if(empty($info)){
-                $msg['code'] = 305;
-                $msg['msg'] = '业务公司不存在';
-                return $msg;
-            }
-
-//            dd($info);
             /** 二次效验结束**/
 
             $datalist=[];       //初始化数组为空
@@ -487,58 +478,9 @@ class UserController extends CommonController{
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
 
-                $where_address=[
-                    ['name','=',$v['qu_name']],
-                    ['level','=',3],
-                ];
-
-                $where_address2=[
-                    ['name','=',$v['shi_name']],
-                    ['level','=',2],
-                ];
-                $where_address3=[
-                    ['name','=',$v['sheng_name']],
-                    ['level','=',1],
-                ];
-
-                $selectMenu=['id','name','parent_id'];
-                $address_info=SysAddress::with(['sysAddress' => function($query)use($selectMenu,$where_address2,$where_address3) {
-                    $query->where($where_address2);
-                    $query->select($selectMenu);
-                    $query->with(['sysAddress' => function($query)use($selectMenu,$where_address3) {
-                        $query->where($where_address3);
-                        $query->select($selectMenu);
-                    }]);
-                }])->where($where_address)->select($selectMenu)->first();
-
-                if(empty($address_info)){
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行区不存在".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }else{
-                    if(empty($address_info->sysAddress)){
-                        if($abcd<$errorNum){
-                            $strs .= '数据中的第'.$a."行市不存在".'</br>';
-                            $cando='N';
-                            $abcd++;
-                        }
-                    }else{
-                        if(empty($address_info->sysAddress->sysAddress)){
-                            if($abcd<$errorNum){
-                                $strs .= '数据中的第'.$a."行省不存在".'</br>';
-                                $cando='N';
-                                $abcd++;
-                            }
-                        }
-                    }
-                }
-                $location = bd_location(2,$v['sheng_name'],$v['shi_name'],$v['qu_name'],$v['address']);
-                // dump($cando);
                 $list=[];
                 if($cando =='Y'){
-                    $list['self_id']            =generate_id('addresss_');
+                    $list['self_id']            =generate_id('user_');
                     $list['sheng_name']         = $v['sheng_name'];
                     $list['qu_name']            = $v['qu_name'];
                     $list['shi_name']           = $v['shi_name'];
@@ -555,8 +497,8 @@ class UserController extends CommonController{
                     $list['create_time']        =$list['update_time']=$now_time;
                     $list['company_id']         = $info->self_id;
                     $list['company_name']       = $info->company_name;
-                    $list['contacts']       = $v['contacts'];
-                    $list['tel']       = $v['tel'];
+                    $list['contacts']           = $v['contacts'];
+                    $list['tel']                = $v['tel'];
                     $list['file_id']            =$file_id;
                     $datalist[]=$list;
                 }
