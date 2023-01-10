@@ -393,10 +393,10 @@ class GoodController extends CommonController{
             $shuzu=[
                 '产品编号' =>['Y','N','64','external_sku_id'],
                 '产品名称' =>['Y','Y','255','good_name'],
-                '产品类型' =>['Y','Y','255','good_name'],
+                '产品类型' =>['Y','Y','255','type'],
                 '单位' =>['Y','Y','10','wms_unit'],
                 '规格' =>['N','Y','50','wms_spec'],
-                '单价' =>['N','Y','50','wms_spec'],
+                '单价' =>['N','Y','50','sale_price'],
 
             ];
 
@@ -408,13 +408,6 @@ class GoodController extends CommonController{
                 return $msg;
             }
             $info_wait=$ret['new_array'];
-
-
-            $where_check=[
-                ['delete_flag','=','Y'],
-                ['self_id','=',$company_id],
-            ];
-
 
             /** 二次效验结束**/
 
@@ -428,11 +421,8 @@ class GoodController extends CommonController{
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
 
-
-
                 $where['delete_flag'] = 'Y';
                 $where['external_sku_id']=$v['external_sku_id'];
-                $where['company_id']=$company_id;
                 $where['type']='wms';
                 $good_info = ErpShopGoodsSku::where($where)->value('external_sku_id');
 
@@ -443,7 +433,11 @@ class GoodController extends CommonController{
                         $abcd++;
                     }
                 }
-
+                if ($v['type'] =='办公'){
+                    $type = 'office';
+                }else{
+                    $type = 'car';
+                }
                 $list=[];
                 if($cando =='Y'){
                     $list['self_id']            =generate_id('sku_');
@@ -452,6 +446,8 @@ class GoodController extends CommonController{
                     $list['wms_unit']           = $v['wms_unit'];
                     $list['wms_spec']           = $v['wms_spec'];
                     $list['type']               = 'wms';
+                    $list['sale_price']         = $v['sale_price'];
+                    $list['good_type']          = $type;
                     $list['group_code']         = $user_info->group_code;
                     $list['group_name']         = $user_info->group_name;
                     $list['create_user_id']     =$user_info->admin_id;
@@ -553,40 +549,38 @@ class GoodController extends CommonController{
             ];
             $where=get_list_where($search);
 
-            $select=['self_id','external_sku_id','company_name','good_english_name','use_flag','group_name','good_name','wms_unit','wms_target_unit','wms_scale',
-                'wms_length','wms_wide','wms_high','wms_weight',
-                'period_value','period'];
+            $select=['self_id','use_flag','good_name','good_english_name','external_sku_id','wms_unit','wms_target_unit','wms_scale','wms_spec',
+                'wms_length','wms_wide','wms_high','wms_weight','wms_out_unit','company_name','group_name','period_value','period','sale_price','good_type'];
             $info=ErpShopGoodsSku::where($where)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头
                 $row = [[
                     "id"=>'ID',
-                    "company_name"=>'业务往来公司',
-                    "external_sku_id"=>'商品编号',
-                    "good_name"=>'商品名称',
-                    "good_english_name"=>'商品英文名称',
-                    "wms_unit"=>'入库单位',
-                    "good_zhuanhua"=>'商品包装换算',
-                    "period"=>'商品有效期',
-                    "use_flag"=>'状态',
-                    "wms_length"=>'箱长（米）',
-                    "wms_wide"=>'箱长（米）',
-                    "wms_high"=>'箱长（米）',
-                    "wms_weight"=>'箱重（KG）',
+                    "external_sku_id"=>'产品编号',
+                    "good_name"=>'产品名称',
+                    "type"=>'产品类型',
+                    "wms_unit"=>'单位',
+                    "wms_spec"=>'规格',
+                    "sale_price"=>'单价',
                 ]];
 
                 /** 现在根据查询到的数据去做一个导出的数据**/
                 $data_execl=[];
                 foreach ($info as $k=>$v){
                     $list=[];
-
+                    if ($v->type == 'office'){
+                        $type = '办公';
+                    }else{
+                        $type = '车用';
+                    }
                     $list['id']=($k+1);
-                    $list['company_name']=$v->company_name;
-                    $list['good_english_name']=$v->good_english_name;
                     $list['external_sku_id']=$v->external_sku_id;
                     $list['good_name']=$v->good_name;
+                    $list['type']=$type;
                     $list['wms_unit']=$v->wms_unit;
+                    $list['wms_spec']=$v->wms_spec;
+                    $list['sale_price']=$v->sale_price;
 
                     if($v->wms_scale && $v->wms_target_unit){
                         $list['good_zhuanhua']='1'.$v->wms_target_unit.'='.$v->wms_scale.$v->wms_unit;
@@ -594,19 +588,7 @@ class GoodController extends CommonController{
                     }else{
                         $list['good_zhuanhua']=null;
                     }
-                    $list['period']=$v->period_value.$period[$v->period];
-
-                    if($v->use_flag == 'Y'){
-                        $list['use_flag']='使用中';
-                    }else{
-                        $list['use_flag']='禁止使用';
-                    }
-
-                    $list['wms_length']=$v->wms_length;
-                    $list['wms_wide']=$v->wms_wide;
-                    $list['wms_high']=$v->wms_high;
-                    $list['wms_weight']=$v->wms_weight;
-
+                    
                     $data_execl[]=$list;
                 }
                 /** 调用EXECL导出公用方法，将数据抛出来***/
