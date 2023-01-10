@@ -353,7 +353,7 @@ class GoodController extends CommonController{
         /** 接收数据*/
         $input              =$request->all();
         $importurl          =$request->input('importurl');
-        $company_id         =$request->input('company_id');
+
         $file_id            =$request->input('file_id');
 
         /****虚拟数据
@@ -361,11 +361,10 @@ class GoodController extends CommonController{
         $input['company_id']   =$company_id='group_202011181550202905767384';
 		***/
         $rules = [
-            'company_id' => 'required',
+
             'importurl' => 'required',
         ];
         $message = [
-            'company_id.required' => '请选择业务公司',
             'importurl.required' => '请上传文件',
         ];
         $validator = Validator::make($input, $rules, $message);
@@ -394,8 +393,11 @@ class GoodController extends CommonController{
             $shuzu=[
                 '产品编号' =>['Y','N','64','external_sku_id'],
                 '产品名称' =>['Y','Y','255','good_name'],
+                '产品类型' =>['Y','Y','255','good_name'],
+                '单位' =>['Y','Y','10','wms_unit'],
                 '规格' =>['N','Y','50','wms_spec'],
-                '主计量单位' =>['Y','Y','10','wms_unit'],
+                '单价' =>['N','Y','50','wms_spec'],
+
             ];
 
             $ret=arr_check($shuzu,$info_check);
