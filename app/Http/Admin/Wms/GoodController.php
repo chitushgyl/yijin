@@ -588,7 +588,7 @@ class GoodController extends CommonController{
                     }else{
                         $list['good_zhuanhua']=null;
                     }
-                    
+
                     $data_execl[]=$list;
                 }
                 /** 调用EXECL导出公用方法，将数据抛出来***/
