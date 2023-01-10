@@ -438,10 +438,11 @@ class GroupController extends CommonController{
 
             $shuzu=[
                 '公司名称' =>['Y','N','100','company_name'],
-                '结算方式(日结、月结、周结、现付)' =>['Y','Y','50','cost_type'],
                 '联系人' =>['Y','Y','50','contacts'],
                 '联系电话' =>['Y','Y','50','tel'],
                 '联系地址' =>['N','Y','50','address'],
+                '开户银行' =>['N','Y','50','bank'],
+                '银行账户' =>['N','Y','50','bank_number'],
             ];
             $ret=arr_check($shuzu,$info_check);
             // dd($ret);
@@ -497,23 +498,6 @@ class GroupController extends CommonController{
                     }
                 }
 
-//                $type = $tms_group_type[$v['type']]??null;
-//                if (empty($type)) {
-//                    if($abcd<$errorNum){
-//                        $strs .= '数据中的第'.$a."行类型错误！".'</br>';
-//                        $cando='N';
-//                        $abcd++;
-//                    }
-//                }
-                $cost_type = $tms_cost_type[$v['cost_type']]??null;
-                if (empty($cost_type)) {
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行结算方式错误！".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }
-
                 $list=[];
                 if($cando =='Y'){
                     $list['self_id']            =generate_id('company_');
@@ -521,8 +505,8 @@ class GroupController extends CommonController{
                     $list['contacts']           = $v['contacts'];
                     $list['address']            = $v['address'];
                     $list['tel']                = $v['tel'];
-                    $list['type']               = $type;
-                    $list['cost_type']          = $cost_type;
+                    $list['bank']               = $v['bank'];
+                    $list['bank_number']        = $v['bank_number'];
                     $list['group_code']         = $info->group_code;
                     $list['group_name']         = $info->group_name;
                     $list['create_user_id']     =$user_info->admin_id;
@@ -602,25 +586,25 @@ class GroupController extends CommonController{
             ];
             $where=get_list_where($search);
             $select=['self_id','company_name','type','group_name','contacts','address','tel',
-                'cost_type'];
+                'bank','bank_number'];
             $info=TmsGroup::where($where)->orderBy('create_time', 'desc')->select($select)->get();
 
             if($info){
                 //设置表头
                 $row = [[
                     "id"=>'ID',
-                    "company_name"=>'业务公司',
-                    "type"=>'类型',
-                    "cost_type"=>'结算方式',
+                    "company_name"=>'公司名称',
                     "contacts"=>'联系人',
                     "tel"=>'联系电话',
-                    "address"=>'公司地址'
+                    "address"=>'公司地址',
+                    "bank"=>'开户银行',
+                    "bank_number"=>'银行账户',
+
                 ]];
 
                 /** 现在根据查询到的数据去做一个导出的数据**/
                 $data_execl=[];
-                $tms_group_type = array_column(config('tms.tms_group_type'),'name','key');
-                $tms_cost_type = array_column(config('tms.tms_cost_type'),'name','key');
+
                 foreach ($info as $k=>$v){
                     $list=[];
 
@@ -636,11 +620,11 @@ class GroupController extends CommonController{
 
                     $list['id']=($k+1);
                     $list['company_name']=$v->company_name;
-                    $list['type']=$type;
-                    $list['cost_type']=$cost_type;
                     $list['contacts']=$v->contacts;
                     $list['tel']=$v->tel;
                     $list['address']=$v->address;
+                    $list['bank']=$v->bank;
+                    $list['bank_number']=$v->bank_number;
 
                     $data_execl[]=$list;
 
