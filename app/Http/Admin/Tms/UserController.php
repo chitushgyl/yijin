@@ -480,7 +480,7 @@ class UserController extends CommonController{
             foreach($info_wait as $k => $v){
                 $where=[
                     ['delete_flag','=','Y'],
-                    ['department','=',$v['department']],
+                    ['section_name','=',$v['department']],
                     ['group_code','=',$user_info->group_code],
                 ];
                 $section = SystemSection::where($where)->select('self_id','section_name','group_code')->first();

@@ -367,12 +367,10 @@ class UserRewardController extends CommonController{
         /** 接收数据*/
         $input              =$request->all();
         $importurl          =$request->input('importurl');
-        $company_id         =$request->input('company_id');
         $file_id            =$request->input('file_id');
         //
         /****虚拟数据
         $input['importurl']     =$importurl="uploads/import/TMS地址导入文件范本.xlsx";
-        $input['company_id']       =$company_id='company_202012291153523141320375';
          ***/
         $rules = [
             'company_id' => 'required',
