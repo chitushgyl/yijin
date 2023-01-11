@@ -478,8 +478,6 @@ class GroupController extends CommonController{
             $errorNum=50;       //控制错误数据的条数
             $a=2;
 
-            $tms_group_type        =array_column(config('tms.tms_group_type'),'key','name');
-            $tms_cost_type        =array_column(config('tms.tms_cost_type'),'key','name');
             // dd($tms_group_type);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
