@@ -958,7 +958,7 @@ class OrderController extends CommonController{
                     $datalist[]=$list;
 
                     $order_log['self_id'] = generate_id('log_');
-                    $order_log['info'] = '创建运单:'.'预约单号'.$v['odd_number'].','.'运单号：'.$v['order_number'];
+                    $order_log['info'] = '创建运单:'.'预约单号'.$v['odd_number'].','.'运单号：'.$list['order_number'];
                     $order_log['create_time'] = $order_log['update_time'] = $now_time;
                     $order_log['order_id']    = $v['self_id'];
                     $order_log['group_code']    = $info->group_code;
