@@ -76,7 +76,8 @@ Route::group([
 //    Route::any('/group/execl', 'GroupController@execl');
     });
 
-
+    Route::any('/group/import', 'GroupController@import');
+    Route::any('/group/execl', 'GroupController@execl');
     /**TMS联系人管理**/
     Route::any('/contacts/contactsList', 'ContactsController@contactsList');
     Route::any('/contacts/contactsPage', 'ContactsController@contactsPage');
