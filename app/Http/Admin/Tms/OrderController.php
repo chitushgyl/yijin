@@ -26,8 +26,6 @@ class OrderController extends CommonController{
         /** 接收中间件参数**/
         $group_info             = $request->get('group_info');
         $user_info              = $request->get('user_info');
-        $order_state_type        =config('tms.3pl_order_state');
-        $data['state_info']       =$order_state_type;
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
         $data['user_info']      = $user_info;
@@ -37,31 +35,6 @@ class OrderController extends CommonController{
             'import_color'=>'#FC5854',
             'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/车辆导入文件范本.xlsx',
         ];
-
-        /** 抓取可调度的订单**/
-        $where['delete_flag'] = 'Y';
-        $where['dispatch_flag'] = 'Y';
-        switch ($group_info['group_id']){
-            case 'all':
-                $data['total']=TmsOrderDispatch::where($where)->count(); //总的数据量
-                break;
-
-            case 'one':
-                $where[]=['group_code','=',$group_info['group_code']];
-                $data['total']=TmsOrderDispatch::where($where)->count(); //总的数据量
-                break;
-
-            case 'more':
-                $data['total']=TmsOrderDispatch::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                break;
-        }
-
-
-        foreach ($data['button_info'] as $k => $v){
-            if($v->id == '625'){
-                $v->name.='（'.$data['total'].'）';
-            }
-        }
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
@@ -1097,10 +1070,11 @@ class OrderController extends CommonController{
                 //设置表头
                 $row = [[
                     "id"=>'ID',
-                    "car_number"=>'车牌号',
-                    "car_type"=>'车型',
-                    "carframe_num"=>'车架号',
-                    "crock_medium"=>'罐体介质',
+                    "send_view"=>'装货地',
+                    "carframe_num"=>'联系人（装）',
+                    "crock_medium"=>'联系电话（装）',
+                    "gather_view"=>'卸货地',
+
                     "volume"=>'罐体容积',
                     "tank_validity"=>'罐检到期日期',
                     "weight"=>'核载吨位',
@@ -1113,6 +1087,32 @@ class OrderController extends CommonController{
                     "carrier"=>'承运险有效期',
                     "remark"=>'备注'
                 ]];
+
+//                '省（装）' =>['Y','N','64','send_sheng_name'],
+//                '市（装）' =>['Y','N','64','send_shi_name'],
+//                '区（装）' =>['Y','N','64','send_qu_name'],
+//                '详细地址（装）' =>['Y','N','100','send_address'],
+//                '联系人（装）' =>['Y','N','64','send_name'],
+//                '联系电话（装）' =>['Y','N','64','send_tel'],
+//                '省（卸）' =>['Y','N','64','gather_sheng_name'],
+//                '市（卸）' =>['Y','N','64','gather_shi_name'],
+//                '区（卸）' =>['Y','N','64','gather_qu_name'],
+//                '详细地址（卸）' =>['Y','N','100','gather_address'],
+//                '联系人（卸）' =>['Y','N','30','gather_name'],
+//                '联系方式（卸）' =>['Y','N','64','gather_tel'],
+//                '预约单号' =>['Y','N','64','odd_number'],
+//                '物料名称' =>['Y','N','64','good_name'],
+//                '预约提货量' =>['Y','N','64','order_weight'],
+//                '实际提货量' =>['N','N','64','real_weight'],
+//                '卸货量' =>['N','N','64','upload_weight'],
+//                '装卸货量差' =>['N','N','64','different_weight'],
+//                '进厂时间' =>['Y','N','64','enter_time'],
+//                '出厂时间' =>['N','N','64','leave_time'],
+//                '费用' =>['Y','N','64','price'],
+//                '其他费用' =>['N','N','64','more_money'],
+//                '备注' =>['N','N','200','remark'],
+//                '开票状态' =>['Y','N','64','bill_flag'],
+//                '结算状态' =>['Y','N','64','payment_state'],
 
                 /** 现在根据查询到的数据去做一个导出的数据**/
                 $data_execl=[];
