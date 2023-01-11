@@ -436,6 +436,7 @@ class CarController extends CommonController{
                '交强险有效期' =>['N','Y','64','compulsory'],
                '商业险有效期' =>['N','Y','64','commercial'],
                '承运险有效期' =>['N','Y','64','carrier'],
+               '备注' =>['N','Y','64','remark'],
                 ];
             $ret=arr_check($shuzu,$info_check);
 
