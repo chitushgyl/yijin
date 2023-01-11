@@ -2,14 +2,8 @@
 namespace App\Http\Admin\Tms;
 use App\Models\Tms\AppSettingParam;
 use App\Models\Tms\OrderLog;
-use App\Models\Tms\TmsCarType;
-use App\Models\Tms\TmsLittleOrder;
 use App\Models\Tms\TmsMoney;
-use App\Models\Tms\TmsOrderCost;
-use App\Models\Tms\TmsOrderMoney;
 use App\Models\Tms\TmsReceipt;
-use App\Models\User\UserCapital;
-use App\Models\User\UserWallet;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\DB;
@@ -19,11 +13,10 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Tools\Import;
 use App\Http\Controllers\StatusController as Status;
 use App\Http\Controllers\DetailsController as Details;
-use App\Models\Tms\TmsGroup;
 use App\Models\Group\SystemGroup;
 use App\Models\Tms\TmsOrder;
-use App\Models\Tms\TmsOrderDispatch;
-use App\Models\Tms\TmsLine;
+
+
 use App\Http\Controllers\TmsController as Tms;
 class OrderController extends CommonController{
 
@@ -114,8 +107,8 @@ class OrderController extends CommonController{
             'order_status','send_time','send_name','send_tel','send_sheng','send_shi','send_qu','send_sheng_name','send_shi_name','send_qu_name','send_address',
             'send_address_longitude','send_address_latitude','gather_time','gather_name','gather_tel','gather_sheng','gather_shi','gather_qu','gather_sheng_name',
             'gather_shi_name','gather_qu_name','gather_address','gather_address_longitude','gather_address_latitude','total_money','good_name','more_money','price',
-            'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number'
-            ];
+            'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
+            'car_number','car_id','car_conact','car_tel'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -815,7 +808,7 @@ class OrderController extends CommonController{
 
     /***    订单导入     /tms/order/import
      */
-    public function import(Request $request){
+    public function import(Request $request,Tms $tms){
         $table_name         ='wms_warehouse_area';
         $now_time           = date('Y-m-d H:i:s', time());
 
@@ -832,6 +825,7 @@ class OrderController extends CommonController{
         /** 接收数据*/
         $input              =$request->all();
         $importurl          =$request->input('importurl');
+        $group_code          =$request->input('group_code');
         $file_id            =$request->input('file_id');
         //dd($input);
         /****虚拟数据
@@ -845,6 +839,17 @@ class OrderController extends CommonController{
         ];
         $validator = Validator::make($input, $rules, $message);
         if ($validator->passes()) {
+            $where_check=[
+                ['delete_flag','=','Y'],
+                ['self_id','=',$group_code],
+            ];
+
+            $info= SystemGroup::where($where_check)->select('self_id','group_code','group_name')->first();
+            if(empty($info)){
+                $msg['code'] = 305;
+                $msg['msg'] = '所属公司不存在';
+                return $msg;
+            }
 
             /**发起二次效验，1效验文件是不是存在， 2效验文件中是不是有数据 3,本身数据是不是重复！！！* */
             if (!file_exists($importurl)) {
@@ -869,8 +874,33 @@ class OrderController extends CommonController{
              * 第四个位置为数据库的对应字段
              */
             $shuzu=[
-                '车辆' =>['Y','N','64','area'],
+                '省（装）' =>['Y','N','64','send_sheng_name'],
+                '市（装）' =>['Y','N','64','send_shi_name'],
+                '区（装）' =>['Y','N','64','send_qu_name'],
+                '详细地址（装）' =>['Y','N','100','send_address'],
+                '联系人（装）' =>['Y','N','64','send_name'],
+                '联系电话（装）' =>['Y','N','64','send_tel'],
+                '省（卸）' =>['Y','N','64','gather_sheng_name'],
+                '市（卸）' =>['Y','N','64','gather_shi_name'],
+                '区（卸）' =>['Y','N','64','gather_qu_name'],
+                '详细地址（卸）' =>['Y','N','100','gather_address'],
+                '联系人（卸）' =>['Y','N','30','gather_name'],
+                '联系方式（卸）' =>['Y','N','64','gather_tel'],
+                '预约单号' =>['Y','N','64','odd_number'],
+                '物料名称' =>['Y','N','64','good_name'],
+                '预约提货量' =>['Y','N','64','order_weight'],
+                '实际提货量' =>['N','N','64','real_weight'],
+                '卸货量' =>['N','N','64','upload_weight'],
+                '装卸货量差' =>['N','N','64','different_weight'],
+                '进厂时间' =>['Y','N','64','enter_time'],
+                '出厂时间' =>['N','N','64','leave_time'],
+                '费用' =>['Y','N','64','price'],
+                '其他费用' =>['N','N','64','more_money'],
+                '备注' =>['N','N','200','remark'],
+                '开票状态' =>['Y','N','64','bill_flag'],
+                '结算状态' =>['Y','N','64','payment_state'],
             ];
+
             $ret=arr_check($shuzu,$info_check);
 
             //dump($ret);
@@ -882,18 +912,6 @@ class OrderController extends CommonController{
 
             $info_wait=$ret['new_array'];
 
-
-            $where_check=[
-                ['delete_flag','=','Y'],
-                ['self_id','=',$warm_id],
-            ];
-
-            $info= WmsWarm::where($where_check)->select('self_id','warm_name','warehouse_id','warehouse_name','group_code','group_name')->first();
-            if(empty($info)){
-                $msg['code'] = 305;
-                $msg['msg'] = '温区不存在';
-                return $msg;
-            }
             /** 二次效验结束**/
 
             $datalist=[];       //初始化数组为空
@@ -902,41 +920,96 @@ class OrderController extends CommonController{
             $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
             $errorNum=50;       //控制错误数据的条数
             $a=2;
-
+            $order_log_list = [];
+            $money_list = [];
             //dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
                 $where=[
                     ['delete_flag','=','Y'],
-                    ['area','=',$v['area']],
-                    ['warehouse_id','=',$info->warehouse_id],
+                    ['odd_number','=',$v['odd_number']],
                 ];
 
-                $area_info = WmsWarehouseArea::where($where)->value('group_code');
+                $area_info = TmsOrder::where($where)->value('odd_number');
 
                 if($area_info){
                     if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行车辆已存在".'</br>';
+                        $strs .= '数据中的第'.$a."行预约单号已存在".'</br>';
                         $cando='N';
                         $abcd++;
                     }
                 }
 
                 $list=[];
+                $order_log=[];
+                $money = [];
                 if($cando =='Y'){
-                    $list['self_id']            =generate_id('area_');
-                    $list['area']               = $v['area'];
-                    $list['warehouse_id']       = $info->warehouse_id;
-                    $list['warehouse_name']     = $info->warehouse_name;
-                    $list['group_code']         = $info->group_code;
-                    $list['group_name']         = $info->group_name;
-                    $list['create_user_id']     = $user_info->admin_id;
-                    $list['create_user_name']   = $user_info->name;
-                    $list['create_time']        = $list['update_time']=$now_time;
-                    $list['warm_id']            = $info->self_id;
-                    $list['warm_name']          = $info->warm_name;
-                    $list['file_id']            =$file_id;
+
+                    $list['self_id']                 = generate_id('area_');
+                    $list['order_number']            = generate_id('');
+                    $list['send_name']               = $v['send_name'];
+                    $list['send_tel']                = $v['send_tel'];
+                    $list['send_sheng_name']         = $v['send_sheng_name'];
+                    $list['send_shi_name']           = $v['send_shi_name'];
+                    $list['send_qu_name']            = $v['send_qu_name'];
+                    $list['send_address']            = $v['send_address'];
+                    $list['gather_name']             = $v['gather_name'];
+                    $list['gather_tel']              = $v['gather_tel'];
+                    $list['gather_sheng_name']       = $v['gather_sheng_name'];
+                    $list['gather_shi_name']         = $v['gather_shi_name'];
+                    $list['gather_qu_name']          = $v['gather_qu_name'];
+                    $list['gather_address']          = $v['gather_address'];
+                    $list['good_name']               = $v['good_name'];
+                    $list['more_money']              = $v['more_money'];
+                    $list['price']                   = $v['price'];
+                    $list['total_money']             = $v['price'] + $v['more_money'];
+                    $list['enter_time']              = $v['enter_time'];
+                    $list['leave_time']              = $v['leave_time'];
+                    $list['order_weight']            = $v['order_weight'];
+                    $list['real_weight']             = $v['real_weight'];
+                    $list['upload_weight']           = $v['upload_weight'];
+                    $list['different_weight']        = $v['different_weight'];
+                    $list['bill_flag']               = $v['bill_flag'];
+                    $list['payment_state']           = $v['payment_state'];
+                    $list['odd_number']              = $v['odd_number'];
+                    $list['remark']                  = $v['remark'];
+
+                    $list['group_code']              = $info->group_code;
+                    $list['group_name']              = $info->group_name;
+                    $list['create_user_id']          = $user_info->admin_id;
+                    $list['create_user_name']        = $user_info->name;
+                    $list['create_time']             = $list['update_time']=$now_time;
+                    $list['file_id']                 = $file_id;
+
                     $datalist[]=$list;
+
+                    $order_log['self_id'] = generate_id('log_');
+                    $order_log['info'] = '创建运单:'.'预约单号'.$v['odd_number'].','.'运单号：'.$v['order_number'];
+                    $order_log['create_time'] = $order_log['update_time'] = $now_time;
+                    $order_log['order_id']    = $v['self_id'];
+                    $order_log['group_code']    = $info->group_code;
+                    $order_log['group_name']    = $info->group_name;
+                    $order_log['create_user_id']       = $user_info->admin_id;
+                    $order_log['create_user_name']     = $user_info->admin_name;
+
+                    $order_log_list[] = $order_log;
+
+
+                    /**保存费用**/
+                    $money['self_id']                = generate_id('money');
+                    $money['pay_type']               = 'freight';
+                    $money['money']                  = $list['total_money'];
+                    $money['pay_state']              = 'Y';
+                    $money['order_id']               = $list['self_id'];
+                    $money['process_state']          = 'Y';
+                    $money['type_state']             = 'in';
+                    $money['group_code']             = $group_code;
+//                $money['group_name']             = $group_name;
+                    $money['create_user_id']         = $user_info->admin_id;
+                    $money['create_user_name']       = $user_info->name;
+                    $money['create_time']            = $money['update_time'] = $now_time;
+
+                    $money_list[] = $money;
                 }
 
                 $a++;
@@ -955,9 +1028,9 @@ class OrderController extends CommonController{
                 return $msg;
             }
             $count=count($datalist);
-            $id= WmsWarehouseArea::insert($datalist);
-
-
+            $id= TmsOrder::insert($datalist);
+            OrderLog::insert($order_log_list);
+            TmsMoney::insert($money_list);
 
 
             if($id){
@@ -985,6 +1058,110 @@ class OrderController extends CommonController{
 
     }
 
+    /**
+     * 订单导出
+     * */
+    public function excel(Request $request){
+        $user_info  = $request->get('user_info');//接收中间件产生的参数
+        $now_time   =date('Y-m-d H:i:s',time());
+        $input      =$request->all();
+        /** 接收数据*/
+        $group_code     =$request->input('group_code');
+//        $group_code  =$input['group_code']   ='group_202012251449437824125582';
+        //dd($group_code);
+        $rules=[
+            'group_code'=>'required',
+        ];
+        $message=[
+            'group_code.required'=>'必须选择公司',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()){
+            /** 下面开始执行导出逻辑**/
+            $group_name     =SystemGroup::where('group_code','=',$group_code)->value('group_name');
+            //查询条件
+            $search=[
+                ['type'=>'=','name'=>'group_code','value'=>$group_code],
+                ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ];
+            $where=get_list_where($search);
+
+            $select=['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
+                'license','medallion','payment_state','insure_price','create_time','update_time','use_flag','delete_flag'];
+            $select1 = ['self_id','parame_name'];
+            $info=TmsCar::with(['TmsCarType' => function($query) use($select1){
+                $query->select($select1);
+            }])->where($where)->orderBy('create_time', 'desc')->select($select)->get();
+//dd($info);
+            if($info){
+                //设置表头
+                $row = [[
+                    "id"=>'ID',
+                    "car_number"=>'车牌号',
+                    "car_type"=>'车型',
+                    "carframe_num"=>'车架号',
+                    "crock_medium"=>'罐体介质',
+                    "volume"=>'罐体容积',
+                    "tank_validity"=>'罐检到期日期',
+                    "weight"=>'核载吨位',
+                    "license_date"=>'行驶证到期日期',
+                    "medallion_date"=>'运输证到期日期',
+                    "insure"=>'保险',
+                    "insure_price"=>'保险金额',
+                    "compulsory"=>'交强险有效期',
+                    "commercial"=>'商业险有效期',
+                    "carrier"=>'承运险有效期',
+                    "remark"=>'备注'
+                ]];
+
+                /** 现在根据查询到的数据去做一个导出的数据**/
+                $data_execl=[];
+
+
+                foreach ($info as $k=>$v){
+                    $list=[];
+
+                    $list['id']=($k+1);
+                    $list['car_number']         = $v['car_number'];
+                    $list['car_type']           = $info->TmsCarType->self_id;
+                    $list['carframe_num']       = $v['carframe_num'];
+                    $list['crock_medium']       = $v['crock_medium'];
+                    $list['license_date']       = $v['license_date'] ;
+                    $list['medallion_date']     = $v['medallion_date'];
+                    $list['weight']             = $v['weight'];
+                    $list['volume']             = $v['volume'];
+                    $list['insure']             = $v['insure'];
+                    $list['insure_price']       = $v['insure_price'];
+                    $list['compulsory']         = $v['compulsory'];
+                    $list['commercial']         = $v['commercial'];
+                    $list['carrier']            = $v['carrier'];
+                    $list['remark']             = $v['remark'];
+                    $data_execl[]=$list;
+                }
+                /** 调用EXECL导出公用方法，将数据抛出来***/
+                $browse_type=$request->path();
+                $msg=$file->export($data_execl,$row,$group_code,$group_name,$browse_type,$user_info,$where,$now_time);
+
+                //dd($msg);
+                return $msg;
+
+            }else{
+                $msg['code']=301;
+                $msg['msg']="没有数据可以导出";
+                return $msg;
+            }
+        }else{
+            $erro=$validator->errors()->all();
+            $msg['msg']=null;
+            foreach ($erro as $k=>$v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code']=300;
+            return $msg;
+        }
+    }
+
     /***    订单明细详情     /tms/order/details
      */
     public function  details(Request $request,Details $details){
@@ -995,8 +1172,8 @@ class OrderController extends CommonController{
             'order_status','send_time','send_name','send_tel','send_sheng','send_shi','send_qu','send_sheng_name','send_shi_name','send_qu_name','send_address',
             'send_address_longitude','send_address_latitude','gather_time','gather_name','gather_tel','gather_sheng','gather_shi','gather_qu','gather_sheng_name',
             'gather_shi_name','gather_qu_name','gather_address','gather_address_longitude','gather_address_latitude','total_money','good_name','more_money','price','receipt_flag',
-            'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number'
-        ];
+            'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
+            'car_number','car_id','car_conact','car_tel'];
         $select1 = ['self_id','receipt','order_id','total_user_id','group_code','group_name'];
         $where = [
             ['delete_flag','=','Y'],
