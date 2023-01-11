@@ -919,7 +919,7 @@ class OrderController extends CommonController{
                 $money = [];
                 if($cando =='Y'){
 
-                    $list['self_id']                 = generate_id('area_');
+                    $list['self_id']                 = generate_id('order_');
                     $list['order_number']            = generate_id('');
                     $list['send_name']               = $v['send_name'];
                     $list['send_tel']                = $v['send_tel'];
@@ -960,7 +960,7 @@ class OrderController extends CommonController{
                     $order_log['self_id'] = generate_id('log_');
                     $order_log['info'] = '创建运单:'.'预约单号'.$v['odd_number'].','.'运单号：'.$list['order_number'];
                     $order_log['create_time'] = $order_log['update_time'] = $now_time;
-                    $order_log['order_id']    = $v['self_id'];
+                    $order_log['order_id']    = $list['self_id'];
                     $order_log['group_code']    = $info->group_code;
                     $order_log['group_name']    = $info->group_name;
                     $order_log['create_user_id']       = $user_info->admin_id;
