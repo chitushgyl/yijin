@@ -47,7 +47,7 @@ Route::group([
         Route::any('/car/addCar','CarController@addCar');
         Route::any('/car/carUseFlag', 'CarController@carUseFlag');
         Route::any('/car/carDelFlag', 'CarController@carDelFlag');
-        Route::any('/car/import', 'CarController@import');
+//        Route::any('/car/import', 'CarController@import');
 //        Route::any('/car/execl', 'CarController@execl');
     });
 
