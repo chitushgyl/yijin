@@ -47,8 +47,8 @@ Route::group([
         Route::any('/car/addCar','CarController@addCar');
         Route::any('/car/carUseFlag', 'CarController@carUseFlag');
         Route::any('/car/carDelFlag', 'CarController@carDelFlag');
-//        Route::any('/car/import', 'CarController@import');
-//        Route::any('/car/execl', 'CarController@execl');
+        Route::any('/car/import', 'CarController@import');
+        Route::any('/car/execl', 'CarController@execl');
     });
 
     /**TMS车辆业务公司管理**/
@@ -72,8 +72,8 @@ Route::group([
     Route::any('/group/addGroup','GroupController@addGroup');
     Route::any('/group/groupUseFlag', 'GroupController@groupUseFlag');
     Route::any('/group/groupDelFlag', 'GroupController@groupDelFlag');
-    Route::any('/group/import', 'GroupController@import');
-    Route::any('/group/execl', 'GroupController@execl');
+//    Route::any('/group/import', 'GroupController@import');
+//    Route::any('/group/execl', 'GroupController@execl');
     });
 
 
