@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Admin\Tms;
+use App\Http\Controllers\FileController as File;
 use App\Models\Tms\AppSettingParam;
 use App\Models\Tms\OrderLog;
 use App\Models\Tms\TmsMoney;
@@ -1034,7 +1035,7 @@ class OrderController extends CommonController{
     /**
      * 订单导出
      * */
-    public function excel(Request $request){
+    public function excel(Request $request,File $file){
         $user_info  = $request->get('user_info');//接收中间件产生的参数
         $now_time   =date('Y-m-d H:i:s',time());
         $input      =$request->all();
@@ -1059,60 +1060,41 @@ class OrderController extends CommonController{
             ];
             $where=get_list_where($search);
 
-            $select=['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
-                'license','medallion','payment_state','insure_price','create_time','update_time','use_flag','delete_flag'];
+            $select=['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code',
+                'order_status','send_time','send_name','send_tel','send_sheng','send_shi','send_qu','send_sheng_name','send_shi_name','send_qu_name','send_address',
+                'send_address_longitude','send_address_latitude','gather_time','gather_name','gather_tel','gather_sheng','gather_shi','gather_qu','gather_sheng_name',
+                'gather_shi_name','gather_qu_name','gather_address','gather_address_longitude','gather_address_latitude','total_money','good_name','more_money','price',
+                'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
+                'car_number','car_id','car_conact','car_tel'];
             $select1 = ['self_id','parame_name'];
-            $info=TmsCar::with(['TmsCarType' => function($query) use($select1){
-                $query->select($select1);
-            }])->where($where)->orderBy('create_time', 'desc')->select($select)->get();
+            $info=TmsOrder::where($where)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头
                 $row = [[
                     "id"=>'ID',
                     "send_view"=>'装货地',
-                    "carframe_num"=>'联系人（装）',
-                    "crock_medium"=>'联系电话（装）',
+                    "send_name"=>'联系人（装）',
+                    "send_tel"=>'联系电话（装）',
                     "gather_view"=>'卸货地',
-
-                    "volume"=>'罐体容积',
-                    "tank_validity"=>'罐检到期日期',
-                    "weight"=>'核载吨位',
-                    "license_date"=>'行驶证到期日期',
-                    "medallion_date"=>'运输证到期日期',
-                    "insure"=>'保险',
-                    "insure_price"=>'保险金额',
-                    "compulsory"=>'交强险有效期',
-                    "commercial"=>'商业险有效期',
-                    "carrier"=>'承运险有效期',
+                    "gather_name"=>'联系人（卸）',
+                    "gather_tel"=>'联系方式（卸）',
+                    "odd_number"=>'预约单号',
+                    "good_name"=>'物料名称',
+                    "order_weight"=>'预约提货量',
+                    "real_weight"=>'实际提货量',
+                    "upload_weight"=>'卸货量',
+                    "different_weight"=>'装卸货量差',
+                    "enter_time"=>'进厂时间',
+                    "leave_time"=>'出厂时间',
+                    "price"=>'费用',
+                    "more_money"=>'其他费用',
+                    "total_money"=>'总运费',
+                    "car_number"=>'运输车辆',
+                    "car_conact"=>'驾驶员',
+                    "car_tel"=>'驾驶员电话',
                     "remark"=>'备注'
                 ]];
-
-//                '省（装）' =>['Y','N','64','send_sheng_name'],
-//                '市（装）' =>['Y','N','64','send_shi_name'],
-//                '区（装）' =>['Y','N','64','send_qu_name'],
-//                '详细地址（装）' =>['Y','N','100','send_address'],
-//                '联系人（装）' =>['Y','N','64','send_name'],
-//                '联系电话（装）' =>['Y','N','64','send_tel'],
-//                '省（卸）' =>['Y','N','64','gather_sheng_name'],
-//                '市（卸）' =>['Y','N','64','gather_shi_name'],
-//                '区（卸）' =>['Y','N','64','gather_qu_name'],
-//                '详细地址（卸）' =>['Y','N','100','gather_address'],
-//                '联系人（卸）' =>['Y','N','30','gather_name'],
-//                '联系方式（卸）' =>['Y','N','64','gather_tel'],
-//                '预约单号' =>['Y','N','64','odd_number'],
-//                '物料名称' =>['Y','N','64','good_name'],
-//                '预约提货量' =>['Y','N','64','order_weight'],
-//                '实际提货量' =>['N','N','64','real_weight'],
-//                '卸货量' =>['N','N','64','upload_weight'],
-//                '装卸货量差' =>['N','N','64','different_weight'],
-//                '进厂时间' =>['Y','N','64','enter_time'],
-//                '出厂时间' =>['N','N','64','leave_time'],
-//                '费用' =>['Y','N','64','price'],
-//                '其他费用' =>['N','N','64','more_money'],
-//                '备注' =>['N','N','200','remark'],
-//                '开票状态' =>['Y','N','64','bill_flag'],
-//                '结算状态' =>['Y','N','64','payment_state'],
 
                 /** 现在根据查询到的数据去做一个导出的数据**/
                 $data_execl=[];
@@ -1122,20 +1104,28 @@ class OrderController extends CommonController{
                     $list=[];
 
                     $list['id']=($k+1);
-                    $list['car_number']         = $v['car_number'];
-                    $list['car_type']           = $info->TmsCarType->self_id;
-                    $list['carframe_num']       = $v['carframe_num'];
-                    $list['crock_medium']       = $v['crock_medium'];
-                    $list['license_date']       = $v['license_date'] ;
-                    $list['medallion_date']     = $v['medallion_date'];
-                    $list['weight']             = $v['weight'];
-                    $list['volume']             = $v['volume'];
-                    $list['insure']             = $v['insure'];
-                    $list['insure_price']       = $v['insure_price'];
-                    $list['compulsory']         = $v['compulsory'];
-                    $list['commercial']         = $v['commercial'];
-                    $list['carrier']            = $v['carrier'];
-                    $list['remark']             = $v['remark'];
+                    $list['send_view']           =  $v['send_sheng_name'].$v['send_shi_name'].$v['send_qu_name'].$v['send_address'];
+                    $list['send_name']           = $v['send_name'];
+                    $list['send_tel']            = $v['send_tel'];
+                    $list['gather_view']         =  $v['gather_sheng_name'].$v['gather_shi_name'].$v['gather_qu_name'].$v['gather_address'];
+                    $list['gather_name']         = $v['gather_name'];
+                    $list['gather_tel']          = $v['gather_tel'];
+                    $list['odd_number']          = $v['odd_number'];
+                    $list['good_name']           = $v['good_name'] ;
+                    $list['order_weight']        = $v['order_weight'];
+                    $list['real_weight']         = $v['real_weight'];
+                    $list['upload_weight']       = $v['upload_weight'];
+                    $list['different_weight']    = $v['different_weight'];
+                    $list['enter_time']          = $v['enter_time'];
+                    $list['leave_time']          = $v['leave_time'];
+                    $list['price']               = $v['price'];
+                    $list['more_money']          = $v['more_money'];
+                    $list['total_money']         = $v['total_money'];
+                    $list['car_number']          = $v['car_number'];
+                    $list['car_conact']          = $v['car_conact'];
+                    $list['car_tel']             = $v['car_tel'];
+                    $list['remark']              = $v['remark'];
+
                     $data_execl[]=$list;
                 }
                 /** 调用EXECL导出公用方法，将数据抛出来***/
