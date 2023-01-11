@@ -423,7 +423,7 @@ class CarController extends CommonController{
              */
             $shuzu=[
                '车牌号' =>['Y','Y','10','car_number'],
-               '车型' =>['Y','Y','1','car_type'],
+               '车型' =>['Y','Y','20','car_type'],
                '车架号' =>['N','Y','64','carframe_num'],
                '罐体介质' =>['N','Y','16','crock_medium'],
                '罐体容积' =>['N','Y','64','volume'],
@@ -653,8 +653,9 @@ class CarController extends CommonController{
             ];
             $where=get_list_where($search);
 
-            $select=['self_id','car_number','car_possess','weight','volam','control','car_type_name','contacts','tel','remark'];
-            $select1 = ['self_id'];
+            $select=['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
+                'license','medallion','payment_state','insure_price','create_time','update_time','use_flag','delete_flag'];
+            $select1 = ['self_id','parame_name'];
             $info=TmsCar::with(['TmsCarType' => function($query) use($select1){
                 $query->select($select1);
             }])->where($where)->orderBy('create_time', 'desc')->select($select)->get();
