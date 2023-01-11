@@ -526,8 +526,8 @@ class CarController extends CommonController{
                     $list['car_type']           = $car_type->self_id;
                     $list['carframe_num']       = $v['carframe_num'];
                     $list['crock_medium']       = $v['crock_medium'];
-                    $list['license_date']       = $v['license_date'] ;
-                    $list['medallion_date']     = $v['medallion_date'];
+                    $list['license_date']       = gmdate('Y-m-d H:i:s', ($v['license_date'] - 25569) * 3600 * 24);
+                    $list['medallion_date']     = gmdate('Y-m-d H:i:s', ($v['medallion_date'] - 25569) * 3600 * 24);
                     $list['remark']             = $v['remark'];
                     $list['weight']             = $v['weight'];
                     $list['volume']             = $v['volume'];

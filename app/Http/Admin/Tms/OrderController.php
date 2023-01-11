@@ -832,19 +832,15 @@ class OrderController extends CommonController{
         /** 接收数据*/
         $input              =$request->all();
         $importurl          =$request->input('importurl');
-        $warm_id            =$request->input('warm_id');
         $file_id            =$request->input('file_id');
         //dd($input);
         /****虚拟数据
         $input['importurl']     =$importurl="uploads/2020-10-13/车辆导入文件范本.xlsx";
-        $input['warm_id']       =$warm_id='warm_202012171029290396683997';
          ***/
         $rules = [
-            'warm_id' => 'required',
             'importurl' => 'required',
         ];
         $message = [
-            'warm_id.required' => '请选择温区',
             'importurl.required' => '请上传文件',
         ];
         $validator = Validator::make($input, $rules, $message);
@@ -864,7 +860,6 @@ class OrderController extends CommonController{
                 $info_check=$res[0];
             }
 
-            //dump($info_check);
 
             /**  定义一个数组，需要的数据和必须填写的项目
             键 是EXECL顶部文字，
