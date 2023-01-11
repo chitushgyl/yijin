@@ -504,7 +504,7 @@ class UserController extends CommonController{
                     $list['department']              = $section->self_id;
                     $list['type']                    = $type;
                     $list['education_background']    = $v['education_background'];
-                    $list['dimensionality']          = $v['identity_num'];
+                    $list['identity_num']            = $v['identity_num'];
                     $list['tel']                     = $v['tel'];
                     $list['entry_time']              = $v['entry_time'];
                     $list['now_address']             = $v['now_address'];
