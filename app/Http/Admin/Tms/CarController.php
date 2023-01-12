@@ -541,19 +541,51 @@ class CarController extends CommonController{
                     $list['car_type']           = $car_type->self_id;
                     $list['carframe_num']       = $v['carframe_num'];
                     $list['crock_medium']       = $v['crock_medium'];
-                    $list['license_date']       = gmdate('Y-m-d H:i:s', ($v['license_date'] - 25569) * 3600 * 24);
-                    $list['medallion_date']     = gmdate('Y-m-d H:i:s', ($v['medallion_date'] - 25569) * 3600 * 24);
+                    if ($v['license_date']){
+                        $list['license_date']       = gmdate('Y-m-d H:i:s', ($v['license_date'] - 25569) * 3600 * 24);
+                    }else{
+                        $list['license_date']       = '';
+                    }
+                    if ($v['medallion_date']){
+                        $list['medallion_date']     = gmdate('Y-m-d H:i:s', ($v['medallion_date'] - 25569) * 3600 * 24);
+                    }else{
+                        $list['medallion_date']       = '';
+                    }
                     $list['remark']             = $v['remark'];
                     $list['weight']             = $v['weight'];
                     $list['volume']             = $v['volume'];
                     $list['insure']             = $v['insure'];
                     $list['insure_price']       = $v['insure_price'];
-                    $list['compulsory']         = gmdate('Y-m-d H:i:s', ($v['compulsory'] - 25569) * 3600 * 24);
-                    $list['commercial']         = gmdate('Y-m-d H:i:s', ($v['commercial'] - 25569) * 3600 * 24);
-                    $list['carrier']            = gmdate('Y-m-d H:i:s', ($v['carrier'] - 25569) * 3600 * 24);
-                    $list['compulsory_end']     = gmdate('Y-m-d H:i:s', ($v['compulsory_end'] - 25569) * 3600 * 24);
-                    $list['commercial_end']     = gmdate('Y-m-d H:i:s', ($v['commercial_end'] - 25569) * 3600 * 24);
-                    $list['carrier_end']        = gmdate('Y-m-d H:i:s', ($v['carrier_end'] - 25569) * 3600 * 24);
+                    if ($v['compulsory']){
+                        $list['compulsory']     = gmdate('Y-m-d H:i:s', ($v['compulsory'] - 25569) * 3600 * 24);
+                    }else{
+                        $list['compulsory']       = '';
+                    }
+                    if ($v['commercial']){
+                        $list['commercial']     = gmdate('Y-m-d H:i:s', ($v['commercial'] - 25569) * 3600 * 24);
+                    }else{
+                        $list['commercial']       = '';
+                    }
+                    if ($v['carrier']){
+                        $list['carrier']     = gmdate('Y-m-d H:i:s', ($v['carrier'] - 25569) * 3600 * 24);
+                    }else{
+                        $list['carrier']       = '';
+                    }
+                    if ($v['compulsory_end']){
+                        $list['compulsory_end']     = gmdate('Y-m-d H:i:s', ($v['compulsory_end'] - 25569) * 3600 * 24);
+                    }else{
+                        $list['compulsory_end']       = '';
+                    }
+                    if ($v['commercial_end']){
+                        $list['commercial_end']     = gmdate('Y-m-d H:i:s', ($v['commercial_end'] - 25569) * 3600 * 24);
+                    }else{
+                        $list['commercial_end']       = '';
+                    }
+                    if ($v['carrier_end']){
+                        $list['carrier_end']     = gmdate('Y-m-d H:i:s', ($v['carrier_end'] - 25569) * 3600 * 24);
+                    }else{
+                        $list['carrier_end']       = '';
+                    }
                     $list['group_code']         = $info->group_code;
                     $list['group_name']         = $info->group_name;
                     $list['create_user_id']     = $user_info->admin_id;

@@ -937,8 +937,18 @@ class OrderController extends CommonController{
                     $list['more_money']              = $v['more_money'];
                     $list['price']                   = $v['price'];
                     $list['total_money']             = $v['price'] + $v['more_money'];
-                    $list['enter_time']              = gmdate('Y-m-d H:i:s', ($v['enter_time'] - 25569) * 3600 * 24);
-                    $list['leave_time']              = gmdate('Y-m-d H:i:s', ($v['leave_time'] - 25569) * 3600 * 24);
+                    if ($v['enter_time']){
+                        $list['enter_time']              = gmdate('Y-m-d H:i:s', ($v['enter_time'] - 25569) * 3600 * 24);
+                    }else{
+                        $list['enter_time']              = '';
+                    }
+                    if ($v['leave_time']){
+                        $list['leave_time']              = gmdate('Y-m-d H:i:s', ($v['leave_time'] - 25569) * 3600 * 24);
+                    }else{
+                        $list['leave_time']              = '';
+                    }
+
+
                     $list['order_weight']            = $v['order_weight'];
                     $list['real_weight']             = $v['real_weight'];
                     $list['upload_weight']           = $v['upload_weight'];

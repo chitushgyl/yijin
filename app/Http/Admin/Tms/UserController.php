@@ -506,12 +506,20 @@ class UserController extends CommonController{
                     $list['education_background']    = $v['education_background'];
                     $list['identity_num']            = $v['identity_num'];
                     $list['tel']                     = $v['tel'];
-                    $list['entry_time']              = gmdate('Y-m-d H:i:s', ($v['entry_time'] - 25569) * 3600 * 24);
+                    if ($v['entry_time']){
+                        $list['entry_time']     = gmdate('Y-m-d H:i:s', ($v['entry_time'] - 25569) * 3600 * 24);
+                    }else{
+                        $list['entry_time']       = '';
+                    }
                     $list['now_address']             = $v['now_address'];
                     $list['salary']                  = $v['salary'];
                     $list['create_time']             = $list['update_time']=$now_time;
                     $list['social_flag']             = $social_flag;
-                    $list['leave_time']              = gmdate('Y-m-d H:i:s', ($v['leave_time'] - 25569) * 3600 * 24);
+                    if ($v['leave_time']){
+                        $list['leave_time']              = gmdate('Y-m-d H:i:s', ($v['leave_time'] - 25569) * 3600 * 24);
+                    }else{
+                        $list['leave_time']       = '';
+                    }
                     $list['live_cost']               = $v['live_cost'];
                     $list['file_id']                 = $file_id;
                     $list['group_code']              = $user_info->group_code;
