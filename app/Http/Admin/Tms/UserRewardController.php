@@ -542,7 +542,7 @@ class UserRewardController extends CommonController{
 
     /***    地址导出     /tms/userReward/excel
      */
-    public function execl(Request $request,File $file){
+    public function excel(Request $request,File $file){
         $user_info  = $request->get('user_info');//接收中间件产生的参数
         $now_time   =date('Y-m-d H:i:s',time());
         $input      =$request->all();
