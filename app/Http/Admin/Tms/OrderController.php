@@ -940,12 +940,12 @@ class OrderController extends CommonController{
                     if ($v['enter_time']){
                         $list['enter_time']              = gmdate('Y-m-d H:i:s', ($v['enter_time'] - 25569) * 3600 * 24);
                     }else{
-                        $list['enter_time']              = '';
+                        $list['enter_time']              = null;
                     }
                     if ($v['leave_time']){
                         $list['leave_time']              = gmdate('Y-m-d H:i:s', ($v['leave_time'] - 25569) * 3600 * 24);
                     }else{
-                        $list['leave_time']              = '';
+                        $list['leave_time']              = null;
                     }
 
 

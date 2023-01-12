@@ -509,7 +509,7 @@ class UserController extends CommonController{
                     if ($v['entry_time']){
                         $list['entry_time']     = gmdate('Y-m-d H:i:s', ($v['entry_time'] - 25569) * 3600 * 24);
                     }else{
-                        $list['entry_time']       = '';
+                        $list['entry_time']       = null;
                     }
                     $list['now_address']             = $v['now_address'];
                     $list['salary']                  = $v['salary'];
@@ -518,7 +518,7 @@ class UserController extends CommonController{
                     if ($v['leave_time']){
                         $list['leave_time']              = gmdate('Y-m-d H:i:s', ($v['leave_time'] - 25569) * 3600 * 24);
                     }else{
-                        $list['leave_time']       = '';
+                        $list['leave_time']       = null;
                     }
                     $list['live_cost']               = $v['live_cost'];
                     $list['file_id']                 = $file_id;

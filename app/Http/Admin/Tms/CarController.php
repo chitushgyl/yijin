@@ -559,32 +559,32 @@ class CarController extends CommonController{
                     if ($v['compulsory']){
                         $list['compulsory']     = gmdate('Y-m-d H:i:s', ($v['compulsory'] - 25569) * 3600 * 24);
                     }else{
-                        $list['compulsory']       = '';
+                        $list['compulsory']       = null;
                     }
                     if ($v['commercial']){
                         $list['commercial']     = gmdate('Y-m-d H:i:s', ($v['commercial'] - 25569) * 3600 * 24);
                     }else{
-                        $list['commercial']       = '';
+                        $list['commercial']       = null;
                     }
                     if ($v['carrier']){
                         $list['carrier']     = gmdate('Y-m-d H:i:s', ($v['carrier'] - 25569) * 3600 * 24);
                     }else{
-                        $list['carrier']       = '';
+                        $list['carrier']       = null;
                     }
                     if ($v['compulsory_end']){
                         $list['compulsory_end']     = gmdate('Y-m-d H:i:s', ($v['compulsory_end'] - 25569) * 3600 * 24);
                     }else{
-                        $list['compulsory_end']       = '';
+                        $list['compulsory_end']       = null;
                     }
                     if ($v['commercial_end']){
                         $list['commercial_end']     = gmdate('Y-m-d H:i:s', ($v['commercial_end'] - 25569) * 3600 * 24);
                     }else{
-                        $list['commercial_end']       = '';
+                        $list['commercial_end']       = null;
                     }
                     if ($v['carrier_end']){
                         $list['carrier_end']     = gmdate('Y-m-d H:i:s', ($v['carrier_end'] - 25569) * 3600 * 24);
                     }else{
-                        $list['carrier_end']       = '';
+                        $list['carrier_end']       = null;
                     }
                     $list['group_code']         = $info->group_code;
                     $list['group_name']         = $info->group_name;
