@@ -113,7 +113,7 @@ class CountController extends CommonController{
                 $v->count +=$vv->now_num;
             }
             $v->good_describe =unit_do($v->wms_unit , $v->wms_target_unit, $v->wms_scale, $v->count);
-
+            $v->button_info=$button_info;
         }
 //        dd($data['items']->toArray());
         $msg['code']=200;
