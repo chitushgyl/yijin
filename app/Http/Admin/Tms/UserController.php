@@ -674,12 +674,12 @@ class UserController extends CommonController{
                 $data_execl=[];
                 foreach ($info as $k=>$v){
                     $list=[];
-                    if ($v->type == '司机'){
-                        $type = 'driver';
-                    }elseif($v->type == '押运员'){
-                        $type = 'cargo';
+                    if ($v->type == 'driver'){
+                        $type = '司机';
+                    }elseif($v->type == 'cargo'){
+                        $type = '押运员';
                     }else{
-                        $type = 'manager';
+                        $type = '管理人员';
                     }
                     $list['id']=($k+1);
                     $list['name']=$v->name;
