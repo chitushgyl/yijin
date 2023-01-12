@@ -672,7 +672,7 @@ class CarController extends CommonController{
             $select=['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
                 'license','medallion','payment_state','insure_price','create_time','update_time','use_flag','delete_flag','compulsory_end','commercial_end','carrier_end','compulsory','commercial','carrier'];
             $select1 = ['self_id','parame_name'];
-            $info=TmsCar::with(['TmsCarType' => function($query) use($select1){
+            $info=TmsCar::with(['tmsCarType' => function($query) use($select1){
                 $query->select($select1);
             }])->where($where)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
@@ -709,7 +709,7 @@ class CarController extends CommonController{
 
                     $list['id']=($k+1);
                     $list['car_number']         = $v['car_number'];
-                    $list['car_type']           = $info->TmsCarType->self_id;
+                    $list['car_type']           = $info->tmsCarType->self_id;
                     $list['carframe_num']       = $v['carframe_num'];
                     $list['crock_medium']       = $v['crock_medium'];
                     $list['license_date']       = $v['license_date'] ;
