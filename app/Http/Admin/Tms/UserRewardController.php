@@ -367,17 +367,16 @@ class UserRewardController extends CommonController{
         /** 接收数据*/
         $input              =$request->all();
         $importurl          =$request->input('importurl');
+        $group_code          =$request->input('group_code');
         $file_id            =$request->input('file_id');
         //
         /****虚拟数据
         $input['importurl']     =$importurl="uploads/import/TMS地址导入文件范本.xlsx";
          ***/
         $rules = [
-            'company_id' => 'required',
             'importurl' => 'required',
         ];
         $message = [
-            'company_id.required' => '请选择业务公司',
             'importurl.required' => '请上传文件',
         ];
         $validator = Validator::make($input, $rules, $message);

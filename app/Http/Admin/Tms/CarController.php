@@ -65,7 +65,7 @@ class CarController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
-            'license','medallion','payment_state','insure_price','create_time','update_time','use_flag','delete_flag'];
+            'license','medallion','payment_state','insure_price','create_time','update_time','use_flag','delete_flag','compulsory_end','commercial_end','carrier_end','compulsory','commercial','carrier'];
         $select1 = ['self_id','parame_name'];
         switch ($group_info['group_id']){
             case 'all':
@@ -127,7 +127,7 @@ class CarController extends CommonController{
         ];
 
         $select = ['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
-            'license','medallion','payment_state','insure_price'];
+            'license','medallion','payment_state','insure_price','compulsory','commercial','carrier','compulsory_end','commercial_end','carrier_end'];
         $data['info']=TmsCar::where($where)->select($select)->first();
 
         if ($data['info']){
@@ -175,6 +175,12 @@ class CarController extends CommonController{
         $license            =$request->input('license');//行驶证
         $medallion          =$request->input('medallion');//运输证
         $insure_price       =$request->input('insure_price');//保险价格
+        $compulsory         =$request->input('compulsory');//交强险
+        $compulsory_end     =$request->input('compulsory_end');//交强险
+        $commercial         =$request->input('commercial');//商业险
+        $commercial_end     =$request->input('commercial_end');//商业险
+        $carrier            =$request->input('carrier');//承运险
+        $carrier_end        =$request->input('carrier_end');//承运险
 
         $rules=[
             'car_number'=>'required',
@@ -231,7 +237,12 @@ class CarController extends CommonController{
             $data['medallion']         =img_for($medallion,'one_in');
 //            $data['payment_state']     =$payment_state;
             $data['insure_price']      =$insure_price;
-
+            $data['compulsory']        =$compulsory;
+            $data['compulsory_end']        =$compulsory_end;
+            $data['commercial']        =$commercial;
+            $data['commercial_end']        =$commercial_end;
+            $data['carrier']           =$carrier;
+            $data['carrier_end']           =$carrier_end;
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsCar::where($wheres)->first();
@@ -433,9 +444,12 @@ class CarController extends CommonController{
                '运输证到期日期' =>['Y','Y','64','medallion_date'],
                '保险' =>['N','Y','64','insure'],
                '保险金额' =>['N','Y','64','insure_price'],
-               '交强险有效期' =>['N','Y','64','compulsory'],
-               '商业险有效期' =>['N','Y','64','commercial'],
-               '承运险有效期' =>['N','Y','64','carrier'],
+               '交强险购买时间' =>['N','Y','64','compulsory'],
+               '交强险到期时间' =>['N','Y','64','compulsory_end'],
+               '商业险购买时间' =>['N','Y','64','commercial'],
+               '商业险到期时间' =>['N','Y','64','commercial_end'],
+               '承运险购买时间' =>['N','Y','64','carrier'],
+               '承运险到期时间' =>['N','Y','64','carrier_end'],
                '备注' =>['N','Y','64','remark'],
                 ];
             $ret=arr_check($shuzu,$info_check);
@@ -533,9 +547,12 @@ class CarController extends CommonController{
                     $list['volume']             = $v['volume'];
                     $list['insure']             = $v['insure'];
                     $list['insure_price']       = $v['insure_price'];
-                    $list['compulsory']         = $v['compulsory'];
-                    $list['commercial']         = $v['commercial'];
-                    $list['carrier']            = $v['carrier'];
+                    $list['compulsory']         = gmdate('Y-m-d H:i:s', ($v['compulsory'] - 25569) * 3600 * 24);
+                    $list['commercial']         = gmdate('Y-m-d H:i:s', ($v['commercial'] - 25569) * 3600 * 24);
+                    $list['carrier']            = gmdate('Y-m-d H:i:s', ($v['carrier'] - 25569) * 3600 * 24);
+                    $list['compulsory_end']     = gmdate('Y-m-d H:i:s', ($v['compulsory_end'] - 25569) * 3600 * 24);
+                    $list['commercial_end']     = gmdate('Y-m-d H:i:s', ($v['commercial_end'] - 25569) * 3600 * 24);
+                    $list['carrier_end']        = gmdate('Y-m-d H:i:s', ($v['carrier_end'] - 25569) * 3600 * 24);
                     $list['group_code']         = $info->group_code;
                     $list['group_name']         = $info->group_name;
                     $list['create_user_id']     = $user_info->admin_id;
@@ -590,7 +607,7 @@ class CarController extends CommonController{
         $self_id=$request->input('self_id');
         $table_name='tms_car';
         $select=['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
-            'license','medallion','payment_state','insure_price'];
+            'license','medallion','payment_state','insure_price','compulsory_end','commercial_end','carrier_end','compulsory','commercial','carrier'];
         $select1 = [];
         $select2 = [];
         // $self_id='car_202012291341297595587871';
@@ -653,7 +670,7 @@ class CarController extends CommonController{
             $where=get_list_where($search);
 
             $select=['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
-                'license','medallion','payment_state','insure_price','create_time','update_time','use_flag','delete_flag'];
+                'license','medallion','payment_state','insure_price','create_time','update_time','use_flag','delete_flag','compulsory_end','commercial_end','carrier_end','compulsory','commercial','carrier'];
             $select1 = ['self_id','parame_name'];
             $info=TmsCar::with(['TmsCarType' => function($query) use($select1){
                 $query->select($select1);
@@ -674,9 +691,12 @@ class CarController extends CommonController{
                     "medallion_date"=>'运输证到期日期',
                     "insure"=>'保险',
                     "insure_price"=>'保险金额',
-                    "compulsory"=>'交强险有效期',
-                    "commercial"=>'商业险有效期',
-                    "carrier"=>'承运险有效期',
+                    "compulsory"=>'交强险购买时间',
+                    "compulsory_end"=>'交强险到期时间',
+                    "commercial"=>'商业险购买时间',
+                    "commercial_end"=>'商业险到期时间',
+                    "carrier"=>'承运险购买时间',
+                    "carrier_end"=>'承运险到期时间',
                     "remark"=>'备注'
                 ]];
 
@@ -699,8 +719,11 @@ class CarController extends CommonController{
                     $list['insure']             = $v['insure'];
                     $list['insure_price']       = $v['insure_price'];
                     $list['compulsory']         = $v['compulsory'];
+                    $list['compulsory_end']         = $v['compulsory_end'];
                     $list['commercial']         = $v['commercial'];
+                    $list['commercial_end']         = $v['commercial_end'];
                     $list['carrier']            = $v['carrier'];
+                    $list['carrier_end']            = $v['carrier_end'];
                     $list['remark']             = $v['remark'];
                     $data_execl[]=$list;
                 }
