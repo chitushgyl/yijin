@@ -520,7 +520,8 @@ class CarController extends CommonController{
                 }
                 $where_car_type = [
                     ['delete_flag','=','Y'],
-                    ['parame_name','=',$v['car_type']]
+                    ['parame_name','=',$v['car_type']],
+                    ['group_code','=',$group_code
                 ];
                 $car_type = TmsCarType::where($where_car_type)->select('self_id','parame_name')->first();
                 // dd($car_type);
