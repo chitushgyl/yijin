@@ -713,18 +713,19 @@ class CarController extends CommonController{
                     $list['car_type']           = $v->tmsCarType->self_id;
                     $list['carframe_num']       = $v['carframe_num'];
                     $list['crock_medium']       = $v['crock_medium'];
+                    $list['volume']             = $v['volume'];
+                    $list['tank_validity']      = $v['tank_validity'];
+                    $list['weight']             = $v['weight'];
                     $list['license_date']       = $v['license_date'] ;
                     $list['medallion_date']     = $v['medallion_date'];
-                    $list['weight']             = $v['weight'];
-                    $list['volume']             = $v['volume'];
                     $list['insure']             = $v['insure'];
                     $list['insure_price']       = $v['insure_price'];
                     $list['compulsory']         = $v['compulsory'];
-                    $list['compulsory_end']         = $v['compulsory_end'];
+                    $list['compulsory_end']     = $v['compulsory_end'];
                     $list['commercial']         = $v['commercial'];
-                    $list['commercial_end']         = $v['commercial_end'];
+                    $list['commercial_end']     = $v['commercial_end'];
                     $list['carrier']            = $v['carrier'];
-                    $list['carrier_end']            = $v['carrier_end'];
+                    $list['carrier_end']        = $v['carrier_end'];
                     $list['remark']             = $v['remark'];
                     $data_execl[]=$list;
                 }
