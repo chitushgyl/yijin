@@ -251,6 +251,7 @@ Route::group([
     /**商品查询 库存**/
     Route::any('/count/countList', 'CountController@countList');
     Route::any('/count/countPage', 'CountController@countPage');
+    Route::any('/count/excel', 'CountController@excel');
 
     /**库位查询**/
     Route::any('/warehousequery/warehousequeryList', 'WarehousequeryController@warehousequeryList');
