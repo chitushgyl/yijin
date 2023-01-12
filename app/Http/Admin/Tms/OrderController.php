@@ -132,13 +132,12 @@ class OrderController extends CommonController{
         $button_info1=[];
 
         foreach ($button_info as $k => $v){
-            if($v->id == 647){
-                $button_info1[]=$v;
-            }
+
 
         }
         foreach ($data['items'] as $k=>$v) {
             $v->order_type_show=$order_type[$v->order_status]??null;
+            $v->button_info = $button_info;
         }
 
 //        dd($data['items']);
