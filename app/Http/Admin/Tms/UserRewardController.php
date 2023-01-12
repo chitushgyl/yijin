@@ -351,11 +351,11 @@ class UserRewardController extends CommonController{
     /***    地址导入     /tms/address/import
      */
     public function import(Request $request){
-        $table_name         ='tms_address_contact';
+        $table_name         ='user_reward';
         $now_time           = date('Y-m-d H:i:s', time());
 
         $operationing       = $request->get('operationing');//接收中间件产生的参数
-        $operationing->access_cause     ='导入创建地址';
+        $operationing->access_cause     ='导入奖惩记录';
         $operationing->table            =$table_name;
         $operationing->operation_type   ='create';
         $operationing->now_time         =$now_time;
@@ -424,20 +424,7 @@ class UserRewardController extends CommonController{
             }
 
             $info_wait=$ret['new_array'];
-            $where_check=[
-                ['delete_flag','=','Y'],
-                ['self_id','=',$company_id],
-            ];
 
-            $info= TmsGroup::where($where_check)->select('self_id','company_name','group_code','group_name')->first();
-            // dd($info->toArray());
-            if(empty($info)){
-                $msg['code'] = 305;
-                $msg['msg'] = '业务公司不存在';
-                return $msg;
-            }
-
-//            dd($info);
             /** 二次效验结束**/
 
             $datalist=[];       //初始化数组为空
@@ -450,55 +437,6 @@ class UserRewardController extends CommonController{
             // dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
-
-                $where_address=[
-                    ['name','=',$v['qu_name']],
-                    ['level','=',3],
-                ];
-
-                $where_address2=[
-                    ['name','=',$v['shi_name']],
-                    ['level','=',2],
-                ];
-                $where_address3=[
-                    ['name','=',$v['sheng_name']],
-                    ['level','=',1],
-                ];
-
-                $selectMenu=['id','name','parent_id'];
-                $address_info=SysAddress::with(['sysAddress' => function($query)use($selectMenu,$where_address2,$where_address3) {
-                    $query->where($where_address2);
-                    $query->select($selectMenu);
-                    $query->with(['sysAddress' => function($query)use($selectMenu,$where_address3) {
-                        $query->where($where_address3);
-                        $query->select($selectMenu);
-                    }]);
-                }])->where($where_address)->select($selectMenu)->first();
-
-                if(empty($address_info)){
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行区不存在".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }else{
-                    if(empty($address_info->sysAddress)){
-                        if($abcd<$errorNum){
-                            $strs .= '数据中的第'.$a."行市不存在".'</br>';
-                            $cando='N';
-                            $abcd++;
-                        }
-                    }else{
-                        if(empty($address_info->sysAddress->sysAddress)){
-                            if($abcd<$errorNum){
-                                $strs .= '数据中的第'.$a."行省不存在".'</br>';
-                                $cando='N';
-                                $abcd++;
-                            }
-                        }
-                    }
-                }
-                $location = bd_location(2,$v['sheng_name'],$v['shi_name'],$v['qu_name'],$v['address']);
                 // dump($cando);
                 $list=[];
                 if($cando =='Y'){
@@ -506,19 +444,15 @@ class UserRewardController extends CommonController{
                     $list['sheng_name']         = $v['sheng_name'];
                     $list['qu_name']            = $v['qu_name'];
                     $list['shi_name']           = $v['shi_name'];
-                    $list['sheng']              = $address_info->sysAddress->sysAddress->id;
-                    $list['shi']                = $address_info->sysAddress->id;
-                    $list['qu']                 = $address_info->id;
                     $list['address']            = $v['address'];
-                    $list['longitude']          = $location ? $location['lng'] : '';
-                    $list['dimensionality']     = $location ? $location['lat'] : '';
-                    $list['group_code']         = $info->group_code;
-                    $list['group_name']         = $info->group_name;
+
+//                    $list['group_code']         = $info->group_code;
+//                    $list['group_name']         = $info->group_name;
                     $list['create_user_id']     = $user_info->admin_id;
                     $list['create_user_name']   = $user_info->name;
                     $list['create_time']        =$list['update_time']=$now_time;
-                    $list['company_id']         = $info->self_id;
-                    $list['company_name']       = $info->company_name;
+//                    $list['company_id']         = $info->self_id;
+//                    $list['company_name']       = $info->company_name;
                     $list['contacts']       = $v['contacts'];
                     $list['tel']       = $v['tel'];
                     $list['file_id']            =$file_id;
@@ -606,7 +540,7 @@ class UserRewardController extends CommonController{
 
     }
 
-    /***    地址导出     /tms/address/execl
+    /***    地址导出     /tms/userReward/excel
      */
     public function execl(Request $request,File $file){
         $user_info  = $request->get('user_info');//接收中间件产生的参数
@@ -633,35 +567,58 @@ class UserRewardController extends CommonController{
             ];
             $where=get_list_where($search);
 
-            $select=['self_id','sheng_name','company_name','shi_name','qu_name','address','contacts','tel'];
-            $info=TmsAddressContact::where($where)->orderBy('create_time', 'desc')->select($select)->get();
+            $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
+                'use_flag','delete_flag','create_time','update_time','group_code','group_name','user_id'];
+            $select1=['self_id','name'];
+            $info=UserReward::with(['systemUser' => function($query) use($select1){
+                $query->select($select1);
+            }])->where($where)
+                ->orderBy('create_time', 'desc')
+                ->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头
                 $row = [[
                     "id"=>'ID',
-                    "company_name"=>'业务往来公司',
-                    "sheng_name"=>'省份',
-                    "shi_name"=>'城市',
-                    "qu_name"=>'区县',
-                    "address"=>'详细地址',
-                    "contacts"=>'联系人',
-                    "tel"=>'联系电话',
+                    "user_name"=>'人员',
+                    "department"=>'部门',
+                    "car_number"=>'车牌号',
+                    "score"=>'扣分情况',
+                    "handle_connect"=>'处理情况',
+                    "payment"=>'交款情况',
+                    "late_fee"=>'滞纳金',
+                    "handle_opinion"=>'处理意见',
+                    "safe_flag"=>'是否有安全奖',
+                    "safe_reward"=>'安全奖金',
                 ]];
+
 
                 /** 现在根据查询到的数据去做一个导出的数据**/
                 $data_execl=[];
                 foreach ($info as $k=>$v){
                     $list=[];
-
                     $list['id']=($k+1);
-                    $list['company_name']=$v->company_name;
-                    $list['sheng_name']=$v->sheng_name;
-                    $list['shi_name']=$v->shi_name;
-                    $list['qu_name']=$v->qu_name;
-                    $list['address']=$v->address;
-                    $list['contacts']=$v->address;
-                    $list['tel']=$v->address;
+                    $list['user_name']=$v->systemUser->name;
+                    if($v['department'] == 1){
+                        $list['department']='运管';
+                    }elseif($v['department'] == 2){
+                        $list['department']='交警';
+                    }else{
+                        $list['department']='高速交警';
+                    }
+                    $list['car_number']=$v->car_number;
+                    $list['score']=$v->score;
+                    $list['handle_connect']=$v->handle_connect;
+                    $list['payment']=$v->payment;
+                    $list['late_fee']=$v->late_fee;
+                    $list['handle_opinion']=$v->handle_opinion;
+                    if ($v->safe_flag == 'Y'){
+                        $list['safe_flag']='是';
+                    }else{
+                        $list['safe_flag']='无';
+                    }
+                    $list['safe_flag']=$v->safe_flag;
+                    $list['safe_reward']=$v->safe_reward;
 
                     $data_execl[]=$list;
                 }

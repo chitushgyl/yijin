@@ -244,6 +244,7 @@ Route::group([
     Route::any('/userReward/userRewardFlag','UserRewardController@userRewardFlag');
     Route::any('/userReward/userRewardDelFlag','UserRewardController@userRewardDelFlag');
     Route::any('/userReward/details','UserRewardController@details');
+    Route::any('/userReward/excel','UserRewardController@excel');
 
     /**车辆维修记录***/
     Route::any('/carService/serviceList','CarServiceController@serviceList');
