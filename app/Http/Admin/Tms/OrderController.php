@@ -755,17 +755,9 @@ class OrderController extends CommonController{
         $data['delete_flag'] = 'N';
         $data['update_time'] = $now_time;
 
-        $operationing->access_cause='删除';
-        $operationing->table=$table_name;
-        $operationing->table_id=$self_id;
-        $operationing->now_time=$now_time;
-        $operationing->old_info=$old_info;
-        $operationing->new_info=(object)$data;
-        $operationing->operation_type=$flag;
         DB::beginTransaction();
         try{
             TmsOrder::where('self_id',$self_id)->update($data);
-            TmsOrderDispatch::where('order_id',$self_id)->update($data);
             DB::commit();
             $msg['code']=200;
             $msg['msg']='删除成功！';
@@ -776,6 +768,14 @@ class OrderController extends CommonController{
         }
 
         return $msg;
+
+        $operationing->access_cause='删除';
+        $operationing->table=$table_name;
+        $operationing->table_id=$self_id;
+        $operationing->now_time=$now_time;
+        $operationing->old_info=$old_info;
+        $operationing->new_info=(object)$data;
+        $operationing->operation_type=$flag;
     }
 
 

@@ -160,9 +160,12 @@ class CountController extends CommonController{
                 'use_flag','delete_flag','create_time','update_time','group_code','group_name','type',
             ];
             $select1 = ['self_id','section_name'];
-            $info=SystemUser::with(['SystemSection' => function($query) use($select1){
-                $query->select($select1);
-            }])->where($where)->whereIn('self_id',explode(',',$ids))->orderBy('create_time', 'desc')->select($select)->get();
+            $info=ErpShopGoodsSku::with(['wmsLibrarySige' => function($query)use($Signselect,$where1) {
+                $query->where($where1);
+                $query->select($Signselect);
+            }])->where($where)
+                ->orderBy('create_time', 'desc')
+                ->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头

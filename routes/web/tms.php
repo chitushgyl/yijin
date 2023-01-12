@@ -48,7 +48,7 @@ Route::group([
         Route::any('/car/carUseFlag', 'CarController@carUseFlag');
         Route::any('/car/carDelFlag', 'CarController@carDelFlag');
         Route::any('/car/import', 'CarController@import');
-//        Route::any('/car/execl', 'CarController@execl');
+        Route::any('/car/execl', 'CarController@execl');
     });
 
     /**TMS车辆业务公司管理**/
@@ -141,7 +141,7 @@ Route::group([
     ], function(){
 
         Route::any('/order/orderUseFlag', 'OrderController@orderUseFlag');
-        Route::any('/order/orderDelFlag', 'OrderController@orderDelFlag');
+//        Route::any('/order/orderDelFlag', 'OrderController@orderDelFlag');
     });
 
     /**TMS调度管理**/
