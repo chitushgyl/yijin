@@ -710,7 +710,7 @@ class CarController extends CommonController{
 
                     $list['id']=($k+1);
                     $list['car_number']         = $v['car_number'];
-                    $list['car_type']           = $info->tmsCarType->self_id;
+                    $list['car_type']           = $v->tmsCarType->self_id;
                     $list['carframe_num']       = $v['carframe_num'];
                     $list['crock_medium']       = $v['crock_medium'];
                     $list['license_date']       = $v['license_date'] ;
