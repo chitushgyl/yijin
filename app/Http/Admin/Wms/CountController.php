@@ -1,9 +1,13 @@
 <?php
 namespace App\Http\Admin\Wms;
+use App\Http\Controllers\FileController as File;
+use App\Models\Group\SystemGroup;
+use App\Models\Group\SystemUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
 use App\Models\Shop\ErpShopGoodsSku;
+use Illuminate\Support\Facades\Validator;
 
 class CountController extends CommonController{
 
@@ -121,6 +125,111 @@ class CountController extends CommonController{
         $msg['data']=$data;
         //dd($msg);
         return $msg;
+    }
+
+    /**
+     * 导出
+     * */
+    public function excel(Request $request,File $file){
+        $user_info  = $request->get('user_info');//接收中间件产生的参数
+        $now_time   =date('Y-m-d H:i:s',time());
+        $input      =$request->all();
+        /** 接收数据*/
+        $group_code     =$request->input('group_code');
+        $ids            =$request->input('ids');
+        // $group_code  =$input['group_code']   ='1234';
+        //dd($group_code);
+        $rules=[
+            'group_code'=>'required',
+        ];
+        $message=[
+            'group_code.required'=>'必须选择公司',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()){
+            /** 下面开始执行导出逻辑**/
+            $group_name     =SystemGroup::where('group_code','=',$group_code)->value('group_name');
+            //查询条件
+            $search=[
+                ['type'=>'=','name'=>'group_code','value'=>$group_code],
+                ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ];
+            $where=get_list_where($search);
+
+            $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','safe_reward',
+                'use_flag','delete_flag','create_time','update_time','group_code','group_name','type',
+            ];
+            $select1 = ['self_id','section_name'];
+            $info=SystemUser::with(['SystemSection' => function($query) use($select1){
+                $query->select($select1);
+            }])->where($where)->whereIn('self_id',explode(',',$ids))->orderBy('create_time', 'desc')->select($select)->get();
+//dd($info);
+            if($info){
+                //设置表头
+                $row = [[
+                    "id"=>'ID',
+                    "name"=>'姓名',
+                    "department"=>'部门',
+                    "type"=>'职务',
+                    "education_background"=>'学历',
+                    "identity_num"=>'身份证号',
+                    "live_cost"=>'住宿费',
+                    "entry_time"=>'入职时间',
+                    "now_address"=>'现居地',
+                    "tel"=>'联系方式',
+                    "salary"=>'工资',
+                    "social_flag"=>'是否参加社保',
+                    "leave_time"=>'离职时间',
+                ]];
+                /** 现在根据查询到的数据去做一个导出的数据**/
+                $data_execl=[];
+                foreach ($info as $k=>$v){
+                    $list=[];
+                    if ($v->type == '司机'){
+                        $type = 'driver';
+                    }elseif($v->type == '押运员'){
+                        $type = 'cargo';
+                    }else{
+                        $type = 'manager';
+                    }
+                    $list['id']=($k+1);
+                    $list['name']=$v->name;
+                    $list['department']=$v->SystemSection->section_name;
+                    $list['type']=$type;
+                    $list['education_background']=$v->education_background;
+                    $list['identity_num']=$v->identity_num;
+                    $list['live_cost']=$v->live_cost;
+                    $list['entry_time']=$v->entry_time;
+                    $list['now_address']=$v->now_address;
+                    $list['tel']=$v->tel;
+                    $list['salary']=$v->salary;
+                    $list['social_flag']=$v->social_flag;
+                    $list['leave_time']=$v->leave_time;
+
+                    $data_execl[]=$list;
+                }
+                /** 调用EXECL导出公用方法，将数据抛出来***/
+                $browse_type=$request->path();
+                $msg=$file->export($data_execl,$row,$group_code,$group_name,$browse_type,$user_info,$where,$now_time);
+
+                //dd($msg);
+                return $msg;
+
+            }else{
+                $msg['code']=301;
+                $msg['msg']="没有数据可以导出";
+                return $msg;
+            }
+        }else{
+            $erro=$validator->errors()->all();
+            $msg['msg']=null;
+            foreach ($erro as $k=>$v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code']=300;
+            return $msg;
+        }
     }
 
 
