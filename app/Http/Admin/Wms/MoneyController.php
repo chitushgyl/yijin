@@ -60,7 +60,7 @@ class MoneyController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name',
-            'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state'];
+            'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -322,6 +322,7 @@ class MoneyController extends CommonController{
         $user_name          =$request->input('user_name');//人员名称
         $process_state      =$request->input('process_state');//审核状态
         $create_time        =$request->input('create_time');//审核状态
+        $type_state        =$request->input('type_state');//审核状态
 
 
         $rules=[
@@ -346,6 +347,7 @@ class MoneyController extends CommonController{
             $data['user_id']            = $user_id;
             $data['user_name']          = $user_name;
             $data['process_state']      = $process_state;
+            $data['type_state']         = $type_state;
 
 
             $wheres['self_id'] = $self_id;
