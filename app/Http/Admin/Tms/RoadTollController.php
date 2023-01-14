@@ -410,7 +410,7 @@ class RoadTollController extends CommonController{
             $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
             $errorNum=50;       //控制错误数据的条数
             $a=2;
-
+            $moneylist=[];
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
 //                if (!check_carnumber($v['car_number'])) {
@@ -422,6 +422,7 @@ class RoadTollController extends CommonController{
 //                }
 
                 $list=[];
+                $money=[];
                 if($cando =='Y'){
                     $list['self_id']            = generate_id('etc_');
                     $list['car_number']         = substr($v['car_number'],0,9);
@@ -438,6 +439,21 @@ class RoadTollController extends CommonController{
                     $list['file_id']            =$file_id;
 
                     $datalist[]=$list;
+
+                    $money['pay_type']           = 'road';
+                    $money['money']              = $v['road_price'];
+                    $money['pay_state']          = 'Y';
+//                    $money['car_id']             = $car_id;
+                    $money['car_number']         = $v['car_number'];
+                    $money['process_state']      = 'Y';
+                    $money['type_state']         = 'out';
+                    $money['self_id']            = generate_id('money');
+                    $money['group_code']         = $info->group_code;
+                    $money['group_name']         = $info->group_name;
+                    $money['create_user_id']     = $user_info->admin_id;
+                    $money['create_user_name']   = $user_info->name;
+                    $money['create_time']       =$money['update_time']=$v['road_time'];
+                    $moneylist[]=$money;
                 }
 
                 $a++;
@@ -452,6 +468,7 @@ class RoadTollController extends CommonController{
             }
             $count=count($datalist);
             $id= RoadToll::insert($datalist);
+            TmsMoney::insert($moneylist);
 
             if($id){
                 $msg['code']=200;

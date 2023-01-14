@@ -476,10 +476,24 @@ class AccidentController extends CommonController{
                     $list['create_time']        =$list['update_time']=$now_time;
                     $list['file_id']            =$file_id;
 
-
-
-
                     $datalist[]=$list;
+
+//                    if ($falt_price){
+//                        $money['pay_type']           = 'repair';
+//                        $money['money']              = $falt_price;
+//                        $money['pay_state']          = 'Y';
+//                        $money['car_id']             = $car_id;
+//                        $money['car_number']         = $car_number;
+//                        $money['process_state']      = 'Y';
+//
+//                        $money['self_id']            = generate_id('money');
+//                        $money['group_code']         = $group_code;
+//                        $money['group_name']         = $group_name;
+//                        $money['create_user_id']     = $user_info->admin_id;
+//                        $money['create_user_name']   = $user_info->name;
+//                        $money['create_time']        =$money['update_time']=$falt_time;
+//
+//                    }
                 }
 
                 $a++;
