@@ -977,7 +977,8 @@ class OrderController extends CommonController{
                                 ['now_num', '>', 0],
                                 ['can_use', '=', 'Y'],
                                 ['delete_flag', '=', 'Y'],
-                                ['create_time', '>', substr($now_time, 0, -9)]
+                                ['create_time', '>',$now_time]
+//                                ['create_time', '>', substr($now_time, 0, -9)]
                         ];
 
                         $resssss = WmsLibrarySige::where($where2)->orderBy('create_time', 'asc')->get()->toArray();
