@@ -977,7 +977,7 @@ class OrderController extends CommonController{
                                 ['now_num', '>', 0],
                                 ['can_use', '=', 'Y'],
                                 ['delete_flag', '=', 'Y'],
-                                ['create_time', '>',$now_time]
+//                                ['create_time', '>',$now_time]
 //                                ['create_time', '>', substr($now_time, 0, -9)]
                         ];
 
