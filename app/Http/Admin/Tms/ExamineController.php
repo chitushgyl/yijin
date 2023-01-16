@@ -51,7 +51,7 @@ class ExamineController extends CommonController{
         $group_code     =$request->input('group_code');
         $user_name      =$request->input('user_name');
         $start_time     =date('Y-m-01',strtotime($request->input('start_time')));
-        $end_time       =date('Y-m-t',strtotime($request->input('end_time')));
+        $end_time       =date('Y-m-t',strtotime($request->input('start_time')));
         $user_id        =$request->input('user_id');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
