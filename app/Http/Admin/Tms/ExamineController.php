@@ -49,10 +49,10 @@ class ExamineController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-        $user_name     =$request->input('user_name');
-        $start_time     =$request->input('start_time');
-        $end_time     =$request->input('end_time');
-        $user_id     =$request->input('user_id');
+        $user_name      =$request->input('user_name');
+        $start_time     =date('Y-m-01',strtotime($request->input('start_time')));
+        $end_time       =date('Y-m-t',strtotime($request->input('end_time')));
+        $user_id        =$request->input('user_id');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -62,10 +62,11 @@ class ExamineController extends CommonController{
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'user_id','value'=>$user_id],
             ['type'=>'like','name'=>'user_name','value'=>$user_name],
+            ['type'=>'>=','name'=>'absence_duty','value'=>$start_time],
+            ['type'=>'<','name'=>'absence_duty','value'=>$end_time],
         ];
 
         $where=get_list_where($search);
-
         $select=['self_id','user_id','user_name','absence_duty','fine_price','fine_time','reward_price','reward_time','create_user_id','create_user_name',
             'remark','create_time','update_time','use_flag','delete_flag','group_code'];
         switch ($group_info['group_id']){
