@@ -55,7 +55,7 @@ class ExamineController extends CommonController{
         $user_id        =$request->input('user_id');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
-
+        dd($start_time,$end_time);
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
