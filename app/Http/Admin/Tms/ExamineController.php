@@ -50,11 +50,12 @@ class ExamineController extends CommonController{
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
         $user_name      =$request->input('user_name');
-        $start_time     =date('Y-m-01',strtotime($request->input('start_time')));
-        $end_time       =date('Y-m-t',strtotime($request->input('start_time')));
+        $start_time     =date('Y-m-01 00:00:00',strtotime($request->input('start_time')));
+        $end_time       =date('Y-m-t 23:59:59',strtotime($request->input('start_time')));
         $user_id        =$request->input('user_id');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
+        dd($start_time,$end_time);
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
