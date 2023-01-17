@@ -50,8 +50,14 @@ class ExamineController extends CommonController{
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
         $user_name      =$request->input('user_name');
-        $start_time     =date('Y-m-01 00:00:00',strtotime($request->input('start_time')));
-        $end_time       =date('Y-m-t 23:59:59',strtotime($request->input('start_time')));
+        $start_time      =$request->input('start_time');
+        $end_time      =$request->input('end_time');
+        if ($start_time){
+            $start_time     =date('Y-m-01 00:00:00',strtotime($request->input('start_time')));
+        }
+        if ($end_time){
+            $end_time       =date('Y-m-t 23:59:59',strtotime($request->input('start_time')));
+        }
         $user_id        =$request->input('user_id');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
@@ -69,6 +75,7 @@ class ExamineController extends CommonController{
         $where=get_list_where($search);
         $select=['self_id','user_id','user_name','absence_duty','fine_price','fine_time','reward_price','reward_time','create_user_id','create_user_name',
             'remark','create_time','update_time','use_flag','delete_flag','group_code'];
+        dd($where);
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=UserExamine::where($where)->count(); //总的数据量
