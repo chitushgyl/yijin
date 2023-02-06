@@ -63,6 +63,10 @@ class OrderController extends CommonController{
         $company_id     =$request->input('company_id');
         $state          =$request->input('order_status');
         $order_status   =$request->input('status') ?? null;
+        $start_time     =$request->input('start_time');
+        $end_time       =$request->input('end_time');
+        $enter_time     =$request->input('enter_time');
+        $leave_time     =$request->input('leave_time');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -72,6 +76,10 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'company_id','value'=>$company_id],
             ['type'=>'=','name'=>'order_status','value'=>$state],
+            ['type'=>'=','name'=>'create_time','value'=>$start_time],
+            ['type'=>'=','name'=>'end_time','value'=>$end_time],
+            ['type'=>'=','name'=>'enter_time','value'=>$enter_time],
+            ['type'=>'=','name'=>'leave_time','value'=>$leave_time],
         ];
 
 
