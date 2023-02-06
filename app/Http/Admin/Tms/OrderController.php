@@ -77,7 +77,7 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'company_id','value'=>$company_id],
             ['type'=>'=','name'=>'order_status','value'=>$state],
             ['type'=>'=','name'=>'create_time','value'=>$start_time],
-            ['type'=>'=','name'=>'end_time','value'=>$end_time],
+            ['type'=>'=','name'=>'create_time','value'=>$end_time],
             ['type'=>'=','name'=>'enter_time','value'=>$enter_time],
             ['type'=>'=','name'=>'leave_time','value'=>$leave_time],
         ];
