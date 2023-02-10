@@ -264,6 +264,7 @@ Route::group([
     Route::any('/carOil/carUseFlag','CarOilController@carUseFlag');
     Route::any('/carOil/carDelFlag','CarOilController@carDelFlag');
     Route::any('/carOil/import','CarOilController@import');
+    Route::any('/carOil/oilList','CarOilController@oilList');
     Route::any('/carOil/oilPage','CarOilController@oilPage');
     Route::any('/carOil/addOil','CarOilController@addOil');
 
