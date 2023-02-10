@@ -304,6 +304,15 @@ Route::group([
     Route::any('/wares/waresDelFlag','WaresController@waresDelFlag');
     Route::any('/wares/details','WaresController@details');
     Route::any('/wares/getWares','WaresController@getWares');
+
+    /***更换轮胎**/
+    Route::any('/trye/tryeList','TryeController@tryeList');
+    Route::any('/trye/tryePage','TryeController@tryePage');
+    Route::any('/trye/createTrye','TryeController@createTrye');
+    Route::any('/trye/addTrye','TryeController@addTrye');
+    Route::any('/trye/tryeUseFlag','TryeController@tryeUseFlag');
+    Route::any('/trye/tryeDelFlag','TryeController@tryeDelFlag');
+    Route::any('/trye/details','TryeController@details');
 });
 
 
