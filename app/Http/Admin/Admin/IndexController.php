@@ -37,6 +37,11 @@ class IndexController extends CommonController{
                 $query->where($where_children);
                 $query->select($select);
                 $query->orderBy('sort','asc');
+                $query->with(['children' => function($query)use($where_children,$select) {
+                    $query->where($where_children);
+                    $query->select($select);
+                    $query->orderBy('sort','asc');
+                }]);
             }])->where($where_menu)->select($select)->orderBy('sort','asc')->get();
             foreach ($menu_info as $key => $value){
                 if ($value->an_name){
@@ -55,6 +60,12 @@ class IndexController extends CommonController{
                 $query->select($select);
                 $query->orderBy('sort','asc');
                 $query->whereIn('id',$menu_id);
+                $query->with(['children' => function($query)use($where_children,$select,$menu_id) {
+                    $query->where($where_children);
+                    $query->select($select);
+                    $query->orderBy('sort','asc');
+                    $query->whereIn('id',$menu_id);
+            }]);
             }])->where($where_menu)->select($select)->whereIn('id',$menu_id)->orderBy('sort','asc')->get();
         }
         /** 做一个 还有多少有效期的事情**/

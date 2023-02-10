@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Admin\Tms;
+use App\Models\Tms\TmsWares;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
@@ -47,33 +48,27 @@ class WaresController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-        $good_name      =$request->input('good_name');
-        $company_name   =$request->input('company_name');
-        $external_sku_id   =$request->input('external_sku_id');
-        $good_type   =$request->input('good_type');
+        $wares_name     =$request->input('wares_name');
+        $type           =$request->input('type');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
-            ['type'=>'=','name'=>'type','value'=>'wms'],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'like','name'=>'good_name','value'=>$good_name],
-            ['type'=>'like','name'=>'company_name','value'=>$company_name],
-            ['type'=>'like','name'=>'external_sku_id','value'=>$external_sku_id],
-            ['type'=>'=','name'=>'good_type','value'=>$good_type],
+            ['type'=>'like','name'=>'wares_name','value'=>$wares_name],
+            ['type'=>'=','name'=>'type','value'=>$type],
         ];
 
         $where=get_list_where($search);
 
-        $select=['self_id','use_flag','good_name','good_english_name','external_sku_id','wms_unit','wms_target_unit','wms_scale','wms_spec',
-            'wms_length','wms_wide','wms_high','wms_weight','wms_out_unit','company_name','group_name','period_value','period','sale_price','good_type'];
+        $select=['self_id','use_flag','wares_name','un_num','type','group_code','group_name','use_flag','delete_flag','create_time','update_time'];
 
         switch ($group_info['group_id']){
             case 'all':
-                $data['total']=ErpShopGoodsSku::where($where)->count(); //总的数据量
-                $data['items']=ErpShopGoodsSku::where($where)
+                $data['total']=TmsWares::where($where)->count(); //总的数据量
+                $data['items']=TmsWares::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -81,16 +76,16 @@ class WaresController extends CommonController{
 
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
-                $data['total']=ErpShopGoodsSku::where($where)->count(); //总的数据量
-                $data['items']=ErpShopGoodsSku::where($where)
+                $data['total']=TmsWares::where($where)->count(); //总的数据量
+                $data['items']=TmsWares::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
 
             case 'more':
-                $data['total']=ErpShopGoodsSku::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=ErpShopGoodsSku::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['total']=TmsWares::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=TmsWares::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -127,7 +122,7 @@ class WaresController extends CommonController{
     /***    新建商品      /tms/wares/createWares
      */
     public function createWares(Request $request){
-        $data['type'] = config('wms.good_type');
+        $data['type'] = config('tms.wares_type');
         /** 接收数据*/
         $self_id=$request->input('self_id');
         $where=[
@@ -135,7 +130,7 @@ class WaresController extends CommonController{
             ['self_id','=',$self_id],
         ];
 
-        $data['info']=ErpShopGoodsSku::where($where)->first();
+        $data['info']=TmsWares::where($where)->first();
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
