@@ -63,7 +63,7 @@ class WaresController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','use_flag','wares_name','un_num','type','group_code','group_name','use_flag','delete_flag','create_time','update_time'];
+        $select=['self_id','use_flag','wares_name','un_num','group_code','group_name','use_flag','delete_flag','create_time','update_time'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -144,61 +144,32 @@ class WaresController extends CommonController{
     public function addWares(Request $request){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
-        $table_name     ='erp_shop_goods_sku';
+        $table_name     ='tms_wares';
 
-        $operationing->access_cause     ='创建/修改商品';
+        $operationing->access_cause     ='创建/修改货物';
         $operationing->table            =$table_name;
         $operationing->operation_type   ='create';
         $operationing->now_time         =$now_time;
-
         $user_info = $request->get('user_info');//接收中间件产生的参数
         $input              =$request->all();
 
         /** 接收数据*/
         $self_id            =$request->input('self_id');
-        $external_sku_id    =$request->input('external_sku_id');//商品编号
-        $good_name          =$request->input('good_name');//产品名称
-        $wms_unit           =$request->input('wms_unit');//单位
-        $wms_spec           =$request->input('wms_spec');//规格
-        $sale_price         =$request->input('sale_price');//单价
-        $type               =$request->input('good_type');//产品类型 //办公  车用
-
+        $un_num             =$request->input('un_num');//un编号
+        $wares_name         =$request->input('wares_name');//货物名称
+        $type               =$request->input('good_type');// 12345678910
 
         $rules=[
-            'external_sku_id'=>'required',
-            'good_name'=>'required',
-            'wms_unit'=>'required',
+            'wares_name'=>'required',
+            'un_num'=>'required',
         ];
         $message=[
-            'external_sku_id.required'=>'请输入商品编号',
-            'good_name.required'=>'请填写商品名称',
-            'wms_unit.required'=>'请填写入库单位',
+            'wares_name.required'=>'请填写货物名称',
+            'un_num.required'=>'请填写UN编号',
         ];
         $validator=Validator::make($input,$rules,$message);
-
         //操作的表
-
         if($validator->passes()){
-            if($self_id){
-                $name_where=[
-                    ['external_sku_id','=',trim($external_sku_id)],
-                    ['self_id','!=',$self_id],
-                    ['delete_flag','=','Y'],
-                ];
-            }else{
-                $name_where=[
-                    ['external_sku_id','=',trim($external_sku_id)],
-                    ['delete_flag','=','Y'],
-                ];
-            }
-            $name_count = ErpShopGoodsSku::where($name_where)->count();            //检查名字是不是重复
-
-            if($name_count > 0){
-                $msg['code'] = 301;
-                $msg['msg'] = '产品编号重复';
-                return $msg;
-            }
-
             $where_goods=[
                 ['delete_flag','=','Y'],
                 ['use_flag','=','Y'],
@@ -207,24 +178,19 @@ class WaresController extends CommonController{
 
             $info2 = SystemGroup::where($where_goods)->select('self_id','group_code','group_name')->first();
 
-
-            $data['external_sku_id']    = $external_sku_id;
-            $data['good_name']          = $good_name;
-            $data['wms_unit']           = $wms_unit;
-            $data['wms_spec']           = $wms_spec;//规格
-            $data['type']               = 'wms';
-            $data['sale_price']         = $sale_price;
-            $data['good_type']          = $type;
+            $data['wares_name']           = $wares_name;
+            $data['un_num']               = $un_num;
+            $data['type']                 = $type;
 
             $wheres['self_id'] = $self_id;
-            $old_info=ErpShopGoodsSku::where($wheres)->first();
+            $old_info=TmsWares::where($wheres)->first();
 
             if($old_info){
                 //dd(1111);
                 $data['update_time']=$now_time;
-                $id=ErpShopGoodsSku::where($wheres)->update($data);
+                $id=TmsWares::where($wheres)->update($data);
 
-                $operationing->access_cause='修改商品';
+                $operationing->access_cause='修改货物';
                 $operationing->operation_type='update';
 
 
@@ -236,8 +202,8 @@ class WaresController extends CommonController{
                 $data['create_user_id']=$user_info->admin_id;
                 $data['create_user_name']=$user_info->name;
                 $data['create_time']=$data['update_time']=$now_time;
-                $id=ErpShopGoodsSku::insert($data);
-                $operationing->access_cause='新建商品';
+                $id=TmsWares::insert($data);
+                $operationing->access_cause='新建货物';
                 $operationing->operation_type='create';
 
             }
@@ -279,8 +245,8 @@ class WaresController extends CommonController{
 
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='erp_shop_goods_sku';
-        $medol_name='erpShopGoodsSku';
+        $table_name='tms_wares';
+        $medol_name='TmsWares';
         $self_id=$request->input('self_id');
         $flag='useFlag';
         //$self_id='group_202007311841426065800243';
@@ -308,8 +274,8 @@ class WaresController extends CommonController{
     public function waresDelFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='erp_shop_goods_sku';
-        $medol_name='erpShopGoodsSku';
+        $table_name='tms_wares';
+        $medol_name='TmsWares';
         $self_id=$request->input('self_id');
         $flag='delFlag';
         //$self_id='group_202007311841426065800243';
@@ -462,7 +428,7 @@ class WaresController extends CommonController{
                 return $msg;
             }
             $count=count($datalist);
-            $id= ErpShopGoodsSku::insert($datalist);
+            $id= TmsWares::insert($datalist);
 
             if($id){
                 $msg['code']=200;
@@ -506,7 +472,7 @@ class WaresController extends CommonController{
             ['group_code','=',$company_id],
         ];
 
-        $data['info']=ErpShopGoodsSku::where($where)->select('self_id','sale_price','external_sku_id','good_name','wms_spec','wms_unit','group_code','group_name')->get();
+        $data['info']=TmsWares::where($where)->select('self_id','wares_name','un_num','type','group_code','group_name','use_flag','delete_flag')->get();
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
@@ -544,9 +510,8 @@ class WaresController extends CommonController{
             ];
             $where=get_list_where($search);
 
-            $select=['self_id','use_flag','good_name','good_english_name','external_sku_id','wms_unit','wms_target_unit','wms_scale','wms_spec',
-                'wms_length','wms_wide','wms_high','wms_weight','wms_out_unit','company_name','group_name','period_value','period','sale_price','good_type'];
-            $info=ErpShopGoodsSku::where($where)->orderBy('create_time', 'desc')->select($select)->get();
+            $select=['self_id','wares_name','un_num','type','group_code','group_name','use_flag','delete_flag','create_time','update_time'];
+            $info=TmsWares::where($where)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头
@@ -616,17 +581,14 @@ class WaresController extends CommonController{
     public function  details(Request $request,Details $details){
 
         $self_id=$request->input('self_id');
-        $table_name='erp_shop_goods_sku';
-        $select=['self_id','group_code','group_name','use_flag','create_user_name','create_time','sale_price','good_type',
-            'good_name','good_english_name','external_sku_id','wms_unit','wms_target_unit','wms_scale','wms_spec','wms_length','wms_wide','wms_high','wms_weight','wms_out_unit','company_name','period_value','period'];
+        $table_name='tms_wares';
+        $select=['self_id','wares_name','un_num','type','group_code','group_name','use_flag','delete_flag','create_time','update_time'];
         //$self_id='group_202009282038310201863384';
         $info=$details->details($self_id,$table_name,$select);
 
         if($info){
 
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
-
-
             $data['info']=$info;
             $log_flag='Y';
             $data['log_flag']=$log_flag;

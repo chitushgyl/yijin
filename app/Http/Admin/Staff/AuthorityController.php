@@ -98,19 +98,19 @@ class AuthorityController extends CommonController{
                 break;
         }
 
-//dd($user_info);   
+//dd($user_info);
         foreach ($data['items'] as $k=>$v) {
 			if($v->self_id != '10'){
 				if($user_info->authority_id == '10'){
-					$v->button_info=$button_info;  
+					$v->button_info=$button_info;
 				}else{
 					if($v->lock_flag == 'N'){
-						$v->button_info=$button_info;  
+						$v->button_info=$button_info;
 					}
 				}
             }
-			
-			
+
+
         }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
