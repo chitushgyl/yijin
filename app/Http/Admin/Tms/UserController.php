@@ -607,7 +607,8 @@ class UserController extends CommonController{
         $table_name='system_user';
         $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
             ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type',
-            'contract_back','license_back','work_license'];
+            'contract_back','license_back','work_license','birthday','sex','age','contract_date','working_age','id_validity',
+            'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity'];
         // $self_id='address_202012301359512962811465';
         $info=$details->details($self_id,$table_name,$select);
 
