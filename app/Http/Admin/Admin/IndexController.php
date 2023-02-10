@@ -39,6 +39,7 @@ class IndexController extends CommonController{
                 $query->orderBy('sort','asc');
                 $query->with(['children' => function($query)use($where_children,$select) {
                     $query->where($where_children);
+                    $query->where('type','CMS');
                     $query->select($select);
                     $query->orderBy('sort','asc');
                 }]);
@@ -62,6 +63,7 @@ class IndexController extends CommonController{
                 $query->whereIn('id',$menu_id);
                 $query->with(['children' => function($query)use($where_children,$select,$menu_id) {
                     $query->where($where_children);
+                    $query->where('type','CMS');
                     $query->select($select);
                     $query->orderBy('sort','asc');
                     $query->whereIn('id',$menu_id);
