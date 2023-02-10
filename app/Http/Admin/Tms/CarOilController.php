@@ -673,6 +673,26 @@ class CarOilController extends CommonController{
 
     }
 
+    /*
+     *          /tms/carOil/oilList
+     * */
+    public function  oilList(Request $request){
+        $data['page_info']      =config('page.listrows');
+        $data['button_info']    =$request->get('anniu');
+
+        $abc='车辆';
+        $data['import_info']    =[
+            'import_text'=>'下载'.$abc.'导入示例文件',
+            'import_color'=>'#FC5854',
+            'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/TMS车辆导入文件范本.xlsx',
+        ];
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
+
     /***
      * 入库列表  /tms/carOil/oilPage
      **/
