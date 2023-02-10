@@ -801,11 +801,11 @@ class CarOilController extends CommonController{
             $money['type_state']         = 'out';
 
             $wheres['self_id'] = $self_id;
-            $old_info=CarOil::where($wheres)->first();
+            $old_info=TmsOil::where($wheres)->first();
 
             if($old_info){
                 $data['update_time']=$now_time;
-                $id=CarOil::where($wheres)->update($data);
+                $id=TmsOil::where($wheres)->update($data);
                 $operationing->access_cause='修改加油记录';
                 $operationing->operation_type='update';
 
@@ -823,7 +823,7 @@ class CarOilController extends CommonController{
                 $money['create_user_name']   = $user_info->name;
                 $money['create_time']        =$money['update_time']=$now_time;
 
-                $id=CarOil::insert($data);
+                $id=TmsOil::insert($data);
                 TmsMoney::insert($money);
                 $operationing->access_cause='新建加油记录';
                 $operationing->operation_type='create';
