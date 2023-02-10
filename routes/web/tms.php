@@ -295,6 +295,15 @@ Route::group([
     Route::any('/examine/examineDelFlag','ExamineController@examineDelFlag');
     Route::any('/examine/import','ExamineController@import');
 
+    /***货物管理**/
+    Route::any('/wares/waresList','WaresController@waresList');
+    Route::any('/wares/waresPage','WaresController@waresPage');
+    Route::any('/wares/createWares','WaresController@createWares');
+    Route::any('/wares/addWares','WaresController@addWares');
+    Route::any('/wares/waresUseFlag','WaresController@waresUseFlag');
+    Route::any('/wares/waresDelFlag','WaresController@waresDelFlag');
+    Route::any('/wares/details','WaresController@details');
+    Route::any('/wares/getWares','WaresController@getWares');
 });
 
 

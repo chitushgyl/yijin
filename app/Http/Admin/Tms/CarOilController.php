@@ -673,7 +673,7 @@ class CarOilController extends CommonController{
 
     }
 
-    /*
+    /**
      *          /tms/carOil/oilList
      * */
     public function  oilList(Request $request){
@@ -721,7 +721,7 @@ class CarOilController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','num','price','total_price','enter_time','create_time','update_time','delete_flag','group_code',
+        $select=['self_id','num','price','total_price','enter_time','create_time','update_time','delete_flag','group_code','suppliere','operator',
             'create_user_id','create_user_name','use_flag'];
         switch ($group_info['group_id']){
             case 'all':
