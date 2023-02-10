@@ -5,6 +5,7 @@ use App\Models\Tms\CarCount;
 use App\Models\Tms\CarDanger;
 use App\Models\Tms\CarOil;
 use App\Models\Tms\TmsMoney;
+use App\Models\Tms\TmsOil;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
@@ -65,7 +66,7 @@ class CarOilController extends CommonController{
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
             ['type'=>'like','name'=>'ic_number','value'=>$ic_number],
             ['type'=>'>=','name'=>'create_time','value'=>$start_time],
-            ['type'=>'<','name'=>'ic_number','value'=>$end_time],
+            ['type'=>'<','name'=>'create_time','value'=>$end_time],
         ];
 
         $where=get_list_where($search);
@@ -127,10 +128,16 @@ class CarOilController extends CommonController{
         $select = ['self_id','car_number','car_id','add_time','ic_number','number','price','total_money','remark','create_time','update_time','delete_flag','group_code',
             'create_user_id','create_user_name'];
         $data['info']=CarOil::where($where)->select($select)->first();
+        $total_num = TmsOil::where('use_flag','Y')->where('delete_flag','Y')->sum('num');
+        $total_price = TmsOil::where('use_flag','Y')->where('delete_flag','Y')->sum('total_price');
+        if ($total_num){
+            $data['price'] = $total_price/$total_num;
+        }
 
         if ($data['info']){
 
         }
+
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
@@ -664,6 +671,190 @@ class CarOilController extends CommonController{
             return $msg;
         }
 
+    }
+
+    /***
+     * 入库列表  /tms/carOil/oilPage
+     **/
+    public function oilPage(Request $request){
+        /** 接收中间件参数**/
+        $group_info     = $request->get('group_info');//接收中间件产生的参数
+        $button_info    = $request->get('anniu');//接收中间件产生的参数
+
+        /**接收数据*/
+        $num            =$request->input('num')??10;
+        $page           =$request->input('page')??1;
+        $use_flag       =$request->input('use_flag');
+        $group_code     =$request->input('group_code');
+        $start_time     =$request->input('start_time');
+        $end_time       =$request->input('end_time');
+        $listrows       =$num;
+        $firstrow       =($page-1)*$listrows;
+
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'>=','name'=>'create_time','value'=>$start_time],
+            ['type'=>'<','name'=>'create_time','value'=>$end_time],
+        ];
+
+        $where=get_list_where($search);
+
+        $select=['self_id','num','price','total_price','enter_time','number','create_time','update_time','delete_flag','group_code',
+            'create_user_id','create_user_name','use_flag'];
+        switch ($group_info['group_id']){
+            case 'all':
+                $data['total']=TmsOil::where($where)->count(); //总的数据量
+                $data['items']=TmsOil::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='Y';
+                break;
+
+            case 'one':
+                $where[]=['group_code','=',$group_info['group_code']];
+                $data['total']=TmsOil::where($where)->count(); //总的数据量
+                $data['items']=TmsOil::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='N';
+                break;
+
+            case 'more':
+                $data['total']=TmsOil::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=TmsOil::where($where)->whereIn('group_code',$group_info['group_code'])
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='Y';
+                break;
+        }
+
+        foreach ($data['items'] as $k=>$v) {
+            $v->button_info=$button_info;
+
+        }
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
+
+    /**
+     * 油入库  /tms/carOil/addOil
+     ***/
+    public function addOil(Request $request){
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='tms_oil';
+        $operationing->access_cause     ='创建/修改入库';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='add';
+        $user_info                      = $request->get('user_info');//接收中间件产生的参数
+        $input                          =$request->all();
+
+        /** 接收数据*/
+        $self_id            =$request->input('self_id');
+        $group_code         =$request->input('group_code');
+        $enter_time         =$request->input('enter_time');//入库日期
+        $num                =$request->input('num');// 加油升数
+        $price              =$request->input('price');//油单价
+        $suppliere          =$request->input('suppliere');//供应商
+        $operator           =$request->input('operator');//经手人
+        $total_price        =$request->input('total_price');//加油总价
+
+        $rules=[
+            'num'=>'required',
+            'price'=>'required',
+        ];
+        $message=[
+            'num.required'=>'升数必须填写',
+            'price.required'=>'单价必须填写',
+        ];
+
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()) {
+
+            $group_name     =SystemGroup::where('group_code','=',$group_code)->value('group_name');
+            if(empty($group_name)){
+                $msg['code'] = 301;
+                $msg['msg'] = '公司不存在';
+                return $msg;
+            }
+
+            $data['num']               =$num;
+            $data['price']             =$price;
+            $data['total_price']       =$total_price;
+            $data['suppliere']         =$suppliere;
+            $data['operator']          =$operator;
+            $data['enter_time']        =$enter_time;
+
+
+            /**保存费用**/
+            $money['pay_type']           = 'fuel';
+            $money['money']              = $total_price;
+            $money['pay_state']          = 'Y';
+            $money['process_state']      = 'Y';
+            $money['type_state']         = 'out';
+
+            $wheres['self_id'] = $self_id;
+            $old_info=CarOil::where($wheres)->first();
+
+            if($old_info){
+                $data['update_time']=$now_time;
+                $id=CarOil::where($wheres)->update($data);
+                $operationing->access_cause='修改加油记录';
+                $operationing->operation_type='update';
+
+            }else{
+                $data['self_id']            =generate_id('oil_');
+                $data['group_code']         = $group_code;
+                $data['group_name']         = $group_name;
+                $data['create_user_id']     =$user_info->admin_id;
+                $data['create_user_name']   =$user_info->name;
+                $data['create_time']        =$data['update_time']=$now_time;
+                $money['self_id']            = generate_id('money');
+                $money['group_code']         = $group_code;
+                $money['group_name']         = $group_name;
+                $money['create_user_id']     = $user_info->admin_id;
+                $money['create_user_name']   = $user_info->name;
+                $money['create_time']        =$money['update_time']=$now_time;
+
+                $id=CarOil::insert($data);
+                TmsMoney::insert($money);
+                $operationing->access_cause='新建加油记录';
+                $operationing->operation_type='create';
+
+            }
+
+            $operationing->table_id=$old_info?$self_id:$data['self_id'];
+            $operationing->old_info=$old_info;
+            $operationing->new_info=$data;
+
+            if($id){
+                $msg['code'] = 200;
+                $msg['msg'] = "操作成功";
+                return $msg;
+            }else{
+                $msg['code'] = 302;
+                $msg['msg'] = "操作失败";
+                return $msg;
+            }
+
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
     }
 
 
