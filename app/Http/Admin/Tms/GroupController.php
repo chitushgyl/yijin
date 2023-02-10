@@ -117,7 +117,7 @@ class GroupController extends CommonController{
     /***    业务公司创建      /tms/group/createGroup
      */
     public function createGroup(Request $request){
-
+        $data['type']    =config('tms.company_type');
         /** 接收数据*/
         $self_id=$request->input('self_id');
 //        $self_id = 'company_202101151011516789650525';

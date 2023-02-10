@@ -50,7 +50,7 @@ class RoadTollController extends CommonController{
         $group_code     =$request->input('group_code');
         $car_number     =$request->input('car_number');
         $start_time     =$request->input('start_time');
-        $end_time     =$request->input('end_time');
+        $end_time       =$request->input('end_time');
         $etc_number     =$request->input('etc_number');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
@@ -68,7 +68,7 @@ class RoadTollController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','car_number','car_id','road_time','etc_number','road_price','address','create_time','update_time','delete_flag','group_code',
-            'create_user_id','create_user_name','use_flag'];
+            'create_user_id','create_user_name','use_flag','etc_balance'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=RoadToll::where($where)->count(); //总的数据量
@@ -122,7 +122,7 @@ class RoadTollController extends CommonController{
         ];
 
         $select = ['self_id','car_number','car_id','road_time','etc_number','road_price','address','create_time','update_time','delete_flag','group_code',
-            'create_user_id','create_user_name'];
+            'create_user_id','create_user_name','etc_balance'];
         $data['info']=RoadToll::where($where)->select($select)->first();
 
         if ($data['info']){
@@ -162,6 +162,7 @@ class RoadTollController extends CommonController{
         $etc_number         =$request->input('etc_number');//etc卡号
         $road_price         =$request->input('road_price');//过路费/扣费金额
         $address            =$request->input('address');//出入口
+        $etc_balance            =$request->input('etc_balance');//扣费后余额
 
 
         $rules=[
@@ -187,6 +188,7 @@ class RoadTollController extends CommonController{
             $data['etc_number']        =$etc_number;
             $data['road_price']        =$road_price;
             $data['address']           =$address;
+            $data['etc_balance']       =$etc_balance;
 
             /**保存费用**/
             $money['pay_type']           = 'road';
@@ -378,6 +380,7 @@ class RoadTollController extends CommonController{
                 '车牌号码' =>['Y','Y','20','car_number'],
                 'ETC通行卡卡号' =>['N','Y','30','etc_number'],
                 '扣费金额' =>['Y','Y','30','road_price'],
+                '扣费后余额' =>['Y','Y','30','etc_balance'],
                 '出入口站点' =>['N','Y','200','address'],
             ];
             $ret=arr_check($shuzu,$info_check);
@@ -430,6 +433,7 @@ class RoadTollController extends CommonController{
                     $list['road_time']          = $v['road_time'];
                     $list['road_price']         = $v['road_price'];
                     $list['address']            = $v['address'];
+                    $list['etc_balance']        = $v['etc_balance'];
 
                     $list['group_code']         = $info->group_code;
                     $list['group_name']         = $info->group_name;

@@ -51,6 +51,7 @@ class UserController extends CommonController{
         $name           =$request->input('name');
         $self_id        =$request->input('self_id');
         $type           =$request->input('type');
+        $social_flag    =$request->input('social_flag');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -61,12 +62,14 @@ class UserController extends CommonController{
             ['type'=>'=','name'=>'name','value'=>$name],
             ['type'=>'=','name'=>'self_id','value'=>$self_id],
             ['type'=>'=','name'=>'type','value'=>$type],
+            ['type'=>'=','name'=>'social_flag','value'=>$social_flag],
         ];
 
         $where=get_list_where($search);
 
         $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','safe_reward',
-        'group_insurance','use_flag','delete_flag','create_time','update_time','group_code','group_name','type'];
+        'group_insurance','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','birthday','sex','age','contract_date','working_age','id_validity',
+            'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity'];
         $select1 = ['self_id','section_name'];
         switch ($group_info['group_id']){
             case 'all':
@@ -134,7 +137,9 @@ class UserController extends CommonController{
             ['self_id','=',$self_id],
         ];
         $select=['self_id','type','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
-            ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','contract_back','license_back','work_license'];
+            ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','contract_back','license_back','work_license'
+        ,'birthday','sex','age','contract_date','working_age','id_validity',
+            'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity'];
         $data['info']=SystemUser::where($where)->select($select)->first();
         if($data['info']){
             $data['info']->driver_license     =img_for($data['info']->driver_license,'no_json');
@@ -196,6 +201,18 @@ class UserController extends CommonController{
         $contract_back           =$request->input('contract_back');//合同反面
         $work_license            =$request->input('work_license');//岗位证件
         $salary                  =$request->input('salary');//工资
+        $birthday                =$request->input('birthday');//出生日期
+        $sex                     =$request->input('sex');//性别
+        $age                     =$request->input('age');//年龄
+        $contract_date           =$request->input('contract_date');//合同有效期
+        $working_age             =$request->input('working_age');//工龄
+        $id_validity             =$request->input('id_validity');//身份证有效期
+        $drive_type              =$request->input('drive_type');//准驾车型
+        $nvq_num                 =$request->input('nvq_num');//资格证号
+        $nvq_organ               =$request->input('nvq_organ');//资格证签发机构
+        $nvq_validity            =$request->input('nvq_validity');//资格证有效期限
+        $drive_organ             =$request->input('drive_organ');//驾照签发机构
+        $drive_validity          =$request->input('drive_validity');//驾驶证有效期限
 
 
 
@@ -244,6 +261,18 @@ class UserController extends CommonController{
             $data['contract_back']        =img_for($contract_back,'one_in');
             $data['work_license']         =img_for($work_license,'in');
             $data['salary']               =$salary;
+            $data['birthday']             =$birthday;
+            $data['sex']                  =$sex;
+            $data['age']                  =$age;
+            $data['contract_date']        =$contract_date;
+            $data['working_age']          =$working_age;
+            $data['id_validity']          =$id_validity;
+            $data['drive_type']           =$drive_type;
+            $data['nvq_num']              =$nvq_num;
+            $data['nvq_organ']            =$nvq_organ;
+            $data['nvq_validity']         =$nvq_validity;
+            $data['drive_organ']          =$drive_organ;
+            $data['drive_validity']       =$drive_validity;
 
             $wheres['self_id'] = $self_id;
             $old_info=SystemUser::where($wheres)->first();
