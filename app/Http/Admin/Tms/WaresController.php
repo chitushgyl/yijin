@@ -157,7 +157,7 @@ class WaresController extends CommonController{
         $self_id            =$request->input('self_id');
         $un_num             =$request->input('un_num');//un编号
         $wares_name         =$request->input('wares_name');//货物名称
-        $type               =$request->input('good_type');// 12345678910  类型
+        $type               =$request->input('type');// 12345678910  类型
 
         $rules=[
             'wares_name'=>'required',
