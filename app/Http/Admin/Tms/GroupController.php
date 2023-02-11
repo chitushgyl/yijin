@@ -66,7 +66,7 @@ class GroupController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','company_name','create_user_name','type','group_name','company_name',
-            'cost_type','contacts','address','tel','use_flag','group_code','bank','bank_number'];
+            'cost_type','contacts','address','tel','use_flag','group_code','bank','bank_number','remark'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -165,6 +165,7 @@ class GroupController extends CommonController{
         $bank               =$request->input('bank');
         $bank_number        =$request->input('bank_number');
         $tax_id        =$request->input('tax_id');
+        $remark        =$request->input('remark');
 
         /*** 虚拟数据
         $input['self_id']           =$self_id='group_202006040950004008768595';
@@ -175,7 +176,6 @@ class GroupController extends CommonController{
         $input['address']          =$address  ='pull';
         $input['type']             =$type  ='客户';
         $input['cost_type']        =$cost_type  ='月结';
-
 ***/
 //        dd($input);
         $rules=[
@@ -198,11 +198,12 @@ class GroupController extends CommonController{
             $data['contacts']                   = $contacts;
             $data['address']                    = $address;
             $data['tel']                        = $tel;
-            $data['cost_type']      		    =$cost_type;
-            $data['bank']      		            =$bank;
-            $data['bank_number']      		    =$bank_number;
-            $data['tax_id']      		        =$tax_id;
-            $data['type']      		            =$type;
+            $data['cost_type']      		    = $cost_type;
+            $data['bank']      		            = $bank;
+            $data['bank_number']      		    = $bank_number;
+            $data['tax_id']      		        = $tax_id;
+            $data['type']      		            = $type;
+            $data['remark']      		        = $remark;
             $wheres['self_id'] = $self_id;
             $old_info=TmsGroup::where($wheres)->first();
 
@@ -657,7 +658,7 @@ class GroupController extends CommonController{
         $self_id=$request->input('self_id');
         $table_name='tms_group';
         $select=['self_id','group_code','group_name','use_flag','create_user_name','create_time',
-            'company_name','contacts','address','tel',
+            'company_name','contacts','address','tel','remark',
             'type','cost_type'];
         // $self_id='company_202012291153523141320375';
         $info=$details->details($self_id,$table_name,$select);
