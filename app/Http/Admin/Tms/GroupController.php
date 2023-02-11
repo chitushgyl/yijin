@@ -164,6 +164,7 @@ class GroupController extends CommonController{
         $cost_type          =$request->input('cost_type');
         $bank               =$request->input('bank');
         $bank_number        =$request->input('bank_number');
+        $tax_id        =$request->input('tax_id');
 
         /*** 虚拟数据
         $input['self_id']           =$self_id='group_202006040950004008768595';
@@ -200,7 +201,8 @@ class GroupController extends CommonController{
             $data['cost_type']      		    =$cost_type;
             $data['bank']      		            =$bank;
             $data['bank_number']      		    =$bank_number;
-
+            $data['tax_id']      		        =$tax_id;
+            $data['type']      		            =$type;
             $wheres['self_id'] = $self_id;
             $old_info=TmsGroup::where($wheres)->first();
 
@@ -242,7 +244,6 @@ class GroupController extends CommonController{
                 $data['create_user_id']     =$user_info->admin_id;
                 $data['create_user_name']   =$user_info->name;
                 $data['create_time']        =$data['update_time']=$now_time;
-				$data['type']      		     =$type;
 
                 $id=TmsGroup::insert($data);
                 $operationing->access_cause='新建业务公司';
