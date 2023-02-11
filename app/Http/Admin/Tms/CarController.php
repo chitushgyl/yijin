@@ -65,7 +65,9 @@ class CarController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
-            'license','medallion','payment_state','insure_price','create_time','update_time','use_flag','delete_flag','compulsory_end','commercial_end','carrier_end','compulsory','commercial','carrier'];
+            'license','medallion','payment_state','insure_price','create_time','update_time','use_flag','delete_flag','compulsory_end','commercial_end','carrier_end','compulsory','commercial','carrier',
+        'medallion_num','curb_weight','all_weight','medallion_change','license_begin','production_date','scrap_date','business_scope','goods',
+        'design_code','operation_date','tank_num','tank_type'];
         $select1 = ['self_id','parame_name'];
         switch ($group_info['group_id']){
             case 'all':
@@ -127,7 +129,9 @@ class CarController extends CommonController{
         ];
 
         $select = ['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
-            'license','medallion','payment_state','insure_price','compulsory','commercial','carrier','compulsory_end','commercial_end','carrier_end'];
+            'license','medallion','payment_state','insure_price','compulsory','commercial','carrier','compulsory_end','commercial_end','carrier_end',
+            'medallion_num','curb_weight','all_weight','medallion_change','license_begin','production_date','scrap_date','business_scope','goods',
+            'design_code','operation_date','tank_num','tank_type'];
         $data['info']=TmsCar::where($where)->select($select)->first();
 
         if ($data['info']){
@@ -181,6 +185,19 @@ class CarController extends CommonController{
         $commercial_end     =$request->input('commercial_end');//商业险
         $carrier            =$request->input('carrier');//承运险
         $carrier_end        =$request->input('carrier_end');//承运险
+        $medallion_num      =$request->input('medallion_num');//运输证号
+        $curb_weight        =$request->input('curb_weight');//整备质量
+        $all_weight         =$request->input('all_weight');//总质量
+        $medallion_change   =$request->input('medallion_change');//运输证换证日期
+        $license_begin      =$request->input('license_begin');//行驶证注册日期
+        $production_date    =$request->input('production_date');//出厂日期
+        $scrap_date         =$request->input('scrap_date');//强制报废日期
+        $business_scope     =$request->input('business_scope');//经营范围
+        $goods              =$request->input('goods');//产品名称  危货/普货
+        $design_code        =$request->input('design_code');//设计代码
+        $operation_date     =$request->input('operation_date');//投运日期
+        $tank_num           =$request->input('tank_num');//罐体编号
+        $tank_type          =$request->input('tank_type');//罐体类型
 
         $rules=[
             'car_number'=>'required',
@@ -238,11 +255,24 @@ class CarController extends CommonController{
 //            $data['payment_state']     =$payment_state;
             $data['insure_price']      =$insure_price;
             $data['compulsory']        =$compulsory;
-            $data['compulsory_end']        =$compulsory_end;
+            $data['compulsory_end']    =$compulsory_end;
             $data['commercial']        =$commercial;
-            $data['commercial_end']        =$commercial_end;
+            $data['commercial_end']    =$commercial_end;
             $data['carrier']           =$carrier;
-            $data['carrier_end']           =$carrier_end;
+            $data['carrier_end']       =$carrier_end;
+            $data['medallion_num']     =$medallion_num;
+            $data['curb_weight']       =$curb_weight;
+            $data['all_weight']        =$all_weight;
+            $data['medallion_change']  =$medallion_change;
+            $data['license_begin']     =$license_begin;
+            $data['production_date']   =$production_date;
+            $data['scrap_date']        =$scrap_date;
+            $data['business_scope']    =$business_scope;
+            $data['goods']             =$goods;
+            $data['design_code']       =$design_code;
+            $data['operation_date']    =$operation_date;
+            $data['tank_num']          =$tank_num;
+            $data['tank_type']         =$tank_type;
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsCar::where($wheres)->first();
@@ -640,7 +670,8 @@ class CarController extends CommonController{
         $self_id=$request->input('self_id');
         $table_name='tms_car';
         $select=['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
-            'license','medallion','payment_state','insure_price','compulsory_end','commercial_end','carrier_end','compulsory','commercial','carrier'];
+            'license','medallion','payment_state','insure_price','compulsory_end','commercial_end','carrier_end','compulsory','commercial','carrier','medallion_num','curb_weight','all_weight','medallion_change','license_begin','production_date','scrap_date','business_scope','goods',
+            'design_code','operation_date','tank_num','tank_type'];
         $select1 = [];
         $select2 = [];
         // $self_id='car_202012291341297595587871';
