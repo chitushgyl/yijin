@@ -131,7 +131,7 @@ class CarController extends CommonController{
         $select = ['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
             'license','medallion','payment_state','insure_price','compulsory','commercial','carrier','compulsory_end','commercial_end','carrier_end',
             'medallion_num','curb_weight','all_weight','medallion_change','license_begin','production_date','scrap_date','business_scope','goods',
-            'design_code','operation_date','tank_num','tank_type'];
+            'design_code','operation_date','tank_num','tank_type','registr_cert','carrier_cert','tank_cert'];
         $data['info']=TmsCar::where($where)->select($select)->first();
 
         if ($data['info']){
@@ -198,6 +198,9 @@ class CarController extends CommonController{
         $operation_date     =$request->input('operation_date');//投运日期
         $tank_num           =$request->input('tank_num');//罐体编号
         $tank_type          =$request->input('tank_type');//罐体类型
+        $registr_cert       =$request->input('registr_cert');//登记证书
+        $carrier_cert       =$request->input('carrier_cert');//承运险
+        $tank_cert          =$request->input('tank_cert');//罐检
 
         $rules=[
             'car_number'=>'required',
@@ -273,7 +276,9 @@ class CarController extends CommonController{
             $data['operation_date']    =$operation_date;
             $data['tank_num']          =$tank_num;
             $data['tank_type']         =$tank_type;
-
+            $data['registr_cert']      =img_for($registr_cert,'one_in');
+            $data['carrier_cert']      =img_for($carrier_cert,'one_in');
+            $data['tank_cert']         =img_for($tank_cert,'one_in');
             $wheres['self_id'] = $self_id;
             $old_info=TmsCar::where($wheres)->first();
 
@@ -671,7 +676,7 @@ class CarController extends CommonController{
         $table_name='tms_car';
         $select=['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
             'license','medallion','payment_state','insure_price','compulsory_end','commercial_end','carrier_end','compulsory','commercial','carrier','medallion_num','curb_weight','all_weight','medallion_change','license_begin','production_date','scrap_date','business_scope','goods',
-            'design_code','operation_date','tank_num','tank_type'];
+            'design_code','operation_date','tank_num','tank_type','registr_cert','carrier_cert','tank_cert'];
         $select1 = [];
         $select2 = [];
         // $self_id='car_202012291341297595587871';

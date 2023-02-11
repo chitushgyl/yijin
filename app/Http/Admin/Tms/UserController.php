@@ -40,6 +40,7 @@ class UserController extends CommonController{
     public function userPage(Request $request){
         /** 接收中间件参数**/
         $user_type    =array_column(config('tms.user_type'),'name','key');
+        $background   =array_column(config('tms.background'),'name','key');
         $group_info     = $request->get('group_info');//接收中间件产生的参数
         $button_info    = $request->get('anniu');//接收中间件产生的参数
 
@@ -116,6 +117,7 @@ class UserController extends CommonController{
             $v->license_back       =img_for($v->license_back,'no_json');
             $v->work_license       =img_for($v->work_license,'more');
             $v->type               =$user_type[$v->type]??null;
+            $v->education_background               =$background[$v->education_background]??null;
         }
 
         $msg['code']=200;
@@ -130,6 +132,7 @@ class UserController extends CommonController{
      */
     public function createUser(Request $request){
         $data['type']    =config('tms.user_type');
+        $data['background']    =config('tms.background');
         /** 接收数据*/
         $self_id=$request->input('self_id');
         $where=[
@@ -603,6 +606,7 @@ class UserController extends CommonController{
      */
     public function  details(Request $request,Details $details){
         $user_type    =array_column(config('tms.user_type'),'name','key');
+        $background   =array_column(config('tms.background'),'name','key');
         $self_id=$request->input('self_id');
         $table_name='system_user';
         $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
@@ -623,6 +627,7 @@ class UserController extends CommonController{
             $info->license_back       =img_for($info->license_back,'no_json');
             $info->work_license       =img_for($info->work_license,'more');
             $info->type_show               =$user_type[$info->type]??null;
+            $info->education_background    =$background[$info->education_background]??null;
             $data['info']=$info;
             $log_flag='Y';
             $data['log_flag']=$log_flag;
