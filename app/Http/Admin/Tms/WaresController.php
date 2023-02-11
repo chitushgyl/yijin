@@ -63,7 +63,7 @@ class WaresController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','use_flag','wares_name','un_num','group_code','group_name','use_flag','delete_flag','create_time','update_time'];
+        $select=['self_id','use_flag','wares_name','un_num','type','group_code','group_name','use_flag','delete_flag','create_time','update_time'];
 
         switch ($group_info['group_id']){
             case 'all':
