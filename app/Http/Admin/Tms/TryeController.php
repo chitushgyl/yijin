@@ -140,6 +140,7 @@ class TryeController extends CommonController{
         //dd($input);
         /** 接收数据*/
         $self_id            =$request->input('self_id');
+        $car_id             =$request->input('car_id');//车牌号
         $car_number         =$request->input('car_number');//车牌号
         $model              =$request->input('model');//型号
         $num                =$request->input('num');//数量
