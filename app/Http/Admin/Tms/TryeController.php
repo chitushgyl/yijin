@@ -128,7 +128,7 @@ class TryeController extends CommonController{
         $user_info = $request->get('user_info');//接收中间件产生的参数
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
-        $table_name     ='tms_car_type';
+        $table_name     ='tms_trye';
 
         $operationing->access_cause     ='创建/修改车辆类型';
         $operationing->table            =$table_name;
