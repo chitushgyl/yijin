@@ -140,15 +140,15 @@ class TryeController extends CommonController{
         //dd($input);
         /** 接收数据*/
         $self_id            =$request->input('self_id');
-        $car_number         =$request->input('car_number');
-        $model              =$request->input('model');
-        $num                =$request->input('num');
-        $trye_num           =$request->input('trye_num');
-        $operator           =$request->input('operator');
-        $type               =$request->input('type');
-        $in_time            =$request->input('in_time');
-        $driver_name        =$request->input('driver_name');
-        $change             =$request->input('change');
+        $car_number         =$request->input('car_number');//车牌号
+        $model              =$request->input('model');//型号
+        $num                =$request->input('num');//数量
+        $trye_num           =$request->input('trye_num');//编号
+        $operator           =$request->input('operator');//经办人
+        $type               =$request->input('type');//类型：in入库  out出库
+        $in_time            =$request->input('in_time');//时间
+        $driver_name        =$request->input('driver_name');//驾驶员
+        $change             =$request->input('change');//更换位置
 
         $rules=[
             'num'=>'required',
