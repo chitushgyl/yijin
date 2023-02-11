@@ -687,6 +687,9 @@ class CarController extends CommonController{
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
             $info->medallion     =img_for($info->medallion,'no_json');
             $info->license       =img_for($info->license,'no_json');
+            $info->registr_cert  =img_for($info->registr_cert,'no_json');
+            $info->carrier_cert  =img_for($info->carrier_cert,'no_json');
+            $info->tank_cert     =img_for($info->tank_cert,'no_json');
             $data['info']=$info;
             $log_flag='Y';
             $data['log_flag']=$log_flag;
