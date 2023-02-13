@@ -73,7 +73,11 @@ class UserRewardController extends CommonController{
                 $data['total']=UserReward::where($where)->count(); //总的数据量
                 $data['items']=UserReward::with(['systemUser' => function($query) use($select1){
                     $query->select($select1);
-                }])->where($where)
+                }])
+                    ->with(['user' => function($query) use($select1){
+                        $query->select($select1);
+                    }])
+                    ->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -84,7 +88,11 @@ class UserRewardController extends CommonController{
                 $data['total']=UserReward::where($where)->count(); //总的数据量
                 $data['items']=UserReward::with(['systemUser' => function($query) use($select1){
                     $query->select($select1);
-                }])->where($where)
+                }])
+                    ->with(['user' => function($query) use($select1){
+                        $query->select($select1);
+                    }])
+                    ->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
@@ -94,7 +102,10 @@ class UserRewardController extends CommonController{
                 $data['total']=UserReward::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=UserReward::with(['systemUser' => function($query) use($select1){
                     $query->select($select1);
-                }])->where($where)->whereIn('group_code',$group_info['group_code'])
+                }])
+                    ->with(['user' => function($query) use($select1){
+                        $query->select($select1);
+                    }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
