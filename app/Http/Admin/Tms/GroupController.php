@@ -348,10 +348,14 @@ class GroupController extends CommonController{
      */
 	public function getCompany(Request $request){
 		$group_code=$request->input('group_code');
-        $where=[
-            ['delete_flag','=','Y'],
-            ['group_code','=',$group_code],
+		$type=$request->input('type');
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'=','name'=>'type','value'=>$type],
         ];
+
+        $where=get_list_where($search);
         $data['info']=TmsGroup::where($where)->get();
 
 	    $msg['code']=200;
