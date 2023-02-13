@@ -175,6 +175,7 @@ class UserRewardController extends CommonController{
         $fault_address           =$request->input('fault_address');//事故地点
         $fault_price             =$request->input('fault_price');//损失金额
         $fault_party             =$request->input('fault_party');//责任方
+        $cash_back               =$request->input('cash_back');//奖金返还
 
         $rules=[
             'car_id'=>'required',
@@ -212,6 +213,7 @@ class UserRewardController extends CommonController{
                     $data['escort']                 =$escort;
                     $data['safe_reward']            =$safe_reward;
                     $data['reward_view']            =$reward_view;
+                    $data['cash_back']              =$cash_back;
                     break;
             }
 
