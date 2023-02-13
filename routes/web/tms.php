@@ -237,14 +237,14 @@ Route::group([
     Route::any('/user/printUser','UserController@printUser');
 
     /**员工奖惩记录**/
-    Route::any('/userReward/userRewardList','UserRewardController@userRewardList');
-    Route::any('/userReward/userRewardPage','UserRewardController@userRewardPage');
-    Route::any('/userReward/createUserReward','UserRewardController@createUserReward');
-    Route::any('/userReward/addUserReward','UserRewardController@addUserReward');
-    Route::any('/userReward/userRewardFlag','UserRewardController@userRewardFlag');
-    Route::any('/userReward/userRewardDelFlag','UserRewardController@userRewardDelFlag');
-    Route::any('/userReward/details','UserRewardController@details');
-    Route::any('/userReward/excel','UserRewardController@excel');
+    Route::any('/userReward/userRewardList','UserRewardController@userRewardList');//列表头部
+    Route::any('/userReward/userRewardPage','UserRewardController@userRewardPage');//列表
+    Route::any('/userReward/createUserReward','UserRewardController@createUserReward');//查询
+    Route::any('/userReward/addUserReward','UserRewardController@addUserReward');//添加
+    Route::any('/userReward/userRewardFlag','UserRewardController@userRewardFlag');//启用禁用
+    Route::any('/userReward/userRewardDelFlag','UserRewardController@userRewardDelFlag');//删除
+    Route::any('/userReward/details','UserRewardController@details');//详情
+    Route::any('/userReward/excel','UserRewardController@excel');//导出
 
     /**车辆维修记录***/
     Route::any('/carService/serviceList','CarServiceController@serviceList');

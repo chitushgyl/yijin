@@ -50,7 +50,7 @@ class UserRewardController extends CommonController{
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
         $car_number     =$request->input('car_number');
-        $user_id     =$request->input('user_id');
+        $user_id        =$request->input('user_id');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -155,20 +155,23 @@ class UserRewardController extends CommonController{
 
         /** 接收数据*/
         $self_id                 =$request->input('self_id');
-        $user_id                 =$request->input('user_id');
+        $type                    =$request->input('type');//violation 违规 rule违章 accident事故 reward奖励
+        $user_id                 =$request->input('user_id');//驾驶员
+        $escort                  =$request->input('escort');//押运员
         $car_id                  =$request->input('car_id');//
         $car_number              =$request->input('car_number');// 车牌号
         $violation_address       =$request->input('violation_address');//违章地址
         $violation_connect       =$request->input('violation_connect');//违章内容
-        $department              =$request->input('department');//部门
         $handle_connect          =$request->input('handle_connect');//处理情况
         $score                   =$request->input('score');//扣分情况
-        $payment                 =$request->input('payment');//交款情况
+        $payment                 =$request->input('payment');//罚款
         $late_fee                =$request->input('late_fee');//滞纳金
-        $handle_opinion          =$request->input('handle_opinion');//处理意见
         $safe_flag               =$request->input('safe_flag');//是否有安全奖
         $safe_reward             =$request->input('safe_reward');//安全奖金
         $group_code              =$request->input('group_code');
+        $handled_by              =$request->input('handled_by');//经办人
+        $remark                  =$request->input('remark');//备注
+        $event_time              =$request->input('event_time');//事件时间
 
         $rules=[
             'car_id'=>'required',
