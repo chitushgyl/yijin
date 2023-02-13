@@ -24,6 +24,7 @@ class UserRewardController extends CommonController{
     public function  userRewardList(Request $request){
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
+        $type    =$request->input('type');
 
         $abc='员工奖惩信息';
         $data['import_info']    =[
@@ -31,6 +32,37 @@ class UserRewardController extends CommonController{
             'import_color'=>'#FC5854',
             'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/TMS地址导入文件范本.xlsx',
         ];
+        $button_info1=[];
+        $button_info2=[];
+        $button_info3=[];
+        $button_info4=[];
+        foreach ($data['button_info'] as $k => $v){
+            if($v->id == 152){
+                $button_info1[]=$v;
+            }
+            if($v->id == 155){
+                $button_info2[]=$v;
+            }
+            if($v->id == 158){
+                $button_info3[]=$v;
+            }
+            if($v->id == 161){
+                $button_info4[]=$v;
+            }
+
+        }
+
+            if ($type == 'violation'){
+                $data['button_info']=$button_info1;
+            }elseif($type == 'rule'){
+                $data['button_info']=$button_info2;
+            }elseif($type == 'accident'){
+                $data['button_info']=$button_info3;
+            }elseif($type == 'reward'){
+                $data['button_info']=$button_info4;
+            }
+
+
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
@@ -51,6 +83,7 @@ class UserRewardController extends CommonController{
         $group_code     =$request->input('group_code');
         $car_number     =$request->input('car_number');
         $user_id        =$request->input('user_id');
+        $type           =$request->input('type');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -60,13 +93,14 @@ class UserRewardController extends CommonController{
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'car_number','value'=>$car_number],
             ['type'=>'=','name'=>'user_id','value'=>$user_id],
+            ['type'=>'=','name'=>'type','value'=>$type],
         ];
 
 
         $where=get_list_where($search);
 
         $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
-            'use_flag','delete_flag','create_time','update_time','group_code','group_name','user_id'];
+            'use_flag','delete_flag','create_time','update_time','group_code','group_name','user_id','type'];
         $select1=['self_id','name'];
         switch ($group_info['group_id']){
             case 'all':
@@ -112,11 +146,62 @@ class UserRewardController extends CommonController{
                 break;
         }
 
-
+        $button_info1=[];
+        $button_info2=[];
+        $button_info3=[];
+        $button_info4=[];
+        foreach ($button_info as $k => $v){
+            if($v->id == 152){
+                $button_info1[]=$v;
+            }
+            if($v->id == 153){
+                $button_info1[]=$v;
+            }
+            if($v->id == 154){
+                $button_info1[]=$v;
+            }
+            if($v->id == 155){
+                $button_info2[]=$v;
+            }
+            if($v->id == 156){
+                $button_info2[]=$v;
+            }
+            if($v->id == 157){
+                $button_info2[]=$v;
+            }
+            if($v->id == 158){
+                $button_info3[]=$v;
+            }
+            if($v->id == 159){
+                $button_info3[]=$v;
+            }
+            if($v->id == 160){
+                $button_info3[]=$v;
+            }
+            if($v->id == 161){
+                $button_info4[]=$v;
+            }
+            if($v->id == 162){
+                $button_info4[]=$v;
+            }
+            if($v->id == 163){
+                $button_info4[]=$v;
+            }
+        }
         foreach ($data['items'] as $k=>$v) {
             $v->button_info=$button_info;
             if ($v->user){
                 $v->escort = $v->user->name;
+            }
+
+            if ($v->type == 'violation'){
+                $v->button_info=$button_info1;
+            }elseif($v->type == 'rule'){
+                $v->button_info=$button_info2;
+            }elseif($v->type == 'accident'){
+                $v->button_info=$button_info3;
+            }elseif($v->type == 'reward'){
+                $v->button_info=$button_info4;
             }
 
         }
