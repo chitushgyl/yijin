@@ -115,6 +115,9 @@ class UserRewardController extends CommonController{
 
         foreach ($data['items'] as $k=>$v) {
             $v->button_info=$button_info;
+            if ($v->user){
+                $v->escort = $v->user->name;
+            }
 
         }
 
