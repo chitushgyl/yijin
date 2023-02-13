@@ -400,10 +400,12 @@ class UserController extends CommonController{
      */
     public function  getUser(Request $request){
         $group_code=$request->input('group_code');
+        $type=$request->input('type');
         // $company_id='company_202012281339503129654415';
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'=','name'=>'type','value'=>$type],
         ];
 
         $where=get_list_where($search);
