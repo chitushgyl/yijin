@@ -157,25 +157,27 @@ class UserRewardController extends CommonController{
         $self_id                 =$request->input('self_id');
         $type                    =$request->input('type');//violation 违规 rule违章 accident事故 reward奖励
         $user_id                 =$request->input('user_id');//驾驶员
+        $user_name               =$request->input('user_name');//驾驶员
         $escort                  =$request->input('escort');//押运员
         $car_id                  =$request->input('car_id');//
         $car_number              =$request->input('car_number');// 车牌号
-        $violation_address       =$request->input('violation_address');//违章地址
         $violation_connect       =$request->input('violation_connect');//违章内容
         $handle_connect          =$request->input('handle_connect');//处理情况
         $score                   =$request->input('score');//扣分情况
         $payment                 =$request->input('payment');//罚款
         $late_fee                =$request->input('late_fee');//滞纳金
-        $safe_flag               =$request->input('safe_flag');//是否有安全奖
-        $safe_reward             =$request->input('safe_reward');//安全奖金
+        $reward_view             =$request->input('reward_view');//是否有安全奖
+        $safe_reward             =$request->input('safe_reward');//奖金
         $group_code              =$request->input('group_code');
         $handled_by              =$request->input('handled_by');//经办人
         $remark                  =$request->input('remark');//备注
         $event_time              =$request->input('event_time');//事件时间
+        $fault_address           =$request->input('fault_address');//事故地点
+        $fault_price             =$request->input('fault_price');//损失金额
+        $fault_party             =$request->input('fault_party');//责任方
 
         $rules=[
             'car_id'=>'required',
-
         ];
         $message=[
             'car_id.required'=>'请选择车辆',
@@ -190,35 +192,53 @@ class UserRewardController extends CommonController{
                 $msg['msg'] = '公司不存在';
                 return $msg;
             }
+            switch($type){
+                case 'violation':
+                    $data['escort']                 =$escort;
+                    $data['violation_connect']      =$violation_connect;
+                    $data['payment']                =$payment;
+                    break;
+                case 'rule':
+                    $data['handle_connect']         =$handle_connect;
+                    $data['score']                  =$score;
+                    $data['payment']                =$payment;
+                    break;
+                case 'accident':
+                    $data['fault_address']          =$fault_address;
+                    $data['fault_price']            =$fault_price;
+                    $data['fault_party']            =$fault_party;
+                    break;
+                case 'reward':
+                    $data['escort']                 =$escort;
+                    $data['safe_reward']            =$safe_reward;
+                    $data['reward_view']            =$reward_view;
+                    break;
+            }
 
             $data['car_id']                 =$car_id;
             $data['user_id']                =$user_id;
+            $data['user_name']              =$user_name;
             $data['car_number']             =$car_number;
-            $data['violation_address']      =$violation_address;
-            $data['violation_connect']      =$violation_connect;
-            $data['department']             =$department;
-            $data['handle_connect']         =$handle_connect;
-            $data['score']                  =$score;
-            $data['payment']                =$payment;
-            $data['late_fee']               =$late_fee;
-            $data['handle_opinion']         =$handle_opinion;
-            $data['safe_flag']              =$safe_flag;
-            $data['safe_reward']            =$safe_reward;
+            $data['type']                   =$type;
+            $data['handled_by']             =$handled_by;
+            $data['remark']                 =$remark;
+            $data['event_time']             =$event_time;
+
 
             /**保存费用**/
-            if ($payment || $late_fee || $safe_reward){
-                if ($safe_reward){
-                    $money['money']              = $safe_reward;
-                }else{
-                    $money['money']              = $payment;
-                }
-            }
-            $money['pay_type']           = 'reward';
-            $money['pay_state']          = 'Y';
-            $money['car_id']             = $car_id;
-            $money['car_number']         = $car_number;
-            $money['process_state']      = 'Y';
-            $money['type_state']         = 'out';
+//            if ($payment || $late_fee || $safe_reward){
+//                if ($safe_reward){
+//                    $money['money']              = $safe_reward;
+//                }else{
+//                    $money['money']              = $payment;
+//                }
+//            }
+//            $money['pay_type']           = 'reward';
+//            $money['pay_state']          = 'Y';
+//            $money['car_id']             = $car_id;
+//            $money['car_number']         = $car_number;
+//            $money['process_state']      = 'Y';
+//            $money['type_state']         = 'out';
 
             $wheres['self_id'] = $self_id;
             $old_info=UserReward::where($wheres)->first();
@@ -239,15 +259,15 @@ class UserRewardController extends CommonController{
                 $data['group_name']         =$group_name;
 
                 $id=UserReward::insert($data);
-                if ($payment || $late_fee || $safe_reward){
-                    $money['self_id']            = generate_id('money');
-                    $money['group_code']         = $group_code;
-                    $money['group_name']         = $group_name;
-                    $money['create_user_id']     = $user_info->admin_id;
-                    $money['create_user_name']   = $user_info->name;
-                    $money['create_time']        =$money['update_time']=$now_time;
-                    TmsMoney::insert($money);
-                }
+//                if ($payment || $late_fee || $safe_reward){
+//                    $money['self_id']            = generate_id('money');
+//                    $money['group_code']         = $group_code;
+//                    $money['group_name']         = $group_name;
+//                    $money['create_user_id']     = $user_info->admin_id;
+//                    $money['create_user_name']   = $user_info->name;
+//                    $money['create_time']        =$money['update_time']=$now_time;
+//                    TmsMoney::insert($money);
+//                }
 
                 $operationing->access_cause='添加员工奖惩记录';
                 $operationing->operation_type='create';
@@ -281,7 +301,6 @@ class UserRewardController extends CommonController{
         }
 
     }
-
 
 
     /***    员工奖惩记录禁用/启用      /tms/userReward/userRewardFlag
