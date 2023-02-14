@@ -313,6 +313,15 @@ Route::group([
     Route::any('/trye/tryeUseFlag','TryeController@tryeUseFlag');
     Route::any('/trye/tryeDelFlag','TryeController@tryeDelFlag');
     Route::any('/trye/details','TryeController@details');
+
+    /**二级维护***/
+    Route::any('/diplasic/diplasicList','DiplasicController@diplasicList');
+    Route::any('/diplasic/diplasicPage','DiplasicController@diplasicPage');
+    Route::any('/diplasic/createDiplasic','DiplasicController@createDiplasic');
+    Route::any('/diplasic/addDiplasic','DiplasicController@addDiplasic');
+    Route::any('/diplasic/diplasicUseFlag','DiplasicController@diplasicUseFlag');
+    Route::any('/diplasic/diplasicDelFlag','DiplasicController@diplasicDelFlag');
+    Route::any('/diplasic/details','DiplasicController@details');
 });
 
 
