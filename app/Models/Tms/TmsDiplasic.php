@@ -14,7 +14,7 @@ class TmsDiplasic extends Model{
     //protected $connection = 'connection-name';
 
     //指定数据库表 如果表名后带s则不需要 不带则需要
-    protected $table = 'tms_city';
+    protected $table = 'tms_diplasic';
 
     //指定主键字段 默认为id
     //protected $primaryKey = 'id';
