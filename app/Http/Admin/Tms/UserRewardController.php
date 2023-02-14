@@ -100,7 +100,8 @@ class UserRewardController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
-            'use_flag','delete_flag','create_time','update_time','group_code','group_name','user_id','type'];
+            'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
+            ,'cash_back','cash_flag','type','user_name'];
         $select1=['self_id','name'];
         switch ($group_info['group_id']){
             case 'all':
@@ -226,7 +227,7 @@ class UserRewardController extends CommonController{
         ];
         $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
-         ,'cash_back','cash_flag','type'];
+         ,'cash_back','cash_flag','type','user_name'];
         $data['info']=UserReward::where($where)->select($select)->first();
 
         $msg['code']=200;
@@ -634,7 +635,8 @@ class UserRewardController extends CommonController{
         $self_id=$request->input('self_id');
         $table_name='user_reward';
         $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
-            'use_flag','delete_flag','create_time','update_time','group_code','group_name','user_id'];
+            'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
+            ,'cash_back','cash_flag','type','user_name'];
         // $self_id='address_202012301359512962811465';
         $select1 = ['self_id','name'];
         $info=$details->details($self_id,$table_name,$select);
