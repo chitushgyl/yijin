@@ -58,7 +58,7 @@ class DiplasicController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','car_id','car_number','produciton_date','input_date','service','tips','service_now','service_plan','create_user_name','create_time','group_code','use_flag'];
+        $select=['self_id','car_id','car_number','production_date','input_date','service','tips','service_now','service_plan','create_user_name','create_time','group_code','use_flag'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsDiplasic::where($where)->count(); //总的数据量
@@ -249,7 +249,7 @@ class DiplasicController extends CommonController{
 
     }
 
-    /***    车辆类型删除     /tms/diplasic/diplasicDelFlag
+    /***    二次维护删除     /tms/diplasic/diplasicDelFlag
      */
     public function diplasicDelFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
