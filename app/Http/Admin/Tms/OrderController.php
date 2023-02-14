@@ -427,14 +427,11 @@ class OrderController extends CommonController{
         $rules=[
             'order_id'=>'required',
             'car_number'=>'required',
-            'car_conact'=>'required',
-            'car_tel'=>'required',
+
         ];
         $message=[
             'order_id.required'=>'请选择要调度的订单',
             'car_number.required'=>'请选择车辆',
-            'car_conact.required'=>'驾驶人',
-            'car_tel.required'=>'联系电话',
         ];
 
         $validator=Validator::make($input,$rules,$message);
