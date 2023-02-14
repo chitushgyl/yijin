@@ -109,7 +109,7 @@ class DiplasicController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $select=['self_id','car_id','car_number','produciton_date','input_date','service','tips','service_now','service_plan','create_user_name','create_time','group_code','use_flag'];
+        $select=['self_id','car_id','car_number','production_date','input_date','service','tips','service_now','service_plan','create_user_name','create_time','group_code','use_flag'];
         $data['info']=TmsDiplasic::where($where)->select($select)->first();
         if($data['info']){
 
@@ -456,7 +456,7 @@ class DiplasicController extends CommonController{
     public function  details(Request $request,Details $details){
         $self_id=$request->input('self_id');
         $table_name='tms_diplasic';
-        $select=['self_id','car_id','car_number','produciton_date','input_date','service','tips','service_now','service_plan','create_user_name','create_time','group_code','use_flag'];
+        $select=['self_id','car_id','car_number','production_date','input_date','service','tips','service_now','service_plan','create_user_name','create_time','group_code','use_flag'];
         // $self_id='type_202012290957581187464100';
         $info=$details->details($self_id,$table_name,$select);
 
