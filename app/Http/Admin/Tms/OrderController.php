@@ -239,17 +239,21 @@ class OrderController extends CommonController{
         $payment_state             = $request->input('payment_state');//结算状态
         $odd_number                = $request->input('odd_number');//预约单号
         $remark                    = $request->input('remark');//备注
+        $car_num                   = $request->input('car_num');//备车数
+        $sale_price                = $request->input('sale_price');//单价
+        $driver_id                 = $request->input('driver_id');//驾驶员
+        $user_name                 = $request->input('user_name');//驾驶员
+        $escort                    = $request->input('escort');//押运员
+        $trailer_num               = $request->input('trailer_num');//挂车号
 
 
         $rules=[
             'good_name'=>'required',
             'price'=>'required',
-            'order_weight'=>'required',
         ];
         $message=[
             'good_name.required'=>'请填写物料名称',
             'price.required'=>'请填写运费',
-            'order_weight.required'=>'请填写预约提货量',
         ];
 
         $validator=Validator::make($input,$rules,$message);
@@ -311,6 +315,13 @@ class OrderController extends CommonController{
             $data['payment_state']           = $payment_state;
             $data['odd_number']              = $odd_number;
             $data['remark']                  = $remark;
+            $data['car_num']                 = $car_num;
+            $data['sale_price']              = $sale_price;
+            $data['driver_id']               = $driver_id;
+            $data['user_name']               = $user_name;
+            $data['escort']                  = $escort;
+            $data['trailer_num']             = $trailer_num;
+
             $old_info = TmsOrder::where('self_id',$self_id)->first();
 
 
@@ -352,6 +363,9 @@ class OrderController extends CommonController{
                 $money['create_user_name']       = $user_info->name;
                 $money['create_time']            = $money['update_time'] = $now_time;
                 TmsMoney::insert($money);
+
+                /***生成工资表**/
+
                 $operationing->access_cause='新建订单';
                 $operationing->operation_type='create';
 

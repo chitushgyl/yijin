@@ -267,7 +267,7 @@ class UserRewardController extends CommonController{
         $score                   =$request->input('score');//扣分情况
         $payment                 =$request->input('payment');//罚款
         $late_fee                =$request->input('late_fee');//滞纳金
-        $reward_view             =$request->input('reward_view');//是否有安全奖
+        $reward_view             =$request->input('reward_view');//奖励详情
         $safe_reward             =$request->input('safe_reward');//奖金
         $group_code              =$request->input('group_code');
         $handled_by              =$request->input('handled_by');//经办人
