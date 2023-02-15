@@ -390,6 +390,19 @@ class OrderController extends CommonController{
                     $wages['remark']       = $remark;
                     TmsWares::insert($wages);
 
+                    $payment['self_id']                = generate_id('money');
+                    $payment['pay_type']               = 'salary';
+                    $payment['money']                  = $total_money;
+                    $payment['pay_state']              = 'Y';
+                    $payment['order_id']               = $data['self_id'];
+                    $payment['process_state']          = 'Y';
+                    $payment['type_state']             = 'out';
+                    $payment['group_code']             = $group_code;
+                    $payment['create_user_id']         = $user_info->admin_id;
+                    $payment['create_user_name']       = $user_info->name;
+                    $payment['create_time']            = $payment['update_time'] = $now_time;
+                    TmsMoney::insert($payment);
+
                 }
 
 
