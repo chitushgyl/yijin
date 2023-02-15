@@ -5,6 +5,7 @@ use App\Models\Tms\AppSettingParam;
 use App\Models\Tms\OrderLog;
 use App\Models\Tms\TmsMoney;
 use App\Models\Tms\TmsReceipt;
+use App\Models\Tms\TmsWages;
 use App\Models\Tms\TmsWares;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
