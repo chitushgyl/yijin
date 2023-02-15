@@ -41,6 +41,7 @@ class CarServiceController extends CommonController{
      */
     public function servicePage(Request $request){
         /** 接收中间件参数**/
+        $service_type    =array_column(config('tms.service_type'),'name','key');
         $group_info     = $request->get('group_info');//接收中间件产生的参数
         $button_info    = $request->get('anniu');//接收中间件产生的参数
 
@@ -99,7 +100,7 @@ class CarServiceController extends CommonController{
 
         foreach ($data['items'] as $k=>$v) {
             $v->button_info=$button_info;
-
+            $v->type = $service_type[$v->type]??null;
         }
 
         $msg['code']=200;

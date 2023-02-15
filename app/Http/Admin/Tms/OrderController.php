@@ -5,6 +5,7 @@ use App\Models\Tms\AppSettingParam;
 use App\Models\Tms\OrderLog;
 use App\Models\Tms\TmsMoney;
 use App\Models\Tms\TmsReceipt;
+use App\Models\Tms\TmsWares;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\DB;
@@ -247,6 +248,7 @@ class OrderController extends CommonController{
         $trailer_num               = $request->input('trailer_num');//挂车号
         $car_id                    = $request->input('car_id');//车牌号
         $car_number                = $request->input('car_number');//车牌号
+        $social_flag               = $request->input('social_flag');//驾驶员是否参加社保
 
 
         $rules=[
@@ -325,6 +327,7 @@ class OrderController extends CommonController{
             $data['trailer_num']             = $trailer_num;
             $data['car_id']                  = $car_id;
             $data['car_number']              = $car_number;
+            $data['social_flag']             = $social_flag;
 
 
             $old_info = TmsOrder::where('self_id',$self_id)->first();
@@ -376,14 +379,15 @@ class OrderController extends CommonController{
                     $wages['driver_id']    = $driver_id;
                     $wages['driver_name']  = $user_name;
                     $wages['social_flag']  = $social_flag;
-                    $wages['date']         = $date;
+                    $wages['date']         = $enter_time;
                     $wages['escort']       = $escort;
-                    $wages['goodsname']    = $goodsname;
-                    $wages['pick_weight']  = $pick_weight;
-                    $wages['unload_weight']= $unload_weight;
+                    $wages['goodsname']    = $good_name;
+                    $wages['pick_weight']  = $real_weight;
+                    $wages['unload_weight']= $upload_weight;
                     $wages['price']        = $price;
                     $wages['total_money']  = $total_money;
                     $wages['remark']       = $remark;
+                    TmsWares::insert($wages);
 
                 }
 
@@ -442,6 +446,10 @@ class OrderController extends CommonController{
         $order_id                  = $request->input('order_id');//订单ID
         $car_number                = $request->input('car_number');//车牌号
         $car_id                    = $request->input('car_id');//车辆ID
+        $driver_id                 = $request->input('driver_id');//驾驶员
+        $driver_name               = $request->input('driver_name');//驾驶员
+        $escort                    = $request->input('escort');//押运员
+        $social_flag               = $request->input('social_flag');//是否有社保
         $car_conact                = $request->input('car_conact');//联系人
         $car_tel                   = $request->input('car_tel');//联系方式
 
@@ -465,7 +473,9 @@ class OrderController extends CommonController{
             $data['car_tel']                  = $car_tel;
             $data['order_status']             = 2;
             $data['create_time']              = $data['update_time'] = $now_time;
-            $old_info = TmsOrder::where('self_id',$order_id)->select('self_id','order_status','gather_shi_name','send_shi_name','odd_number')->first();
+            $old_info = TmsOrder::where('self_id',$order_id)
+                ->select('self_id','order_status','gather_shi_name','send_shi_name','odd_number','enter_time','real_weight','upload_weight','price','total_money')
+                ->first();
 
             $id = TmsOrder::where('self_id',$order_id)->update($data);
             $order_log['self_id'] = generate_id('log_');
@@ -484,7 +494,24 @@ class OrderController extends CommonController{
             $money['update_time'] = $now_time;
             $money['user_name'] = $car_conact;
             TmsMoney::where('order_id',$order_id)->update($money);
+            /*** 保存工资表**/
+            if ($car_id){
+                $wages['car_id']       = $car_id;
+                $wages['car_number']   = $car_number;
+                $wages['driver_id']    = $driver_id;
+                $wages['driver_name']  = $driver_name;
+                $wages['social_flag']  = $social_flag;
+                $wages['date']         = $old_info->enter_time;
+                $wages['escort']       = $escort;
+                $wages['goodsname']    = $old_info->goods_name;
+                $wages['pick_weight']  = $old_info->real_weight;
+                $wages['unload_weight']= $old_info->upload_weight;
+                $wages['price']        = $old_info->price;
+                $wages['total_money']  = $old_info->total_money;
+                $wages['remark']       = $old_info->remark;
+                TmsWares::insert($wages);
 
+            }
             $operationing->access_cause='调度订单';
             $operationing->operation_type='update';
             $operationing->table_id=$old_info?$order_id:$order_id;
