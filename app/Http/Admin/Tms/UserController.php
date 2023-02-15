@@ -409,7 +409,7 @@ class UserController extends CommonController{
         ];
 
         $where=get_list_where($search);
-        $select=['self_id','name'];
+        $select=['self_id','name','social_flag'];
         $data['info']=SystemUser::where($where)->select($select)->get();
 
         $msg['code']=200;

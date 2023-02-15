@@ -374,7 +374,7 @@ class OrderController extends CommonController{
                     $wages['car_id']       = $car_id;
                     $wages['car_number']   = $car_number;
                     $wages['driver_id']    = $driver_id;
-                    $wages['driver_name']  = $driver_name;
+                    $wages['driver_name']  = $user_name;
                     $wages['social_flag']  = $social_flag;
                     $wages['date']         = $date;
                     $wages['escort']       = $escort;
