@@ -327,7 +327,7 @@ class OrderController extends CommonController{
             $data['trailer_num']             = $trailer_num;
             $data['car_id']                  = $car_id;
             $data['car_number']              = $car_number;
-            $data['social_flag']             = $social_flag;
+//            $data['social_flag']             = $social_flag;
 
 
             $old_info = TmsOrder::where('self_id',$self_id)->first();
@@ -374,6 +374,7 @@ class OrderController extends CommonController{
 
                 /***生成工资表**/
                 if ($car_id){
+                    $wages['order_id']     = $data['self_id'];
                     $wages['car_id']       = $car_id;
                     $wages['car_number']   = $car_number;
                     $wages['driver_id']    = $driver_id;
@@ -496,6 +497,7 @@ class OrderController extends CommonController{
             TmsMoney::where('order_id',$order_id)->update($money);
             /*** 保存工资表**/
             if ($car_id){
+                $wages['order_id']     = $order_id;
                 $wages['car_id']       = $car_id;
                 $wages['car_number']   = $car_number;
                 $wages['driver_id']    = $driver_id;
