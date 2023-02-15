@@ -245,6 +245,8 @@ class OrderController extends CommonController{
         $user_name                 = $request->input('user_name');//驾驶员
         $escort                    = $request->input('escort');//押运员
         $trailer_num               = $request->input('trailer_num');//挂车号
+        $car_id                    = $request->input('car_id');//车牌号
+        $car_number                = $request->input('car_number');//车牌号
 
 
         $rules=[
@@ -321,6 +323,9 @@ class OrderController extends CommonController{
             $data['user_name']               = $user_name;
             $data['escort']                  = $escort;
             $data['trailer_num']             = $trailer_num;
+            $data['car_id']                  = $car_id;
+            $data['car_number']              = $car_number;
+
 
             $old_info = TmsOrder::where('self_id',$self_id)->first();
 
@@ -365,6 +370,23 @@ class OrderController extends CommonController{
                 TmsMoney::insert($money);
 
                 /***生成工资表**/
+                if ($car_id){
+                    $wages['car_id']       = $car_id;
+                    $wages['car_number']   = $car_number;
+                    $wages['driver_id']    = $driver_id;
+                    $wages['driver_name']  = $driver_name;
+                    $wages['social_flag']  = $social_flag;
+                    $wages['date']         = $date;
+                    $wages['escort']       = $escort;
+                    $wages['goodsname']    = $goodsname;
+                    $wages['pick_weight']  = $pick_weight;
+                    $wages['unload_weight']= $unload_weight;
+                    $wages['price']        = $price;
+                    $wages['total_money']  = $total_money;
+                    $wages['remark']       = $remark;
+
+                }
+
 
                 $operationing->access_cause='新建订单';
                 $operationing->operation_type='create';

@@ -69,7 +69,7 @@ class CarServiceController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator',
-            'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view'];
+            'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view','type','driver_id','service_item','servicer','next_kilo'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=CarService::where($where)->count(); //总的数据量
@@ -113,6 +113,7 @@ class CarServiceController extends CommonController{
     /***    新建车辆维修      /tms/carService/createService
      */
     public function createService(Request $request){
+        $data['type']        =config('tms.service_type');
         /** 接收数据*/
         $self_id=$request->input('self_id');
 //        $self_id = 'car_20210313180835367958101';
@@ -123,7 +124,7 @@ class CarServiceController extends CommonController{
         ];
 
         $select = ['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator',
-            'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view'];
+            'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view','type','driver_id','service_item','servicer','next_kilo'];
         $data['info']=CarService::where($where)->select($select)->first();
 
         if ($data['info']){
@@ -156,19 +157,20 @@ class CarServiceController extends CommonController{
         /** 接收数据*/
         $self_id            =$request->input('self_id');
         $group_code         =$request->input('group_code');
-        $car_number         =$request->input('car_number');//车牌号
+        $type               =$request->input('type');//类型 service维修  保养preserve
         $car_id             =$request->input('car_id');
-        $brand              =$request->input('brand');//品牌
-        $fittings           =$request->input('fittings');//配件名称
-        $kilo_num           =$request->input('kilo_num');//公里数
-        $service_time       =$request->input('service_time');//维修时间
-        $warranty_time      =$request->input('warranty_time');//保修期
-        $reason             =$request->input('reason');// 原因
-        $service_view       =$request->input('service_view');//详细记录
-        $service_price      =$request->input('service_price');//维修价格
-        $service_partne     =$request->input('service_partne');//维修单位
+        $car_number         =$request->input('car_number');//车牌号
+        $brand              =$request->input('brand');//品牌型号
+        $driver_id          =$request->input('driver_id');//驾驶员 self_id
         $driver_name        =$request->input('driver_name');//驾驶员
-        $contact            =$request->input('contact');//驾驶员联系方式
+        $service_item       =$request->input('service_item');//维修/保养项目
+        $service_view       =$request->input('service_view');//维修/保养明细
+        $service_time       =$request->input('service_time');//维修/保养时间
+        $servicer           =$request->input('servicer');//维修人员
+        $service_partne     =$request->input('service_partne');//维修/保养单位
+        $service_price      =$request->input('service_price');//金额
+        $kilo_num           =$request->input('kilo_num');//保养公里数
+        $next_kilo          =$request->input('next_kilo');//下次保养公里数
         $operator           =$request->input('operator');//经办人
         $remark             =$request->input('remark');//备注
 
@@ -188,21 +190,20 @@ class CarServiceController extends CommonController{
                 $msg['msg'] = '公司不存在';
                 return $msg;
             }
-
             $data['car_number']        =$car_number;
             $data['car_id']            =$car_id;
             $data['brand']             =$brand;
             $data['kilo_num']          =$kilo_num;
-            $data['fittings']          =$fittings;
+            $data['next_kilo']         =$next_kilo;
+            $data['type']              =$type;
             $data['service_time']      =$service_time;
-            $data['warranty_time']     =$warranty_time;
-            $data['reason']            =$reason;
+            $data['driver_id']         =$driver_id;
+            $data['service_item']      =$service_item;
             $data['service_view']      =$service_view;
             $data['service_partne']    =$service_partne;
             $data['service_price']     =$service_price;
-
             $data['driver_name']       =$driver_name;
-            $data['contact']           =$contact;
+            $data['servicer']          =$servicer;
             $data['operator']          =$operator;
             $data['remark']            =$remark;
 
@@ -563,7 +564,7 @@ class CarServiceController extends CommonController{
         $self_id=$request->input('self_id');
         $table_name='car_service';
         $select=['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator',
-            'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view'];
+            'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view','type','driver_id','service_item','servicer','next_kilo'];
         // $self_id='car_202012291341297595587871';
         $info=$details->details($self_id,$table_name,$select);
 
