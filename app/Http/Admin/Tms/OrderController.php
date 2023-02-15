@@ -511,7 +511,8 @@ class OrderController extends CommonController{
             $money['user_name'] = $car_conact;
             TmsMoney::where('order_id',$order_id)->update($money);
             /*** 保存工资表**/
-            if ($car_id){
+            $tms_wages = TmsWages::where('order_id',$order_id)->first();
+            if ($car_id &&$tms_wages){
                 $wages['order_id']     = $order_id;
                 $wages['car_id']       = $car_id;
                 $wages['car_number']   = $car_number;
