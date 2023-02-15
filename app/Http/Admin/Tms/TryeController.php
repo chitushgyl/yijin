@@ -189,7 +189,7 @@ class TryeController extends CommonController{
                 $operationing->operation_type='update';
 
             }else{
-                $data['self_id']            =generate_id('type_');
+                $data['self_id']            =generate_id('trye_');
                 $data['create_user_id']     =$user_info->admin_id;
                 $data['create_user_name']   =$user_info->name;
                 $data['create_time']        =$data['update_time']=$now_time;

@@ -375,6 +375,7 @@ class OrderController extends CommonController{
 
                 /***生成工资表**/
                 if ($car_id){
+                    $wages['self_id']      = generate_id('wages_');
                     $wages['order_id']     = $data['self_id'];
                     $wages['car_id']       = $car_id;
                     $wages['car_number']   = $car_number;
