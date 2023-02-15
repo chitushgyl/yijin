@@ -388,7 +388,7 @@ class OrderController extends CommonController{
                     $wages['price']        = $price;
                     $wages['total_money']  = $total_money;
                     $wages['remark']       = $remark;
-                    TmsWares::insert($wages);
+                    TmsWages::insert($wages);
 
                     $payment['self_id']                = generate_id('money');
                     $payment['pay_type']               = 'salary';
