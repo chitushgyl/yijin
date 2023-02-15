@@ -399,6 +399,10 @@ class OrderController extends CommonController{
                     $payment['order_id']               = $data['self_id'];
                     $payment['process_state']          = 'Y';
                     $payment['type_state']             = 'out';
+                    $payment['car_id']                 = $car_id;
+                    $payment['car_number']             = $car_number;
+                    $payment['user_id']                = $driver_id;
+                    $payment['user_name']              = $user_name;
                     $payment['group_code']             = $group_code;
                     $payment['create_user_id']         = $user_info->admin_id;
                     $payment['create_user_name']       = $user_info->name;
