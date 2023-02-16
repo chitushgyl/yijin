@@ -255,6 +255,7 @@ Route::group([
     Route::any('/carService/serviceDelFlag','CarServiceController@serviceDelFlag');
     Route::any('/carService/details','CarServiceController@details');
     Route::any('/carService/import','CarServiceController@import');
+    Route::any('/carService/excel','CarServiceController@excel');
 
     /**车辆加油记录***/
     Route::any('/carOil/carList','CarOilController@carList');
@@ -313,6 +314,7 @@ Route::group([
     Route::any('/trye/tryeUseFlag','TryeController@tryeUseFlag');
     Route::any('/trye/tryeDelFlag','TryeController@tryeDelFlag');
     Route::any('/trye/details','TryeController@details');
+    Route::any('/trye/excel','TryeController@excel');
 
     /**二级维护***/
     Route::any('/diplasic/diplasicList','DiplasicController@diplasicList');
@@ -322,6 +324,8 @@ Route::group([
     Route::any('/diplasic/diplasicUseFlag','DiplasicController@diplasicUseFlag');
     Route::any('/diplasic/diplasicDelFlag','DiplasicController@diplasicDelFlag');
     Route::any('/diplasic/details','DiplasicController@details');
+    Route::any('/diplasic/import','DiplasicController@import');
+    Route::any('/diplasic/excel','DiplasicController@excel');
 });
 
 
