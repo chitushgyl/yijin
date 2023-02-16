@@ -68,7 +68,7 @@ class UserController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','safe_reward',
+        $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','safe_reward','salary',
         'group_insurance','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','birthday','sex','age','contract_date','working_age','id_validity',
             'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address'];
         $select1 = ['self_id','section_name'];
@@ -141,7 +141,7 @@ class UserController extends CommonController{
         ];
         $select=['self_id','type','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
             ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','contract_back','license_back','work_license'
-        ,'birthday','sex','age','contract_date','working_age','id_validity','id_address',
+        ,'birthday','sex','age','contract_date','working_age','id_validity','id_address','salary',
             'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity'];
         $data['info']=SystemUser::where($where)->select($select)->first();
         if($data['info']){
@@ -615,7 +615,7 @@ class UserController extends CommonController{
         $table_name='system_user';
         $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
             ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type',
-            'contract_back','license_back','work_license','birthday','sex','age','contract_date','working_age','id_validity',
+            'contract_back','license_back','work_license','birthday','sex','age','contract_date','working_age','id_validity','salary',
             'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address'];
         // $self_id='address_202012301359512962811465';
         $info=$details->details($self_id,$table_name,$select);
