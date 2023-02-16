@@ -523,7 +523,7 @@ class UserController extends CommonController{
             $errorNum=50;       //控制错误数据的条数
             $a=2;
 
-//             dd($info_wait);
+             dd($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
                 $where=[
