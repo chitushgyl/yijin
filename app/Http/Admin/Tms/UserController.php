@@ -532,6 +532,14 @@ class UserController extends CommonController{
                     ['group_code','=',$user_info->group_code],
                 ];
                 $section = SystemSection::where($where)->select('self_id','section_name','group_code')->first();
+                if ($section->self_id){
+
+                }else{
+                    $strs .= '数据中的第'.$a."行部门不存在".'</br>';
+                    $cando='N';
+                    $abcd++;
+                }
+
                 if ($v['type'] == '驾驶员'){
                     $type = 'driver';
                 }elseif($v['type'] == '押运员'){
