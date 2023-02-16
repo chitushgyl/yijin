@@ -527,6 +527,7 @@ class TryeController extends CommonController{
         /** 接收数据*/
         $group_code     =$request->input('group_code');
         $ids            =$request->input('ids');
+        $type            =$request->input('type');
         // $group_code  =$input['group_code']   ='1234';
         //dd($group_code);
         $rules=[
@@ -543,6 +544,7 @@ class TryeController extends CommonController{
             $search=[
                 ['type'=>'=','name'=>'group_code','value'=>$group_code],
                 ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+                ['type'=>'=','name'=>'type','value'=>$type],
             ];
             $where=get_list_where($search);
 
