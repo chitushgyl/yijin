@@ -702,6 +702,7 @@ class UserController extends CommonController{
     /***    人员导出     /tms/user/execl
      */
     public function execl(Request $request,File $file){
+        $background   =array_column(config('tms.background'),'name','key');
         $user_info  = $request->get('user_info');//接收中间件产生的参数
         $now_time   =date('Y-m-d H:i:s',time());
         $input      =$request->all();
@@ -782,19 +783,29 @@ class UserController extends CommonController{
                     }
                     $list['id']=($k+1);
                     $list['name']=$v->name;
-                    $list['sex']=$v->sex;
+                    if ($v->sex == 'Y'){
+                        $sex = '男';
+                    }else{
+                        $sex = '女';
+                    }
+                    $list['sex']=$sex;
                     $list['identity_num']=$v->identity_num;
                     $list['birthday']=$v->birthday;
                     $list['age']=$v->age;
                     $list['tel']=$v->tel;
-                    $list['education_background']=$v->education_background;
+                    $list['education_background']=$background[$v->education_background]??null;;
                     $list['department']=$v->SystemSection->section_name;
                     $list['type']=$type;
                     $list['entry_time']=$v->entry_time;
                     $list['working_age']=$v->working_age;
                     $list['now_address']=$v->now_address;
                     $list['live_cost']=$v->live_cost;
-                    $list['social_flag']=$v->social_flag;
+                    if ($v->social_flag == 'Y'){
+                        $social_flag = '是';
+                    }else{
+                        $social_flag = '否';
+                    }
+                    $list['social_flag']=$social_flag;
                     $list['salary']=$v->salary;
                     $list['id_address']=$v->id_address;
                     $list['leave_time']=$v->leave_time;
