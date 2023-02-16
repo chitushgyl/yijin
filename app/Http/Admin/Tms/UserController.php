@@ -523,7 +523,7 @@ class UserController extends CommonController{
             $errorNum=50;       //控制错误数据的条数
             $a=2;
 
-             dd($info_wait);
+//             dd($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
                 $where=[
@@ -557,48 +557,27 @@ class UserController extends CommonController{
                     $list['name']                    = $v['name'];
                     $list['sex']                     = $sex;
                     $list['identity_num']            = $v['identity_num'];
-                    $list['birthday']                = gmdate('Y-m-d', ($v['birthday'] - 25569) * 3600 * 24);
+                    $list['birthday']                = $v['birthday'];
                     $list['age']                     = $v['age'];
                     $list['tel']                     = $v['tel'];
                     $list['education_background']    = $v['education_background'];
                     $list['department']              = $section->self_id;
                     $list['type']                    = $type;
-                    if ($v['entry_time']){
-                        $list['entry_time']          = gmdate('Y-m-d', ($v['entry_time'] - 25569) * 3600 * 24);
-                    }else{
-                        $list['entry_time']       = null;
-                    }
+                    $list['entry_time']              = $v['entry_time'];
                     $list['working_age']             = $v['working_age'];
                     $list['now_address']             = $v['now_address'];
                     $list['live_cost']               = $v['live_cost'];
                     $list['social_flag']             = $social_flag;
                     $list['salary']                  = $v['salary'];
                     $list['id_address']              = $v['id_address'];
-                    if ($v['leave_time']){
-                        $list['leave_time']              = gmdate('Y-m-d', ($v['leave_time'] - 25569) * 3600 * 24);
-                    }else{
-                        $list['leave_time']       = null;
-                    }
-                    if ($v['id_validity']){
-                        $list['id_validity']              = gmdate('Y-m-d', ($v['id_validity'] - 25569) * 3600 * 24);
-                    }else{
-                        $list['id_validity']       = null;
-                    }
+                    $list['leave_time']              = $v['leave_time'];
+                    $list['id_validity']              = $v['id_validity'];
                     $list['drive_type']             = $v['drive_type'];
-                    if ($v['drive_validity']){
-                        $list['drive_validity']              = gmdate('Y-m-d', ($v['drive_validity'] - 25569) * 3600 * 24);
-                    }else{
-                        $list['drive_validity']       = null;
-                    }
+                    $list['drive_validity']              = $v['drive_validity'];
                     $list['drive_organ']              = $v['drive_organ'];
                     $list['nvq_num']                  = $v['nvq_num'];
-                    if ($v['nvq_validity']){
-                        $list['nvq_validity']              = gmdate('Y-m-d', ($v['nvq_validity'] - 25569) * 3600 * 24);
-                    }else{
-                        $list['nvq_validity']       = null;
-                    }
+                    $list['nvq_validity']              = ['nvq_validity'];
                     $list['nvq_organ']               = $v['nvq_organ'];
-
                     $list['create_time']             = $list['update_time']=$now_time;
                     $list['file_id']                 = $file_id;
                     $list['group_code']              = $user_info->group_code;

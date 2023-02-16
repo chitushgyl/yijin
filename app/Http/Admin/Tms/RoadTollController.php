@@ -380,7 +380,7 @@ class RoadTollController extends CommonController{
                 '车牌号码' =>['Y','Y','20','car_number'],
                 'ETC通行卡卡号' =>['N','Y','30','etc_number'],
                 '扣费金额' =>['Y','Y','30','road_price'],
-                '扣费后余额' =>['Y','Y','30','etc_balance'],
+                '消费后余额' =>['Y','Y','30','etc_balance'],
                 '出入口站点' =>['N','Y','200','address'],
             ];
             $ret=arr_check($shuzu,$info_check);
