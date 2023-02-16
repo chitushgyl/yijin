@@ -50,8 +50,8 @@ class ExamineController extends CommonController{
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
         $user_name      =$request->input('user_name');
-        $start_time      =$request->input('start_time');
-        $end_time      =$request->input('end_time');
+        $start_time     =$request->input('start_time');
+        $end_time       =$request->input('end_time');
         if ($start_time){
             $start_time     =date('Y-m-01 00:00:00',strtotime($request->input('start_time')));
         }
