@@ -517,7 +517,7 @@ class TryeController extends CommonController{
     }
 
     /**
-     *  导出
+     *  导出   tms/trye/excel
      * */
     public function excel(Request $request,File $file){
         $background   =array_column(config('tms.background'),'name','key');

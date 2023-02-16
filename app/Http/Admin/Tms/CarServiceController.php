@@ -598,9 +598,9 @@ class CarServiceController extends CommonController{
 
     }
 
-    /***    维修导出     /tms/car/execl
+    /***    维修导出     /tms/car/excel
      */
-    public function execl(Request $request,File $file){
+    public function excel(Request $request,File $file){
         $user_info  = $request->get('user_info');//接收中间件产生的参数
         $now_time   =date('Y-m-d H:i:s',time());
         $input      =$request->all();
