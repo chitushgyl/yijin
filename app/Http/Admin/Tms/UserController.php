@@ -584,7 +584,7 @@ class UserController extends CommonController{
                     $list['drive_validity']          = $v['drive_validity'];
                     $list['drive_organ']             = $v['drive_organ'];
                     $list['nvq_num']                 = $v['nvq_num'];
-                    $list['nvq_validity']            = ['nvq_validity'];
+                    $list['nvq_validity']            = $v['nvq_validity'];
                     $list['nvq_organ']               = $v['nvq_organ'];
                     $list['create_time']             = $list['update_time']=$now_time;
                     $list['file_id']                 = $file_id;
