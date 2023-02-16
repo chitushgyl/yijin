@@ -598,7 +598,7 @@ class CarServiceController extends CommonController{
 
     }
 
-    /***    车辆导出     /tms/car/execl
+    /***    维修导出     /tms/car/execl
      */
     public function execl(Request $request,File $file){
         $user_info  = $request->get('user_info');//接收中间件产生的参数
@@ -625,21 +625,26 @@ class CarServiceController extends CommonController{
             ];
             $where=get_list_where($search);
 
-            $select=['self_id','car_number','car_possess','weight','volam','control','car_type_name','contacts','tel','remark'];
-            $info=TmsCar::where($where)->orderBy('create_time', 'desc')->select($select)->get();
+            $select=['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator',
+                'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view','type','driver_id','service_item','servicer','next_kilo'];
+            $info=CarService::where($where)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头
                 $row = [[
                     "id"=>'ID',
                     "car_number"=>'车牌号',
-                    "car_type_name"=>'车辆类型',
-                    "car_possess"=>'属性',
-                    "control"=>'温控',
-                    "weight"=>'承重(kg)',
-                    "volam"=>'体积(立方)',
-                    "contacts"=>'联系人',
-                    "tel"=>'联系电话',
+                    "brand"=>'品牌型号',
+                    "driver_name"=>'维修/保养驾驶员',
+                    "service_time"=>'维修/保养日期',
+                    "service_item"=>'维修/保养项目',
+                    "service_view"=>'维修/保养明细',
+                    "servicer"=>'维修人员',
+                    "service_partne"=>'维修/保养单位',
+                    "kilo_num"=>'保养公里数',
+                    "next_kilo"=>'下次保养公里数',
+                    "service_price"=>'金额',
+                    "operator"=>'经办人',
                     "remark"=>'备注'
                 ]];
 
@@ -650,26 +655,20 @@ class CarServiceController extends CommonController{
 
                 foreach ($info as $k=>$v){
                     $list=[];
-
-                    $list['id']=($k+1);
-                    $list['car_number']=$v->car_number;
-                    $list['car_type_name']=$v->car_type_name;
-                    $control = '';
-                    $car_possess = '';
-                    if (!empty($tms_control_type[$v['control']])) {
-                        $control = $tms_control_type[$v['control']];
-                    }
-
-                    if (!empty($tms_car_possess_type[$v['car_possess']])) {
-                        $car_possess = $tms_car_possess_type[$v['car_possess']];
-                    }
-                    $list['car_possess']=$car_possess;
-                    $list['control']    =$control;
-                    $list['weight']     =$v->weight;
-                    $list['volam']      =$v->volam;
-                    $list['contacts']   =$v->contacts;
-                    $list['tel']        =$v->tel;
-                    $list['remark']     =$v->remark;
+                    $list['id']            =($k+1);
+                    $list['car_number']    =$v->car_number;
+                    $list['brand']         =$v->brand;
+                    $list['driver_name']   =$v->driver_name;
+                    $list['service_time']  =$v->service_time;
+                    $list['service_item']  =$v->service_item;
+                    $list['service_view']  =$v->service_view;
+                    $list['servicer']      =$v->servicer;
+                    $list['service_partne']=$v->service_partne;
+                    $list['kilo_num']      =$v->kilo_num;
+                    $list['next_kilo']     =$v->next_kilo;
+                    $list['service_price'] =$v->service_price;
+                    $list['operator']      =$v->operator;
+                    $list['remark']        =$v->remark;
 
                     $data_execl[]=$list;
                 }

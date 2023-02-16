@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Admin\Tms;
+
 use App\Models\Tms\TmsTrye;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
@@ -10,6 +11,7 @@ use App\Tools\Import;
 use App\Http\Controllers\StatusController as Status;
 use App\Http\Controllers\DetailsController as Details;
 use App\Models\Tms\TmsCarType;
+use App\Http\Controllers\FileController as File;
 
 
 class TryeController extends CommonController{
@@ -512,6 +514,95 @@ class TryeController extends CommonController{
             return $msg;
         }
 
+    }
+
+    /**
+     *  导出
+     * */
+    public function excel(Request $request,File $file){
+        $background   =array_column(config('tms.background'),'name','key');
+        $user_info  = $request->get('user_info');//接收中间件产生的参数
+        $now_time   =date('Y-m-d H:i:s',time());
+        $input      =$request->all();
+        /** 接收数据*/
+        $group_code     =$request->input('group_code');
+        $ids            =$request->input('ids');
+        // $group_code  =$input['group_code']   ='1234';
+        //dd($group_code);
+        $rules=[
+            'group_code'=>'required',
+        ];
+        $message=[
+            'group_code.required'=>'必须选择公司',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()){
+            /** 下面开始执行导出逻辑**/
+            $group_name     =SystemGroup::where('group_code','=',$group_code)->value('group_name');
+            //查询条件
+            $search=[
+                ['type'=>'=','name'=>'group_code','value'=>$group_code],
+                ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ];
+            $where=get_list_where($search);
+
+            $select=['self_id','car_number','model','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag'];
+
+            $info=TmsTrye::where($where)->whereIn('self_id',explode(',',$ids))->orderBy('create_time', 'desc')->select($select)->get();
+//dd($info);
+            if($info){
+                //设置表头
+                $row = [[
+                    "id"=>'ID',
+                    "trye_num"=>'轮胎编号',
+                    "num"=>'数量',
+                    "in_time"=>'日期',
+                    "car_number"=>'车牌号',
+                    "model"=>'型号',
+                    "change"=>'更换位置',
+                    "driver_name"=>'驾驶员',
+                    "operator"=>'经办人',
+                ]];
+
+                /** 现在根据查询到的数据去做一个导出的数据**/
+                $data_execl=[];
+
+                foreach ($info as $k=>$v){
+                    $list=[];
+                    $list['id']=($k+1);
+                    $list['trye_num']=$v->trye_num;
+                    $list['num']=$v->num;
+                    $list['in_time']=$v->in_time;
+                    $list['car_number']=$v->car_number;
+                    $list['model']=$v->model;
+                    $list['change']=$v->change;
+                    $list['driver_name']=$v->driver_name;
+                    $list['operator']=$v->operator;
+                    $data_execl[]=$list;
+                }
+//                dd($data_execl);
+                /** 调用EXECL导出公用方法，将数据抛出来***/
+                $browse_type=$request->path();
+                $msg=$file->export($data_execl,$row,$group_code,$group_name,$browse_type,$user_info,$where,$now_time);
+
+                //dd($msg);
+                return $msg;
+
+            }else{
+                $msg['code']=301;
+                $msg['msg']="没有数据可以导出";
+                return $msg;
+            }
+        }else{
+            $erro=$validator->errors()->all();
+            $msg['msg']=null;
+            foreach ($erro as $k=>$v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code']=300;
+            return $msg;
+        }
     }
 
 }
