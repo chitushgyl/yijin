@@ -479,17 +479,29 @@ class UserController extends CommonController{
              */
             $shuzu=[
                 '姓名' =>['Y','Y','30','name'],
+                '性别' =>['Y','Y','30','sex'],
+                '身份证号' =>['Y','Y','30','identity_num'],
+                '出生日期' =>['N','Y','30','birthday'],
+                '年龄' =>['N','Y','30','age'],
+                '手机号' =>['Y','Y','64','tel'],
+                '学历' =>['N','Y','64','education_background'],
                 '部门' =>['Y','Y','64','department'],
-                '职务' =>['Y','Y','30','type'],
-                '学历' =>['Y','Y','64','education_background'],
-                '身份证号' =>['Y','Y','64','identity_num'],
-                '住宿费' =>['Y','Y','64','live_cost'],
+                '职位' =>['Y','Y','30','type'],
                 '入职时间' =>['Y','Y','64','entry_time'],
+                '工龄' =>['Y','Y','64','working_age'],
                 '现居地' =>['Y','Y','64','now_address'],
-                '联系方式' =>['Y','Y','64','tel'],
-                '工资' =>['N','Y','64','salary'],
+                '住宿费' =>['Y','Y','64','live_cost'],
                 '是否参加社保' =>['N','Y','64','social_flag'],
+                '基本工资' =>['N','Y','64','salary'],
+                '身份证地址' =>['N','Y','64','id_address'],
                 '离职时间' =>['N','Y','64','leave_time'],
+                '身份证有效期截止' =>['N','Y','30','id_validity'],
+                '准驾车型' =>['N','Y','30','drive_type'],
+                '驾驶证有效期截止' =>['N','Y','30','drive_validity'],
+                '驾驶证发证机构' =>['N','Y','30','drive_organ'],
+                '资格证号' =>['N','Y','30','nvq_num'],
+                '资格证有效期截止' =>['N','Y','30','nvq_validity'],
+                '资格证发证机构' =>['N','Y','30','nvq_organ'],
             ];
             $ret=arr_check($shuzu,$info_check);
 
@@ -520,14 +532,20 @@ class UserController extends CommonController{
                     ['group_code','=',$user_info->group_code],
                 ];
                 $section = SystemSection::where($where)->select('self_id','section_name','group_code')->first();
-                if ($v['type'] == '司机'){
+                if ($v['type'] == '驾驶员'){
                     $type = 'driver';
                 }elseif($v['type'] == '押运员'){
                     $type = 'cargo';
-                }else{
+                }elseif($v['type'] == '管理人员'){
                     $type = 'manager';
+                }elseif($v['type'] == '驾驶员/押运员'){
+                    $type = 'dr_cargo';
                 }
-
+                if($v['sex'] == '男'){
+                    $sex = 'Y';
+                }else{
+                    $sex = 'N';
+                }
                 if($v['social_flag'] == '是'){
                     $social_flag = 'Y';
                 }else{
@@ -537,26 +555,51 @@ class UserController extends CommonController{
                 if($cando =='Y'){
                     $list['self_id']                 = generate_id('user_');
                     $list['name']                    = $v['name'];
+                    $list['sex']                     = $sex;
+                    $list['identity_num']            = $v['identity_num'];
+                    $list['birthday']                = gmdate('Y-m-d', ($v['birthday'] - 25569) * 3600 * 24);
+                    $list['age']                     = $v['age'];
+                    $list['tel']                     = $v['tel'];
+                    $list['education_background']    = $v['education_background'];
                     $list['department']              = $section->self_id;
                     $list['type']                    = $type;
-                    $list['education_background']    = $v['education_background'];
-                    $list['identity_num']            = $v['identity_num'];
-                    $list['tel']                     = $v['tel'];
                     if ($v['entry_time']){
-                        $list['entry_time']     = gmdate('Y-m-d H:i:s', ($v['entry_time'] - 25569) * 3600 * 24);
+                        $list['entry_time']     = gmdate('Y-m-d', ($v['entry_time'] - 25569) * 3600 * 24);
                     }else{
                         $list['entry_time']       = null;
                     }
+                    $list['working_age']             = $v['working_age'];
                     $list['now_address']             = $v['now_address'];
-                    $list['salary']                  = $v['salary'];
-                    $list['create_time']             = $list['update_time']=$now_time;
+                    $list['live_cost']               = $v['live_cost'];
                     $list['social_flag']             = $social_flag;
+                    $list['salary']                  = $v['salary'];
+                    $list['id_address']              = $v['id_address'];
                     if ($v['leave_time']){
-                        $list['leave_time']              = gmdate('Y-m-d H:i:s', ($v['leave_time'] - 25569) * 3600 * 24);
+                        $list['leave_time']              = gmdate('Y-m-d', ($v['leave_time'] - 25569) * 3600 * 24);
                     }else{
                         $list['leave_time']       = null;
                     }
-                    $list['live_cost']               = $v['live_cost'];
+                    if ($v['id_validity']){
+                        $list['id_validity']              = gmdate('Y-m-d', ($v['id_validity'] - 25569) * 3600 * 24);
+                    }else{
+                        $list['id_validity']       = null;
+                    }
+                    $list['drive_type']             = $v['drive_type'];
+                    if ($v['drive_validity']){
+                        $list['drive_validity']              = gmdate('Y-m-d', ($v['drive_validity'] - 25569) * 3600 * 24);
+                    }else{
+                        $list['drive_validity']       = null;
+                    }
+                    $list['drive_organ']              = $v['drive_organ'];
+                    $list['nvq_num']                  = $v['nvq_num'];
+                    if ($v['nvq_validity']){
+                        $list['nvq_validity']              = gmdate('Y-m-d', ($v['nvq_validity'] - 25569) * 3600 * 24);
+                    }else{
+                        $list['nvq_validity']       = null;
+                    }
+                    $list['nvq_organ']               = $v['nvq_organ'];
+
+                    $list['create_time']             = $list['update_time']=$now_time;
                     $list['file_id']                 = $file_id;
                     $list['group_code']              = $user_info->group_code;
                     $list['group_name']              = $user_info->group_name;
@@ -684,9 +727,10 @@ class UserController extends CommonController{
             ];
             $where=get_list_where($search);
 
-            $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','safe_reward',
-                'use_flag','delete_flag','create_time','update_time','group_code','group_name','type',
-                ];
+            $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
+                ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type',
+                'contract_back','license_back','work_license','birthday','sex','age','contract_date','working_age','id_validity','salary',
+                'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address'];
             $select1 = ['self_id','section_name'];
             $info=SystemUser::with(['SystemSection' => function($query) use($select1){
                 $query->select($select1);
@@ -697,42 +741,68 @@ class UserController extends CommonController{
                 $row = [[
                     "id"=>'ID',
                     "name"=>'姓名',
-                    "department"=>'部门',
-                    "type"=>'职务',
-                    "education_background"=>'学历',
+                    "sex"=>'性别',
                     "identity_num"=>'身份证号',
-                    "live_cost"=>'住宿费',
+                    "birthday"=>'出生日期',
+                    "age"=>'年龄',
+                    "tel"=>'手机号',
+                    "education_background"=>'学历',
+                    "department"=>'部门',
+                    "type"=>'职位',
                     "entry_time"=>'入职时间',
+                    "working_age"=>'工龄',
                     "now_address"=>'现居地',
-                    "tel"=>'联系方式',
-                    "salary"=>'工资',
+                    "live_cost"=>'住宿费',
                     "social_flag"=>'是否参加社保',
+                    "salary"=>'基本工资',
+                    "id_address"=>'身份证地址',
                     "leave_time"=>'离职时间',
+                    "id_validity"=>'身份证有效期截止',
+                    "drive_type"=>'准驾车型',
+                    "drive_validity"=>'驾驶证有效期截止',
+                    "drive_organ"=>'驾驶证发证机构',
+                    "nvq_num"=>'资格证号',
+                    "nvq_validity"=>'资格证有效期截止',
+                    "nvq_organ"=>'资格证发证机构',
                 ]];
+
                 /** 现在根据查询到的数据去做一个导出的数据**/
                 $data_execl=[];
                 foreach ($info as $k=>$v){
                     $list=[];
                     if ($v->type == 'driver'){
-                        $type = '司机';
+                        $type = '驾驶员';
                     }elseif($v->type == 'cargo'){
                         $type = '押运员';
+                    }elseif($v->type == 'dr_cargo'){
+                        $type = '驾驶员/押运员';
                     }else{
                         $type = '管理人员';
                     }
                     $list['id']=($k+1);
                     $list['name']=$v->name;
+                    $list['sex']=$v->sex;
+                    $list['identity_num']=$v->identity_num;
+                    $list['age']=$v->age;
+                    $list['tel']=$v->tel;
+                    $list['education_background']=$v->education_background;
                     $list['department']=$v->SystemSection->section_name;
                     $list['type']=$type;
-                    $list['education_background']=$v->education_background;
-                    $list['identity_num']=$v->identity_num;
-                    $list['live_cost']=$v->live_cost;
                     $list['entry_time']=$v->entry_time;
+                    $list['working_age']=$v->working_age;
                     $list['now_address']=$v->now_address;
-                    $list['tel']=$v->tel;
-                    $list['salary']=$v->salary;
+                    $list['live_cost']=$v->live_cost;
                     $list['social_flag']=$v->social_flag;
+                    $list['salary']=$v->salary;
+                    $list['id_address']=$v->id_address;
                     $list['leave_time']=$v->leave_time;
+                    $list['id_validity']=$v->id_validity;
+                    $list['drive_type']=$v->drive_type;
+                    $list['drive_validity']=$v->drive_validity;
+                    $list['drive_organ']=$v->drive_organ;
+                    $list['nvq_num']=$v->nvq_num;
+                    $list['nvq_validity']=$v->nvq_validity;
+                    $list['nvq_organ']=$v->nvq_organ;
 
                     $data_execl[]=$list;
                 }
