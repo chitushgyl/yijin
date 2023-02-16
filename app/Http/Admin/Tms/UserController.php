@@ -523,7 +523,7 @@ class UserController extends CommonController{
             $errorNum=50;       //控制错误数据的条数
             $a=2;
 
-            // dump($info_wait);
+             dd($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
                 $where=[
@@ -564,7 +564,7 @@ class UserController extends CommonController{
                     $list['department']              = $section->self_id;
                     $list['type']                    = $type;
                     if ($v['entry_time']){
-                        $list['entry_time']     = gmdate('Y-m-d', ($v['entry_time'] - 25569) * 3600 * 24);
+                        $list['entry_time']          = gmdate('Y-m-d', ($v['entry_time'] - 25569) * 3600 * 24);
                     }else{
                         $list['entry_time']       = null;
                     }
