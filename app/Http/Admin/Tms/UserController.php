@@ -523,7 +523,7 @@ class UserController extends CommonController{
             $errorNum=50;       //控制错误数据的条数
             $a=2;
 
-             dd($info_wait);
+//             dd($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
                 $where=[
@@ -579,12 +579,12 @@ class UserController extends CommonController{
                     $list['salary']                  = $v['salary'];
                     $list['id_address']              = $v['id_address'];
                     $list['leave_time']              = $v['leave_time'];
-                    $list['id_validity']              = $v['id_validity'];
-                    $list['drive_type']             = $v['drive_type'];
-                    $list['drive_validity']              = $v['drive_validity'];
-                    $list['drive_organ']              = $v['drive_organ'];
-                    $list['nvq_num']                  = $v['nvq_num'];
-                    $list['nvq_validity']              = ['nvq_validity'];
+                    $list['id_validity']             = $v['id_validity'];
+                    $list['drive_type']              = $v['drive_type'];
+                    $list['drive_validity']          = $v['drive_validity'];
+                    $list['drive_organ']             = $v['drive_organ'];
+                    $list['nvq_num']                 = $v['nvq_num'];
+                    $list['nvq_validity']            = ['nvq_validity'];
                     $list['nvq_organ']               = $v['nvq_organ'];
                     $list['create_time']             = $list['update_time']=$now_time;
                     $list['file_id']                 = $file_id;
