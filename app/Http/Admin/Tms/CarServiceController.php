@@ -650,9 +650,6 @@ class CarServiceController extends CommonController{
 
                 /** 现在根据查询到的数据去做一个导出的数据**/
                 $data_execl=[];
-                $tms_control_type = array_column(config('tms.tms_control_type'),'name','key');
-                $tms_car_possess_type = array_column(config('tms.tms_car_possess_type'),'name','key');
-
                 foreach ($info as $k=>$v){
                     $list=[];
                     $list['id']            =($k+1);
