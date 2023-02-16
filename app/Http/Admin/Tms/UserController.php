@@ -60,7 +60,7 @@ class UserController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'=','name'=>'name','value'=>$name],
+            ['type'=>'like','name'=>'name','value'=>$name],
             ['type'=>'=','name'=>'self_id','value'=>$self_id],
             ['type'=>'=','name'=>'type','value'=>$type],
             ['type'=>'=','name'=>'social_flag','value'=>$social_flag],
@@ -768,6 +768,7 @@ class UserController extends CommonController{
 
                 /** 现在根据查询到的数据去做一个导出的数据**/
                 $data_execl=[];
+
                 foreach ($info as $k=>$v){
                     $list=[];
                     if ($v->type == 'driver'){
@@ -783,6 +784,7 @@ class UserController extends CommonController{
                     $list['name']=$v->name;
                     $list['sex']=$v->sex;
                     $list['identity_num']=$v->identity_num;
+                    $list['birthday']=$v->birthday;
                     $list['age']=$v->age;
                     $list['tel']=$v->tel;
                     $list['education_background']=$v->education_background;
@@ -806,6 +808,7 @@ class UserController extends CommonController{
 
                     $data_execl[]=$list;
                 }
+//                dd($data_execl);
                 /** 调用EXECL导出公用方法，将数据抛出来***/
                 $browse_type=$request->path();
                 $msg=$file->export($data_execl,$row,$group_code,$group_name,$browse_type,$user_info,$where,$now_time);
