@@ -468,7 +468,6 @@ class WaresController extends CommonController{
         $where=[
             ['delete_flag','=','Y'],
             ['use_flag','=','Y'],
-            ['type','=','wms'],
             ['group_code','=',$company_id],
         ];
 

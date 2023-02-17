@@ -315,6 +315,7 @@ Route::group([
     Route::any('/trye/tryeDelFlag','TryeController@tryeDelFlag');
     Route::any('/trye/details','TryeController@details');
     Route::any('/trye/excel','TryeController@excel');
+    Route::any('/trye/getWares','TryeController@getWares');
 
     /**二级维护***/
     Route::any('/diplasic/diplasicList','DiplasicController@diplasicList');
