@@ -1,8 +1,11 @@
 <?php
 namespace App\Http\Admin\Tms;
 use App\Http\Controllers\FileController as File;
+use App\Models\Group\SystemUser;
 use App\Models\Tms\AppSettingParam;
 use App\Models\Tms\OrderLog;
+use App\Models\Tms\TmsCar;
+use App\Models\Tms\TmsGroup;
 use App\Models\Tms\TmsMoney;
 use App\Models\Tms\TmsReceipt;
 use App\Models\Tms\TmsWages;
@@ -954,19 +957,23 @@ class OrderController extends CommonController{
                 '详细地址（卸）' =>['Y','N','100','gather_address'],
                 '联系人（卸）' =>['Y','N','30','gather_name'],
                 '联系电话（卸）' =>['Y','N','64','gather_tel'],
+//                '货物类型' =>['Y','N','64','goods_type'],
                 '预约单号' =>['Y','N','64','odd_number'],
-                '物料名称' =>['Y','N','64','good_name'],
-                '预约提货量（吨）' =>['Y','N','64','order_weight'],
-                '实际提货量（吨）' =>['N','N','64','real_weight'],
-                '卸货量' =>['N','N','64','upload_weight'],
-                '装卸货量差' =>['N','N','64','different_weight'],
-                '进厂时间' =>['Y','N','64','enter_time'],
-                '出厂时间' =>['N','N','64','leave_time'],
-                '费用' =>['Y','N','64','price'],
+                '车牌号' =>['N','N','64','car_number'],
+                '挂车号' =>['N','N','64','trailer_num'],
+                '驾驶员' =>['N','N','64','user_name'],
+                '押运员' =>['N','N','64','escort'],
+                '货物名称' =>['Y','N','64','good_name'],
+                '单价' =>['N','N','64','sale_price'],
+                '车数' =>['N','N','64','car_num'],
+                '装货数量' =>['Y','N','64','real_weight'],
+                '卸货数量' =>['Y','N','200','upload_weight'],
+                '托运人' =>['N','N','64','company_name'],
+                '日期' =>['Y','N','64','enter_time'],
+                '运费' =>['Y','N','64','price'],
                 '其他费用' =>['N','N','64','more_money'],
-                '备注' =>['N','N','200','remark'],
-                '开票状态' =>['Y','N','64','bill_flag'],
-                '结算状态' =>['Y','N','64','payment_state'],
+                '总费用' =>['Y','N','64','total_money'],
+                '备注' =>['N','N','64','remark'],
             ];
 
             $ret=arr_check($shuzu,$info_check);
@@ -1007,7 +1014,39 @@ class OrderController extends CommonController{
                         $abcd++;
                     }
                 }
+                $driver = SystemUser::where('type','driver')->where('group_code',$group_code)->select('self_id','name','use_flag','delete_flag','social_flag')->first();
+                $cargo = SystemUser::where('type','cargo')->where('group_code',$group_code)->select('self_id','name','use_flag','delete_flag','social_flag')->first();
+                $company = TmsGroup::where('type','check')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $car = TmsCar::where('car_number',$v['car_number'])->select('self_id','car_number')->first();
 
+                if (count(json_decode(json_encode($driver),true)) == 0){
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                if (count(json_decode(json_encode($cargo),true)) == 0){
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行押运员不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                if (count(json_decode(json_encode($company),true)) == 0){
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行托运人不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                if (count(json_decode(json_encode($car),true)) == 0){
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行车辆不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
                 $list=[];
                 $order_log=[];
                 $money = [];
@@ -1031,24 +1070,19 @@ class OrderController extends CommonController{
                     $list['more_money']              = $v['more_money'];
                     $list['price']                   = $v['price'];
                     $list['total_money']             = $v['price'] + $v['more_money'];
-                    if ($v['enter_time']){
-                        $list['enter_time']              = gmdate('Y-m-d H:i:s', ($v['enter_time'] - 25569) * 3600 * 24);
-                    }else{
-                        $list['enter_time']              = null;
-                    }
-                    if ($v['leave_time']){
-                        $list['leave_time']              = gmdate('Y-m-d H:i:s', ($v['leave_time'] - 25569) * 3600 * 24);
-                    }else{
-                        $list['leave_time']              = null;
-                    }
-
-
-                    $list['order_weight']            = $v['order_weight'];
+                    $list['enter_time']              = $v['enter_time'];
+                    $list['car_id']                  = $car->self_id;
+                    $list['car_number']              = $car->car_number;
+                    $list['trailer_num']             = $v['trailer_num'];
+                    $list['driver_id']               = $driver->self_id;
+                    $list['user_name']               = $driver->name;
+                    $list['escort']                  = $cargo->self_id;
+                    $list['sale_price']              = $v['sale_price'];
+                    $list['car_num']                 = $v['car_num'];
+                    $list['company_id']              = $company->self_id;
+                    $list['company_name']            = $company->company_name;
                     $list['real_weight']             = $v['real_weight'];
                     $list['upload_weight']           = $v['upload_weight'];
-                    $list['different_weight']        = $v['different_weight'];
-                    $list['bill_flag']               = $v['bill_flag'];
-                    $list['payment_state']           = $v['payment_state'];
                     $list['odd_number']              = $v['odd_number'];
                     $list['remark']                  = $v['remark'];
 
@@ -1088,6 +1122,44 @@ class OrderController extends CommonController{
                     $money['create_time']            = $money['update_time'] = $now_time;
 
                     $money_list[] = $money;
+
+                    /**生成工资***/
+                    $wages['self_id']      = generate_id('wages_');
+                    $wages['order_id']     = $ist['self_id'];
+                    $wages['car_id']       = $car->self_id;
+                    $wages['car_number']   = $car->car_number;
+                    $wages['driver_id']    = $driver->self_id;
+                    $wages['driver_name']  = $driver->name;
+                    $wages['social_flag']  = $driver->social_flag;
+                    $wages['date']         = $v['enter_time'];
+                    $wages['escort']       = $cargo->self_id;
+                    $wages['goodsname']    = $v['good_name'];
+                    $wages['pick_weight']  = $v['real_weight'];
+                    $wages['unload_weight']= $v['upload_weight'];
+                    $wages['price']        = $v['price'];
+                    $wages['total_money']  = $v['total_money'];
+                    $wages['remark']       = $v['remark'];
+
+                    $wages_list[] = $wages;
+
+
+                    $payment['self_id']                = generate_id('money');
+                    $payment['pay_type']               = 'salary';
+                    $payment['money']                  = $v['total_money'];
+                    $payment['pay_state']              = 'Y';
+                    $payment['order_id']               = $list['self_id'];
+                    $payment['process_state']          = 'Y';
+                    $payment['type_state']             = 'out';
+                    $payment['car_id']                 = $car->self_id;
+                    $payment['car_number']             = $car->car_number;
+                    $payment['user_id']                = $car->self_id;
+                    $payment['user_name']              = $car->name;
+                    $payment['group_code']             = $group_code;
+                    $payment['create_user_id']         = $user_info->admin_id;
+                    $payment['create_user_name']       = $user_info->name;
+                    $payment['create_time']            = $payment['update_time'] = $now_time;
+                    $payment_list[] = $payment;
+
                 }
 
                 $a++;
@@ -1109,7 +1181,8 @@ class OrderController extends CommonController{
             $id= TmsOrder::insert($datalist);
             OrderLog::insert($order_log_list);
             TmsMoney::insert($money_list);
-
+            TmsMoney::insert($payment_list);
+            TmsWages::insert($wages_list);
 
             if($id){
                 $msg['code']=200;

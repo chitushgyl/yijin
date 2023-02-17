@@ -679,7 +679,7 @@ class CarController extends CommonController{
         $select=['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
             'license','medallion','payment_state','insure_price','compulsory_end','commercial_end','carrier_end','compulsory','commercial','carrier','medallion_num','curb_weight','all_weight','medallion_change','license_begin','production_date','scrap_date','business_scope','goods',
             'design_code','operation_date','tank_num','tank_type','registr_cert','carrier_cert','tank_cert','medallion_change_end'];
-      
+
         // $self_id='car_202012291341297595587871';
         $info=$details->details($self_id,$table_name,$select);
 
