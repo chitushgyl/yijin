@@ -70,7 +70,7 @@ class UserController extends CommonController{
 
         $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','safe_reward','salary',
         'group_insurance','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','birthday','sex','age','contract_date','working_age','id_validity',
-            'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address'];
+            'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address','driver_nvq_num','driver_nvq_validity','driver_nvq_organ','driver_nvq'];
         $select1 = ['self_id','section_name'];
         switch ($group_info['group_id']){
             case 'all':
@@ -142,7 +142,7 @@ class UserController extends CommonController{
         $select=['self_id','type','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
             ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','contract_back','license_back','work_license'
         ,'birthday','sex','age','contract_date','working_age','id_validity','id_address','salary',
-            'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity'];
+            'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','driver_nvq_num','driver_nvq_validity','driver_nvq_organ','driver_nvq'];
         $data['info']=SystemUser::where($where)->select($select)->first();
         if($data['info']){
             $data['info']->driver_license     =img_for($data['info']->driver_license,'no_json');
@@ -217,6 +217,10 @@ class UserController extends CommonController{
         $drive_organ             =$request->input('drive_organ');//驾照签发机构
         $drive_validity          =$request->input('drive_validity');//驾驶证有效期限
         $id_address              =$request->input('id_address');//身份证上的地址
+        $driver_nvq_num          =$request->input('driver_nvq_num');//驾驶员资格证号
+        $driver_nvq_validity     =$request->input('driver_nvq_validity');//驾驶员资格证有效期截止
+        $driver_nvq_organ        =$request->input('driver_nvq_organ');//驾驶员资格证发证机构
+        $driver_nvq              =$request->input('driver_nvq');//驾驶员资格证
 
 
 
@@ -278,6 +282,10 @@ class UserController extends CommonController{
             $data['drive_organ']          =$drive_organ;
             $data['drive_validity']       =$drive_validity;
             $data['id_address']           =$id_address;
+            $data['driver_nvq_num']       =$driver_nvq_num;
+            $data['driver_nvq_validity']  =$driver_nvq_validity;
+            $data['driver_nvq_organ']     =$driver_nvq_organ;
+            $data['driver_nvq']           =img_for($driver_nvq,'one_in');
 
             $wheres['self_id'] = $self_id;
             $old_info=SystemUser::where($wheres)->first();
@@ -559,6 +567,15 @@ class UserController extends CommonController{
                 }else{
                     $social_flag = 'N';
                 }
+                if(preg_match('^[1-9]([0-9a-zA-Z]{17}|[0-9a-zA-Z]{14})$',$v['identity_num'])){
+                    $list['identity_num']=$v['identity_num'];
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."身份证号填写错误".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
                 $list=[];
                 if($cando =='Y'){
                     $list['self_id']                 = generate_id('user_');
@@ -644,9 +661,9 @@ class UserController extends CommonController{
         $self_id=$request->input('self_id');
         $table_name='system_user';
         $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
-            ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type',
-            'contract_back','license_back','work_license','birthday','sex','age','contract_date','working_age','id_validity','salary',
-            'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address'];
+            ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','contract_back','license_back','work_license','birthday',
+            'sex','age','contract_date','working_age','id_validity','salary','drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address','driver_nvq_num','driver_nvq_validity','driver_nvq_organ','driver_nvq'
+        ];
         // $self_id='address_202012301359512962811465';
         $info=$details->details($self_id,$table_name,$select);
 
@@ -716,9 +733,9 @@ class UserController extends CommonController{
             $where=get_list_where($search);
 
             $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
-                ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type',
-                'contract_back','license_back','work_license','birthday','sex','age','contract_date','working_age','id_validity','salary',
-                'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address'];
+                ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','contract_back','license_back','work_license',
+                'birthday','sex','age','contract_date','working_age','id_validity','salary','drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address',
+                'driver_nvq_num','driver_nvq_validity','driver_nvq_organ','driver_nvq'];
             $select1 = ['self_id','section_name'];
             $info=SystemUser::with(['SystemSection' => function($query) use($select1){
                 $query->select($select1);
@@ -1012,6 +1029,59 @@ class UserController extends CommonController{
             $msg['msg']="没有查询到数据";
             return $msg;
         }
+    }
+
+    /**验证身份证**/
+    function getIDCardInfo($IDCard){
+        $result['error']=0;//0：未知错误，1：身份证格式错误，2：无错误
+        $result['flag']='';//0标示成年，1标示未成年
+        $result['tdate']='';//生日，格式如：2012-11-15
+        if(!eregi("^[1-9]([0-9a-zA-Z]{17}|[0-9a-zA-Z]{14})$",$IDCard)){
+            $result['error']=1;
+            return $result;
+        }else{
+            if(strlen($IDCard)==18){
+                $tyear=intval(substr($IDCard,6,4));
+                $tmonth=intval(substr($IDCard,10,2));
+                $tday=intval(substr($IDCard,12,2));
+                if($tyear>date("Y")||$tyear<(date("Y")-100)){
+                    $flag=0;
+                }elseif($tmonth<0||$tmonth>12){
+                    $flag=0;
+                }elseif($tday<0||$tday>31){
+                    $flag=0;
+                }else{
+                    $tdate=$tyear."-".$tmonth."-".$tday." 00:00:00";
+                    if((time()-mktime(0,0,0,$tmonth,$tday,$tyear))>18*365*24*60*60){
+                        $flag=0;
+                    }else{
+                        $flag=1;
+                    }
+                }
+            }elseif(strlen($IDCard)==15){
+                $tyear=intval("19".substr($IDCard,6,2));
+                $tmonth=intval(substr($IDCard,8,2));
+                $tday=intval(substr($IDCard,10,2));
+                if($tyear>date("Y")||$tyear<(date("Y")-100)){
+                    $flag=0;
+                }elseif($tmonth<0||$tmonth>12){
+                    $flag=0;
+                }elseif($tday<0||$tday>31){
+                    $flag=0;
+                }else{
+                    $tdate=$tyear."-".$tmonth."-".$tday." 00:00:00";
+                    if((time()-mktime(0,0,0,$tmonth,$tday,$tyear))>18*365*24*60*60){
+                        $flag=0;
+                    }else{
+                        $flag=1;
+                    }
+                }
+            }
+        }
+        $result['error']=2;//0：未知错误，1：身份证格式错误，2：无错误
+        $result['isAdult']=$flag;//0标示成年，1标示未成年
+        $result['birthday']=$tdate;//生日日期
+        return $result;
     }
 
 }
