@@ -481,14 +481,14 @@ class UserController extends CommonController{
                 '姓名' =>['Y','Y','30','name'],
                 '性别' =>['Y','Y','30','sex'],
                 '身份证号' =>['Y','Y','30','identity_num'],
-                '出生日期' =>['N','Y','30','birthday'],
+                '出生日期' =>['N','Y','50','birthday'],
                 '年龄' =>['N','Y','30','age'],
                 '手机号' =>['Y','Y','64','tel'],
-                '学历' =>['N','Y','64','education_background'],
+                '学历' =>['Y','Y','64','education_background'],
                 '部门' =>['Y','Y','64','department'],
                 '职位' =>['Y','Y','30','type'],
                 '入职时间' =>['Y','Y','64','entry_time'],
-                '工龄' =>['Y','Y','64','working_age'],
+                '工龄' =>['N','Y','64','working_age'],
                 '现居地' =>['Y','Y','64','now_address'],
                 '住宿费' =>['Y','Y','64','live_cost'],
                 '是否参加社保' =>['N','Y','64','social_flag'],
@@ -505,7 +505,7 @@ class UserController extends CommonController{
             ];
             $ret=arr_check($shuzu,$info_check);
 
-            // dump($ret);
+//             dd($ret);
             if($ret['cando'] == 'N'){
                 $msg['code'] = 304;
                 $msg['msg'] = $ret['msg'];
