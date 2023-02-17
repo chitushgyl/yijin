@@ -567,7 +567,7 @@ class UserController extends CommonController{
                 }else{
                     $social_flag = 'N';
                 }
-                if(preg_match('^[1-9]([0-9a-zA-Z]{17}|[0-9a-zA-Z]{14})$',$v['identity_num'])){
+                if(preg_match("/^[1-9]([0-9a-zA-Z]{17}|[0-9a-zA-Z]{14})$/",$v['identity_num'])){
                     $list['identity_num']=$v['identity_num'];
                 }else{
                     if($abcd<$errorNum){
@@ -582,14 +582,30 @@ class UserController extends CommonController{
                     $list['name']                    = $v['name'];
                     $list['sex']                     = $sex;
                     $list['identity_num']            = $v['identity_num'];
-                    $list['birthday']                = $v['birthday'];
-                    $list['age']                     = $v['age'];
+                    $year = substr($v['identity_num'],6,4);
+                    $month = substr($v['identity_num'],10,2);
+                    $day = substr($v['identity_num'],12,2);
+                    $now_year = date('Y',time());
+                    $list['birthday']                = $year.'-'.$month.'-'.$day;
+                    $list['age']                     = $now_year-$year;
                     $list['tel']                     = $v['tel'];
                     $list['education_background']    = $v['education_background'];
                     $list['department']              = $section->self_id;
                     $list['type']                    = $type;
                     $list['entry_time']              = $v['entry_time'];
-                    $list['working_age']             = $v['working_age'];
+                    $work_time = strtotime($v['entry_time']);
+                    $work_time1 = date('Y',$work_time);
+                    $work_time2 = date('m',$work_time);
+                    $work = $now_year-$work_time1;
+//                    $work_age = '';
+                    if ($work==0){
+                        $work_age = (date('m',time())-$work_time2).'个月';
+                    }elseif($work == 1){
+                        $work_age = (12-$work_time2+date('m',time())).'个月';
+                    }else{
+                        $work_age = $work.'年'.(12-$work_time2+date('m',time())).'个月';
+                    }
+                    $list['working_age']             = $work_age;
                     $list['now_address']             = $v['now_address'];
                     $list['live_cost']               = $v['live_cost'];
                     $list['social_flag']             = $social_flag;
