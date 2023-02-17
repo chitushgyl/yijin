@@ -493,15 +493,15 @@ class UserController extends CommonController{
                 '住宿费' =>['Y','Y','64','live_cost'],
                 '是否参加社保' =>['N','Y','64','social_flag'],
                 '基本工资' =>['N','Y','64','salary'],
-                '身份证地址' =>['N','Y','64','id_address'],
+                '身份证地址' =>['N','Y','100','id_address'],
                 '离职时间' =>['N','Y','64','leave_time'],
                 '身份证有效期截止' =>['N','Y','30','id_validity'],
                 '准驾车型' =>['N','Y','30','drive_type'],
                 '驾驶证有效期截止' =>['N','Y','30','drive_validity'],
-                '驾驶证发证机构' =>['N','Y','30','drive_organ'],
+                '驾驶证发证机构' =>['N','Y','50','drive_organ'],
                 '资格证号' =>['N','Y','30','nvq_num'],
                 '资格证有效期截止' =>['N','Y','30','nvq_validity'],
-                '资格证发证机构' =>['N','Y','30','nvq_organ'],
+                '资格证发证机构' =>['N','Y','50','nvq_organ'],
             ];
             $ret=arr_check($shuzu,$info_check);
 
