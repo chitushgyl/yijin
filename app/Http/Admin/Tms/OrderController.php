@@ -1014,33 +1014,33 @@ class OrderController extends CommonController{
                         $abcd++;
                     }
                 }
-                $driver = SystemUser::where('type','driver')->where('group_code',$group_code)->select('self_id','name','use_flag','delete_flag','social_flag')->first();
-                $cargo = SystemUser::where('type','cargo')->where('group_code',$group_code)->select('self_id','name','use_flag','delete_flag','social_flag')->first();
-                $company = TmsGroup::where('type','check')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $driver = SystemUser::where('type','driver')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','use_flag','delete_flag','social_flag')->first();
+                $cargo = SystemUser::where('type','cargo')->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','use_flag','delete_flag','social_flag')->first();
+                $company = TmsGroup::where('type','check')->where('name',$v['company_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $car = TmsCar::where('car_number',$v['car_number'])->select('self_id','car_number')->first();
 
-                if (count(json_decode(json_encode($driver),true)) == 0){
+                if (!$driver){
                     if($abcd<$errorNum){
                         $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
                         $cando='N';
                         $abcd++;
                     }
                 }
-                if (count(json_decode(json_encode($cargo),true)) == 0){
+                if (!$cargo){
                     if($abcd<$errorNum){
                         $strs .= '数据中的第'.$a."行押运员不存在".'</br>';
                         $cando='N';
                         $abcd++;
                     }
                 }
-                if (count(json_decode(json_encode($company),true)) == 0){
+                if (!$company){
                     if($abcd<$errorNum){
                         $strs .= '数据中的第'.$a."行托运人不存在".'</br>';
                         $cando='N';
                         $abcd++;
                     }
                 }
-                if (count(json_decode(json_encode($car),true)) == 0){
+                if (!$car){
                     if($abcd<$errorNum){
                         $strs .= '数据中的第'.$a."行车辆不存在".'</br>';
                         $cando='N';
