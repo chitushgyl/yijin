@@ -29,7 +29,7 @@ class CarServiceController extends CommonController{
         $data['import_info']    =[
             'import_text'=>'下载'.$abc.'导入示例文件',
             'import_color'=>'#FC5854',
-            'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/维修/保养导入.xlsx',
+            'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/维修保养导入.xlsx',
         ];
 
         $msg['code']=200;

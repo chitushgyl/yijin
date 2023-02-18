@@ -31,7 +31,7 @@ class CarOilController extends CommonController{
         $data['import_info']    =[
             'import_text'=>'下载'.$abc.'导入示例文件',
             'import_color'=>'#FC5854',
-            'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/加油记录导入.xlsx',
+            'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/加油明细导入.xlsx',
         ];
 
         $msg['code']=200;

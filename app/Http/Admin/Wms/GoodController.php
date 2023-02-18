@@ -24,7 +24,7 @@ class GoodController extends CommonController{
         $data['import_info']    =[
             'import_text'=>'下载'.$abc.'导入示例文件',
             'import_color'=>'#FC5854',
-            'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/商品导入文件范本.xlsx',
+            'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/产品导入.xlsx',
         ];
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
