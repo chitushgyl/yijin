@@ -373,10 +373,6 @@ class DiplasicController extends CommonController{
             //dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
-                $where=[
-                    ['delete_flag','=','Y'],
-                    ['parame_name','=',$v['parame_name']],
-                ];
 
                 $list=[];
                 if($cando =='Y'){
