@@ -201,6 +201,8 @@ class CarController extends CommonController{
         $registr_cert       =$request->input('registr_cert');//登记证书
         $carrier_cert       =$request->input('carrier_cert');//承运险
         $tank_cert          =$request->input('tank_cert');//罐检
+        $nameplate          =$request->input('nameplate');//铭牌
+        $pass_cert          =$request->input('pass_cert');//合格证
         $medallion_change_end          =$request->input('medallion_change_end');//运输证换成有效期截止
 
         $rules=[
@@ -281,6 +283,8 @@ class CarController extends CommonController{
             $data['registr_cert']      =img_for($registr_cert,'one_in');
             $data['carrier_cert']      =img_for($carrier_cert,'one_in');
             $data['tank_cert']         =img_for($tank_cert,'one_in');
+            $data['nameplate']         =img_for($nameplate,'one_in');
+            $data['pass_cert']         =img_for($pass_cert,'one_in');
             $wheres['self_id'] = $self_id;
             $old_info=TmsCar::where($wheres)->first();
 
@@ -678,7 +682,7 @@ class CarController extends CommonController{
         $table_name='tms_car';
         $select=['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
             'license','medallion','payment_state','insure_price','compulsory_end','commercial_end','carrier_end','compulsory','commercial','carrier','medallion_num','curb_weight','all_weight','medallion_change','license_begin','production_date','scrap_date','business_scope','goods',
-            'design_code','operation_date','tank_num','tank_type','registr_cert','carrier_cert','tank_cert','medallion_change_end'];
+            'design_code','operation_date','tank_num','tank_type','registr_cert','carrier_cert','tank_cert','medallion_change_end','nameplate','pass_cert'];
 
         // $self_id='car_202012291341297595587871';
         $info=$details->details($self_id,$table_name,$select);
@@ -691,6 +695,8 @@ class CarController extends CommonController{
             $info->registr_cert  =img_for($info->registr_cert,'no_json');
             $info->carrier_cert  =img_for($info->carrier_cert,'no_json');
             $info->tank_cert     =img_for($info->tank_cert,'no_json');
+            $info->nameplate     =img_for($info->nameplate,'no_json');
+            $info->pass_cert     =img_for($info->pass_cert,'no_json');
             $data['info']=$info;
             $log_flag='Y';
             $data['log_flag']=$log_flag;
