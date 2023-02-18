@@ -450,7 +450,7 @@ class GroupController extends CommonController{
                 '联系地址' =>['N','Y','50','address'],
                 '税务登记号' =>['N','Y','50','tax_id'],
                 '开户银行' =>['N','Y','50','bank'],
-                '银行账户' =>['N','Y','50','bank_number'],
+                '银行账号' =>['N','Y','50','bank_number'],
                 '备注' =>['N','Y','50','remark'],
             ];
             $ret=arr_check($shuzu,$info_check);
@@ -623,7 +623,7 @@ class GroupController extends CommonController{
                     "address"=>'公司地址',
                     "tax_id"=>'税务登记号',
                     "bank"=>'开户银行',
-                    "bank_number"=>'银行账户',
+                    "bank_number"=>'银行账号',
                     "remark"=>'备注',
 
                 ]];
