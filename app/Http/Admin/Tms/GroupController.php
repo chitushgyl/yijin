@@ -22,7 +22,7 @@ class GroupController extends CommonController{
         $data['import_info']    =[
             'import_text'=>'下载'.$abc.'导入示例文件',
             'import_color'=>'#FC5854',
-            'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/示例模板.xlsx',
+            'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/客户导入.xlsx',
         ];
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
@@ -38,7 +38,7 @@ class GroupController extends CommonController{
         /** 接收中间件参数**/
         $group_info         = $request->get('group_info');//接收中间件产生的参数
         $button_info        = $request->get('anniu');//接收中间件产生的参数
-
+        $tms_group_type     =array_column(config('tms.company_type'),'name','key');
         /**接收数据*/
         $num            =$request->input('num')??10;
         $page           =$request->input('page')??1;
@@ -164,8 +164,8 @@ class GroupController extends CommonController{
         $cost_type          =$request->input('cost_type');
         $bank               =$request->input('bank');
         $bank_number        =$request->input('bank_number');
-        $tax_id        =$request->input('tax_id');
-        $remark        =$request->input('remark');
+        $tax_id             =$request->input('tax_id');
+        $remark             =$request->input('remark');
 
         /*** 虚拟数据
         $input['self_id']           =$self_id='group_202006040950004008768595';
@@ -443,12 +443,15 @@ class GroupController extends CommonController{
 
 
             $shuzu=[
+                '单位类型' =>['Y','N','100','type'],
                 '公司名称' =>['Y','N','100','company_name'],
                 '联系人' =>['Y','Y','50','contacts'],
                 '联系电话' =>['Y','Y','50','tel'],
                 '联系地址' =>['N','Y','50','address'],
+                '税务登记号' =>['N','Y','50','tax_id'],
                 '开户银行' =>['N','Y','50','bank'],
                 '银行账户' =>['N','Y','50','bank_number'],
+                '备注' =>['N','Y','50','remark'],
             ];
             $ret=arr_check($shuzu,$info_check);
             // dd($ret);
@@ -501,16 +504,31 @@ class GroupController extends CommonController{
                         $abcd++;
                     }
                 }
+                if ($v['type'] == '收货人'){
+                    $type = 'take';
+                }elseif($v['type'] == '装货人'){
+                    $type = 'load';
+                }elseif($v['type'] == '托运人'){
+                    $type = 'check';
+                }else{
+                    $strs .= '数据中的第'.$a."行类型错误".'</br>';
+                    $cando='N';
+                    $abcd++;
+                }
+
 
                 $list=[];
                 if($cando =='Y'){
                     $list['self_id']            =generate_id('company_');
+                    $list['type']               = $type;
                     $list['company_name']       = $v['company_name'];
                     $list['contacts']           = $v['contacts'];
                     $list['address']            = $v['address'];
                     $list['tel']                = $v['tel'];
+                    $list['tax_id']             = $v['tax_id'];
                     $list['bank']               = $v['bank'];
                     $list['bank_number']        = $v['bank_number'];
+                    $list['remark']             = $v['remark'];
                     $list['group_code']         = $info->group_code;
                     $list['group_name']         = $info->group_name;
                     $list['create_user_id']     =$user_info->admin_id;
@@ -568,6 +586,7 @@ class GroupController extends CommonController{
     public function execl(Request $request,File $file){
         $user_info  = $request->get('user_info');//接收中间件产生的参数
         $now_time   =date('Y-m-d H:i:s',time());
+        $tms_group_type     =array_column(config('tms.company_type'),'name','key');
         $input      =$request->all();
         /** 接收数据*/
         $group_code     =$request->input('group_code');
@@ -589,7 +608,7 @@ class GroupController extends CommonController{
                 ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ];
             $where=get_list_where($search);
-            $select=['self_id','company_name','type','group_name','contacts','address','tel',
+            $select=['self_id','company_name','type','group_name','contacts','address','tel','tax_id','remark',
                 'bank','bank_number'];
             $info=TmsGroup::where($where)->orderBy('create_time', 'desc')->select($select)->get();
 
@@ -597,12 +616,15 @@ class GroupController extends CommonController{
                 //设置表头
                 $row = [[
                     "id"=>'ID',
+                    "type"=>'单位类型',
                     "company_name"=>'公司名称',
                     "contacts"=>'联系人',
                     "tel"=>'联系电话',
                     "address"=>'公司地址',
+                    "tax_id"=>'税务登记号',
                     "bank"=>'开户银行',
                     "bank_number"=>'银行账户',
+                    "remark"=>'备注',
 
                 ]];
 
@@ -623,12 +645,15 @@ class GroupController extends CommonController{
                     }
 
                     $list['id']=($k+1);
+                    $list['type']=$type;
                     $list['company_name']=$v->company_name;
                     $list['contacts']=$v->contacts;
                     $list['tel']=$v->tel;
                     $list['address']=$v->address;
+                    $list['tax_id']=$v->tax_id;
                     $list['bank']=$v->bank;
                     $list['bank_number']=$v->bank_number;
+                    $list['remark']=$v->remark;
 
                     $data_execl[]=$list;
 

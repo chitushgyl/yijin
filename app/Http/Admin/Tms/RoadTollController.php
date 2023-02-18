@@ -27,7 +27,7 @@ class RoadTollController extends CommonController{
         $data['import_info']    =[
             'import_text'=>'下载'.$abc.'导入示例文件',
             'import_color'=>'#FC5854',
-            'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/TMS车辆导入文件范本.xlsx',
+            'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/ETC导入.xlsx',
         ];
 
         $msg['code']=200;
