@@ -253,6 +253,8 @@ class OrderController extends CommonController{
         $car_id                    = $request->input('car_id');//车牌号
         $car_number                = $request->input('car_number');//车牌号
         $social_flag               = $request->input('social_flag');//驾驶员是否参加社保
+        $company_id                = $request->input('company_id');//托运人
+        $company_name              = $request->input('comnpany_name');//托运人
 
 
         $rules=[
@@ -331,6 +333,8 @@ class OrderController extends CommonController{
             $data['trailer_num']             = $trailer_num;
             $data['car_id']                  = $car_id;
             $data['car_number']              = $car_number;
+            $data['company_id']              = $company_id;
+            $data['company_name']            = $company_name;
 //            $data['social_flag']             = $social_flag;
 
 
@@ -369,6 +373,8 @@ class OrderController extends CommonController{
                 $money['order_id']               = $data['self_id'];
                 $money['process_state']          = 'Y';
                 $money['type_state']             = 'in';
+                $money['company_id']             = $company_id;
+                $money['company_name']           = $company_name;
                 $money['group_code']             = $group_code;
 //                $money['group_name']             = $group_name;
                 $money['create_user_id']         = $user_info->admin_id;
@@ -1120,6 +1126,8 @@ class OrderController extends CommonController{
                     $money['create_user_id']         = $user_info->admin_id;
                     $money['create_user_name']       = $user_info->name;
                     $money['create_time']            = $money['update_time'] = $now_time;
+                    $money['company_id']             = $company->self_id;
+                    $money['company_name']           = $company->company_name;
 
                     $money_list[] = $money;
 

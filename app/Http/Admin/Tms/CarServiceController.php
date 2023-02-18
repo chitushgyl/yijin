@@ -486,7 +486,7 @@ class CarServiceController extends CommonController{
                         $abcd++;
                     }
                 }
-                $driver = SystemUser::where('type','driver')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','use_flag','delete_flag','social_flag')->first();
+                $driver = SystemUser::where('type','driver')->where('name',$v['driver_name'])->where('group_code',$group_code)->select('self_id','name','use_flag','delete_flag','social_flag')->first();
                 if (!$driver){
                     if($abcd<$errorNum){
                         $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
