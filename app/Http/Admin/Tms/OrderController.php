@@ -972,7 +972,7 @@ class OrderController extends CommonController{
                 '日期' =>['Y','N','64','enter_time'],
                 '运费' =>['Y','N','64','price'],
                 '其他费用' =>['N','N','64','more_money'],
-                '总费用' =>['Y','N','64','total_money'],
+                '总运费' =>['Y','N','64','total_money'],
                 '备注' =>['N','N','64','remark'],
             ];
 
