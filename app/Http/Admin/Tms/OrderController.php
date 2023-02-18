@@ -957,7 +957,7 @@ class OrderController extends CommonController{
                 '详细地址（卸）' =>['Y','N','100','gather_address'],
                 '联系人（卸）' =>['Y','N','30','gather_name'],
                 '联系电话（卸）' =>['Y','N','64','gather_tel'],
-//                '货物类型' =>['Y','N','64','goods_type'],
+                '货物类型' =>['Y','N','64','goods'],
                 '预约单号' =>['Y','N','64','odd_number'],
                 '车牌号' =>['N','N','64','car_number'],
                 '挂车号' =>['N','N','64','trailer_num'],
@@ -1125,7 +1125,7 @@ class OrderController extends CommonController{
 
                     /**生成工资***/
                     $wages['self_id']      = generate_id('wages_');
-                    $wages['order_id']     = $ist['self_id'];
+                    $wages['order_id']     = $list['self_id'];
                     $wages['car_id']       = $car->self_id;
                     $wages['car_number']   = $car->car_number;
                     $wages['driver_id']    = $driver->self_id;
