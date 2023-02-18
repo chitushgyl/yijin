@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Admin\Tms;
 use App\Http\Controllers\FileController as File;
+use App\Models\Group\SystemUser;
 use App\Models\Tms\CarService;
 use App\Models\Tms\TmsMoney;
 use Illuminate\Http\Request;
@@ -414,19 +415,21 @@ class CarServiceController extends CommonController{
              * 第三个位置为长度判断
              * 第四个位置为数据库的对应字段
              */
+
             $shuzu=[
+                '类型' =>['Y','Y','30','type'],
                 '车牌号' =>['Y','Y','30','car_number'],
-                '品牌' =>['Y','Y','30','brand'],
-                '公里数' =>['Y','Y','30','kilo_num'],
-                '配件名称' =>['Y','Y','30','fittings'],
-                '保养/维修时间' =>['Y','Y','50','service_time'],
-                '保修期' =>['Y','Y','50','warranty_time'],
-                '原因' =>['Y','Y','50','reason'],
-                '详细记录' =>['Y','Y','255','service_view'],
-                '保养/维修单位' =>['Y','Y','50','service_partne'],
-                '保养/维修金额' =>['Y','Y','50','service_price'],
-                '经办人' =>['Y','Y','50','operator'],
-                '司机' =>['Y','Y','50','driver_name'],
+                '品牌型号' =>['Y','Y','30','brand'],
+                '维修/保养日期' =>['Y','Y','30','service_time'],
+                '送修/保养驾驶员' =>['Y','Y','30','driver_name'],
+                '维修/保养项目' =>['Y','Y','50','service_item'],
+                '维修/保养明细' =>['N','Y','200','service_view'],
+                '维修/保养单位' =>['N','Y','50','service_partne'],
+                '维修人员' =>['N','Y','30','servicer'],
+                '保养公里数' =>['N','Y','50','kilo_num'],
+                '下次保养公里数' =>['N','Y','50','next_kilo'],
+                '金额' =>['Y','Y','50','service_price'],
+                '经办人' =>['N','Y','50','operator'],
                 '备注' =>['N','Y','200','remark'],
             ];
             $ret=arr_check($shuzu,$info_check);
@@ -472,23 +475,43 @@ class CarServiceController extends CommonController{
                     }
                 }
 
+                if ($v['type'] == '维修'){
+                     $type = 'service';
+                }elseif($v['type'] == '保养'){
+                     $type = 'preserve';
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行类型错误！".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                $driver = SystemUser::where('type','driver')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','use_flag','delete_flag','social_flag')->first();
+                if (!$driver){
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
                 $list=[];
                 $money=[];
                 if($cando =='Y'){
-
                     $list['self_id']            = generate_id('service_');
+                    $list['type']               = $type;
                     $list['car_number']         = $v['car_number'];
                     $list['brand']              = $v['brand'];
-                    $list['kilo_num']           = $v['kilo_num'];
-                    $list['fittings']           = $v['fittings'];
                     $list['service_time']       = $v['service_time'];
-                    $list['warranty_time']      = $v['warranty_time'];
-                    $list['reason']             = $v['reason'];
+                    $list['driver_id']          = $driver->self_id;
+                    $list['driver_name']        = $driver->name;
+                    $list['service_item']       = $v['service_item'];
                     $list['service_view']       = $v['service_view'];
                     $list['service_partne']     = $v['service_partne'];
+                    $list['servicer']           = $v['servicer'];
+                    $list['kilo_num']           = $v['kilo_num'];
+                    $list['next_kilo']          = $v['next_kilo'];
                     $list['service_price']      = $v['service_price'];
                     $list['operator']           = $v['operator'];
-                    $list['driver_name']        = $v['driver_name'];
                     $list['remark']             = $v['remark'];
 
                     $list['group_code']         = $info->group_code;
