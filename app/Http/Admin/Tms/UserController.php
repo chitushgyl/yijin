@@ -539,13 +539,13 @@ class UserController extends CommonController{
                     ['group_code','=',$user_info->group_code],
                 ];
                 $section = SystemSection::where($where)->select('self_id','section_name','group_code')->first();
-                if ($section){
-
-                }else{
-                    $strs .= '数据中的第'.$a."行部门不存在".'</br>';
-                    $cando='N';
-                    $abcd++;
-                }
+//                if ($section){
+//
+//                }else{
+//                    $strs .= '数据中的第'.$a."行部门不存在".'</br>';
+//                    $cando='N';
+//                    $abcd++;
+//                }
 
                 if ($v['type'] == '驾驶员'){
                     $type = 'driver';
@@ -589,13 +589,14 @@ class UserController extends CommonController{
                     $list['age']                     = $now_year-$year;
                     $list['tel']                     = $v['tel'];
                     $list['education_background']    = $v['education_background'];
-                    $list['department']              = $section->self_id;
+//                    $list['department']              = $section->self_id;
                     $list['type']                    = $type;
                     if (is_numeric($v['entry_time'])){
                         $list['entry_time']              = gmdate('Y-m-d', ($v['entry_time'] - 25569) * 3600 * 24);
                     }else{
                         $list['entry_time']              = $v['entry_time'];
                     }
+                    dump($list['entry_time']);
                     $work_time = strtotime($list['entry_time']);
                     $work_time1 = date('Y',$work_time);
                     $work_time2 = date('m',$work_time);
@@ -604,9 +605,18 @@ class UserController extends CommonController{
                     if ($work==0){
                         $work_age = (date('m',time())-$work_time2).'个月';
                     }elseif($work == 1){
-                        $work_age = (12-$work_time2+date('m',time())).'个月';
+                        if(12-$work_time2+date('m',time()) == 12){
+                            $work_age = '1年';
+                        }else{
+                            $work_age = (12-$work_time2+date('m',time())).'个月';
+                        }
                     }else{
-                        $work_age = $work.'年'.(12-$work_time2+date('m',time())).'个月';
+                        if ($work_time2>date('m',time())){
+                            $work_age = ($work-1).'年'.(12-$work_time2+date('m',time())).'个月';
+                        }else{
+                            $work_age = $work.'年'.(date('m',time())-$work_time2).'个月';
+                        }
+
                     }
                     $list['working_age']             = $work_age;
                     $list['now_address']             = $v['now_address'];
@@ -637,7 +647,6 @@ class UserController extends CommonController{
             $operationing->new_info=$datalist;
 
             //dump($operationing);
-//             dd($datalist);
 
             if($cando == 'N'){
                 $msg['code'] = 306;
