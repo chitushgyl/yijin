@@ -501,6 +501,9 @@ class OrderController extends CommonController{
             $data['car_conact']               = $car_conact;
             $data['car_tel']                  = $car_tel;
             $data['order_status']             = 2;
+            $data['driver_id']                = $driver_id;
+            $data['user_name']                = $driver_name;
+            $data['escort']                   = $escort;
             $data['create_time']              = $data['update_time'] = $now_time;
             $old_info = TmsOrder::where('self_id',$order_id)
                 ->select('self_id','order_status','gather_shi_name','send_shi_name','odd_number','enter_time','real_weight','upload_weight','price','total_money')
@@ -1348,7 +1351,7 @@ class OrderController extends CommonController{
             'send_address_longitude','send_address_latitude','gather_time','gather_name','gather_tel','gather_sheng','gather_shi','gather_qu','gather_sheng_name',
             'gather_shi_name','gather_qu_name','gather_address','gather_address_longitude','gather_address_latitude','total_money','good_name','more_money','price','receipt_flag',
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
-            'car_number','car_id','car_conact','car_tel'];
+            'car_number','car_id','car_conact','car_tel','car_num','sale_price','driver_id','user_name','escort','trailer_num'];
         $select1 = ['self_id','receipt','order_id','total_user_id','group_code','group_name'];
         $where = [
             ['delete_flag','=','Y'],
