@@ -553,9 +553,8 @@ class CarServiceController extends CommonController{
             }
             $count=count($datalist);
             $id= CarService::insert($datalist);
-             if ($v['service_price']) {
-                 TmsMoney::insert($moneylist);
-             }
+            TmsMoney::insert($moneylist);
+
 
             if($id){
                 $msg['code']=200;
