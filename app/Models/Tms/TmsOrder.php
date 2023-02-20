@@ -70,6 +70,12 @@ class TmsOrder extends Model{
         return $this->hasOne('App\Models\Tms\TmsReceipt','order_id','self_id');
     }
 
+    public function systemuser(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasOne('App\Models\Group\SystemUser','self_id','escort');
+    }
+
 
 
 }

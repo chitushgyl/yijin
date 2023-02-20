@@ -1353,15 +1353,20 @@ class OrderController extends CommonController{
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
             'car_number','car_id','car_conact','car_tel','car_num','sale_price','driver_id','user_name','escort','trailer_num'];
         $select1 = ['self_id','receipt','order_id','total_user_id','group_code','group_name'];
+        $select2 = ['self_id','name','type'];
         $where = [
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
 
-        $info = TmsOrder::with(['tmsReceipt'=>function($query)use($select1){
+        $info = TmsOrder::with(['tmsReceipt'=>function($query)use($select1,$select2){
             $query->where('delete_flag','=','Y');
             $query->select($select1);
-        }])->where($where)->select($select)->first();
+        }])
+            ->with(['systemuser'=>function($query)use($select2){
+                $query->where('delete_flag','=','Y');
+                $query->select($select2);
+            }])->where($where)->select($select)->first();
 
         if($info){
             $order_type    =array_column(config('tms.order_type'),'name','key');
