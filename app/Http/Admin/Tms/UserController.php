@@ -470,13 +470,13 @@ class UserController extends CommonController{
             }
 
             $res = Excel::toArray((new Import),$importurl);
-            //dump($res);
+//            dump($res);
             $info_check=[];
             if(array_key_exists('0', $res)){
                 $info_check=$res[0];
             }
 
-            //dump($info_check);
+//            dump($info_check);
 
             /**  定义一个数组，需要的数据和必须填写的项目
             键 是EXECL顶部文字，
@@ -497,23 +497,22 @@ class UserController extends CommonController{
                 '职位' =>['Y','Y','30','type'],
                 '入职时间' =>['Y','Y','64','entry_time'],
                 '工龄' =>['N','Y','64','working_age'],
-                '现居地' =>['Y','Y','64','now_address'],
-                '住宿费' =>['Y','Y','64','live_cost'],
+                '现居地' =>['Y','Y','200','now_address'],
+                '住宿费' =>['N','Y','64','live_cost'],
                 '是否参加社保' =>['N','Y','64','social_flag'],
                 '基本工资' =>['N','Y','64','salary'],
-                '身份证地址' =>['N','Y','100','id_address'],
+                '身份证地址' =>['N','Y','200','id_address'],
                 '离职时间' =>['N','Y','64','leave_time'],
                 '身份证有效期截止' =>['N','Y','30','id_validity'],
                 '准驾车型' =>['N','Y','30','drive_type'],
                 '驾驶证有效期截止' =>['N','Y','30','drive_validity'],
-                '驾驶证发证机构' =>['N','Y','50','drive_organ'],
+                '驾驶证发证机构' =>['N','Y','100','drive_organ'],
                 '资格证号' =>['N','Y','30','nvq_num'],
                 '资格证有效期截止' =>['N','Y','30','nvq_validity'],
-                '资格证发证机构' =>['N','Y','50','nvq_organ'],
+                '资格证发证机构' =>['N','Y','100','nvq_organ'],
             ];
             $ret=arr_check($shuzu,$info_check);
 
-//             dd($ret);
             if($ret['cando'] == 'N'){
                 $msg['code'] = 304;
                 $msg['msg'] = $ret['msg'];
@@ -540,7 +539,7 @@ class UserController extends CommonController{
                     ['group_code','=',$user_info->group_code],
                 ];
                 $section = SystemSection::where($where)->select('self_id','section_name','group_code')->first();
-                if ($section->self_id){
+                if ($section){
 
                 }else{
                     $strs .= '数据中的第'.$a."行部门不存在".'</br>';
@@ -592,8 +591,12 @@ class UserController extends CommonController{
                     $list['education_background']    = $v['education_background'];
                     $list['department']              = $section->self_id;
                     $list['type']                    = $type;
-                    $list['entry_time']              = $v['entry_time'];
-                    $work_time = strtotime($v['entry_time']);
+                    if (is_numeric($v['entry_time'])){
+                        $list['entry_time']              = gmdate('Y-m-d', ($v['entry_time'] - 25569) * 3600 * 24);
+                    }else{
+                        $list['entry_time']              = $v['entry_time'];
+                    }
+                    $work_time = strtotime($list['entry_time']);
                     $work_time1 = date('Y',$work_time);
                     $work_time2 = date('m',$work_time);
                     $work = $now_year-$work_time1;
@@ -634,7 +637,7 @@ class UserController extends CommonController{
             $operationing->new_info=$datalist;
 
             //dump($operationing);
-            // dd($datalist);
+//             dd($datalist);
 
             if($cando == 'N'){
                 $msg['code'] = 306;
