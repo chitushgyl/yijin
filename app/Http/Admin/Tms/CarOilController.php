@@ -708,6 +708,7 @@ class CarOilController extends CommonController{
         $group_code     =$request->input('group_code');
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
+        $suppliere       =$request->input('suppliere');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -715,6 +716,7 @@ class CarOilController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'like','name'=>'suppliere','value'=>$suppliere],
             ['type'=>'>=','name'=>'create_time','value'=>$start_time],
             ['type'=>'<','name'=>'create_time','value'=>$end_time],
         ];
