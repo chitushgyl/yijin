@@ -450,13 +450,13 @@ class CarOilController extends CommonController{
             $moneylist =[];
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
-                if (!check_carnumber($v['car_number'])) {
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行车牌号错误！".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }
+//                if (!check_carnumber($v['car_number'])) {
+//                    if($abcd<$errorNum){
+//                        $strs .= '数据中的第'.$a."行车牌号错误！".'</br>';
+//                        $cando='N';
+//                        $abcd++;
+//                    }
+//                }
 
                 $list=[];
                 $money=[];

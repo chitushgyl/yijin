@@ -95,7 +95,7 @@ class OrderController extends CommonController{
             'send_address_longitude','send_address_latitude','gather_time','gather_name','gather_tel','gather_sheng','gather_shi','gather_qu','gather_sheng_name',
             'gather_shi_name','gather_qu_name','gather_address','gather_address_longitude','gather_address_latitude','total_money','good_name','more_money','price',
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
-            'car_number','car_id','car_conact','car_tel'];
+            'car_number','car_id','car_conact','car_tel','company_id','company_name'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -1268,29 +1268,28 @@ class OrderController extends CommonController{
                     "gather_name"=>'联系人（卸）',
                     "gather_tel"=>'联系方式（卸）',
                     "odd_number"=>'预约单号',
-                    "good_name"=>'物料名称',
-                    "order_weight"=>'预约提货量（吨）',
-                    "real_weight"=>'实际提货量（吨）',
-                    "upload_weight"=>'卸货量（吨）',
-                    "different_weight"=>'装卸货量差（吨）',
-                    "enter_time"=>'进厂时间',
-                    "leave_time"=>'出厂时间',
-                    "price"=>'费用',
+                    "car_number"=>'车牌号',
+                    "trailer_num"=>'挂车号',
+                    "user_name"=>'驾驶员',
+                    "escort"=>'押运员',
+                    "good_name"=>'货物名称',
+                    "sale_price"=>'单价',
+                    "car_num"=>'车数',
+                    "real_weight"=>'装货数量',
+                    "upload_weight"=>'卸货数量',
+                    "company_name"=>'托运人',
+                    "enter_time"=>'日期',
+                    "price"=>'运费',
                     "more_money"=>'其他费用',
                     "total_money"=>'总运费',
-                    "car_number"=>'运输车辆',
-                    "car_conact"=>'驾驶员',
-                    "car_tel"=>'驾驶员电话',
+
                     "remark"=>'备注'
                 ]];
-
                 /** 现在根据查询到的数据去做一个导出的数据**/
                 $data_execl=[];
 
-
                 foreach ($info as $k=>$v){
                     $list=[];
-
                     $list['id']=($k+1);
                     $list['send_view']           =  $v['send_sheng_name'].$v['send_shi_name'].$v['send_qu_name'].$v['send_address'];
                     $list['send_name']           = $v['send_name'];
@@ -1300,18 +1299,20 @@ class OrderController extends CommonController{
                     $list['gather_tel']          = $v['gather_tel'];
                     $list['odd_number']          = $v['odd_number'];
                     $list['good_name']           = $v['good_name'] ;
-                    $list['order_weight']        = $v['order_weight'];
                     $list['real_weight']         = $v['real_weight'];
                     $list['upload_weight']       = $v['upload_weight'];
-                    $list['different_weight']    = $v['different_weight'];
                     $list['enter_time']          = $v['enter_time'];
-                    $list['leave_time']          = $v['leave_time'];
                     $list['price']               = $v['price'];
                     $list['more_money']          = $v['more_money'];
                     $list['total_money']         = $v['total_money'];
                     $list['car_number']          = $v['car_number'];
-                    $list['car_conact']          = $v['car_conact'];
-                    $list['car_tel']             = $v['car_tel'];
+                    $list['trailer_num']         = $v['trailer_num'];
+                    $list['user_name']           = $v['user_name'];
+                    $cargo = SystemUser::where('self_id',$v['escort'])->select('self_id','name','use_flag','delete_flag','social_flag')->first();
+                    $list['escort']              = $cargo->name;
+                    $list['company_name']        = $v['company_name'];
+                    $list['sale_price']          = $v['sale_price'];
+                    $list['car_num']             = $v['car_num'];
                     $list['remark']              = $v['remark'];
 
                     $data_execl[]=$list;
