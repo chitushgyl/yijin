@@ -1378,6 +1378,9 @@ class OrderController extends CommonController{
                 $receipt_info = img_for($info->tmsReceipt->receipt,'more');
                 $info->receipt = $receipt_info;
             }
+            if ($info->systemuser){
+                $info->escort = $info->systemuser->name;
+            }
 
             $log_flag='Y';
             $data['log_flag']=$log_flag;
