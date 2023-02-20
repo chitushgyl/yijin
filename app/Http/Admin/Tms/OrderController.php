@@ -540,7 +540,7 @@ class OrderController extends CommonController{
                 $wages['price']        = $old_info->price;
                 $wages['total_money']  = $old_info->total_money;
                 $wages['remark']       = $old_info->remark;
-                TmsWares::insert($wages);
+                TmsWages::insert($wages);
 
             }
             $operationing->access_cause='调度订单';
