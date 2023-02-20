@@ -600,7 +600,7 @@ class UserController extends CommonController{
                     $work_time1 = date('Y',$work_time);
                     $work_time2 = date('m',$work_time);
                     $work = $now_year-$work_time1;
-//                    $work_age = '';
+
                     if ($work==0){
                         $work_age = (date('m',time())-$work_time2).'个月';
                     }elseif($work == 1){
