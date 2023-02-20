@@ -596,7 +596,6 @@ class UserController extends CommonController{
                     }else{
                         $list['entry_time']              = $v['entry_time'];
                     }
-                    dump($list['entry_time']);
                     $work_time = strtotime($list['entry_time']);
                     $work_time1 = date('Y',$work_time);
                     $work_time2 = date('m',$work_time);
