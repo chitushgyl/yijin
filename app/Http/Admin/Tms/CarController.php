@@ -194,6 +194,7 @@ class CarController extends CommonController{
         $scrap_date         =$request->input('scrap_date');//强制报废日期
         $business_scope     =$request->input('business_scope');//经营范围
         $goods              =$request->input('goods');//产品名称  危货/普货
+        $goods_type         =$request->input('goods_type');//产品名称  危货/普货
         $design_code        =$request->input('design_code');//设计代码
         $operation_date     =$request->input('operation_date');//投运日期
         $tank_num           =$request->input('tank_num');//罐体编号
@@ -275,6 +276,7 @@ class CarController extends CommonController{
             $data['scrap_date']        =$scrap_date;
             $data['business_scope']    =$business_scope;
             $data['goods']             =$goods;
+            $data['goods_type']        =$goods_type;
             $data['design_code']       =$design_code;
             $data['operation_date']    =$operation_date;
             $data['tank_num']          =$tank_num;
