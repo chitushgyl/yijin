@@ -150,6 +150,11 @@ class AdministrateController extends CommonController{
                         $query->where($whereMenu2);
                         $query->select($selectMenu);
                         $query->orderBy('sort','asc');
+                        $query->with(['children' => function($query)use($selectMenu,$whereMenu2) {
+                            $query->where($whereMenu2);
+                            $query->select($selectMenu);
+                            $query->orderBy('sort','asc');
+                        }]);
                     }]);
                 }])->where($whereMenu)->select($selectMenu)->orderBy('sort','asc')->get()->toArray();
 
