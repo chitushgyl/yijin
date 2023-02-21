@@ -169,7 +169,7 @@ class OrderController extends CommonController{
                 $v->button_info = $button_info3;
             }
             if (in_array($v->order_status,[2,3,4,5,6])){
-                $v->button_info = $button_info3;
+                $v->button_info = $button_info4;
             }
         }
 
