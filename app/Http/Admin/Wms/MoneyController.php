@@ -107,10 +107,10 @@ class MoneyController extends CommonController{
         foreach ($data['items'] as $k=>$v) {
             $v->pay_type=$money_type_show[$v->pay_type]??null;
 //            $v->button_info=$button_info;
-            if ($v->process_state == 'N'){
+            if ($v->pay_state == 'N'){
                 $v->button_info=$button_info3;
             }
-            if ($v->process_state == 'Y'){
+            if ($v->pay_state == 'Y'){
                 $v->button_info=$button_info4;
             }
 
@@ -528,7 +528,7 @@ class MoneyController extends CommonController{
         if($validator->passes()){
             $wheres['self_id'] = $self_id;
             $old_info=TmsMoney::where($wheres)->first();
-            if ($old_info->process_state == 'Y'){
+            if ($old_info->pay_state == 'Y'){
                 $msg['code'] = 303;
                 $msg['msg'] = "费用已结算，不可修改！";
                 return $msg;
