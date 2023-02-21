@@ -475,5 +475,77 @@ class MoneyController extends CommonController{
         }
     }
 
+    /*
+     *修改价格差异 wms/money/updateMoney
+     * */
+    public function updateMoney(Request $request){
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='tms_money';
+
+        $operationing->access_cause     ='创建/修改商品';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+
+        $user_info = $request->get('user_info');//接收中间件产生的参数
+        $input              =$request->all();
+
+        /** 接收数据*/
+        $self_id            =$request->input('self_id');
+        $money      =$request->input('money');//修改金额
+
+        $rules=[
+            'self_id'=>'required',
+
+        ];
+        $message=[
+            'self_id.required'=>'请选择费用条目！',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+
+        //操作的表
+        if($validator->passes()){
+            $wheres['self_id'] = $self_id;
+            $old_info=TmsMoney::where($wheres)->first();
+            if ($old_info->process_state == 'Y'){
+                $msg['code'] = 303;
+                $msg['msg'] = "费用已结算，不可修改！";
+                return $msg;
+            }
+            $data['before_money'] = $old_info->money;
+            $data['money'] = $money;
+            $data['update_time']   = $now_time;
+            $id = TmsMoney::where('self_id',$self_id)->update($data);
+
+            $operationing->access_cause='修改费用';
+            $operationing->operation_type='create';
+            $operationing->table_id=$old_info?$self_id:$data['self_id'];
+            $operationing->old_info=$old_info;
+            $operationing->new_info=$data;
+
+            if($id){
+                $msg['code'] = 200;
+                $msg['msg'] = "操作成功";
+                return $msg;
+            }else{
+                $msg['code'] = 302;
+                $msg['msg'] = "操作失败";
+                return $msg;
+            }
+
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
+    }
+
 }
 ?>
