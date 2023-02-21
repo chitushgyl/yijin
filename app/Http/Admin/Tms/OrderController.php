@@ -386,7 +386,7 @@ class OrderController extends CommonController{
                 OrderLog::insert($order_log);
 
                 /**保存费用**/
-                $money['self_id']                = generate_id('money');
+                $money['self_id']                = generate_id('money_');
                 $money['pay_type']               = 'freight';
                 $money['money']                  = $total_money;
                 $money['pay_state']              = 'Y';
@@ -421,7 +421,7 @@ class OrderController extends CommonController{
                     $wages['remark']       = $remark;
                     TmsWages::insert($wages);
 
-                    $payment['self_id']                = generate_id('money');
+                    $payment['self_id']                = generate_id('money_');
                     $payment['pay_type']               = 'salary';
                     $payment['money']                  = $total_money;
                     $payment['pay_state']              = 'Y';

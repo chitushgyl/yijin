@@ -240,7 +240,7 @@ class CarServiceController extends CommonController{
 
                 $id=CarService::insert($data);
                 if($service_price){
-                    $money['self_id']            = generate_id('money');
+                    $money['self_id']            = generate_id('money_');
                     $money['group_code']         = $group_code;
                     $money['group_name']         = $group_name;
                     $money['create_user_id']     = $user_info->admin_id;
@@ -531,7 +531,7 @@ class CarServiceController extends CommonController{
                         $money['car_number']         = $v['car_number'];
                         $money['process_state']      = 'Y';
                         $money['type_state']         = 'out';
-                        $money['self_id']            = generate_id('money');
+                        $money['self_id']            = generate_id('money_');
                         $money['group_code']         = $info->group_code;
                         $money['group_name']         = $info->group_name;
                         $money['create_user_id']     = $user_info->admin_id;

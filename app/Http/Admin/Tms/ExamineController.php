@@ -236,7 +236,7 @@ class ExamineController extends CommonController{
 
                 $id=UserExamine::insert($data);
                 if($fine_price ||$reward_price){
-                    $money['self_id']            = generate_id('money');
+                    $money['self_id']            = generate_id('money_');
                     $money['group_code']         = $group_code;
                     $money['group_name']         = $group_name;
                     $money['create_user_id']     = $user_info->admin_id;
