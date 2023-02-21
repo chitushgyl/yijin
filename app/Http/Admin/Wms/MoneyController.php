@@ -89,12 +89,32 @@ class MoneyController extends CommonController{
                 break;
         }
 
+        $button_info1=[];
+        $button_info2=[];
+        $button_info3=[];
+        $button_info4=[];
+        foreach ($button_info as $k => $v){
+            if($v->id == 99){
+                $button_info1[] = $v;
+                $button_info3[] = $v;
+            }
+            if($v->id == 174){
+                $button_info2[] = $v;
+                $button_info3[] = $v;
+            }
 
+        }
         foreach ($data['items'] as $k=>$v) {
             $v->pay_type=$money_type_show[$v->pay_type]??null;
-            $v->button_info=$button_info;
-
+//            $v->button_info=$button_info;
+            if ($v->process_state == 'N'){
+                $v->button_info=$button_info3;
             }
+            if ($v->process_state == 'Y'){
+                $v->button_info=$button_info4;
+            }
+
+        }
 
 
         $msg['code']=200;
@@ -475,7 +495,7 @@ class MoneyController extends CommonController{
         }
     }
 
-    /*
+    /**
      *修改价格差异 wms/money/updateMoney
      * */
     public function updateMoney(Request $request){
