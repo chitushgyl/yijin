@@ -210,6 +210,11 @@ class AuthorityController extends CommonController{
                         $query->where($whereMenu2);
                         $query->select($selectMenu);
                         $query->orderBy('sort','asc');
+                        $query->with(['children' => function($query)use($selectMenu,$whereMenu2) {
+                            $query->where($whereMenu2);
+                            $query->select($selectMenu);
+                            $query->orderBy('sort','asc');
+                        }]);
                     }]);
                 }])->where($whereMenu)->select($selectMenu)->orderBy('sort','asc')->get()->toArray();
 
@@ -229,6 +234,12 @@ class AuthorityController extends CommonController{
                         $query->whereIn('id',$arr);
                         $query->select($selectMenu);
                         $query->orderBy('sort','asc');
+                        $query->with(['children' => function($query)use($selectMenu,$whereMenu2,$arr) {
+                            $query->where($whereMenu2);
+                            $query->whereIn('id',$arr);
+                            $query->select($selectMenu);
+                            $query->orderBy('sort','asc');
+                        }]);
                     }]);
                 }])->where($whereMenu)->whereIn('id',$arr)->select($selectMenu)->orderBy('sort','asc')->get()->toArray();
 
