@@ -335,19 +335,19 @@ class UserRewardController extends CommonController{
 
 
             /**保存费用**/
-//            if ($payment || $late_fee || $safe_reward){
-//                if ($safe_reward){
-//                    $money['money']              = $safe_reward;
-//                }else{
-//                    $money['money']              = $payment;
-//                }
-//            }
-//            $money['pay_type']           = 'reward';
-//            $money['pay_state']          = 'Y';
-//            $money['car_id']             = $car_id;
-//            $money['car_number']         = $car_number;
-//            $money['process_state']      = 'Y';
-//            $money['type_state']         = 'out';
+            if ($payment || $safe_reward){
+                if ($safe_reward){
+                    $money['money']              = $safe_reward;
+                }else{
+                    $money['money']              = $payment;
+                }
+            }
+            $money['pay_type']           = 'reward';
+            $money['pay_state']          = 'Y';
+            $money['car_id']             = $car_id;
+            $money['car_number']         = $car_number;
+            $money['process_state']      = 'Y';
+            $money['type_state']         = 'out';
 
             $wheres['self_id'] = $self_id;
             $old_info=UserReward::where($wheres)->first();
@@ -368,15 +368,15 @@ class UserRewardController extends CommonController{
                 $data['group_name']         =$group_name;
 
                 $id=UserReward::insert($data);
-//                if ($payment || $late_fee || $safe_reward){
-//                    $money['self_id']            = generate_id('money_');
-//                    $money['group_code']         = $group_code;
-//                    $money['group_name']         = $group_name;
-//                    $money['create_user_id']     = $user_info->admin_id;
-//                    $money['create_user_name']   = $user_info->name;
-//                    $money['create_time']        =$money['update_time']=$now_time;
-//                    TmsMoney::insert($money);
-//                }
+                if ($payment || $safe_reward){
+                    $money['self_id']            = generate_id('money_');
+                    $money['group_code']         = $group_code;
+                    $money['group_name']         = $group_name;
+                    $money['create_user_id']     = $user_info->admin_id;
+                    $money['create_user_name']   = $user_info->name;
+                    $money['create_time']        =$money['update_time']=$now_time;
+                    TmsMoney::insert($money);
+                }
 
                 $operationing->access_cause='添加员工奖惩记录';
                 $operationing->operation_type='create';
