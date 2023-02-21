@@ -60,7 +60,7 @@ class MoneyController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name',
-            'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state'];
+            'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -131,7 +131,7 @@ class MoneyController extends CommonController{
         //$self_id='money_202012231738203885359374';
         $table_name='wms_money';
         $select=['self_id','type','group_name','warehouse_name','create_user_name','create_time','use_flag','company_name',
-            'payee_affirm_flag','payee_user_name','payee_time','payment_affirm_flag','payment_user_name','payment_time','settle_flag','settle_id','money'];
+            'payee_affirm_flag','payee_user_name','payee_time','payment_affirm_flag','payment_user_name','payment_time','settle_flag','settle_id','money','before_money'];
 
 
         $list_select=['self_id','area','row','column','tier','external_sku_id','good_name','good_english_name','spec','good_unit','good_target_unit','good_scale','production_date','expire_time','num',
@@ -493,7 +493,7 @@ class MoneyController extends CommonController{
 
         /** 接收数据*/
         $self_id            =$request->input('self_id');
-        $money      =$request->input('money');//修改金额
+        $money              =$request->input('money');//修改金额
 
         $rules=[
             'self_id'=>'required',
