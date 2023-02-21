@@ -146,7 +146,6 @@ class OrderController extends CommonController{
         $button_info2=[];
         $button_info3=[];
         $button_info4=[];
-        dump($button_info);
         foreach ($button_info as $k => $v){
             if($v->id == 83){
                 $button_info1[] = $v;
@@ -162,7 +161,7 @@ class OrderController extends CommonController{
             }
 
         }
-        
+
         foreach ($data['items'] as $k=>$v) {
             $v->order_type_show=$order_type[$v->order_status]??null;
 //            $v->button_info = $button_info;
