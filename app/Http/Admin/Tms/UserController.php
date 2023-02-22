@@ -584,7 +584,7 @@ class UserController extends CommonController{
 
                         }else{
                             if($abcd<$errorNum){
-                                $strs .= '数据中的第'.$a."行身份证有效期截止日期格式错误".'</br>';
+                                $strs .= '数据中的第'.$a."行入职时间日期格式错误".'</br>';
                                 $cando='N';
                                 $abcd++;
                             }
@@ -670,11 +670,7 @@ class UserController extends CommonController{
                     $list['education_background']    = $v['education_background'];
 //                    $list['department']              = $section->self_id;
                     $list['type']                    = $type;
-                    if (is_numeric($v['entry_time'])){
-                        $list['entry_time']              = gmdate('Y-m-d',($v['entry_time'] - 25569) * 3600 * 24);
-                    }else{
-                        $list['entry_time']              = $v['entry_time'];
-                    }
+                    $list['entry_time']              = $v['entry_time'];
                     $work_time = strtotime($list['entry_time']);
                     $work_time1 = date('Y',$work_time);
                     $work_time2 = date('m',$work_time);
