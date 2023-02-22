@@ -96,7 +96,7 @@ class UserRewardController extends CommonController{
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
             ['type'=>'=','name'=>'user_id','value'=>$user_id],
             ['type'=>'=','name'=>'type','value'=>$type],
-            ['type'=>'>','name'=>'event_time','value'=>$start_time],
+            ['type'=>'>=','name'=>'event_time','value'=>$start_time],
             ['type'=>'<=','name'=>'event_time','value'=>$end_time],
         ];
 
