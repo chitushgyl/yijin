@@ -575,17 +575,85 @@ class UserController extends CommonController{
                         $abcd++;
                     }
                 }
-                if ($v['id_validity']){
-                    if(date('Y-m-d',strtotime($v['id_validity'])) == $v['id_validity']){
 
+                if ($v['entry_time']){
+                    if (is_numeric($v['entry_time'])){
+                        $v['entry_time']              = gmdate('Y-m-d',($v['entry_time'] - 25569) * 3600 * 24);
                     }else{
-                        if($abcd<$errorNum){
-                            $strs .= '数据中的第'.$a."行日期格式错误".'</br>';
-                            $cando='N';
-                            $abcd++;
+                        if(date('Y-m-d',strtotime($v['entry_time'])) == $v['entry_time']){
+
+                        }else{
+                            if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行身份证有效期截止日期格式错误".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
                         }
                     }
                 }
+                if ($v['id_validity']){
+                    if (is_numeric($v['id_validity'])){
+                        $v['id_validity']              = gmdate('Y-m-d',($v['id_validity'] - 25569) * 3600 * 24);
+                    }else{
+                        if(date('Y-m-d',strtotime($v['id_validity'])) == $v['id_validity']){
+
+                        }else{
+                            if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行身份证有效期截止日期格式错误".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
+                        }
+                    }
+                }
+                if ($v['leave_time']){
+                    if (is_numeric($v['leave_time'])){
+                        $v['leave_time']              = gmdate('Y-m-d',($v['leave_time'] - 25569) * 3600 * 24);
+                    }else{
+                        if(date('Y-m-d',strtotime($v['leave_time'])) == $v['leave_time']){
+
+                        }else{
+                            if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行离职时间日期格式错误".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
+                        }
+                    }
+                }
+                if ($v['drive_validity']){
+                    if (is_numeric($v['drive_validity'])){
+                        $v['drive_validity']              = gmdate('Y-m-d',($v['drive_validity'] - 25569) * 3600 * 24);
+                    }else{
+                        if(date('Y-m-d',strtotime($v['drive_validity'])) == $v['drive_validity']){
+
+                        }else{
+                            if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行驾驶证有效截止日期格式错误".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
+                        }
+                    }
+                }
+
+
+                if ($v['nvq_validity']){
+                    if (is_numeric($v['nvq_validity'])){
+                        $v['nvq_validity']              = gmdate('Y-m-d',($v['nvq_validity'] - 25569) * 3600 * 24);
+                    }else{
+                        if(date('Y-m-d',strtotime($v['nvq_validity'])) == $v['nvq_validity']){
+
+                        }else{
+                            if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行资格证有效截止日期格式错误".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
+                        }
+                    }
+                }
+
                 $list=[];
                 if($cando =='Y'){
                     $list['self_id']                 = generate_id('user_');
