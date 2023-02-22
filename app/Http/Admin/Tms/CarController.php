@@ -50,7 +50,8 @@ class CarController extends CommonController{
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
         $car_number     =$request->input('car_number');
-        $carframe_num    =$request->input('carframe_num');
+        $carframe_num   =$request->input('carframe_num');
+        $car_type       =$request->input('car_type');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -60,6 +61,7 @@ class CarController extends CommonController{
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
             ['type'=>'like','name'=>'carframe_num','value'=>$carframe_num],
+            ['type'=>'=','name'=>'car_type','value'=>$car_type],
         ];
 
         $where=get_list_where($search);
