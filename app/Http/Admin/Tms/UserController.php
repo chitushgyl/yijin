@@ -592,7 +592,7 @@ class UserController extends CommonController{
 //                    $list['department']              = $section->self_id;
                     $list['type']                    = $type;
                     if (is_numeric($v['entry_time'])){
-                        $list['entry_time']              = gmdate('Y-m-d', ($v['entry_time'] - 25569) * 3600 * 24);
+                        $list['entry_time']              = gmdate('Y-m-d',($v['entry_time'] - 25569) * 3600 * 24);
                     }else{
                         $list['entry_time']              = $v['entry_time'];
                     }
@@ -624,6 +624,15 @@ class UserController extends CommonController{
                     $list['salary']                  = $v['salary'];
                     $list['id_address']              = $v['id_address'];
                     $list['leave_time']              = $v['leave_time'];
+                    if ($v['id_validity']){
+                        if(date('Y-m-d',strtotime($v['id_validity'])) == $v['id_validity']){
+
+                        }else{
+                            $strs .= '数据中的第'.$a."行日期格式错误".'</br>';
+//                          $cando='N';
+//                          $abcd++;
+                        }
+                    }
                     $list['id_validity']             = $v['id_validity'];
                     $list['drive_type']              = $v['drive_type'];
                     $list['drive_validity']          = $v['drive_validity'];
