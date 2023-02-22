@@ -211,13 +211,15 @@ class CarController extends CommonController{
         $car_brand          =$request->input('car_brand');//车辆品牌
         $car_model          =$request->input('car_model');//车身型号
         $car_made           =$request->input('car_made');//国产/进口
-        $engine_num         =$request->input('engine_num');//发动机型号
+        $engine_num         =$request->input('engine_num');//发动机号
+        $engine_model       =$request->input('engine_model');//发动机型号
         $fuel_type          =$request->input('fuel_type');//燃料种类
         $displacement_power =$request->input('displacement_power');//排量/功率
         $maker              =$request->input('maker');//制造厂名称
         $turn_view          =$request->input('turn_view');//转向形式
         $tread              =$request->input('tread');//前后轮距
         $trye_num           =$request->input('trye_num');//轮胎数/规格
+        $steel_plate        =$request->input('steel_plate');//钢板弹簧片数
         $wheel_base         =$request->input('wheel_base');//轴距
         $axles_num          =$request->input('axles_num');//车轴数
         $outline            =$request->input('outline');//车辆外廓尺寸
@@ -225,6 +227,7 @@ class CarController extends CommonController{
         $car_user           =$request->input('car_user');//驾驶室载客
         $gps_flag           =$request->input('gps_flag');//卫星定位安装情况
         $bussiness_license  =$request->input('bussiness_license');//经营许可证号
+        $license_plate      =$request->input('license_plate');//车牌颜色
 
         $rules=[
             'car_number'=>'required',
@@ -312,12 +315,14 @@ class CarController extends CommonController{
             $data['car_model']         =$car_model;
             $data['car_made']          =$car_made;
             $data['engine_num']        =$engine_num;
+            $data['engine_model']      =$engine_model;
             $data['fuel_type']         =$fuel_type;
             $data['displacement_power']=$displacement_power;
             $data['maker']             =$maker;
             $data['turn_view']         =$turn_view;
             $data['tread']             =$tread;
             $data['trye_num']          =$trye_num;
+            $data['steel_plate']       =$steel_plate;
             $data['wheel_base']        =$wheel_base;
             $data['axles_num']         =$axles_num;
             $data['outline']           =$outline;
@@ -325,6 +330,7 @@ class CarController extends CommonController{
             $data['car_user']          =$car_user;
             $data['gps_flag']          =$gps_flag;
             $data['bussiness_license'] =$bussiness_license;
+            $data['license_plate']     =$license_plate;
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsCar::where($wheres)->first();
