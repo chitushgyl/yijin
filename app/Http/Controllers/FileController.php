@@ -72,7 +72,7 @@ class FileController extends Controller{
                     $msg['msg'] = '只能上传 png | jpg | gif | pdf格式的图片';
                     return $msg;
                 }else{
-                    if($size > 2*1024*1024){
+                    if($size > 50*1024*1024){
                         $msg['code'] = 303;
                         $msg['msg'] = '上传图片不能超过2M';
                         return $msg;
