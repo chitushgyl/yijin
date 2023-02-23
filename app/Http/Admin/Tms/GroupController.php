@@ -57,7 +57,7 @@ class GroupController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'cost_type','value'=>$cost_type],
-            ['type'=>'=','name'=>'type','value'=>$type],
+            ['type'=>'like','name'=>'type','value'=>$type],
             ['type'=>'like','name'=>'company_name','value'=>$company_name],
             ['type'=>'like','name'=>'contacts','value'=>$contacts],
             ['type'=>'like','name'=>'tel','value'=>$tel],
@@ -352,11 +352,10 @@ class GroupController extends CommonController{
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'=','name'=>'type','value'=>$type],
+            ['type'=>'like','name'=>'type','value'=>$type],
         ];
-
         $where=get_list_where($search);
-        $data['info']=TmsGroup::where($where)->get();
+        $data['info']=TmsGroup::where($where)->get()->toArray();
 
 	    $msg['code']=200;
         $msg['msg']="数据拉取成功";
