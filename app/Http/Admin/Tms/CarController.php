@@ -343,8 +343,8 @@ class CarController extends CommonController{
             $data['gps_flag']          =$gps_flag;
             $data['bussiness_license'] =$bussiness_license;
             $data['license_plate']     =$license_plate;
-            $data['license_back']      =$license_back;
-            $data['medallion_back']    =$medallion_back;
+            $data['license_back']      =img_for($license_back,'one_in');
+            $data['medallion_back']    =img_for($medallion_back,'one_in');
             $data['registr_date']      =$registr_date;
             $data['medallion_begin']   =$medallion_begin;
             $data['license_start']     =$license_start;
