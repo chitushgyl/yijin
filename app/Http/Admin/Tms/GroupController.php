@@ -98,7 +98,11 @@ class GroupController extends CommonController{
 
         foreach ($data['items'] as $k=>$v) {
 //            $v->total_money = number_format($v->total_money/100, 2);
-			$v->type_show=$tms_group_type[$v->type]??null;
+            $company_type = [];
+            foreach (explode(',',$v->type) as $kk => $vv){
+                $company_type[] = $tms_group_type[$vv]??null;
+            }
+			$v->type_show=implode('/',$company_type);
 			$v->cost_type_show=$tms_cost_type[$v->cost_type]??null;
             $v->button_info=$button_info;
 //
