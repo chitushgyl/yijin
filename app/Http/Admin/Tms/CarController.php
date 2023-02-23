@@ -137,7 +137,8 @@ class CarController extends CommonController{
             'medallion_num','curb_weight','all_weight','medallion_change','license_begin','production_date','scrap_date','business_scope','goods','car_model',
             'design_code','operation_date','tank_num','tank_type','registr_cert','carrier_cert','tank_cert','medallion_change_end','car_color','car_brand',
             'car_made','engine_num','fuel_type','displacement_power','maker','turn_view','tread','trye_num','steel_plate','wheel_base','axles_num','outline',
-            'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model'];
+            'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model','license_back','medallion_back','registr_date','medallion_begin',
+            'license_start','compulsory_cert','commercial_cert'];
         $data['info']=TmsCar::where($where)->select($select)->first();
 
         if ($data['info']){
@@ -232,6 +233,13 @@ class CarController extends CommonController{
         $gps_flag           =$request->input('gps_flag');//卫星定位安装情况
         $bussiness_license  =$request->input('bussiness_license');//经营许可证号
         $license_plate      =$request->input('license_plate');//车牌颜色
+        $license_back       =$request->input('license_back');//行驶证背面
+        $medallion_back     =$request->input('medallion_back');//运输证背面
+        $registr_date       =$request->input('registr_date');//机动车注册登记日期
+        $medallion_begin    =$request->input('medallion_begin');//运输证发证日期
+        $license_start      =$request->input('license_start');//行驶证发证日期
+        $compulsory_cert    =$request->input('compulsory_cert');//交强险
+        $commercial_cert    =$request->input('commercial_cert');//商业险
 
         $rules=[
             'car_number'=>'required',
@@ -335,6 +343,13 @@ class CarController extends CommonController{
             $data['gps_flag']          =$gps_flag;
             $data['bussiness_license'] =$bussiness_license;
             $data['license_plate']     =$license_plate;
+            $data['license_back']      =$license_back;
+            $data['medallion_back']    =$medallion_back;
+            $data['registr_date']      =$registr_date;
+            $data['medallion_begin']   =$medallion_begin;
+            $data['license_start']     =$license_start;
+            $data['compulsory_cert']   =img_for($compulsory_cert,'one_in');
+            $data['commercial_cert']   =img_for($commercial_cert,'one_in');
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsCar::where($wheres)->first();
@@ -735,7 +750,8 @@ class CarController extends CommonController{
             'license','medallion','payment_state','insure_price','compulsory_end','commercial_end','carrier_end','compulsory','commercial','carrier','medallion_num','curb_weight','all_weight','medallion_change','license_begin','production_date','scrap_date','business_scope','goods',
             'design_code','operation_date','tank_num','tank_type','registr_cert','carrier_cert','tank_cert','medallion_change_end','nameplate','pass_cert','car_color','car_brand',
             'car_made','engine_num','fuel_type','displacement_power','maker','turn_view','tread','trye_num','steel_plate','wheel_base','axles_num','outline','car_model',
-            'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model'];
+            'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model','license_back','medallion_back','registr_date','medallion_begin',
+            'license_start','compulsory_cert','commercial_cert'];
 
         // $self_id='car_202012291341297595587871';
         $info=$details->details($self_id,$table_name,$select);
