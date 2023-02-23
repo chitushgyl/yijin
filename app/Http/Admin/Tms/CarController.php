@@ -766,6 +766,10 @@ class CarController extends CommonController{
             $info->tank_cert     =img_for($info->tank_cert,'no_json');
             $info->nameplate     =img_for($info->nameplate,'no_json');
             $info->pass_cert     =img_for($info->pass_cert,'no_json');
+            $info->compulsory_cert     =img_for($info->compulsory_cert,'no_json');
+            $info->commercial_cert     =img_for($info->commercial_cert,'no_json');
+            $info->license_back     =img_for($info->license_back,'no_json');
+            $info->medallion_back     =img_for($info->medallion_back,'no_json');
             $data['info']=$info;
             $log_flag='Y';
             $data['log_flag']=$log_flag;
@@ -1265,28 +1269,6 @@ class CarController extends CommonController{
             ->with(['TmsCarType' => function($query) use($select7){
                 $query->select($select7);
             }])
-            ->with(['TmsCarType' => function($query) use($select7){
-                $query->select($select7);
-            }])
-            ->with(['TmsCarType' => function($query) use($select7){
-                $query->select($select7);
-            }])
-            ->with(['TmsCarType' => function($query) use($select7){
-                $query->select($select7);
-            }])
-            ->with(['TmsCarType' => function($query) use($select7){
-                $query->select($select7);
-            }])
-            ->with(['TmsCarType' => function($query) use($select7){
-                $query->select($select7);
-            }])
-            ->with(['TmsCarType' => function($query) use($select7){
-                $query->select($select7);
-            }])
-            ->with(['TmsCarType' => function($query) use($select7){
-                $query->select($select7);
-            }])
-
         ->where($where)->select($select)->get();
 
         $msg['code']=200;
