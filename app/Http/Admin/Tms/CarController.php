@@ -752,9 +752,12 @@ class CarController extends CommonController{
             'car_made','engine_num','fuel_type','displacement_power','maker','turn_view','tread','trye_num','steel_plate','wheel_base','axles_num','outline','car_model',
             'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model','license_back','medallion_back','registr_date','medallion_begin',
             'license_start','compulsory_cert','commercial_cert'];
+        $select1 = ['self_id','parame_name'];
 
-        // $self_id='car_202012291341297595587871';
-        $info=$details->details($self_id,$table_name,$select);
+
+        $info= TmsCar::with(['TmsCarType' => function($query) use($select1){
+            $query->select($select1);
+        }])->where('self_id',$self_id)->select($select)->first();
 
         if($info){
 
@@ -770,6 +773,7 @@ class CarController extends CommonController{
             $info->commercial_cert     =img_for($info->commercial_cert,'no_json');
             $info->license_back     =img_for($info->license_back,'no_json');
             $info->medallion_back     =img_for($info->medallion_back,'no_json');
+            $info->type_show     = $info->TmsCarType->parame_name;
             $data['info']=$info;
             $log_flag='Y';
             $data['log_flag']=$log_flag;
