@@ -279,6 +279,12 @@ Route::group([
     Route::any('/pay/bulkAlipay', 'PayController@bulkAlipay');
     Route::any('/pay/bulkAlipay_notify', 'PayController@bulkAlipay_notify');
 });
+Route::group([
+    'prefix' => 'crondtab','namespace'  => 'Crondtab',
+], function(){
+Route::any('/crondtab/userReword', 'CrondtabController@userReword'); //定时下线订单
+
+});
 
 
 

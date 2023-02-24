@@ -3,6 +3,7 @@ namespace App\Http\Admin\Tms;
 use App\Http\Controllers\FileController as File;
 use App\Models\Group\SystemGroup;
 use App\Models\Group\SystemUser;
+use App\Models\Tms\TmsCar;
 use App\Models\Tms\TmsDiplasic;
 use App\Models\Tms\TmsTrye;
 use Illuminate\Http\Request;
@@ -154,6 +155,7 @@ class DiplasicController extends CommonController{
         $service_plan       =$request->input('service_plan');//计划维护日期
         $next_service_plan  =$request->input('next_service_plan');//计划维护日期
         $tips               =$request->input('tips');//提示
+        $group_code         =$request->input('group_code');//
 
         $rules=[
             'car_number'=>'required',
@@ -164,7 +166,27 @@ class DiplasicController extends CommonController{
 
         $validator=Validator::make($input,$rules,$message);
         if($validator->passes()) {
+            if($self_id){
+                $name_where=[
+                    ['self_id','!=',$self_id],
+                    ['car_number','=',$car_number],
+                    ['delete_flag','=','Y'],
+                    ['group_code','=',$group_code]
+                ];
+            }else{
+                $name_where=[
+                    ['car_number','=',$car_number],
+                    ['delete_flag','=','Y'],
+                    ['group_code','=',$group_code]
+                ];
+            }
 
+            $carnumber = TmsCar::where($name_where)->count();
+            if ($carnumber>0){
+                $msg['code'] = 308;
+                $msg['msg'] = '车牌号已存在，请重新填写';
+                return $msg;
+            }
             $data['car_id']               =$car_id;
             $data['car_number']           =$car_number;
             $data['production_date']      =$production_date;
