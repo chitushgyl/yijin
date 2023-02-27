@@ -153,6 +153,8 @@ class UserController extends CommonController{
             $data['info']->contract_back      =img_for($data['info']->contract_back,'no_json');
             $data['info']->license_back       =img_for($data['info']->license_back,'no_json');
             $data['info']->work_license       =img_for($data['info']->work_license,'more');
+            $data['info']->driver_nvq         =img_for($data['info']->driver_nvq,'no_json');
+
         }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
