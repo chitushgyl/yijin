@@ -274,7 +274,7 @@ class OrderController extends CommonController{
         $car_number                = $request->input('car_number');//车牌号
         $social_flag               = $request->input('social_flag');//驾驶员是否参加社保
         $company_id                = $request->input('company_id');//托运人
-        $company_name              = $request->input('comnpany_name');//托运人
+        $company_name              = $request->input('company_name');//托运人
 
 
         $rules=[
