@@ -769,7 +769,11 @@ class UserController extends CommonController{
             'sex','age','contract_date','working_age','id_validity','salary','drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address','driver_nvq_num','driver_nvq_validity','driver_nvq_organ','driver_nvq'
         ];
         // $self_id='address_202012301359512962811465';
+        $select1 = ['self_id','section_name'];
         $info=$details->details($self_id,$table_name,$select);
+        $info=SystemUser::with(['SystemSection' => function($query) use($select1){
+            $query->select($select1);
+        }])->where('self_id',$self_id)->select($select)->first();
 
         if($info){
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
@@ -781,7 +785,7 @@ class UserController extends CommonController{
             $info->contract_back      =img_for($info->contract_back,'no_json');
             $info->license_back       =img_for($info->license_back,'no_json');
             $info->work_license       =img_for($info->work_license,'more');
-            $info->driver_nvq       =img_for($info->driver_nvq,'no_json');
+            $info->driver_nvq         =img_for($info->driver_nvq,'no_json');
             $info->type_show               =$user_type[$info->type]??null;
             $info->education_background    =$background[$info->education_background]??null;
             $data['info']=$info;
