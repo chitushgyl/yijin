@@ -131,7 +131,7 @@ class CarOilController extends CommonController{
         $total_num = TmsOil::where('use_flag','Y')->where('delete_flag','Y')->sum('num');
         $total_price = TmsOil::where('use_flag','Y')->where('delete_flag','Y')->sum('total_price');
         if ($total_num){
-            $data['price'] = $total_price/$total_num;
+            $data['price'] = round($total_price/$total_num,2);
         }
 
         if ($data['info']){
