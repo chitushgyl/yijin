@@ -141,7 +141,7 @@ class UserController extends CommonController{
         ];
         $select=['self_id','type','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
             ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','contract_back','license_back','work_license'
-        ,'birthday','sex','age','contract_date','working_age','id_validity','id_address','salary',
+        ,'birthday','sex','age','contract_date','working_age','id_validity','id_address','salary','department_name',
             'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','driver_nvq_num','driver_nvq_validity','driver_nvq_organ','driver_nvq'];
         $data['info']=SystemUser::where($where)->select($select)->first();
         if($data['info']){
@@ -184,7 +184,8 @@ class UserController extends CommonController{
         $self_id                 =$request->input('self_id');
         $name                    =$request->input('name');// 姓名
         $tel                     =$request->input('tel');// 联系方式
-        $department              =$request->input('department');// 部门
+        $department              =$request->input('department');// 部门id
+        $department_name         =$request->input('department_name');// 部门名称
         $identity_num            =$request->input('identity_num');//身份证号
         $entry_time              =$request->input('entry_time');//入职时间
         $leave_time              =$request->input('leave_time');//离职时间
@@ -251,6 +252,7 @@ class UserController extends CommonController{
             $data['name']                 =$name;
             $data['tel']                  =$tel;
             $data['department']           =$department;
+            $data['department_name']      =$department_name;
             $data['identity_num']         =$identity_num;
             $data['entry_time']           =$entry_time;
             $data['leave_time']           =$leave_time;
@@ -766,11 +768,12 @@ class UserController extends CommonController{
         $table_name='system_user';
         $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
             ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','contract_back','license_back','work_license','birthday',
-            'sex','age','contract_date','working_age','id_validity','salary','drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address','driver_nvq_num','driver_nvq_validity','driver_nvq_organ','driver_nvq'
+            'sex','age','contract_date','working_age','id_validity','salary','drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address','driver_nvq_num','driver_nvq_validity',
+            'driver_nvq_organ','driver_nvq','department_name',
         ];
         // $self_id='address_202012301359512962811465';
         $select1 = ['self_id','section_name'];
-        $info=$details->details($self_id,$table_name,$select);
+//        $info=$details->details($self_id,$table_name,$select);
         $info=SystemUser::with(['SystemSection' => function($query) use($select1){
             $query->select($select1);
         }])->where('self_id',$self_id)->select($select)->first();
@@ -788,6 +791,7 @@ class UserController extends CommonController{
             $info->driver_nvq         =img_for($info->driver_nvq,'no_json');
             $info->type_show               =$user_type[$info->type]??null;
             $info->education_background    =$background[$info->education_background]??null;
+            $info->department_name    =$info->department_name??$info->SystemUser->section_name;
             $data['info']=$info;
             $log_flag='Y';
             $data['log_flag']=$log_flag;
