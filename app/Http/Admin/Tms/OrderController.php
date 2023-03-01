@@ -72,6 +72,7 @@ class OrderController extends CommonController{
         $end_time       =$request->input('end_time');
         $enter_time     =$request->input('enter_time');
         $leave_time     =$request->input('leave_time');
+        $odd_number     =$request->input('odd_number');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -85,6 +86,7 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'create_time','value'=>$end_time],
             ['type'=>'=','name'=>'enter_time','value'=>$enter_time],
             ['type'=>'=','name'=>'leave_time','value'=>$leave_time],
+            ['type'=>'=','name'=>'odd_number','value'=>$odd_number],
         ];
 
 
