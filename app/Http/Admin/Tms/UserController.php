@@ -777,7 +777,7 @@ class UserController extends CommonController{
         $info=SystemUser::with(['SystemSection' => function($query) use($select1){
             $query->select($select1);
         }])->where('self_id',$self_id)->select($select)->first();
-        dd($info->SystemUser);
+
         if($info){
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
             $info->driver_license     =img_for($info->driver_license,'no_json');
@@ -791,7 +791,7 @@ class UserController extends CommonController{
             $info->driver_nvq         =img_for($info->driver_nvq,'no_json');
             $info->type_show               =$user_type[$info->type]??null;
             $info->education_background    =$background[$info->education_background]??null;
-            $info->department_name    =$info->department_name??$info->SystemUser->section_name;
+            $info->department_name    =$info->department_name??$info->SystemSection->section_name;
             $data['info']=$info;
             $log_flag='Y';
             $data['log_flag']=$log_flag;
