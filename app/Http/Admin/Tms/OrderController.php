@@ -533,7 +533,7 @@ class OrderController extends CommonController{
 
             $id = TmsOrder::where('self_id',$order_id)->update($data);
             $order_log['self_id'] = generate_id('log_');
-            $order_log['info'] = '调度运单:'.'预约单号'.$old_info->odd_number.','.'车牌号：'.$data['car_number'].',联系人：'.$data['car_conact'].',联系方式：'.$data['car_tel'];
+            $order_log['info'] = '调度运单:'.'预约单号'.$old_info->odd_number.','.'车牌号：'.$data['car_number'];
             $order_log['create_time'] = $order_log['update_time'] = $now_time;
             $order_log['order_id']    = $order_id;
             $order_log['state']       = 2;
