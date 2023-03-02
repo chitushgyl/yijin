@@ -301,19 +301,30 @@ class RoadTollController extends CommonController{
         $flag='delFlag';
 //        $self_id='car_202012242220439016797353';
 
-        $status_info=$status->changeFlag($table_name,$medol_name,$self_id,$flag,$now_time);
+        $old_info = RoadToll::whereIn('self_id',explode(',',$self_id))->select('use_flag','self_id','delete_flag','group_code')->get();
+        $data['delete_flag']='N';
+        $data['update_time']=$now_time;
+//        dd($old_info);
+        $id=RoadToll::whereIn('self_id',explode(',',$self_id))->update($data);
+        if ($id){
+            $msg['code']=200;
+            $msg['msg']="数据拉取成功";
+        }else{
+            $msg['code']=301;
+            $msg['msg']="删除失败";
 
+        }
         $operationing->access_cause='删除';
         $operationing->table=$table_name;
         $operationing->table_id=$self_id;
         $operationing->now_time=$now_time;
-        $operationing->old_info=$status_info['old_info'];
-        $operationing->new_info=$status_info['new_info'];
+        $operationing->old_info=$old_info;
+        $operationing->new_info=(object)$data;
         $operationing->operation_type=$flag;
 
-        $msg['code']=$status_info['code'];
-        $msg['msg']=$status_info['msg'];
-        $msg['data']=$status_info['new_info'];
+        $msg['code']=$msg['code'];
+        $msg['msg']=$msg['msg'];
+        $msg['data']=(object)$data;
 
         return $msg;
     }
