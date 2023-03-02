@@ -477,7 +477,7 @@ class CarOilController extends CommonController{
                     $list['ic_number']          = $v['ic_number'];
                     $list['number']             = $v['number'];
                     $list['price']              = $v['price'];
-                    $list['total_money']        = $v['total_money'];
+                    $list['total_money']        = $v['price']*$v['number'];
                     $list['add_time']           = $v['add_time'];
                     $list['address']            = $v['address'];
 
@@ -491,7 +491,7 @@ class CarOilController extends CommonController{
                     $datalist[]=$list;
 
                      $money['pay_type']           = 'fuel';
-                     $money['money']              = $v['total_money'];
+                     $money['money']              = $list['total_money'];
                      $money['pay_state']          = 'Y';
 //                     $money['car_id']             = $car_id;
                      $money['car_number']         = $v['car_number'];
