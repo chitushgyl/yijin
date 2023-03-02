@@ -399,7 +399,7 @@ class CarOilController extends CommonController{
             if(array_key_exists('0', $res)){
                 $info_check=$res[0];
             }
-
+//            dd($info_check);
             /**  定义一个数组，需要的数据和必须填写的项目
             键 是EXECL顶部文字，
              * 第一个位置是不是必填项目    Y为必填，N为不必须，
@@ -411,7 +411,7 @@ class CarOilController extends CommonController{
                 'IC卡卡号' =>['Y','Y','10','ic_number'],
                 '车牌号' =>['N','Y','20','car_number'],
                 '会员名称' =>['Y','Y','20','car_number'],
-                '加注金额' =>['N','Y','30','total_money'],
+                '总价' =>['N','Y','30','total_money'],
                 '加注量' =>['N','Y','30','number'],
                 '单价' =>['N','Y','30','price'],
                 '交易时间' =>['Y','Y','50','add_time'],
@@ -439,7 +439,7 @@ class CarOilController extends CommonController{
                 return $msg;
             }
 
-            // dd($info);
+//             dd($info);
 
             $datalist=[];       //初始化数组为空
             $cando='Y';         //错误数据的标记
