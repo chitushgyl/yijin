@@ -181,10 +181,10 @@ class DiplasicController extends CommonController{
                 ];
             }
 
-            $carnumber = TmsCar::where($name_where)->count();
+            $carnumber = TmsDiplasic::where($name_where)->count();
             if ($carnumber>0){
                 $msg['code'] = 308;
-                $msg['msg'] = '车牌号已存在，请重新填写';
+                $msg['msg'] = '该车牌已存在！';
                 return $msg;
             }
             $data['car_id']               =$car_id;
