@@ -55,6 +55,7 @@ class CarServiceController extends CommonController{
         $driver_name     =$request->input('driver_name');
         $start_time     =$request->input('start_time');
         $end_time     =$request->input('end_time');
+        $type     =$request->input('type');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -66,6 +67,7 @@ class CarServiceController extends CommonController{
             ['type'=>'like','name'=>'driver_name','value'=>$driver_name],
             ['type'=>'>=','name'=>'create_time','value'=>$start_time],
             ['type'=>'<','name'=>'create_time','value'=>$end_time],
+            ['type'=>'=','name'=>'type','value'=>$type],
         ];
 
         $where=get_list_where($search);
