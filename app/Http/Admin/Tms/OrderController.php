@@ -1275,7 +1275,7 @@ class OrderController extends CommonController{
                 'send_address_longitude','send_address_latitude','gather_time','gather_name','gather_tel','gather_sheng','gather_shi','gather_qu','gather_sheng_name',
                 'gather_shi_name','gather_qu_name','gather_address','gather_address_longitude','gather_address_latitude','total_money','good_name','more_money','price',
                 'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
-                'car_number','car_id','car_conact','car_tel'];
+                'car_number','car_id','car_conact','car_tel','user_name','trailer_num','sale_price','car_num','escort'];
             $select1 = ['self_id','parame_name'];
             $info=TmsOrder::where($where)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
@@ -1304,7 +1304,6 @@ class OrderController extends CommonController{
                     "price"=>'运费',
                     "more_money"=>'其他费用',
                     "total_money"=>'总运费',
-
                     "remark"=>'备注'
                 ]];
                 /** 现在根据查询到的数据去做一个导出的数据**/
@@ -1336,7 +1335,6 @@ class OrderController extends CommonController{
                     }else{
                         $list['escort']              = null;
                     }
-
                     $list['company_name']        = $v['company_name'];
                     $list['sale_price']          = $v['sale_price'];
                     $list['car_num']             = $v['car_num'];
