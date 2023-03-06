@@ -230,7 +230,7 @@ class GroupController extends CommonController{
                 $data['update_time']=$now_time;
                 $id=TmsGroup::where($wheres)->update($data);
 
-                $operationing->access_cause='修改业务公司';
+                $operationing->access_cause='修改客户公司';
                 $operationing->operation_type='update';
             }else{
                 $where_check['group_code'] = $group_code;
@@ -251,7 +251,7 @@ class GroupController extends CommonController{
                 $data['create_time']        =$data['update_time']=$now_time;
 
                 $id=TmsGroup::insert($data);
-                $operationing->access_cause='新建业务公司';
+                $operationing->access_cause='新建客户公司';
                 $operationing->operation_type='create';
 
             }

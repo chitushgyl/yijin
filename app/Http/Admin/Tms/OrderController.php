@@ -1331,7 +1331,12 @@ class OrderController extends CommonController{
                     $list['trailer_num']         = $v['trailer_num'];
                     $list['user_name']           = $v['user_name'];
                     $cargo = SystemUser::where('self_id',$v['escort'])->select('self_id','name','use_flag','delete_flag','social_flag')->first();
-                    $list['escort']              = $cargo->name;
+                    if($cargo){
+                        $list['escort']              = $cargo->name;
+                    }else{
+                        $list['escort']              = null;
+                    }
+
                     $list['company_name']        = $v['company_name'];
                     $list['sale_price']          = $v['sale_price'];
                     $list['car_num']             = $v['car_num'];
