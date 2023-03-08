@@ -138,7 +138,9 @@ class CarController extends CommonController{
             'design_code','operation_date','tank_num','tank_type','registr_cert','carrier_cert','tank_cert','medallion_change_end','car_color','car_brand',
             'car_made','engine_num','fuel_type','displacement_power','maker','turn_view','tread','trye_num','steel_plate','wheel_base','axles_num','outline',
             'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model','license_back','medallion_back','registr_date','medallion_begin',
-            'license_start','compulsory_cert','commercial_cert'];
+            'license_start','compulsory_cert','commercial_cert','registr_cert_date','carrier_insurer','carrier_insurer_num','carrier_baoe','carrier_zrx','carrier_zr','carrier_good',
+            'compulsory_insurer','compulsory_num','compulsory_sc','compulsory_yl','compulsory_property','commercial_insurer','commercial_num','commercial_tz','commercial_zr','commercial_driver',
+            'commercial_user'];
         $data['info']=TmsCar::where($where)->select($select)->first();
 
         if ($data['info']){
@@ -240,6 +242,25 @@ class CarController extends CommonController{
         $license_start      =$request->input('license_start');//行驶证发证日期
         $compulsory_cert    =$request->input('compulsory_cert');//交强险
         $commercial_cert    =$request->input('commercial_cert');//商业险
+        $registr_cert_date  =$request->input('registr_cert_date');//登记证书发证日期
+        $carrier_insurer    =$request->input('carrier_insurer');//保险公司
+        $carrier_insurer_num=$request->input('carrier_insurer_num');//承运险保险单号
+        $carrier_baoe       =$request->input('carrier_baoe');//人身伤亡每人保额（万元）
+        $carrier_zrx        =$request->input('carrier_zrx');//第三者责任险
+        $carrier_zr         =$request->input('carrier_zr');//每人人身伤亡责任（万元）
+        $carrier_good       =$request->input('carrier_good');//货物责任保险（万元）
+        $compulsory_insurer =$request->input('compulsory_insurer');//交强险保险公司
+        $compulsory_num     =$request->input('compulsory_num');//交强险保险保单
+        $compulsory_sc      =$request->input('compulsory_sc');//交强险死亡伤残赔偿
+        $compulsory_yl      =$request->input('compulsory_yl');//医疗费用赔偿
+        $compulsory_property=$request->input('compulsory_property');//交强险财产损失赔偿
+        $commercial_insurer =$request->input('commercial_insurer');//商业险保险单位
+        $commercial_num     =$request->input('commercial_num');//商业险保险单号
+        $commercial_tz      =$request->input('commercial_tz');//特种车损失险（万元）
+        $commercial_zr      =$request->input('commercial_zr');//商业险第三者责任险（万元）
+        $commercial_driver  =$request->input('commercial_driver');//车上司机责任险（万元）
+        $commercial_user    =$request->input('commercial_user');//车上乘客责任险（万元）
+
 
         $rules=[
             'car_number'=>'required',
@@ -350,7 +371,24 @@ class CarController extends CommonController{
             $data['license_start']     =$license_start;
             $data['compulsory_cert']   =img_for($compulsory_cert,'one_in');
             $data['commercial_cert']   =img_for($commercial_cert,'one_in');
-
+            $data['registr_cert_date'] =$registr_cert_date;
+            $data['carrier_insurer']   =$carrier_insurer;
+            $data['carrier_insurer_num']=$carrier_insurer_num;
+            $data['carrier_baoe']       =$carrier_baoe;
+            $data['carrier_zrx']        =$carrier_zrx;
+            $data['carrier_zr']         =$carrier_zr;
+            $data['carrier_good']       =$carrier_good;
+            $data['compulsory_insurer'] =$compulsory_insurer;
+            $data['compulsory_num']     =$compulsory_num;
+            $data['compulsory_sc']      =$compulsory_sc;
+            $data['compulsory_yl']      =$compulsory_yl;
+            $data['compulsory_property']=$compulsory_property;
+            $data['commercial_insurer'] =$commercial_insurer;
+            $data['commercial_num']     =$commercial_num;
+            $data['commercial_tz']      =$commercial_tz;
+            $data['commercial_zr']      =$commercial_zr;
+            $data['commercial_driver']  =$commercial_driver;
+            $data['commercial_user']    =$commercial_user;
             $wheres['self_id'] = $self_id;
             $old_info=TmsCar::where($wheres)->first();
 
@@ -751,7 +789,9 @@ class CarController extends CommonController{
             'design_code','operation_date','tank_num','tank_type','registr_cert','carrier_cert','tank_cert','medallion_change_end','nameplate','pass_cert','car_color','car_brand',
             'car_made','engine_num','fuel_type','displacement_power','maker','turn_view','tread','trye_num','steel_plate','wheel_base','axles_num','outline','car_model',
             'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model','license_back','medallion_back','registr_date','medallion_begin',
-            'license_start','compulsory_cert','commercial_cert'];
+            'license_start','compulsory_cert','commercial_cert','registr_cert_date','carrier_insurer','carrier_insurer_num','carrier_baoe','carrier_zrx','carrier_zr','carrier_good',
+            'compulsory_insurer','compulsory_num','compulsory_sc','compulsory_yl','compulsory_property','commercial_insurer','commercial_num','commercial_tz','commercial_zr','commercial_driver',
+            'commercial_user'];
         $select1 = ['self_id','parame_name'];
 
 
