@@ -976,35 +976,17 @@ class OrderController extends CommonController{
              * 第四个位置为数据库的对应字段
              */
             $shuzu=[
-                '省（装）' =>['Y','N','64','send_sheng_name'],
-                '市（装）' =>['Y','N','64','send_shi_name'],
-                '区（装）' =>['Y','N','64','send_qu_name'],
-                '详细地址（装）' =>['Y','N','100','send_address'],
-                '联系人（装）' =>['Y','N','64','send_name'],
-                '联系电话（装）' =>['Y','N','64','send_tel'],
-                '省（卸）' =>['Y','N','64','gather_sheng_name'],
-                '市（卸）' =>['Y','N','64','gather_shi_name'],
-                '区（卸）' =>['Y','N','64','gather_qu_name'],
-                '详细地址（卸）' =>['Y','N','100','gather_address'],
-                '联系人（卸）' =>['Y','N','30','gather_name'],
-                '联系电话（卸）' =>['Y','N','64','gather_tel'],
-                '货物类型' =>['Y','N','64','goods'],
-                '预约单号' =>['Y','N','64','odd_number'],
-                '车牌号' =>['N','N','64','car_number'],
-                '挂车号' =>['N','N','64','trailer_num'],
+                '标识' =>['Y','N','100','order_number'],
+                '所属组织' =>['Y','N','100','order_number'],
+                '货物品名' =>['Y','N','64','good_name'],
+                '承运人' =>['Y','N','64','company_name'],
+                '车牌号' =>['Y','N','64','car_number'],
+                '挂车号' =>['Y','N','64','trailer_num'],
                 '驾驶员' =>['N','N','64','user_name'],
-                '押运员' =>['N','N','64','escort'],
-                '货物名称' =>['Y','N','64','good_name'],
-                '单价' =>['N','N','64','sale_price'],
-                '车数' =>['N','N','64','car_num'],
-                '装货数量' =>['Y','N','64','real_weight'],
-                '卸货数量' =>['Y','N','200','upload_weight'],
-                '托运人' =>['N','N','64','company_name'],
-                '日期' =>['Y','N','64','enter_time'],
-                '运费' =>['Y','N','64','price'],
-                '其他费用' =>['N','N','64','more_money'],
-                '总运费' =>['Y','N','64','total_money'],
-                '备注' =>['N','N','64','remark'],
+                '副驾驶员' =>['N','N','64','escort'],
+                '发货日期' =>['Y','N','64','enter_time'],
+                '装车点' =>['Y','N','100','send_address'],
+                '卸车点' =>['Y','N','100','gather_address'],
             ];
 
             $ret=arr_check($shuzu,$info_check);
@@ -1059,14 +1041,14 @@ class OrderController extends CommonController{
                 }
                 if (!$cargo){
                     if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行押运员不存在".'</br>';
+                        $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
                         $cando='N';
                         $abcd++;
                     }
                 }
                 if (!$company){
                     if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行托运人不存在".'</br>';
+                        $strs .= '数据中的第'.$a."行承运人不存在".'</br>';
                         $cando='N';
                         $abcd++;
                     }
@@ -1084,23 +1066,10 @@ class OrderController extends CommonController{
                 if($cando =='Y'){
 
                     $list['self_id']                 = generate_id('order_');
-                    $list['order_number']            = generate_id('');
-                    $list['send_name']               = $v['send_name'];
-                    $list['send_tel']                = $v['send_tel'];
-                    $list['send_sheng_name']         = $v['send_sheng_name'];
-                    $list['send_shi_name']           = $v['send_shi_name'];
-                    $list['send_qu_name']            = $v['send_qu_name'];
+                    $list['order_number']            = $v['order_number'];
                     $list['send_address']            = $v['send_address'];
-                    $list['gather_name']             = $v['gather_name'];
-                    $list['gather_tel']              = $v['gather_tel'];
-                    $list['gather_sheng_name']       = $v['gather_sheng_name'];
-                    $list['gather_shi_name']         = $v['gather_shi_name'];
-                    $list['gather_qu_name']          = $v['gather_qu_name'];
                     $list['gather_address']          = $v['gather_address'];
                     $list['good_name']               = $v['good_name'];
-                    $list['more_money']              = $v['more_money'];
-                    $list['price']                   = $v['price'];
-                    $list['total_money']             = $v['price'] + $v['more_money'];
                     $list['enter_time']              = $v['enter_time'];
                     $list['car_id']                  = $car->self_id;
                     $list['car_number']              = $car->car_number;
@@ -1112,11 +1081,6 @@ class OrderController extends CommonController{
                     $list['car_num']                 = $v['car_num'];
                     $list['company_id']              = $company->self_id;
                     $list['company_name']            = $company->company_name;
-                    $list['real_weight']             = $v['real_weight'];
-                    $list['upload_weight']           = $v['upload_weight'];
-                    $list['odd_number']              = $v['odd_number'];
-                    $list['remark']                  = $v['remark'];
-
                     $list['group_code']              = $info->group_code;
                     $list['group_name']              = $info->group_name;
                     $list['create_user_id']          = $user_info->admin_id;

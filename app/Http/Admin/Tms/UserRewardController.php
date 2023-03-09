@@ -3,9 +3,9 @@ namespace App\Http\Admin\Tms;
 
 use App\Models\Group\SystemGroup;
 use App\Models\Group\SystemUser;
+use App\Models\Tms\AwardRemind;
 use App\Models\Tms\TmsMoney;
 use App\Models\User\UserReward;
-use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
@@ -348,6 +348,7 @@ class UserRewardController extends CommonController{
             $money['car_number']         = $car_number;
             $money['process_state']      = 'Y';
             $money['type_state']         = 'out';
+            $money['order_id']           = $data['self_id'];
 
             $wheres['self_id'] = $self_id;
             $old_info=UserReward::where($wheres)->first();
@@ -368,7 +369,7 @@ class UserRewardController extends CommonController{
                 $data['group_name']         =$group_name;
 
                 $id=UserReward::insert($data);
-                if ($payment || $safe_reward){
+                if ($payment){
                     $money['self_id']            = generate_id('money_');
                     $money['group_code']         = $group_code;
                     $money['group_name']         = $group_name;
@@ -376,6 +377,20 @@ class UserRewardController extends CommonController{
                     $money['create_user_name']   = $user_info->name;
                     $money['create_time']        =$money['update_time']=$now_time;
                     TmsMoney::insert($money);
+                }
+                if ($type == 'reward'){
+                    $award['self_id']            = generate_id('award_');
+                    $award['reward_id']          = $data['self_id'];
+                    $award['user_id']            = $user_id;
+                    $award['user_name']          = $user_name;
+                    $award['money_award']        = $safe_reward;
+                    $time = date('Y-m', strtotime('+1 month', strtotime($event_time)));
+                    $award['cash_back']          = $time;
+                    $award['group_code']         = $group_code;
+                    $award['group_name']         = $group_name;
+                    $award['create_user_id']     = $user_info->admin_id;
+                    $award['create_user_name']   = $user_info->name;
+                    $award['create_time']        = $award['update_time']=$now_time;
                 }
 
                 $operationing->access_cause='添加员工奖惩记录';
@@ -780,6 +795,92 @@ class UserRewardController extends CommonController{
         }
 
     }
+
+    /**
+     * 奖金返还记录列表
+     * */
+    public function remindPage(Request $request){
+            /** 接收中间件参数**/
+            $group_info     = $request->get('group_info');//接收中间件产生的参数
+            $button_info    = $request->get('anniu');//接收中间件产生的参数
+
+            /**接收数据*/
+            $num            =$request->input('num')??10;
+            $page           =$request->input('page')??1;
+            $use_flag       =$request->input('use_flag');
+            $group_code     =$request->input('group_code');
+            $user_id        =$request->input('user_id');
+            $listrows       =$num;
+            $firstrow       =($page-1)*$listrows;
+
+            $search=[
+                ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+                ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+                ['type'=>'=','name'=>'group_code','value'=>$group_code],
+                ['type'=>'=','name'=>'user_id','value'=>$user_id],
+            ];
+
+            $where=get_list_where($search);
+            $select=['self_id','user_id','user_name','money_award','award_flag','group_code','group_name','delete_flag','use_flag','cash_flag','cash_back','create_time','update_time'];
+            $select1=['self_id','name'];
+            switch ($group_info['group_id']){
+                case 'all':
+                    $data['total']=AwardRemind::where($where)->count(); //总的数据量
+                    $data['items']=AwardRemind::with(['systemUser' => function($query) use($select1){
+                        $query->select($select1);
+                    }])
+                        ->with(['user' => function($query) use($select1){
+                            $query->select($select1);
+                        }])
+                        ->where($where)
+                        ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                        ->select($select)->get();
+                    $data['group_show']='Y';
+                    break;
+
+                case 'one':
+                    $where[]=['group_code','=',$group_info['group_code']];
+                    $data['total']=AwardRemind::where($where)->count(); //总的数据量
+                    $data['items']=AwardRemind::with(['systemUser' => function($query) use($select1){
+                        $query->select($select1);
+                    }])
+                        ->with(['user' => function($query) use($select1){
+                            $query->select($select1);
+                        }])
+                        ->where($where)
+                        ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                        ->select($select)->get();
+                    $data['group_show']='N';
+                    break;
+
+                case 'more':
+                    $data['total']=AwardRemind::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                    $data['items']=AwardRemind::with(['systemUser' => function($query) use($select1){
+                        $query->select($select1);
+                    }])
+                        ->with(['user' => function($query) use($select1){
+                            $query->select($select1);
+                        }])->where($where)->whereIn('group_code',$group_info['group_code'])
+                        ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                        ->select($select)->get();
+                    $data['group_show']='Y';
+                    break;
+            }
+
+            $button_info1=[];
+
+//            foreach ($button_info as $k => $v){
+//
+//            }
+            foreach ($data['items'] as $k=>$v) {
+                $v->button_info=$button_info;
+            }
+
+            $msg['code']=200;
+            $msg['msg']="数据拉取成功";
+            $msg['data']=$data;
+            return $msg;
+        }
 
 }
 ?>

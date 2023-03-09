@@ -245,6 +245,7 @@ Route::group([
     Route::any('/userReward/userRewardDelFlag','UserRewardController@userRewardDelFlag');//删除
     Route::any('/userReward/details','UserRewardController@details');//详情
     Route::any('/userReward/excel','UserRewardController@excel');//导出
+    Route::any('/userReward/remindPage','UserRewardController@remindPage');//奖金返还提醒列表
 
     /**车辆维修记录***/
     Route::any('/carService/serviceList','CarServiceController@serviceList');
