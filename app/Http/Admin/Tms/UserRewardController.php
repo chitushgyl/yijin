@@ -831,9 +831,6 @@ class UserRewardController extends CommonController{
                     $data['items']=AwardRemind::with(['systemUser' => function($query) use($select1){
                         $query->select($select1);
                     }])
-                        ->with(['user' => function($query) use($select1){
-                            $query->select($select1);
-                        }])
                         ->where($where)
                         ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                         ->select($select)->get();
@@ -846,9 +843,6 @@ class UserRewardController extends CommonController{
                     $data['items']=AwardRemind::with(['systemUser' => function($query) use($select1){
                         $query->select($select1);
                     }])
-                        ->with(['user' => function($query) use($select1){
-                            $query->select($select1);
-                        }])
                         ->where($where)
                         ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                         ->select($select)->get();
@@ -860,9 +854,7 @@ class UserRewardController extends CommonController{
                     $data['items']=AwardRemind::with(['systemUser' => function($query) use($select1){
                         $query->select($select1);
                     }])
-                        ->with(['user' => function($query) use($select1){
-                            $query->select($select1);
-                        }])->where($where)->whereIn('group_code',$group_info['group_code'])
+                        ->where($where)->whereIn('group_code',$group_info['group_code'])
                         ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                         ->select($select)->get();
                     $data['group_show']='Y';
