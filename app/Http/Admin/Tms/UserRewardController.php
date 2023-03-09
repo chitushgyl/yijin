@@ -385,7 +385,7 @@ class UserRewardController extends CommonController{
                     $award['user_id']            = $user_id;
                     $award['user_name']          = $user_name;
                     $award['money_award']        = $safe_reward;
-                    $time = date('Y-m', strtotime('+1 month', strtotime($event_time)));
+                    $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
                     $award['cash_back']          = $time;
                     $award['group_code']         = $group_code;
                     $award['group_name']         = $group_name;
