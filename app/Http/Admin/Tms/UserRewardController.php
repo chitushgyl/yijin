@@ -392,6 +392,7 @@ class UserRewardController extends CommonController{
                     $award['create_user_id']     = $user_info->admin_id;
                     $award['create_user_name']   = $user_info->name;
                     $award['create_time']        = $award['update_time']=$now_time;
+                    AwardRemind::insert($award);
                 }
 
                 $operationing->access_cause='添加员工奖惩记录';
