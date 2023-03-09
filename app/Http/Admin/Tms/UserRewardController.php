@@ -348,7 +348,7 @@ class UserRewardController extends CommonController{
             $money['car_number']         = $car_number;
             $money['process_state']      = 'Y';
             $money['type_state']         = 'out';
-            $money['order_id']           = $data['self_id'];
+
 
             $wheres['self_id'] = $self_id;
             $old_info=UserReward::where($wheres)->first();
@@ -371,6 +371,7 @@ class UserRewardController extends CommonController{
                 $id=UserReward::insert($data);
                 if ($payment){
                     $money['self_id']            = generate_id('money_');
+                    $money['order_id']           = $data['self_id'];
                     $money['group_code']         = $group_code;
                     $money['group_name']         = $group_name;
                     $money['create_user_id']     = $user_info->admin_id;
