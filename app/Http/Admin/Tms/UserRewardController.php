@@ -797,9 +797,20 @@ class UserRewardController extends CommonController{
         }
 
     }
+    /**
+     * tms/userReward/remindList
+     * */
+    public function remindList(Request $request){
+        $data['page_info']      =config('page.listrows');
+        $data['button_info']    =$request->get('anniu');
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
 
     /**
-     * 奖金返还记录列表
+     * 奖金返还记录列表  tms/userReward/remindPage
      * */
     public function remindPage(Request $request){
             /** 接收中间件参数**/
@@ -812,6 +823,8 @@ class UserRewardController extends CommonController{
             $use_flag       =$request->input('use_flag');
             $group_code     =$request->input('group_code');
             $user_id        =$request->input('user_id');
+            $start_time     =$request->input('start_time');
+            $end_time       =$request->input('end_time');
             $listrows       =$num;
             $firstrow       =($page-1)*$listrows;
 
@@ -820,6 +833,8 @@ class UserRewardController extends CommonController{
                 ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
                 ['type'=>'=','name'=>'group_code','value'=>$group_code],
                 ['type'=>'=','name'=>'user_id','value'=>$user_id],
+                ['type'=>'>=','name'=>'cash_back','value'=>$start_time],
+                ['type'=>'<','name'=>'cash_back','value'=>$end_time],
             ];
 
             $where=get_list_where($search);

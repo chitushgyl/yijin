@@ -1247,13 +1247,10 @@ class OrderController extends CommonController{
                 //设置表头
                 $row = [[
                     "id"=>'ID',
-                    "send_view"=>'装货地',
-                    "send_name"=>'联系人（装）',
-                    "send_tel"=>'联系电话（装）',
-                    "gather_view"=>'卸货地',
-                    "gather_name"=>'联系人（卸）',
-                    "gather_tel"=>'联系方式（卸）',
-                    "odd_number"=>'预约单号',
+                    "order_number"=>'标识',
+                    "odd_number" =>'预约单号',
+                    "send_adress"=>'装货点',
+                    "gather_address"=>'卸货点',
                     "car_number"=>'车牌号',
                     "trailer_num"=>'挂车号',
                     "user_name"=>'驾驶员',
@@ -1276,12 +1273,9 @@ class OrderController extends CommonController{
                 foreach ($info as $k=>$v){
                     $list=[];
                     $list['id']=($k+1);
-                    $list['send_view']           =  $v['send_sheng_name'].$v['send_shi_name'].$v['send_qu_name'].$v['send_address'];
-                    $list['send_name']           = $v['send_name'];
-                    $list['send_tel']            = $v['send_tel'];
-                    $list['gather_view']         =  $v['gather_sheng_name'].$v['gather_shi_name'].$v['gather_qu_name'].$v['gather_address'];
-                    $list['gather_name']         = $v['gather_name'];
-                    $list['gather_tel']          = $v['gather_tel'];
+                    $list['order_number']        = $v['order_number'];
+                    $list['send_address']        = $v['send_address'];
+                    $list['gather_address']      = $v['gather_address'];
                     $list['odd_number']          = $v['odd_number'];
                     $list['good_name']           = $v['good_name'] ;
                     $list['real_weight']         = $v['real_weight'];
