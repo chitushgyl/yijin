@@ -97,7 +97,7 @@ class OrderController extends CommonController{
             'send_address_longitude','send_address_latitude','gather_time','gather_name','gather_tel','gather_sheng','gather_shi','gather_qu','gather_sheng_name',
             'gather_shi_name','gather_qu_name','gather_address','gather_address_longitude','gather_address_latitude','total_money','good_name','more_money','price',
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
-            'car_number','car_id','car_conact','car_tel','company_id','company_name'];
+            'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -277,6 +277,7 @@ class OrderController extends CommonController{
         $social_flag               = $request->input('social_flag');//驾驶员是否参加社保
         $company_id                = $request->input('company_id');//托运人
         $company_name              = $request->input('company_name');//托运人
+        $ordertypes                = $request->input('ordertypes');//托运人
 
 
         $rules=[
@@ -357,6 +358,7 @@ class OrderController extends CommonController{
             $data['car_number']              = $car_number;
             $data['company_id']              = $company_id;
             $data['company_name']            = $company_name;
+            $data['ordertypes']            = $ordertypes;
 //            $data['social_flag']             = $social_flag;
 
 
@@ -1359,7 +1361,7 @@ class OrderController extends CommonController{
             'send_address_longitude','send_address_latitude','gather_time','gather_name','gather_tel','gather_sheng','gather_shi','gather_qu','gather_sheng_name',
             'gather_shi_name','gather_qu_name','gather_address','gather_address_longitude','gather_address_latitude','total_money','good_name','more_money','price','receipt_flag',
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
-            'car_number','car_id','car_conact','car_tel','car_num','sale_price','driver_id','user_name','escort','trailer_num'];
+            'car_number','car_id','car_conact','car_tel','car_num','sale_price','driver_id','user_name','escort','trailer_num','ordertypes'];
         $select1 = ['self_id','receipt','order_id','total_user_id','group_code','group_name'];
         $select2 = ['self_id','name','type'];
         $where = [
