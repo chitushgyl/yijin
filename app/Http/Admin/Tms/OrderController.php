@@ -977,7 +977,7 @@ class OrderController extends CommonController{
              */
             $shuzu=[
                 '标识' =>['Y','N','100','order_number'],
-                '所属组织' =>['Y','N','100','order_number'],
+                '所属组织' =>['Y','N','100','group_name'],
                 '货物品名' =>['Y','N','64','good_name'],
                 '承运人' =>['Y','N','64','company_name'],
                 '车牌号' =>['Y','N','64','car_number'],
@@ -1015,10 +1015,10 @@ class OrderController extends CommonController{
             foreach($info_wait as $k => $v){
                 $where=[
                     ['delete_flag','=','Y'],
-                    ['odd_number','=',$v['odd_number']],
+                    ['order_number','=',$v['order_number']],
                 ];
 
-                $area_info = TmsOrder::where($where)->value('odd_number');
+                $area_info = TmsOrder::where($where)->value('order_number');
 
                 if($area_info){
                     if($abcd<$errorNum){
