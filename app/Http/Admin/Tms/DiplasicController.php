@@ -348,7 +348,7 @@ class DiplasicController extends CommonController{
             }
 
             $res = Excel::toArray((new Import),$importurl);
-            //dump($res);
+//            dd($res);
             $info_check=[];
             if(array_key_exists('0', $res)){
                 $info_check=$res[0];
@@ -392,7 +392,7 @@ class DiplasicController extends CommonController{
             $errorNum=50;       //控制错误数据的条数
             $a=2;
 
-            //dump($info_wait);
+//            dd($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
 
@@ -400,11 +400,86 @@ class DiplasicController extends CommonController{
                 if($cando =='Y'){
                     $list['self_id']              = generate_id('diplasic_');
                     $list['car_number']           = $v['car_number'];
+                    if ($v['production_date']){
+                        if (is_numeric($v['production_date'])){
+                            $v['production_date']              = gmdate('Y-m-d',($v['production_date'] - 25569) * 3600 * 24);
+                        }else{
+                            if(date('Y-m-d',strtotime($v['production_date'])) == $v['production_date']){
+
+                            }else{
+                                if($abcd<$errorNum){
+                                    $strs .= '数据中的第'.$a."行车辆出厂日期格式错误".'</br>';
+                                    $cando='N';
+                                    $abcd++;
+                                }
+                            }
+                        }
+                    }
                     $list['production_date']      = $v['production_date'];
+                    if ($v['input_date']){
+                        if (is_numeric($v['input_date'])){
+                            $v['input_date']              = gmdate('Y-m-d',($v['input_date'] - 25569) * 3600 * 24);
+                        }else{
+                            if(date('Y-m-d',strtotime($v['input_date'])) == $v['input_date']){
+
+                            }else{
+                                if($abcd<$errorNum){
+                                    $strs .= '数据中的第'.$a."行车辆投入运行日期格式错误".'</br>';
+                                    $cando='N';
+                                    $abcd++;
+                                }
+                            }
+                        }
+                    }
                     $list['input_date']           = $v['input_date'];
                     $list['service']              = $v['service'];
+                    if ($v['service_now']){
+                        if (is_numeric($v['service_now'])){
+                            $v['service_now']              = gmdate('Y-m-d',($v['service_now'] - 25569) * 3600 * 24);
+                        }else{
+                            if(date('Y-m-d',strtotime($v['service_now'])) == $v['service_now']){
+
+                            }else{
+                                if($abcd<$errorNum){
+                                    $strs .= '数据中的第'.$a."行".$year."维护月份格式错误".'</br>';
+                                    $cando='N';
+                                    $abcd++;
+                                }
+                            }
+                        }
+                    }
                     $list['service_now']          = $v['service_now'];
+                    if ($v['service_plan']){
+                        if (is_numeric($v['service_plan'])){
+                            $v['service_plan']              = gmdate('Y-m-d',($v['service_plan'] - 25569) * 3600 * 24);
+                        }else{
+                            if(date('Y-m-d',strtotime($v['service_plan'])) == $v['service_plan']){
+
+                            }else{
+                                if($abcd<$errorNum){
+                                    $strs .= '数据中的第'.$a."行计划".$year."维护月份格式错误".'</br>';
+                                    $cando='N';
+                                    $abcd++;
+                                }
+                            }
+                        }
+                    }
                     $list['service_plan']         = $v['service_plan'];
+                    if ($v['next_service_plan']){
+                        if (is_numeric($v['next_service_plan'])){
+                            $v['next_service_plan']              = gmdate('Y-m-d',($v['next_service_plan'] - 25569) * 3600 * 24);
+                        }else{
+                            if(date('Y-m-d',strtotime($v['next_service_plan'])) == $v['next_service_plan']){
+
+                            }else{
+                                if($abcd<$errorNum){
+                                    $strs .= '数据中的第'.$a."行计划".$next_year."维护月份格式错误".'</br>';
+                                    $cando='N';
+                                    $abcd++;
+                                }
+                            }
+                        }
+                    }
                     $list['next_service_plan']    = $v['next_service_plan'];
                     $list['tips']                 = $v['tips'];
                     $list['group_code']           = $group_code;
