@@ -830,6 +830,7 @@ class UserRewardController extends CommonController{
             /** 接收中间件参数**/
             $group_info     = $request->get('group_info');//接收中间件产生的参数
             $button_info    = $request->get('anniu');//接收中间件产生的参数
+            $now_time = date('Y-m',time());
 
             /**接收数据*/
             $num            =$request->input('num')??10;
@@ -837,7 +838,7 @@ class UserRewardController extends CommonController{
             $use_flag       =$request->input('use_flag');
             $group_code     =$request->input('group_code');
             $user_id        =$request->input('user_id');
-            $user_name        =$request->input('user_name');
+            $user_name      =$request->input('user_name');
             $start_time     =$request->input('start_time');
             $end_time       =$request->input('end_time');
             $listrows       =$num;
@@ -852,6 +853,10 @@ class UserRewardController extends CommonController{
                 ['type'=>'>=','name'=>'cash_back','value'=>$start_time],
                 ['type'=>'<','name'=>'cash_back','value'=>$end_time],
             ];
+            $where1 = [
+               ['cash_back','=',$now_time],
+               ['award_flag','=','N']
+            ];
 
             $where=get_list_where($search);
             $select=['self_id','user_id','user_name','money_award','award_flag','group_code','group_name','delete_flag','use_flag','cash_flag','cash_back','create_time','update_time'];
@@ -865,6 +870,13 @@ class UserRewardController extends CommonController{
                         ->where($where)
                         ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                         ->select($select)->get();
+                    $data['info']=AwardRemind::with(['systemUser' => function($query) use($select1){
+                        $query->select($select1);
+                    }])
+                        ->whereIn('group_code',$group_info['group_code'])
+                        ->where($where1)
+                        ->orderBy('create_time', 'desc')
+                        ->select($select)->get();
                     $data['group_show']='Y';
                     break;
 
@@ -877,6 +889,13 @@ class UserRewardController extends CommonController{
                         ->where($where)
                         ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                         ->select($select)->get();
+                    $data['info']=AwardRemind::with(['systemUser' => function($query) use($select1){
+                        $query->select($select1);
+                    }])
+                        ->whereIn('group_code',$group_info['group_code'])
+                        ->where($where1)
+                        ->orderBy('create_time', 'desc')
+                        ->select($select)->get();
                     $data['group_show']='N';
                     break;
 
@@ -887,6 +906,13 @@ class UserRewardController extends CommonController{
                     }])
                         ->where($where)->whereIn('group_code',$group_info['group_code'])
                         ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                        ->select($select)->get();
+                    $data['info']=AwardRemind::with(['systemUser' => function($query) use($select1){
+                        $query->select($select1);
+                    }])
+                        ->whereIn('group_code',$group_info['group_code'])
+                        ->where($where1)
+                        ->orderBy('create_time', 'desc')
                         ->select($select)->get();
                     $data['group_show']='Y';
                     break;
