@@ -1087,8 +1087,7 @@ class OrderController extends CommonController{
                     if($v['escort']){
                         $list['escort']                  = $cargo->self_id;
                     }
-                    $list['sale_price']              = $v['sale_price'];
-                    $list['car_num']                 = $v['car_num'];
+
                     $list['company_id']              = $company->self_id;
                     $list['company_name']            = $company->company_name;
                     $list['group_code']              = $info->group_code;
