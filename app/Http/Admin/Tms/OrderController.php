@@ -1027,25 +1027,31 @@ class OrderController extends CommonController{
                         $abcd++;
                     }
                 }
-                $driver = SystemUser::where('type','driver')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','use_flag','delete_flag','social_flag')->first();
-                $cargo = SystemUser::where('type','cargo')->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','use_flag','delete_flag','social_flag')->first();
+
+
                 $company = TmsGroup::where('type','check')->where('company_name',$v['company_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $car = TmsCar::where('car_number',$v['car_number'])->select('self_id','car_number')->first();
+                if ($v['user_name']){
+                    $driver = SystemUser::where('type','driver')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','use_flag','delete_flag','social_flag')->first();
+                    if (!$driver){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+                }
+                if($v['escort']){
+                    $cargo = SystemUser::where('type','cargo')->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','use_flag','delete_flag','social_flag')->first();
+                    if (!$cargo){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+                }
 
-                if (!$driver){
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }
-                if (!$cargo){
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }
                 if (!$company){
                     if($abcd<$errorNum){
                         $strs .= '数据中的第'.$a."行承运人不存在".'</br>';
