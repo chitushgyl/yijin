@@ -1100,7 +1100,7 @@ class OrderController extends CommonController{
                     $datalist[]=$list;
 
                     $order_log['self_id'] = generate_id('log_');
-                    $order_log['info'] = '创建运单:'.','.'运单号：'.$list['order_number'];
+                    $order_log['info'] = '创建运单:'.','.'标识：'.$list['order_number'];
                     $order_log['create_time'] = $order_log['update_time'] = $now_time;
                     $order_log['order_id']    = $list['self_id'];
                     $order_log['group_code']    = $info->group_code;
@@ -1112,59 +1112,59 @@ class OrderController extends CommonController{
 
 
                     /**保存费用**/
-                    $money['self_id']                = generate_id('money');
-                    $money['pay_type']               = 'freight';
-                    $money['money']                  = $list['total_money'];
-                    $money['pay_state']              = 'Y';
-                    $money['order_id']               = $list['self_id'];
-                    $money['process_state']          = 'Y';
-                    $money['type_state']             = 'in';
-                    $money['group_code']             = $group_code;
-//                $money['group_name']             = $group_name;
-                    $money['create_user_id']         = $user_info->admin_id;
-                    $money['create_user_name']       = $user_info->name;
-                    $money['create_time']            = $money['update_time'] = $now_time;
-                    $money['company_id']             = $company->self_id;
-                    $money['company_name']           = $company->company_name;
-
-                    $money_list[] = $money;
+//                    $money['self_id']                = generate_id('money');
+//                    $money['pay_type']               = 'freight';
+//                    $money['money']                  = $list['total_money'];
+//                    $money['pay_state']              = 'Y';
+//                    $money['order_id']               = $list['self_id'];
+//                    $money['process_state']          = 'Y';
+//                    $money['type_state']             = 'in';
+//                    $money['group_code']             = $group_code;
+////                $money['group_name']             = $group_name;
+//                    $money['create_user_id']         = $user_info->admin_id;
+//                    $money['create_user_name']       = $user_info->name;
+//                    $money['create_time']            = $money['update_time'] = $now_time;
+//                    $money['company_id']             = $company->self_id;
+//                    $money['company_name']           = $company->company_name;
+//
+//                    $money_list[] = $money;
 
                     /**生成工资***/
-                    $wages['self_id']      = generate_id('wages_');
-                    $wages['order_id']     = $list['self_id'];
-                    $wages['car_id']       = $car->self_id;
-                    $wages['car_number']   = $car->car_number;
-                    $wages['driver_id']    = $driver->self_id;
-                    $wages['driver_name']  = $driver->name;
-                    $wages['social_flag']  = $driver->social_flag;
-                    $wages['date']         = $v['enter_time'];
-                    $wages['escort']       = $cargo->self_id;
-                    $wages['goodsname']    = $v['good_name'];
-                    $wages['pick_weight']  = $v['real_weight'];
-                    $wages['unload_weight']= $v['upload_weight'];
-                    $wages['price']        = $v['price'];
-                    $wages['total_money']  = $v['total_money'];
-                    $wages['remark']       = $v['remark'];
+//                    $wages['self_id']      = generate_id('wages_');
+//                    $wages['order_id']     = $list['self_id'];
+//                    $wages['car_id']       = $car->self_id;
+//                    $wages['car_number']   = $car->car_number;
+//                    $wages['driver_id']    = $driver->self_id;
+//                    $wages['driver_name']  = $driver->name;
+//                    $wages['social_flag']  = $driver->social_flag;
+//                    $wages['date']         = $v['enter_time'];
+//                    $wages['escort']       = $cargo->self_id;
+//                    $wages['goodsname']    = $v['good_name'];
+//                    $wages['pick_weight']  = $v['real_weight'];
+//                    $wages['unload_weight']= $v['upload_weight'];
+//                    $wages['price']        = $v['price'];
+//                    $wages['total_money']  = $v['total_money'];
+//                    $wages['remark']       = $v['remark'];
+//
+//                    $wages_list[] = $wages;
 
-                    $wages_list[] = $wages;
 
-
-                    $payment['self_id']                = generate_id('money');
-                    $payment['pay_type']               = 'salary';
-                    $payment['money']                  = $v['total_money'];
-                    $payment['pay_state']              = 'Y';
-                    $payment['order_id']               = $list['self_id'];
-                    $payment['process_state']          = 'Y';
-                    $payment['type_state']             = 'out';
-                    $payment['car_id']                 = $car->self_id;
-                    $payment['car_number']             = $car->car_number;
-                    $payment['user_id']                = $car->self_id;
-                    $payment['user_name']              = $car->name;
-                    $payment['group_code']             = $group_code;
-                    $payment['create_user_id']         = $user_info->admin_id;
-                    $payment['create_user_name']       = $user_info->name;
-                    $payment['create_time']            = $payment['update_time'] = $now_time;
-                    $payment_list[] = $payment;
+//                    $payment['self_id']                = generate_id('money');
+//                    $payment['pay_type']               = 'salary';
+//                    $payment['money']                  = $v['total_money'];
+//                    $payment['pay_state']              = 'Y';
+//                    $payment['order_id']               = $list['self_id'];
+//                    $payment['process_state']          = 'Y';
+//                    $payment['type_state']             = 'out';
+//                    $payment['car_id']                 = $car->self_id;
+//                    $payment['car_number']             = $car->car_number;
+//                    $payment['user_id']                = $car->self_id;
+//                    $payment['user_name']              = $car->name;
+//                    $payment['group_code']             = $group_code;
+//                    $payment['create_user_id']         = $user_info->admin_id;
+//                    $payment['create_user_name']       = $user_info->name;
+//                    $payment['create_time']            = $payment['update_time'] = $now_time;
+//                    $payment_list[] = $payment;
 
                 }
 
@@ -1186,9 +1186,9 @@ class OrderController extends CommonController{
             $count=count($datalist);
             $id= TmsOrder::insert($datalist);
             OrderLog::insert($order_log_list);
-            TmsMoney::insert($money_list);
-            TmsMoney::insert($payment_list);
-            TmsWages::insert($wages_list);
+//            TmsMoney::insert($money_list);
+//            TmsMoney::insert($payment_list);
+//            TmsWages::insert($wages_list);
 
             if($id){
                 $msg['code']=200;
