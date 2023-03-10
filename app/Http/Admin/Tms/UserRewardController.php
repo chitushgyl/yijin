@@ -353,7 +353,19 @@ class UserRewardController extends CommonController{
             $wheres['self_id'] = $self_id;
             $old_info=UserReward::where($wheres)->first();
             if($old_info){
-
+                if ($type == 'reward'){
+                    $update['user_id']            = $user_id;
+                    $update['user_name']          = $user_name;
+                    $update['money_award']        = $safe_reward;
+                    $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
+                    $update['cash_back']          = $time;
+                    $update['group_code']         = $group_code;
+                    $update['group_name']         = $group_name;
+                    $update['create_user_id']     = $user_info->admin_id;
+                    $update['create_user_name']   = $user_info->name;
+                    $update['update_time']=$now_time;
+                    AwardRemind::where('reward_id',$self_id)->update($update);
+                }
                 $data['update_time']=$now_time;
                 $id=UserReward::where($wheres)->update($data);
                 $operationing->access_cause='修改员工奖惩记录';
