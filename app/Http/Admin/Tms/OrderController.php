@@ -1080,9 +1080,13 @@ class OrderController extends CommonController{
                     $list['car_id']                  = $car->self_id;
                     $list['car_number']              = $car->car_number;
                     $list['trailer_num']             = $v['trailer_num'];
-                    $list['driver_id']               = $driver->self_id;
-                    $list['user_name']               = $driver->name;
-                    $list['escort']                  = $cargo->self_id;
+                    if ($v['user_name']){
+                        $list['driver_id']               = $driver->self_id;
+                        $list['user_name']               = $driver->name;
+                    }
+                    if($v['escort']){
+                        $list['escort']                  = $cargo->self_id;
+                    }
                     $list['sale_price']              = $v['sale_price'];
                     $list['car_num']                 = $v['car_num'];
                     $list['company_id']              = $company->self_id;
