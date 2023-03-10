@@ -1066,6 +1066,21 @@ class OrderController extends CommonController{
                         $abcd++;
                     }
                 }
+                if ($v['enter_time']){
+                    if (is_numeric($v['enter_time'])){
+                        $v['enter_time']              = gmdate('Y-m-d',($v['enter_time'] - 25569) * 3600 * 24);
+                    }else{
+                        if(date('Y-m-d',strtotime($v['enter_time'])) == $v['enter_time']){
+
+                        }else{
+                            if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行发货日期格式错误".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
+                        }
+                    }
+                }
                 $list=[];
                 $order_log=[];
                 $money = [];
