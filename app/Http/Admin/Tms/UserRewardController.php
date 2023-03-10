@@ -823,6 +823,7 @@ class UserRewardController extends CommonController{
             $use_flag       =$request->input('use_flag');
             $group_code     =$request->input('group_code');
             $user_id        =$request->input('user_id');
+            $user_name        =$request->input('user_name');
             $start_time     =$request->input('start_time');
             $end_time       =$request->input('end_time');
             $listrows       =$num;
@@ -833,6 +834,7 @@ class UserRewardController extends CommonController{
                 ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
                 ['type'=>'=','name'=>'group_code','value'=>$group_code],
                 ['type'=>'=','name'=>'user_id','value'=>$user_id],
+                ['type'=>'like','name'=>'user_name','value'=>$user_name],
                 ['type'=>'>=','name'=>'cash_back','value'=>$start_time],
                 ['type'=>'<','name'=>'cash_back','value'=>$end_time],
             ];
