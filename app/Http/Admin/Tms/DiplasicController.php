@@ -367,9 +367,9 @@ class DiplasicController extends CommonController{
              */
             $shuzu=[
                 '车牌号码' =>['Y','N','64','car_number'],
-                '车辆出厂日期' =>['Y','N','50','production_date'],
-                '车辆投入运行日期' =>['Y','N','50','input_date'],
-                '车辆维护周期' =>['Y','N','64','service'],
+                '车辆出厂日期' =>['Y','Y','50','production_date'],
+                '车辆投入运行日期' =>['Y','Y','50','input_date'],
+                '车辆维护周期' =>['Y','Y','64','service'],
                 $year.'年维护月份' =>['Y','Y','30','service_now'],
                 '计划'.$year.'年维护月份' =>['N','Y','30','service_plan'],
                 '计划'.$next_year.'年维护月份' =>['N','Y','30','next_service_plan'],
