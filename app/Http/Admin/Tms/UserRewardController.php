@@ -307,11 +307,13 @@ class UserRewardController extends CommonController{
                     break;
                 case 'rule':
                     $data['handle_connect']         =$handle_connect;
+                    $data['violation_connect']      =$violation_connect;
                     $data['score']                  =$score;
                     $data['payment']                =$payment;
                     break;
                 case 'accident':
                     $data['fault_address']          =$fault_address;
+                    $data['violation_connect']      =$violation_connect;
                     $data['fault_price']            =$fault_price;
                     $data['fault_party']            =$fault_party;
                     break;

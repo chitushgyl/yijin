@@ -419,12 +419,12 @@ class UserController extends CommonController{
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'=','name'=>'type','value'=>$type],
+//            ['type'=>'=','name'=>'type','value'=>$type],
         ];
 
         $where=get_list_where($search);
         $select=['self_id','name','social_flag'];
-        $data['info']=SystemUser::where($where)->select($select)->get();
+        $data['info']=SystemUser::where($where)->whereIn('type',explode(',',$type))->select($select)->get();
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";

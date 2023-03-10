@@ -14,7 +14,7 @@ class CrondtabController extends Controller {
 
 
     /**
-     *查询当月有无违规 违章 事故 /api/crondtab/userReword
+     *查询当月有无违规 违章 事故 /admin/crondtab/userReword
      */
     public function userReword(Request $request){
         $now_time  = time();
@@ -22,6 +22,9 @@ class CrondtabController extends Controller {
         $month_start = date('Y-m-01',strtotime(date('Y-m-d')));
         $month_end = date('Y-m-d',strtotime("$month_start+1 month-1 day"));
         $where = [
+
+        ];
+        $where1 = [
             ['type','!=','reward'],
             ['delete_flag','=','Y'],
             ['event_time','>=',$month_start],
@@ -31,7 +34,7 @@ class CrondtabController extends Controller {
         $select = ['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
             ,'cash_back','cash_flag','type','user_name'];
-        $order_list = UserReward::where($where)->select($select)->get();
+        $order_list = UserReward::where($where1)->select($select)->get();
 
         dd($order_list->toArray());
 
