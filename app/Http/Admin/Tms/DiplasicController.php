@@ -406,6 +406,8 @@ class DiplasicController extends CommonController{
                         }else{
                             if(date('Y-m-d',strtotime($v['production_date'])) == $v['production_date']){
 
+                            }elseif($v['production_date'] == '/'){
+                                $v['production_date'] = null;
                             }else{
                                 if($abcd<$errorNum){
                                     $strs .= '数据中的第'.$a."行车辆出厂日期格式错误".'</br>';
@@ -422,6 +424,8 @@ class DiplasicController extends CommonController{
                         }else{
                             if(date('Y-m-d',strtotime($v['input_date'])) == $v['input_date']){
 
+                            }elseif($v['input_date'] == '/'){
+                                $v['input_date'] = null;
                             }else{
                                 if($abcd<$errorNum){
                                     $strs .= '数据中的第'.$a."行车辆投入运行日期格式错误".'</br>';
@@ -439,6 +443,8 @@ class DiplasicController extends CommonController{
                         }else{
                             if(date('Y-m-d',strtotime($v['service_now'])) == $v['service_now']){
 
+                            }elseif($v['service_now'] == '/'){
+                                $v['service_now'] = null;
                             }else{
                                 if($abcd<$errorNum){
                                     $strs .= '数据中的第'.$a."行".$year."维护月份格式错误".'</br>';
@@ -455,6 +461,8 @@ class DiplasicController extends CommonController{
                         }else{
                             if(date('Y-m-d',strtotime($v['service_plan'])) == $v['service_plan']){
 
+                            }elseif($v['service_plan'] == '/'){
+                                $v['service_plan'] = null;
                             }else{
                                 if($abcd<$errorNum){
                                     $strs .= '数据中的第'.$a."行计划".$year."维护月份格式错误".'</br>';
@@ -471,6 +479,8 @@ class DiplasicController extends CommonController{
                         }else{
                             if(date('Y-m-d',strtotime($v['next_service_plan'])) == $v['next_service_plan']){
 
+                            }elseif($v['next_service_plan'] == '/'){
+                                $v['next_service_plan'] = null;
                             }else{
                                 if($abcd<$errorNum){
                                     $strs .= '数据中的第'.$a."行计划".$next_year."维护月份格式错误".'</br>';
