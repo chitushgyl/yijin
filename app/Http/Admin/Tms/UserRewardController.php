@@ -873,7 +873,6 @@ class UserRewardController extends CommonController{
                     $data['info']=AwardRemind::with(['systemUser' => function($query) use($select1){
                         $query->select($select1);
                     }])
-                        ->whereIn('group_code',$group_info['group_code'])
                         ->where($where1)
                         ->orderBy('create_time', 'desc')
                         ->select($select)->get();
@@ -892,7 +891,6 @@ class UserRewardController extends CommonController{
                     $data['info']=AwardRemind::with(['systemUser' => function($query) use($select1){
                         $query->select($select1);
                     }])
-                        ->whereIn('group_code',$group_info['group_code'])
                         ->where($where1)
                         ->orderBy('create_time', 'desc')
                         ->select($select)->get();
