@@ -56,6 +56,13 @@ class CrondtabController extends Controller {
         }
     }
 
+    /**
+     * 自动更新二次维护时间
+     * */
+    public function updateDiplasic(Request $request){
+        $now_time = date('Y-m-d H:i:s',time());
+    }
+
 
 
 
