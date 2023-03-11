@@ -83,10 +83,15 @@ class CrondtabController extends Controller {
                     }
                     $update['service'] = $num.'个月';
                     $update['next_service_plan'] = date('Y-m-d', strtotime('+'.$num.' month', strtotime($v->next_service_plan)));
-                    TmsDiplasic::where('self_id',$v->self_id)->update($update);
+                    $id = TmsDiplasic::where('self_id',$v->self_id)->update($update);
                 }
             }
 
+        }
+        if ($id){
+            $msg['code']=200;
+            $msg['msg']='更新成功！';
+            return $msg;
         }
     }
 
