@@ -71,7 +71,7 @@ class CrondtabController extends Controller {
         foreach ($order_list as $k => $v){
             if ($v->next_service_plan){
                 $year = date('Y',strtotime($v->next_service_plan));
-                if ($now_year = $year){
+                if ($now_year == $year){
                     $update['service_now'] = $v->next_service_plan;
                     //计算当前时间与投入时间的时间间隔 大于5年 维护周期12个月 小于5年 维护周期6个月
                     $a = (strtotime(date('Y-m-d',time()))-strtotime($v->input_date))/(24*3600*365);
