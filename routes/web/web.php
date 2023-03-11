@@ -283,6 +283,7 @@ Route::group([
     'prefix' => 'crondtab','namespace'  => 'Crondtab',
 ], function(){
 Route::any('/crondtab/userReword', 'CrondtabController@userReword'); //定时下线订单
+Route::any('/crondtab/updateDiplasic', 'CrondtabController@updateDiplasic'); //定时下线订单
 
 });
 

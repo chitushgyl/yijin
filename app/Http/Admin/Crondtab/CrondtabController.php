@@ -4,6 +4,7 @@ namespace App\Http\Admin\Crondtab;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tms\AwardRemind;
+use App\Models\Tms\TmsDiplasic;
 use App\Models\Tms\TmsPayment;
 use App\Models\User\UserCapital;
 use App\Models\User\UserReward;
@@ -46,7 +47,7 @@ class CrondtabController extends Controller {
                 'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
                 ,'cash_back','cash_flag','type','user_name'];
             $order_list = UserReward::where($where1)->orWhere($where2)->select($select)->get();
-            if(count(get_object_vars($order_list))>0){
+            if(count($order_list)>0){
                 $time = date('Y-m', strtotime('+6 month', strtotime($month_start)));
                 $update['cash_back']          = $time;
                 $update['update_time']        = date('Y-m-d H:i:s',time());
@@ -61,6 +62,32 @@ class CrondtabController extends Controller {
      * */
     public function updateDiplasic(Request $request){
         $now_time = date('Y-m-d H:i:s',time());
+        $now_year = date('Y',time());
+        $where = [
+            ['delete_flag','=','Y'],
+        ];
+        $order_list = TmsDiplasic::where($where)->get();
+//        dd($order_list->toArray());
+        foreach ($order_list as $k => $v){
+            if ($v->next_service_plan){
+                $year = date('Y',strtotime($v->next_service_plan));
+                if ($now_year = $year){
+                    $update['service_now'] = $v->next_service_plan;
+                    //计算当前时间与投入时间的时间间隔 大于5年 维护周期12个月 小于5年 维护周期6个月
+                    $a = (strtotime(date('Y-m-d',time()))-strtotime($v->input_date))/(24*3600*365);
+                    if ($a - 5 >0){
+                        $num = 12;
+                    }else{
+                        $num = 6;
+                        $update['service_plan'] = date('Y-m-d', strtotime('+'.$num.' month', strtotime($v->next_service_plan)));
+                    }
+                    $update['service'] = $num.'个月';
+                    $update['next_service_plan'] = date('Y-m-d', strtotime('+'.$num.' month', strtotime($v->next_service_plan)));
+                    TmsDiplasic::where('self_id',$v->self_id)->update($update);
+                }
+            }
+
+        }
     }
 
 
