@@ -52,10 +52,11 @@ class CarServiceController extends CommonController{
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
         $car_number     =$request->input('car_number');
-        $driver_name     =$request->input('driver_name');
+        $driver_name    =$request->input('driver_name');
         $start_time     =$request->input('start_time');
-        $end_time     =$request->input('end_time');
-        $type     =$request->input('type');
+        $end_time       =$request->input('end_time');
+        $type           =$request->input('type');
+        $service_partne =$request->input('service_partne');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -68,6 +69,7 @@ class CarServiceController extends CommonController{
             ['type'=>'>=','name'=>'create_time','value'=>$start_time],
             ['type'=>'<','name'=>'create_time','value'=>$end_time],
             ['type'=>'=','name'=>'type','value'=>$type],
+            ['type'=>'=','name'=>'service_partne','value'=>$service_partne],
         ];
 
         $where=get_list_where($search);
