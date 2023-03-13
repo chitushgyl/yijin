@@ -943,10 +943,9 @@ class UserRewardController extends CommonController{
         $self_id=$request->input('self_id');
         $flag='delFlag';
 //        $self_id='car_202012242220439016797353';
-        $old_info = AwardRemind::where('self_id',$self_id)->select('user_id','user_name','money_award','award_flag','cash_back','use_flag','self_id','delete_flag','group_code')->get();
+        $old_info = AwardRemind::where('self_id',$self_id)->select('user_id','user_name','money_award','award_flag','cash_back','use_flag','self_id','delete_flag','group_code')->first();
         $data['award_flag']='Y';
         $data['update_time']=$now_time;
-//        dd($old_info);
         $id=AwardRemind::where('self_id',$self_id)->update($data);
         /**保存费用**/
         $money['pay_type']           = 'fuel';
