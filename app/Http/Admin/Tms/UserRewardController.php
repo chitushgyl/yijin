@@ -925,6 +925,10 @@ class UserRewardController extends CommonController{
 //            }
             foreach ($data['items'] as $k=>$v) {
                 $v->button_info=$button_info;
+                if ($v->award_flag == 'Y'){
+                    $v->button_info=[];
+                }
+
             }
 
             $msg['code']=200;

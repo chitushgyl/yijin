@@ -424,7 +424,12 @@ class UserController extends CommonController{
 
         $where=get_list_where($search);
         $select=['self_id','name','social_flag'];
-        $data['info']=SystemUser::where($where)->whereIn('type',explode(',',$type))->select($select)->get();
+        if ($type){
+            $data['info']=SystemUser::where($where)->whereIn('type',explode(',',$type))->select($select)->get();
+        }else{
+            $data['info']=SystemUser::where($where)->select($select)->get();
+        }
+
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
