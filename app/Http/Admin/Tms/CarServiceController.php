@@ -69,7 +69,7 @@ class CarServiceController extends CommonController{
             ['type'=>'>=','name'=>'create_time','value'=>$start_time],
             ['type'=>'<','name'=>'create_time','value'=>$end_time],
             ['type'=>'=','name'=>'type','value'=>$type],
-            ['type'=>'=','name'=>'service_partne','value'=>$service_partne],
+            ['type'=>'like','name'=>'service_partne','value'=>$service_partne],
         ];
 
         $where=get_list_where($search);
