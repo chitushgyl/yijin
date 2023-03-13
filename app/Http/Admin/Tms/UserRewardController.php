@@ -316,6 +316,8 @@ class UserRewardController extends CommonController{
                     $data['violation_connect']      =$violation_connect;
                     $data['fault_price']            =$fault_price;
                     $data['fault_party']            =$fault_party;
+                    $data['score']                  =$score;
+                    $data['payment']                =$payment;
                     break;
                 case 'reward':
                     $data['escort']                 =$escort;
@@ -948,7 +950,7 @@ class UserRewardController extends CommonController{
         $data['update_time']=$now_time;
         $id=AwardRemind::where('self_id',$self_id)->update($data);
         /**保存费用**/
-        $money['pay_type']           = 'fuel';
+        $money['pay_type']           = 'reward';
         $money['money']              = $old_info->money_award;
         $money['pay_state']          = 'Y';
         $money['user_id']            = $old_info->user_id;
