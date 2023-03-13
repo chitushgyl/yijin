@@ -931,6 +931,62 @@ class UserRewardController extends CommonController{
             return $msg;
         }
 
+        /**
+         * 修改是否返还状态  tms/userReward/updateState
+         * */
+    public function updateState(Request $request){
+        $now_time=date('Y-m-d H:i:s',time());
+        $operationing = $request->get('operationing');//接收中间件产生的参数
+        $user_info = $request->get('user_info');//接收中间件产生的参数
+        $table_name='award_remind';
+        $medol_name='AwardRemind';
+        $self_id=$request->input('self_id');
+        $flag='delFlag';
+//        $self_id='car_202012242220439016797353';
+        $old_info = AwardRemind::where('self_id',$self_id)->select('user_id','user_name','money_award','award_flag','cash_back','use_flag','self_id','delete_flag','group_code')->get();
+        $data['award_flag']='Y';
+        $data['update_time']=$now_time;
+//        dd($old_info);
+        $id=AwardRemind::where('self_id',$self_id)->update($data);
+        /**保存费用**/
+        $money['pay_type']           = 'fuel';
+        $money['money']              = $old_info->money_award;
+        $money['pay_state']          = 'Y';
+        $money['user_id']            = $old_info->user_id;
+        $money['user_name']          = $old_info->user_name;
+        $money['process_state']      = 'Y';
+        $money['type_state']         = 'out';
+        $money['self_id']            = generate_id('money_');
+        $money['group_code']         = $user_info->group_code;
+        $money['group_name']         = $user_info->group_name;
+        $money['create_user_id']     = $user_info->admin_id;
+        $money['create_user_name']   = $user_info->name;
+        $money['create_time']        = $money['update_time']=$now_time;
+
+        TmsMoney::insert($money);
+        if ($id){
+            $msg['code']=200;
+            $msg['msg']="修改成功！";
+        }else{
+            $msg['code']=300;
+            $msg['msg']="修改失败！";
+
+        }
+        $operationing->access_cause='删除';
+        $operationing->table=$table_name;
+        $operationing->table_id=$self_id;
+        $operationing->now_time=$now_time;
+        $operationing->old_info=$old_info;
+        $operationing->new_info=(object)$data;
+        $operationing->operation_type=$flag;
+
+        $msg['code']=$msg['code'];
+        $msg['msg']=$msg['msg'];
+        $msg['data']=(object)$data;
+
+        return $msg;
+    }
+
 }
 ?>
 
