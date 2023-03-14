@@ -73,7 +73,7 @@ class OrderController extends CommonController{
 
         $where = get_list_where($search);
 
-        $select = ['self_id','status','count','total_flag','create_time','create_user_name',
+        $select = ['self_id','status','count','total_flag','create_time','create_user_name','out_time',
             'fuhe_flag','file_id','warehouse_name','group_name','picker','operator','purchase','car_num'];
         $order_list_select= ['self_id','good_name','good_unit','spec','num','order_id','external_sku_id','remarks','price','total_price','out_library_state'];
         switch ($group_info['group_id']) {
