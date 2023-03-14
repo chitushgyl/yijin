@@ -51,7 +51,11 @@ class OrderController extends CommonController{
         $use_flag           = $request->input('use_flag');
         $warehouse_name     = $request->input('warehouse_name');
         $status             = $request->input('status');
-        $total_flag             = $request->input('total_flag');
+        $total_flag         = $request->input('total_flag');
+        $picker             = $request->input('picker');
+        $car_number         = $request->input('car_number');
+        $start_time         = $request->input('start_time');
+        $end_time           = $request->input('end_time');
         $listrows           = $num;
         $firstrow           = ($page - 1) * $listrows;
 
@@ -61,6 +65,10 @@ class OrderController extends CommonController{
             ['type'=>'all','name'=>'total_flag','value'=>$total_flag],
             ['type'=>'like','name'=>'warehouse_name','value'=>$warehouse_name],
             ['type'=>'=','name'=>'status','value'=>$status],
+            ['type'=>'like','name'=>'picker','value'=>$picker],
+            ['type'=>'=','name'=>'car_number','value'=>$car_number],
+            ['type'=>'>=','name'=>'start_time','value'=>$start_time],
+            ['type'=>'<','name'=>'end_time','value'=>$end_time],
         ];
 
         $where = get_list_where($search);
@@ -170,6 +178,7 @@ class OrderController extends CommonController{
         $picker             = $request->input('picker');
         $operator           = $request->input('operator');
         $purchase           = $request->input('purchase');
+        $out_time           = $request->input('out_time');
 
 
         /***
@@ -228,6 +237,7 @@ class OrderController extends CommonController{
             $order_2['picker']              =$picker;
             $order_2['operator']            =$operator;
             $order_2['purchase']            =$purchase;
+            $order_2['out_time']            =$out_time;
             $order_2['status']              =2;
 
             $list=[];
