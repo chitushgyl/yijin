@@ -82,6 +82,7 @@ class CarServiceController extends CommonController{
                 $data['items']=CarService::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
+                $data['price']=CarService::where($where)->sum('service_price');
                 $data['group_show']='Y';
                 break;
 
@@ -91,6 +92,7 @@ class CarServiceController extends CommonController{
                 $data['items']=CarService::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
+                $data['price']=CarService::where($where)->sum('service_price');
                 $data['group_show']='N';
                 break;
 
@@ -99,6 +101,7 @@ class CarServiceController extends CommonController{
                 $data['items']=CarService::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
+                $data['price']=CarService::where($where)->whereIn('group_code',$group_info['group_code'])->sum('service_price');
                 $data['group_show']='Y';
                 break;
         }

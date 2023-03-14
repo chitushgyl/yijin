@@ -119,6 +119,7 @@ class UserRewardController extends CommonController{
                     ->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
+
                 $data['group_show']='Y';
                 break;
 
@@ -134,6 +135,7 @@ class UserRewardController extends CommonController{
                     ->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
+//                $data['price']=UserReward::where($where)->sum('total_money');
                 $data['group_show']='N';
                 break;
 
@@ -147,6 +149,7 @@ class UserRewardController extends CommonController{
                     }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
+//                $data['price']=UserReward::where($where)->whereIn('group_code',$group_info['group_code'])->sum('total_money');
                 $data['group_show']='Y';
                 break;
         }

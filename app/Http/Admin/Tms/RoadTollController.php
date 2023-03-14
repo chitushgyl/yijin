@@ -75,6 +75,7 @@ class RoadTollController extends CommonController{
                 $data['items']=RoadToll::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
+                $data['price']=RoadToll::where($where)->sum('road_price');
                 $data['group_show']='Y';
                 break;
 
@@ -84,6 +85,7 @@ class RoadTollController extends CommonController{
                 $data['items']=RoadToll::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
+                $data['price']=RoadToll::where($where)->sum('road_price');
                 $data['group_show']='N';
                 break;
 
@@ -92,6 +94,7 @@ class RoadTollController extends CommonController{
                 $data['items']=RoadToll::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
+                $data['price']=RoadToll::where($where)->whereIn('group_code',$group_info['group_code'])->sum('road_price');
                 $data['group_show']='Y';
                 break;
         }

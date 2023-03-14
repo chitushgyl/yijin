@@ -79,6 +79,7 @@ class CarOilController extends CommonController{
                 $data['items']=CarOil::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
+                $data['price']=CarOil::where($where)->sum('total_money');
                 $data['group_show']='Y';
                 break;
 
@@ -88,6 +89,7 @@ class CarOilController extends CommonController{
                 $data['items']=CarOil::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
+                $data['price']=CarOil::where($where)->sum('total_money');
                 $data['group_show']='N';
                 break;
 
@@ -96,6 +98,7 @@ class CarOilController extends CommonController{
                 $data['items']=CarOil::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
+                $data['price']=CarOil::where($where)->whereIn('group_code',$group_info['group_code'])->sum('total_money');
                 $data['group_show']='Y';
                 break;
         }
