@@ -120,9 +120,9 @@ class UserRewardController extends CommonController{
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 if ($type == 'reward'){
-                    $data['price']=UserReward::where($where)->sum('payment');
-                }else{
                     $data['price']=UserReward::where($where)->sum('safe_reward');
+                }else{
+                    $data['price']=UserReward::where($where)->sum('payment');
                 }
 
                 $data['group_show']='Y';
@@ -141,9 +141,9 @@ class UserRewardController extends CommonController{
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 if ($type == 'reward'){
-                    $data['price']=UserReward::where($where)->sum('payment');
-                }else{
                     $data['price']=UserReward::where($where)->sum('safe_reward');
+                }else{
+                    $data['price']=UserReward::where($where)->sum('payment');
                 }
                 $data['group_show']='N';
                 break;
@@ -160,9 +160,9 @@ class UserRewardController extends CommonController{
                     ->select($select)->get();
 
                 if ($type == 'reward'){
-                    $data['price']=UserReward::where($where)->whereIn('group_code',$group_info['group_code'])->sum('payment');
-                }else{
                     $data['price']=UserReward::where($where)->whereIn('group_code',$group_info['group_code'])->sum('safe_reward');
+                }else{
+                    $data['price']=UserReward::where($where)->whereIn('group_code',$group_info['group_code'])->sum('payment');
                 }
                 $data['group_show']='Y';
                 break;
