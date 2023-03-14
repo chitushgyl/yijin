@@ -100,6 +100,7 @@ class LibraryController extends CommonController{
         $purchase           =$request->input('purchase');
         $start_time           =$request->input('start_time');
         $end_time           =$request->input('end_time');
+        $good_name           =$request->input('good_name');
         $listrows           =$num;
         $firstrow           =($page-1)*$listrows;
 
@@ -113,6 +114,7 @@ class LibraryController extends CommonController{
 			['type'=>'like','name'=>'purchase','value'=>$purchase],
 			['type'=>'>=','name'=>'enter_time','value'=>$start_time],
 			['type'=>'<','name'=>'enter_time','value'=>$end_time],
+
         ];
 
         $where=get_list_where($search);
@@ -126,8 +128,11 @@ class LibraryController extends CommonController{
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=WmsLibraryOrder::where($where)->count(); //总的数据量
-                $data['items']=WmsLibraryOrder::with(['wmsLibrarySige' => function($query)use($WmsLibrarySigeSelect) {
+                $data['items']=WmsLibraryOrder::with(['wmsLibrarySige' => function($query)use($WmsLibrarySigeSelect,$good_name) {
                     $query->where('delete_flag','Y');
+                    if ($good_name){
+                        $query->where('good_name','like',$good_name);
+                    }
                     $query->select($WmsLibrarySigeSelect);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
@@ -138,8 +143,11 @@ class LibraryController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=WmsLibraryOrder::where($where)->count(); //总的数据量
-                $data['items']=WmsLibraryOrder::with(['wmsLibrarySige' => function($query)use($WmsLibrarySigeSelect) {
+                $data['items']=WmsLibraryOrder::with(['wmsLibrarySige' => function($query)use($WmsLibrarySigeSelect,$good_name) {
                     $query->where('delete_flag','Y');
+                    if ($good_name){
+                        $query->where('good_name','like',$good_name);
+                    }
                     $query->select($WmsLibrarySigeSelect);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
@@ -149,8 +157,11 @@ class LibraryController extends CommonController{
 
             case 'more':
                 $data['total']=WmsLibraryOrder::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=WmsLibraryOrder::with(['wmsLibrarySige' => function($query)use($WmsLibrarySigeSelect) {
+                $data['items']=WmsLibraryOrder::with(['wmsLibrarySige' => function($query)use($WmsLibrarySigeSelect,$good_name) {
                     $query->where('delete_flag','Y');
+                    if ($good_name){
+                        $query->where('good_name','like',$good_name);
+                    }
                     $query->select($WmsLibrarySigeSelect);
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
