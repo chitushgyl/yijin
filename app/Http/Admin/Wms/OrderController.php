@@ -592,7 +592,7 @@ class OrderController extends CommonController{
             ['delete_flag','=','Y'],
         ];
         $order_select = ['self_id','status','create_user_name','create_time','group_name','warehouse_name','total_flag','total_time',
-            'picker','operator','purchase','car_num','delivery_time'];
+            'picker','operator','purchase','car_num','delivery_time','out_time'];
         $order_list_select= ['self_id','good_name','good_unit','spec','num','order_id','external_sku_id','remarks','price','total_price','out_library_state'];
         $wms_out_sige_select= ['order_list_id','num','good_unit','good_target_unit','good_scale','good_english_name'];
 
