@@ -56,6 +56,7 @@ class OrderController extends CommonController{
         $car_number         = $request->input('car_number');
         $start_time         = $request->input('start_time');
         $end_time           = $request->input('end_time');
+        $good_name           = $request->input('good_name');
         $listrows           = $num;
         $firstrow           = ($page - 1) * $listrows;
 
@@ -79,8 +80,11 @@ class OrderController extends CommonController{
         switch ($group_info['group_id']) {
             case 'all':
                 $data['total'] = WmsOutOrder::where($where)->count(); //总的数据量
-                $data['items'] = WmsOutOrder::with(['wmsOutOrderList'=>function($query)use($order_list_select){
+                $data['items'] = WmsOutOrder::with(['wmsOutOrderList'=>function($query)use($order_list_select,$good_name){
                     $query->where('delete_flag','=','Y');
+                    if ($good_name){
+                        $query->where('good_name','like',$good_name);
+                    }
                     $query->select($order_list_select);
                 }]) ->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
@@ -91,7 +95,10 @@ class OrderController extends CommonController{
             case 'one':
                 $where[] = ['group_code', '=', $group_info['group_code']];
                 $data['total'] = WmsOutOrder::where($where)->count(); //总的数据量
-                $data['items'] = WmsOutOrder::with(['wmsOutOrderList'=>function($query)use($order_list_select){
+                $data['items'] = WmsOutOrder::with(['wmsOutOrderList'=>function($query)use($order_list_select,$good_name){
+                    if ($good_name){
+                        $query->where('good_name','like',$good_name);
+                    }
                     $query->where('delete_flag','=','Y');
                     $query->select($order_list_select);
                 }]) ->where($where)
@@ -102,8 +109,11 @@ class OrderController extends CommonController{
 
             case 'more':
                 $data['total'] = WmsOutOrder::where($where)->whereIn('group_code', $group_info['group_code'])->count(); //总的数据量
-                $data['items'] = WmsOutOrder::with(['wmsOutOrderList'=>function($query)use($order_list_select){
+                $data['items'] = WmsOutOrder::with(['wmsOutOrderList'=>function($query)use($order_list_select,$good_name){
                     $query->where('delete_flag','=','Y');
+                    if ($good_name){
+                        $query->where('good_name','like',$good_name);
+                    }
                     $query->select($order_list_select);
                 }]) ->where($where)->whereIn('group_code', $group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
