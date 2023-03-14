@@ -3,6 +3,7 @@ namespace App\Http\Admin\Wms;
 use App\Models\Tms\TmsMoney;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\DetailsController as Details;
 use App\Models\Wms\WmsMoney;
@@ -70,6 +71,7 @@ class MoneyController extends CommonController{
                 $data['items']=TmsMoney::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
+                $data['info']=TmsMoney::where($where)->select('pay_type',DB::raw('sum(money) as price'))->groupBy('pay_type')->get();
                 $data['group_show']='Y';
                 break;
 
@@ -79,6 +81,7 @@ class MoneyController extends CommonController{
                 $data['items']=TmsMoney::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
+                $data['info']=TmsMoney::where($where)->select('pay_type',DB::raw('sum(money) as price'))->groupBy('pay_type')->get();
                 $data['group_show']='N';
                 break;
 
@@ -87,6 +90,8 @@ class MoneyController extends CommonController{
                 $data['items']=TmsMoney::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
+                $data['info']=TmsMoney::where($where)->whereIn('group_code',$group_info['group_code'])
+                    ->select('pay_type',DB::raw('sum(money) as price'))->groupBy('pay_type')->get();
                 $data['group_show']='Y';
                 break;
         }
@@ -116,6 +121,9 @@ class MoneyController extends CommonController{
                 $v->button_info=$button_info4;
             }
 
+        }
+        foreach ($data['info'] as $k=>$v) {
+            $v->pay_type=$money_type_show[$v->pay_type]??null;
         }
 
 
