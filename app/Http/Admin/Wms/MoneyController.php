@@ -108,7 +108,7 @@ class MoneyController extends CommonController{
         }
         foreach ($data['items'] as $k=>$v) {
             $v->pay_type=$money_type_show[$v->pay_type]??null;
-//            $v->button_info=$button_info;
+            $v->button_info=$button_info;
             if ($v->pay_state == 'N'){
                 $v->button_info=$button_info3;
             }

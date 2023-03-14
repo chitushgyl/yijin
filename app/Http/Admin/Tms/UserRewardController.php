@@ -105,7 +105,7 @@ class UserRewardController extends CommonController{
 
         $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
-            ,'cash_back','cash_flag','type','user_name'];
+            ,'cash_back','cash_flag','type','user_name','bear'];
         $select1=['self_id','name'];
         switch ($group_info['group_id']){
             case 'all':
@@ -231,7 +231,7 @@ class UserRewardController extends CommonController{
         ];
         $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
-         ,'cash_back','cash_flag','type','user_name'];
+         ,'cash_back','cash_flag','type','user_name','bear'];
         $data['info']=UserReward::where($where)->select($select)->first();
 
         $msg['code']=200;
@@ -282,6 +282,7 @@ class UserRewardController extends CommonController{
         $fault_party             =$request->input('fault_party');//责任方
         $cash_back               =$request->input('cash_back');//奖金返还
         $cash_flag               =$request->input('cash_flag');//奖金是否发放
+        $bear                    =$request->input('bear');//承担多少责任
 
         $rules=[
             'car_id'=>'required',
@@ -316,6 +317,7 @@ class UserRewardController extends CommonController{
                     $data['violation_connect']      =$violation_connect;
                     $data['fault_price']            =$fault_price;
                     $data['fault_party']            =$fault_party;
+                    $data['bear']                   =$bear;
                     $data['score']                  =$score;
                     $data['payment']                =$payment;
                     break;
@@ -673,7 +675,7 @@ class UserRewardController extends CommonController{
         $table_name='user_reward';
         $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
-            ,'cash_back','cash_flag','type','user_name'];
+            ,'cash_back','cash_flag','type','user_name','bear'];
         // $self_id='address_202012301359512962811465';
         $select1 = ['self_id','name'];
         $info=$details->details($self_id,$table_name,$select);
