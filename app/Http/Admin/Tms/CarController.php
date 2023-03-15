@@ -63,6 +63,7 @@ class CarController extends CommonController{
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
             ['type'=>'like','name'=>'carframe_num','value'=>$carframe_num],
             ['type'=>'=','name'=>'car_type','value'=>$car_type],
+            ['type'=>'=','name'=>'type','value'=>$type],
         ];
 
         $where=get_list_where($search);
@@ -70,7 +71,7 @@ class CarController extends CommonController{
         $select=['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
             'license','medallion','payment_state','insure_price','create_time','update_time','use_flag','delete_flag','compulsory_end','commercial_end','carrier_end','compulsory','commercial','carrier',
         'medallion_num','curb_weight','all_weight','medallion_change','license_begin','production_date','scrap_date','business_scope','goods','medallion_change_end',
-        'design_code','operation_date','tank_num','tank_type','car_color','car_brand','car_model',
+        'design_code','operation_date','tank_num','tank_type','car_color','car_brand','car_model','type',
             'car_made','engine_num','fuel_type','displacement_power','maker','turn_view','tread','trye_num','steel_plate','wheel_base','axles_num','outline',
             'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model'];
         $select1 = ['self_id','parame_name','type'];
@@ -79,9 +80,6 @@ class CarController extends CommonController{
                 $data['total']=TmsCar::where($where)->count(); //总的数据量
                 $data['items']=TmsCar::with(['TmsCarType' => function($query) use($select1,$type){
                     $query->select($select1);
-                    if ($type){
-                        $query->where('type',$type);
-                    }
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
@@ -91,11 +89,8 @@ class CarController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=TmsCar::where($where)->count(); //总的数据量
-                $data['items']=TmsCar::with(['TmsCarType' => function($query) use($select1,$type){
+                $data['items']=TmsCar::with(['TmsCarType' => function($query) use($select1){
                     $query->select($select1);
-                    if ($type){
-                        $query->where('type',$type);
-                    }
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
@@ -104,11 +99,8 @@ class CarController extends CommonController{
 
             case 'more':
                 $data['total']=TmsCar::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=TmsCar::with(['TmsCarType' => function($query) use($select1,$type){
+                $data['items']=TmsCar::with(['TmsCarType' => function($query) use($select1){
                     $query->select($select1);
-                    if ($type){
-                        $query->where('type',$type);
-                    }
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
@@ -150,7 +142,7 @@ class CarController extends CommonController{
             'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model','license_back','medallion_back','registr_date','medallion_begin',
             'license_start','compulsory_cert','commercial_cert','registr_cert_date','carrier_insurer','carrier_insurer_num','carrier_baoe','carrier_zrx','carrier_zr','carrier_good',
             'compulsory_insurer','compulsory_num','compulsory_sc','compulsory_yl','compulsory_property','commercial_insurer','commercial_num','commercial_tz','commercial_zr','commercial_driver',
-            'commercial_user','car_unit'];
+            'commercial_user','car_unit','type'];
         $data['info']=TmsCar::where($where)->select($select)->first();
 
         if ($data['info']){
@@ -186,6 +178,7 @@ class CarController extends CommonController{
         $group_code         =$request->input('group_code');
         $car_number         =$request->input('car_number');//车牌号
         $car_type           =$request->input('car_type');//车型
+        $type               =$request->input('type');//车型
         $carframe_num       =$request->input('carframe_num');//车架号
         $crock_medium       =$request->input('crock_medium');//罐体介质
         $license_date       =$request->input('license_date');// 行驶证到期时间
@@ -315,6 +308,7 @@ class CarController extends CommonController{
 
             $data['car_number']        =$car_number;
             $data['car_type']          =$car_type;
+            $data['type']              =$type;
             $data['carframe_num']      =$carframe_num;
             $data['crock_medium']      =$crock_medium;
             $data['license_date']      =$license_date;

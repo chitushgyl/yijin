@@ -265,12 +265,18 @@ class TypeController extends CommonController{
     /***    拿去车辆类型数据     /tms/type/getType
      */
     public function  getType(Request $request){
+        $type=$request->input('type');
         $where=[
             ['delete_flag','=','Y'],
             ['use_flag','=','Y'],
         ];
         $select=['self_id','parame_name','img','type'];
-        $data['info']=TmsCarType::where($where)->select($select)->get();
+        if ($type){
+            $data['info']=TmsCarType::where($where)->where('type',$type)->select($select)->get();
+        }else{
+            $data['info']=TmsCarType::where($where)->select($select)->get();
+        }
+
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
