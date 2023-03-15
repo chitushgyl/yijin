@@ -73,7 +73,7 @@ class CarController extends CommonController{
         'design_code','operation_date','tank_num','tank_type','car_color','car_brand','car_model',
             'car_made','engine_num','fuel_type','displacement_power','maker','turn_view','tread','trye_num','steel_plate','wheel_base','axles_num','outline',
             'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model'];
-        $select1 = ['self_id','parame_name'];
+        $select1 = ['self_id','parame_name','type'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsCar::where($where)->count(); //总的数据量
