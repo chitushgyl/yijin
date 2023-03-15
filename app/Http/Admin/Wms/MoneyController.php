@@ -72,6 +72,7 @@ class MoneyController extends CommonController{
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['info']=TmsMoney::where($where)->select('pay_type',DB::raw('sum(money) as price'))->groupBy('pay_type')->get();
+                $data['cost']=TmsMoney::where($where)->select('type_state',DB::raw('sum(money) as total_price'))->groupBy('type_state')->get();
                 $data['group_show']='Y';
                 break;
 
@@ -81,7 +82,7 @@ class MoneyController extends CommonController{
                 $data['items']=TmsMoney::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
-                $data['info']=TmsMoney::where($where)->select('pay_type',DB::raw('sum(money) as price'))->groupBy('pay_type')->get();
+                $data['cost']=TmsMoney::where($where)->select('type_state',DB::raw('sum(money) as total_price'))->groupBy('type_state')->get();
                 $data['group_show']='N';
                 break;
 
@@ -90,8 +91,8 @@ class MoneyController extends CommonController{
                 $data['items']=TmsMoney::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
-                $data['info']=TmsMoney::where($where)->whereIn('group_code',$group_info['group_code'])
-                    ->select('pay_type',DB::raw('sum(money) as price'))->groupBy('pay_type')->get();
+                $data['cost']=TmsMoney::where($where)->whereIn('group_code',$group_info['group_code'])
+                    ->select('type_state',DB::raw('sum(money) as total_price'))->groupBy('type_state')->get();
                 $data['group_show']='Y';
                 break;
         }
@@ -125,8 +126,16 @@ class MoneyController extends CommonController{
         foreach ($data['info'] as $k=>$v) {
             $v->pay_type=$money_type_show[$v->pay_type]??null;
         }
-
-
+        $in = $out = 0;
+        foreach ($data['cost'] as $k=>$v) {
+            if ($v->type_state == 'in'){
+                $in = $v->total_price;
+            }
+            if ($v->type_state == 'out'){
+                $out = $v->total_price;
+            }
+        }
+        $data['diff_price'] = $in-$out;
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
