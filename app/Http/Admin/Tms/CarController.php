@@ -52,6 +52,7 @@ class CarController extends CommonController{
         $car_number     =$request->input('car_number');
         $carframe_num   =$request->input('carframe_num');
         $car_type       =$request->input('car_type');
+        $type           =$request->input('type');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -76,8 +77,11 @@ class CarController extends CommonController{
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsCar::where($where)->count(); //总的数据量
-                $data['items']=TmsCar::with(['TmsCarType' => function($query) use($select1){
+                $data['items']=TmsCar::with(['TmsCarType' => function($query) use($select1,$type){
                     $query->select($select1);
+                    if ($type){
+                        $query->where('type',$type);
+                    }
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
@@ -87,8 +91,11 @@ class CarController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=TmsCar::where($where)->count(); //总的数据量
-                $data['items']=TmsCar::with(['TmsCarType' => function($query) use($select1){
+                $data['items']=TmsCar::with(['TmsCarType' => function($query) use($select1,$type){
                     $query->select($select1);
+                    if ($type){
+                        $query->where('type',$type);
+                    }
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
@@ -97,8 +104,11 @@ class CarController extends CommonController{
 
             case 'more':
                 $data['total']=TmsCar::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=TmsCar::with(['TmsCarType' => function($query) use($select1){
+                $data['items']=TmsCar::with(['TmsCarType' => function($query) use($select1,$type){
                     $query->select($select1);
+                    if ($type){
+                        $query->where('type',$type);
+                    }
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();

@@ -55,7 +55,7 @@ class TypeController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','parame_name','create_user_name','create_time','allweight','allvolume','group_code','use_flag'];
+        $select=['self_id','parame_name','type','create_user_name','create_time','allweight','allvolume','group_code','use_flag'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsCarType::where($where)->count(); //总的数据量
@@ -106,7 +106,7 @@ class TypeController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $select=['self_id','parame_name','create_user_name','create_time','allweight','allvolume','group_code','use_flag'];
+        $select=['self_id','parame_name','type','create_user_name','create_time','allweight','allvolume','group_code','use_flag'];
         $data['info']=TmsCarType::where($where)->select($select)->first();
         if($data['info']){
 
@@ -138,6 +138,7 @@ class TypeController extends CommonController{
         /** 接收数据*/
         $self_id            =$request->input('self_id');
         $parame_name        =$request->input('parame_name');
+        $type               =$request->input('type');
 
         $rules=[
             'parame_name'=>'required',
@@ -149,6 +150,7 @@ class TypeController extends CommonController{
         $validator=Validator::make($input,$rules,$message);
         if($validator->passes()) {
             $data['parame_name']        =$parame_name;
+            $data['type']               =$type;
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsCarType::where($wheres)->first();
@@ -267,7 +269,7 @@ class TypeController extends CommonController{
             ['delete_flag','=','Y'],
             ['use_flag','=','Y'],
         ];
-        $select=['self_id','parame_name','img'];
+        $select=['self_id','parame_name','img','type'];
         $data['info']=TmsCarType::where($where)->select($select)->get();
 
         $msg['code']=200;
@@ -455,7 +457,7 @@ class TypeController extends CommonController{
     public function  details(Request $request,Details $details){
         $self_id=$request->input('self_id');
         $table_name='tms_car_type';
-        $select=['self_id','parame_name','create_time','group_code','group_name'];
+        $select=['self_id','parame_name','create_time','group_code','group_name','type'];
         // $self_id='type_202012290957581187464100';
         $info=$details->details($self_id,$table_name,$select);
 
