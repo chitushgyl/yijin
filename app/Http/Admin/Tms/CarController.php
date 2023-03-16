@@ -146,7 +146,18 @@ class CarController extends CommonController{
         $data['info']=TmsCar::where($where)->select($select)->first();
 
         if ($data['info']){
-
+            $data['info']->medallion     =img_for($data['info']->medallion,'no_json');
+            $data['info']->license       =img_for($data['info']->license,'no_json');
+            $data['info']->registr_cert  =img_for($data['info']->registr_cert,'no_json');
+            $data['info']->carrier_cert  =img_for($data['info']->carrier_cert,'no_json');
+            $data['info']->tank_cert     =img_for($data['info']->tank_cert,'no_json');
+            $data['info']->nameplate     =img_for($data['info']->nameplate,'no_json');
+            $data['info']->pass_cert     =img_for($data['info']->pass_cert,'no_json');
+            $data['info']->compulsory_cert     =img_for($data['info']->compulsory_cert,'no_json');
+            $data['info']->commercial_cert     =img_for($data['info']->commercial_cert,'no_json');
+            $data['info']->license_back     =img_for($data['info']->license_back,'no_json');
+            $data['info']->medallion_back     =img_for($data['info']->medallion_back,'no_json');
+            $data['info']->type_show     = $data['info']->TmsCarType->parame_name;
         }
 
         $msg['code']=200;
@@ -308,7 +319,6 @@ class CarController extends CommonController{
 
             $data['car_number']        =$car_number;
             $data['car_type']          =$car_type;
-            $data['type']              =$type;
             $data['carframe_num']      =$carframe_num;
             $data['crock_medium']      =$crock_medium;
             $data['license_date']      =$license_date;
@@ -407,6 +417,7 @@ class CarController extends CommonController{
 
             }else{
                 $data['self_id']            =generate_id('car_');
+                $data['type']              =$type;
                 $data['group_code']         = $group_code;
                 $data['group_name']         = $group_name;
                 $data['create_user_id']     =$user_info->admin_id;
