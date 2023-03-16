@@ -143,11 +143,11 @@ class CarController extends CommonController{
             'license_start','compulsory_cert','commercial_cert','registr_cert_date','carrier_insurer','carrier_insurer_num','carrier_baoe','carrier_zrx','carrier_zr','carrier_good',
             'compulsory_insurer','compulsory_num','compulsory_sc','compulsory_yl','compulsory_property','commercial_insurer','commercial_num','commercial_tz','commercial_zr','commercial_driver',
             'commercial_user','car_unit','type','goods_type'];
-        $select1 = ['self_id','parame_name'];
+        $select1 = ['self_id','parame_name','type'];
         $data['info']= TmsCar::with(['TmsCarType' => function($query) use($select1){
             $query->select($select1);
         }])->where('self_id',$self_id)->select($select)->first();
-        
+
         if ($data['info']){
             $data['info']->medallion     =img_for($data['info']->medallion,'no_json');
             $data['info']->license       =img_for($data['info']->license,'no_json');
