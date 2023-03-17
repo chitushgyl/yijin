@@ -65,7 +65,7 @@ class GroupController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','company_name','create_user_name','type','group_name','company_name',
+        $select=['self_id','company_name','create_user_name','type','group_name','company_name','agreement_date','agreement',
             'cost_type','contacts','address','tel','use_flag','group_code','bank','bank_number','remark'];
 
         switch ($group_info['group_id']){

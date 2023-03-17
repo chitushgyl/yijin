@@ -1053,9 +1053,9 @@ class LibraryController extends CommonController{
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ='wms_library_sige';
 
-        $operationing->access_cause     ='添加/修改入库商品信息';
+        $operationing->access_cause     ='修改入库商品信息';
         $operationing->table            =$table_name;
-        $operationing->operation_type   ='create';
+        $operationing->operation_type   ='edit';
         $operationing->now_time         =$now_time;
 
         $user_info          = $request->get('user_info');//接收中间件产生的参数
