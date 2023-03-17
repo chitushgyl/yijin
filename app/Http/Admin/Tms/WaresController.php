@@ -38,6 +38,7 @@ class WaresController extends CommonController{
      */
     public function waresPage(Request $request){
         $period  =array_column(config('wms.period'),'name','key');
+        $wares_type  =array_column(config('tms.wares_type'),'name','key');
 
         /** 接收中间件参数**/
         $group_info     = $request->get('group_info');//接收中间件产生的参数
@@ -106,7 +107,7 @@ class WaresController extends CommonController{
                 $v->zhuanhua=null;
             }
 
-
+            $v->type = $wares_type[$v->type]??null;
             $v->button_info=$button_info;
 
         }

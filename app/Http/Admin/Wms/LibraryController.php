@@ -976,6 +976,76 @@ class LibraryController extends CommonController{
     }
 
     /**
+     * 入库修改  wms/library/createSku
+     * */
+    public function createSku(Request $request,Details $details){
+        $wms_order_type      = config('wms.wms_order_type');
+        $wms_order_type_show  =array_column($wms_order_type,'name','key');
+        $in_store_status  =array_column(config('wms.in_store_status'),'name','key');
+        $self_id=$request->input('self_id');
+
+        //$self_id='SID_2020120415135553691290';
+
+        $where=[
+            ['self_id','=',$self_id],
+            ['delete_flag','=','Y'],
+        ];
+
+        $select=['self_id','grounding_status','order_status','type','create_user_name','create_time','group_name','check_time','grounding_status','count',
+            'purchase','operator','accepted','voucher','type','warehouse_id','warehouse_name','enter_time','purchase_date'];
+
+        $WmsLibrarySigeSelect=[
+            'self_id','grounding_status','in_library_state','grounding_type','good_remark','good_lot','order_id','external_sku_id','good_name','spec',
+            'production_date','expire_time','initial_num as now_num','good_unit','good_target_unit','good_scale','can_use', 'delete_flag'
+        ];
+
+        $info=WmsLibraryOrder::with(['wmsLibrarySige' => function($query)use($WmsLibrarySigeSelect) {
+            $query->where('delete_flag','Y');
+            $query->select($WmsLibrarySigeSelect);
+        }])->where($where)
+            ->select($select)->first();
+
+
+        if($info){
+            $info->type_show=$wms_order_type_show[$info->type];
+
+            /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
+            foreach ($info->wmsLibrarySige as $k => $v){
+                if ($v->area && $v->row && $v->column){
+                    $v->sign=$v->area.'-'.$v->row.'-'.$v->column.'-'.$v->tier;
+                }
+
+
+                $v->good_describe =unit_do($v->good_unit , $v->good_target_unit, $v->good_scale, $v->now_num);
+                $v->in_library_state_show = $in_store_status[$v->in_library_state]??null;
+            }
+
+            $data['info']=$info;
+            $log_flag='N';
+            $data['log_flag']=$log_flag;
+            $log_num='10';
+            $data['log_num']=$log_num;
+            $data['log_data']=null;
+
+            if($log_flag =='Y'){
+                $data['log_data']=$details->change($self_id,$log_num);
+            }
+
+
+            $msg['code']=200;
+            $msg['msg']="数据拉取成功";
+            $msg['data']=$data;
+//dd($msg);
+
+            return $msg;
+        }else{
+            $msg['code']=300;
+            $msg['msg']="没有查询到数据";
+            return $msg;
+        }
+    }
+
+    /**
      * 修改入库明细里商品信息
      * */
     public function editSku(Request $request,Change $change){
