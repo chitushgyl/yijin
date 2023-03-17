@@ -120,7 +120,7 @@ class LibraryController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','order_status','grounding_status','group_name','group_code','warehouse_name','warehouse_id','count','type','create_user_name',
-            'check_time','create_time','accepted','purchase','operator','enter_time'];
+            'check_time','create_time','accepted','purchase','operator','enter_time','purchase_date'];
         $WmsLibrarySigeSelect=[
             'self_id','grounding_status','in_library_state','grounding_type','good_remark','good_lot','order_id','external_sku_id','good_name','spec',
             'production_date','expire_time','initial_num as now_num','good_unit','good_target_unit','good_scale','can_use', 'delete_flag'
@@ -695,6 +695,7 @@ class LibraryController extends CommonController{
         $operator           = $request->input('operator');//经办人
         $accepted           = $request->input('accepted');//验收人
         $enter_time         = $request->input('enter_time');//入库时间
+        $purchase_date         = $request->input('purchase_date');//采购时间
         $voucher            = json_decode($request->input('voucher'),true);//凭证
 
         /*** 虚拟数据
@@ -798,6 +799,7 @@ class LibraryController extends CommonController{
             $data['count']              =$count;
             $data['type']               ='preentry';
             $data['enter_time']         =$enter_time;
+            $data['purchase_date']      =$purchase_date;
 
             $data['check_time']         =$now_time;
             $data['voucher']            =img_for($voucher,'in');
@@ -855,7 +857,7 @@ class LibraryController extends CommonController{
         ];
 
         $select=['self_id','grounding_status','order_status','type','create_user_name','create_time','group_name','check_time','grounding_status','count',
-            'purchase','operator','accepted','voucher','type','warehouse_id','warehouse_name','enter_time'];
+            'purchase','operator','accepted','voucher','type','warehouse_id','warehouse_name','enter_time','purchase_date'];
 
 		$WmsLibrarySigeSelect=[
             'self_id','grounding_status','in_library_state','grounding_type','good_remark','good_lot','order_id','external_sku_id','good_name','spec',
