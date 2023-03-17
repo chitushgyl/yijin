@@ -170,6 +170,8 @@ class GroupController extends CommonController{
         $bank_number        =$request->input('bank_number');
         $tax_id             =$request->input('tax_id');
         $remark             =$request->input('remark');
+        $agreement          =$request->input('agreement');
+        $agreement_date     =$request->input('agreement_date');
 
         /*** 虚拟数据
         $input['self_id']           =$self_id='group_202006040950004008768595';
@@ -208,6 +210,8 @@ class GroupController extends CommonController{
             $data['tax_id']      		        = $tax_id;
             $data['type']      		            = $type;
             $data['remark']      		        = $remark;
+            $data['agreement']      		    = $agreement;
+            $data['agreement_date']      	    = $agreement_date;
             $wheres['self_id'] = $self_id;
             $old_info=TmsGroup::where($wheres)->first();
 
@@ -692,7 +696,7 @@ class GroupController extends CommonController{
         $self_id=$request->input('self_id');
         $table_name='tms_group';
         $select=['self_id','group_code','group_name','use_flag','create_user_name','create_time',
-            'company_name','contacts','address','tel','remark',
+            'company_name','contacts','address','tel','remark','agreement_date','agreement',
             'type','cost_type'];
         // $self_id='company_202012291153523141320375';
         $info=$details->details($self_id,$table_name,$select);

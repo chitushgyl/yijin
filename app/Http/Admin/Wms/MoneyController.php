@@ -71,7 +71,6 @@ class MoneyController extends CommonController{
                 $data['items']=TmsMoney::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
-                $data['info']=TmsMoney::where($where)->select('pay_type',DB::raw('sum(money) as price'))->groupBy('pay_type')->get();
                 $data['cost']=TmsMoney::where($where)->select('type_state',DB::raw('sum(money) as total_price'))->groupBy('type_state')->get();
                 $data['group_show']='Y';
                 break;
