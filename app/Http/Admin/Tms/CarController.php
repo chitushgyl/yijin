@@ -526,12 +526,14 @@ class CarController extends CommonController{
     public function  getCar(Request $request){
         $group_code=$request->input('group_code');
         $car_number=$request->input('car_number');
+        $type      =$request->input('type');
 //        $input['group_code'] =  $group_code = '1234';
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>'Y'],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
+            ['type'=>'=','name'=>'type','value'=>$type],
         ];
 
         $where=get_list_where($search);
