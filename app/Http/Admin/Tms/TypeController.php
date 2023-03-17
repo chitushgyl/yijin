@@ -55,12 +55,12 @@ class TypeController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','parame_name','type','create_user_name','create_time','allweight','allvolume','group_code','use_flag'];
+        $select=['type','self_id','parame_name','create_user_name','create_time','allweight','allvolume','group_code','use_flag'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsCarType::where($where)->count(); //总的数据量
                 $data['items']=TmsCarType::where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('type')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
@@ -69,7 +69,7 @@ class TypeController extends CommonController{
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=TmsCarType::where($where)->count(); //总的数据量
                 $data['items']=TmsCarType::where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('type')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
@@ -77,7 +77,7 @@ class TypeController extends CommonController{
             case 'more':
                 $data['total']=TmsCarType::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=TmsCarType::where($where)->whereIn('group_code',$group_info['group_code'])
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('type')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
