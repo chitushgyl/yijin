@@ -1046,9 +1046,187 @@ class LibraryController extends CommonController{
     }
 
     /**
-     * 修改入库明细里商品信息
+     * 修改入库信息
      * */
     public function editSku(Request $request,Change $change){
+        $operationing       = $request->get('operationing');//接收中间件产生的参数
+        $user_info          = $request->get('user_info');                //接收中间件产生的参数
+        $now_time           =date('Y-m-d H:i:s',time());
+        $table_name         ='wms_library_order';
+
+        $operationing->access_cause='入库';
+        $operationing->operation_type='create';
+        $operationing->table=$table_name;
+        $operationing->now_time=$now_time;
+
+        $input=$request->all();
+        /** 接收数据*/
+        $self_id            = $request->self_id;
+        $warehouse_id       = $request->input('warehouse_id');//仓库ID
+        $sige_id            = $request->input('sige_id');
+        $library_sige       = json_decode($request->input('library_sige'), true);//产品信息
+        $purchase           = $request->input('purchase');//采购商/供应商
+        $operator           = $request->input('operator');//经办人
+        $accepted           = $request->input('accepted');//验收人
+        $enter_time         = $request->input('enter_time');//入库时间
+        $purchase_date      = $request->input('purchase_date');//采购时间
+        $voucher            = json_decode($request->input('voucher'),true);//凭证
+
+        /*** 虚拟数据
+        $input['group_code']=$group_code='1234';
+        $input['self_id']=$self_id='1234';
+        $input['sige_id']=$sige_id='1234';
+        $input['warehouse_id']=$warehouse_id='warehouse_20221215135058787296124';
+        $input['purchase']=$purchase='12345';
+        $input['operator']=$operator='1234';
+        $input['accepted']=$accepted='123';
+        $input['library_sige']=$library_sige=[
+        '0'=>[
+        'sku_id'=>'sku_202212171207283772516693',
+        'now_num'=>'30',
+        'can_use'=>'Y',
+        'good_remark'=>'Y',
+        ]
+        ];
+         **/
+        $rules=[
+            'group_code'=>'required',
+            'warehouse_id'=>'required',
+            'library_sige'=>'required',
+        ];
+        $message=[
+            'group_code.required'=>'请填写公司',
+            'warehouse_id.required'=>'请填写仓库',
+            'library_sige.required'=>'请选择商品',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()){
+            /** 开始检查其他数据对不对    **/
+            $where_pack=[
+                ['delete_flag','=','Y'],
+                ['self_id','=', $warehouse_id],
+            ];
+
+            $warehouse_info = WmsWarehouse::where($where_pack)->select('warehouse_name','group_code','group_name')->first();
+            if(empty($warehouse_info)){
+                $msg['code'] = 304;
+                $msg['msg'] = '仓库不存在';
+                return $msg;
+            }
+
+            /** 开始制作数据了*/
+            $datalist=[];       //初始化数组为空
+            $seld=generate_id('SID_');
+
+            $data['self_id']            =$seld;
+            $data['create_time']        =$now_time;
+            $data["update_time"]        =$now_time;
+            $data["grounding_status"]   ='Y';
+            $data["group_code"]         =$warehouse_info->group_code;
+            $data["group_name"]         =$warehouse_info->group_name;
+            $data["create_user_id"]     =$user_info->admin_id;
+            $data["create_user_name"]   =$user_info->name;
+            $data["warehouse_id"]       =$warehouse_id;
+            $data["warehouse_name"]     =$warehouse_info->warehouse_name;
+            $data['count']              =count($library_sige);
+            $data['type']               ='preentry';
+            $data['enter_time']         =$enter_time;
+            $data['purchase_date']      =$purchase_date;
+
+            $data['check_time']         =$now_time;
+            $data['voucher']            =img_for($voucher,'in');
+            $data['order_status']       = 'W';
+            $data['purchase']           =$purchase;
+            $data['operator']           =$operator;
+            $data['accepted']           =$accepted;
+
+            if ($self_id){
+
+            }else{
+
+            }
+            foreach($library_sige as $k => $v){
+                $where100['self_id']=$v['sku_id'];
+                //查询商品是不是存在
+                $goods_select=['self_id','external_sku_id','good_name','good_english_name','wms_target_unit','wms_scale','wms_unit','wms_spec',
+                    'period','period_value'];
+
+                $getGoods=ErpShopGoodsSku::where($where100)->select($goods_select)->first();
+                $list=[];
+
+                $list["self_id"]            =generate_id('LSID_');
+                $list["order_id"]           =$seld;
+                $list["sku_id"]             =$getGoods->self_id;
+                $list["external_sku_id"]    =$getGoods->external_sku_id;
+                $list["good_name"]          =$getGoods->good_name;
+                $list["good_english_name"]  =$getGoods->good_english_name;
+                $list["good_target_unit"]   =$getGoods->wms_target_unit;
+                $list["good_scale"]         =$getGoods->wms_scale;
+                $list["good_unit"]          =$getGoods->wms_unit;
+                $list["good_info"]          =json_encode($getGoods,JSON_UNESCAPED_UNICODE);
+                $list['spec']               =$getGoods->wms_spec;
+                $list['initial_num']        =$v['now_num'];
+                $list['now_num']            =$v['now_num'];
+                $list['storage_number']     =$v['now_num'];
+                $list["group_code"]         =$user_info->group_code;
+                $list["group_name"]         =$user_info->group_name;
+                $list['create_time']        =$now_time;
+                $list["update_time"]        =$now_time;
+                $list["create_user_id"]     =$user_info->admin_id;
+                $list["create_user_name"]   =$user_info->name;
+                $list["grounding_status"]   ='Y';
+                $list["good_remark"]        =$v['good_remark'];
+                $list["use_flag"]           ='N';
+                $datalist[]=$list;
+
+                /**保存费用**/
+//                $money['pay_type']           = 'fuel';
+//                $money['money']              = $v['now_num']*$v['price'];
+//                $money['pay_state']          = 'Y';
+//                $money['process_state']      = 'Y';
+//                $moneyList[] = $money;
+            }
+
+            $count=count($datalist);
+
+
+
+            $id=WmsLibraryOrder::insert($data);
+//            TmsMoney::insert($moneyList);
+            $operationing->table_id=$data['self_id'];
+            $operationing->old_info=null;
+            $operationing->new_info=$data;
+
+            if($id){
+                WmsLibrarySige::insert($datalist);
+                $change->change($datalist,'preentry');
+
+                $msg['code']=200;
+                $msg['msg']='操作成功';
+
+                return $msg;
+            }else{
+                $msg['code']=301;
+                $msg['msg']='操作失败';
+                return $msg;
+            }
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
+    }
+
+    /**
+     * 修改入库明细里商品信息
+     * */
+    public function editS(Request $request,Change $change){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ='wms_library_sige';

@@ -53,6 +53,8 @@ class UserController extends CommonController{
         $self_id        =$request->input('self_id');
         $type           =$request->input('type');
         $social_flag    =$request->input('social_flag');
+        $entry_time     =$request->input('entry_time');//入职时间
+        $leave_time     =$request->input('leave_time');//离职时间
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -64,6 +66,8 @@ class UserController extends CommonController{
             ['type'=>'=','name'=>'self_id','value'=>$self_id],
             ['type'=>'=','name'=>'type','value'=>$type],
             ['type'=>'=','name'=>'social_flag','value'=>$social_flag],
+            ['type'=>'=','name'=>'entry_time','value'=>$entry_time],
+            ['type'=>'=','name'=>'leave_time','value'=>$leave_time],
         ];
 
         $where=get_list_where($search);
