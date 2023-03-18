@@ -329,7 +329,6 @@ class OrderController extends CommonController{
                 }
             }catch(\Exception $e){
                 DB::rollBack();
-                dd($e);
                 $msg['code'] = '300';
                 $msg['msg']  = '操作失败！';
                 return $msg;
