@@ -1280,7 +1280,7 @@ class OrderController extends CommonController{
         $order_select = ['self_id','status','create_user_name','create_time','group_name','warehouse_name','total_flag','total_time',
             'picker','operator','purchase','car_num','delivery_time','out_time'];
         $order_list_select= ['self_id','good_name','good_unit','spec','num','order_id','external_sku_id','remarks','price','total_price','out_library_state'];
-        $wms_out_sige_select= ['order_list_id','num','good_unit','good_target_unit','good_scale','good_english_name'];
+        $wms_out_sige_select= ['order_list_id','num','good_unit','good_target_unit','good_scale','good_english_name','self_id','sku_id'];
 
         $info=wmsOutOrder::with(['wmsOutOrderList'=>function($query)use($order_list_select,$wms_out_sige_select){
             $query->where('delete_flag','=','Y');
@@ -1338,6 +1338,148 @@ class OrderController extends CommonController{
         }else{
             $msg['code']=300;
             $msg['msg']="没有查询到数据";
+            return $msg;
+        }
+    }
+
+    /**
+     * 出库订单修改 wms/order/editOrder
+     * */
+    public function editOrder(Request $request){
+        $user_info          = $request->get('user_info');//接收中间件产生的参数
+        $now_time           = date('Y-m-d H:i:s', time());
+        $table_name         ='wms_out_order';
+        $operationing       = $request->get('operationing');//接收中间件产生的参数
+        $operationing->access_cause     ='创建出库订单';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='add';
+
+        /** 接收数据*/
+        $input              = $request->all();
+        $warehouse_id       = $request->input('warehouse_id');
+        $goods              = json_decode($request->input('goods'),true);
+        $delivery_time      = $request->input('delivery_time');
+        $car_num            = $request->input('car_num');
+        $picker             = $request->input('picker');
+        $operator           = $request->input('operator');
+        $purchase           = $request->input('purchase');
+        $out_time           = $request->input('out_time');
+
+
+        /***
+        $input['warehouse_id'] = $warehouse_id = 'warehouse_20221215135058787296124';
+        $input['car_num'] = $car_num = '485615612';
+        $input['picker'] = $picker = '12345';
+        $input['operator'] = $operator = '1234';
+        $input['purchase'] = $purchase = '123';
+        $input['goods']=$goods=[
+        '0'=>[
+        'sku_id'=>'sku_202212171207283772516693',
+        'can_use'=>'Y',
+        'num'=>29,
+        'wms_unit'=>'',
+        'price'=>'200',
+        'total_price'=>6200,
+        'remark'=>'0.2',
+        'out_library_state'=>'',
+
+        ],
+        ];
+         * **/
+        $rules = [
+            'goods' => 'required',
+        ];
+        $message = [
+            'goods.required' => '请选择要出库的产品',
+        ];
+        $validator = Validator::make($input, $rules, $message);
+
+        if ($validator->passes()) {
+            $where_warehouse=[
+                ['delete_flag','=','Y'],
+                ['self_id','=',$warehouse_id],
+            ];
+
+            $warehouse_info = WmsWarehouse::where($where_warehouse)->select('self_id','warehouse_name','group_name','group_code')->first();
+            if(empty($warehouse_info)){
+                $msg['code'] = 302;
+                $msg['msg'] = '仓库不存在';
+                return $msg;
+            }
+
+
+            $order_2['self_id']             =generate_id('order_');
+            $order_2['group_code']          =$user_info->group_code;
+            $order_2['group_name']          =$user_info->group_name;
+            $order_2['count']               =count($goods);
+            $order_2['warehouse_id']        =$warehouse_info->self_id;
+            $order_2['warehouse_name']      =$warehouse_info->warehouse_name;
+            $order_2['create_user_id']      =$user_info->admin_id;
+            $order_2['create_user_name']    =$user_info->name;
+            $order_2['create_time']         =$order_2['update_time']            =$now_time;
+            $order_2['delivery_time']       =$delivery_time;
+            $order_2['car_num']             =$car_num;
+            $order_2['picker']              =$picker;
+            $order_2['operator']            =$operator;
+            $order_2['purchase']            =$purchase;
+            $order_2['out_time']            =$out_time;
+            $order_2['status']              =2;
+
+            $list=[];
+            foreach($goods as $k =>$v){
+
+                $where_sku=[
+                    ['delete_flag','=','Y'],
+                    ['self_id','=',$v['sku_id']],
+                ];
+                $select_ErpShopGoodsSku=['self_id','group_code','group_name','external_sku_id','wms_unit','good_name','wms_spec'];
+                $sku_info = ErpShopGoodsSku::where($where_sku)->select($select_ErpShopGoodsSku)->first();
+
+                //dd($vv);
+                $list['self_id']            =generate_id('list_');
+                $list['good_name']          = $sku_info->good_name;
+                $list['spec']               = $sku_info->wms_spec;
+                $list['num']                = $v['num'];
+                $list['good_unit']          = $v['wms_unit'];
+                $list['group_code']         = $sku_info->group_code;
+                $list['group_name']         = $sku_info->group_name;
+                $list['order_id']           = $order_2['self_id'];
+                $list['sku_id']             = $sku_info->self_id;
+                $list['create_user_id']     = $user_info->admin_id;
+                $list['create_user_name']   = $user_info->name;
+                $list['create_time']        = $list['update_time']=$now_time;
+                $list['price']              = $v['price'];
+                $list['total_price']        = $v['total_price'];
+                $list['remarks']            = $v['remark'];
+//                $list['out_library_state']  = $v['out_library_state'];
+                $datalist[]=$list;
+
+            }
+
+            WmsOutOrderList::insert($datalist);
+            $id= WmsOutOrder::insert($order_2);
+
+            if($id){
+                $msg['code']=200;
+                $msg['msg']='操作成功!';
+
+                return $msg;
+            }else{
+                $msg['code']=301;
+                $msg['msg']='操作失败';
+                return $msg;
+            }
+
+        }else{
+            $erro = $validator->errors()->all();
+            $msg['msg'] = null;
+            foreach ($erro as $k => $v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code'] = 300;
             return $msg;
         }
     }
