@@ -1063,7 +1063,7 @@ class LibraryController extends CommonController{
         /** 接收数据*/
         $self_id            = $request->input('self_id');
         $warehouse_id       = $request->input('warehouse_id');//仓库ID
-        $sige_id            = $request->input('sige_id');
+        $sige_id            = json_decode($request->input('sige_id'),true);
         $library_sige       = json_decode($request->input('library_sige'), true);//产品信息
         $purchase           = $request->input('purchase');//采购商/供应商
         $operator           = $request->input('operator');//经办人
@@ -1137,7 +1137,7 @@ class LibraryController extends CommonController{
             try{
                 /***有产品信息 说明是编辑 先删除之前添加的数据 **/
                 if(count($sige_id)>0){
-                    $sige_update['delete_flag'] = 'Y';
+                    $sige_update['delete_flag'] = 'N';
                     $sige_update['update_time'] = $now_time;
                     WmsLibrarySige::whereIn('self_id',$sige_id)->update($sige_update);
                     WmsLibraryChange::whereIn('library_sige_id',$sige_id)->update($sige_update);
@@ -1203,7 +1203,7 @@ class LibraryController extends CommonController{
                     $data["update_time"]        =$now_time;
                     $id=WmsLibraryOrder::insert($data);
                 }
-                $operationing->table_id=$data['self_id'];
+                $operationing->table_id=$self_id;
                 $operationing->old_info=null;
                 $operationing->new_info=$data;
 
