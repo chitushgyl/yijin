@@ -1135,102 +1135,101 @@ class LibraryController extends CommonController{
 
             DB::beginTransaction();
             try{
+                /***有产品信息 说明是编辑 先删除之前添加的数据 **/
                 if(count($sige_id)>0){
                     $sige_update['delete_flag'] = 'Y';
                     $sige_update['update_time'] = $now_time;
                     WmsLibrarySige::whereIn('self_id',$sige_id)->update($sige_update);
                     WmsLibraryChange::whereIn('library_sige_id',$sige_id)->update($sige_update);
                 }
+                /***处理本次添加或修改的产品数据**/
+                foreach($library_sige as $k => $v){
+                    $where100['self_id']=$v['sku_id'];
+                    //查询商品是不是存在
+                    $goods_select=['self_id','external_sku_id','good_name','good_english_name','wms_target_unit','wms_scale','wms_unit','wms_spec',
+                        'period','period_value','sale_price'];
 
-            }catch (\Exception $exception){
-                DB::rollBack();
-                $msg['code']=300;
-                $msg['msg']='操作失败!';
-            }
+                    $getGoods=ErpShopGoodsSku::where($where100)->select($goods_select)->first();
+                    $list=[];
 
+                    $list["self_id"]            =generate_id('LSID_');
+                    $list["order_id"]           =$seld;
+                    $list["sku_id"]             =$getGoods->self_id;
+                    $list["external_sku_id"]    =$getGoods->external_sku_id;
+                    $list["good_name"]          =$getGoods->good_name;
+                    $list["good_english_name"]  =$getGoods->good_english_name;
+                    $list["good_target_unit"]   =$getGoods->wms_target_unit;
+                    $list["good_scale"]         =$getGoods->wms_scale;
+                    $list["good_unit"]          =$getGoods->wms_unit;
+                    $list["good_info"]          =json_encode($getGoods,JSON_UNESCAPED_UNICODE);
+                    $list['spec']               =$getGoods->wms_spec;
+                    $list['initial_num']        =$v['now_num'];
+                    $list['now_num']            =$v['now_num'];
+                    $list['storage_number']     =$v['now_num'];
+                    $list["group_code"]         =$user_info->group_code;
+                    $list["group_name"]         =$user_info->group_name;
+                    $list['create_time']        =$now_time;
+                    $list["update_time"]        =$now_time;
+                    $list["create_user_id"]     =$user_info->admin_id;
+                    $list["create_user_name"]   =$user_info->name;
+                    $list["grounding_status"]   ='Y';
+                    $list["good_remark"]        =$v['good_remark'];
+                    $list["use_flag"]           ='N';
+                    $datalist[]=$list;
 
-            $wheres['self_id'] = $self_id;
-            $old_info=WmsLibraryOrder::where($wheres)->first();
-            if ($old_info){
-                $data['update_time']=$now_time;
-                $id=WmsLibraryOrder::where($wheres)->update($data);
-
-                $operationing->access_cause='修改入库信息';
-                $operationing->operation_type='update';
-            }else{
-                $data['self_id']            =$seld;
-                $data["group_code"]         =$warehouse_info->group_code;
-                $data["group_name"]         =$warehouse_info->group_name;
-                $data["create_user_id"]     =$user_info->admin_id;
-                $data["create_user_name"]   =$user_info->name;
-                $data['create_time']        =$now_time;
-                $data["update_time"]        =$now_time;
-            }
-            foreach($library_sige as $k => $v){
-                $where100['self_id']=$v['sku_id'];
-                //查询商品是不是存在
-                $goods_select=['self_id','external_sku_id','good_name','good_english_name','wms_target_unit','wms_scale','wms_unit','wms_spec',
-                    'period','period_value'];
-
-                $getGoods=ErpShopGoodsSku::where($where100)->select($goods_select)->first();
-                $list=[];
-
-                $list["self_id"]            =generate_id('LSID_');
-                $list["order_id"]           =$seld;
-                $list["sku_id"]             =$getGoods->self_id;
-                $list["external_sku_id"]    =$getGoods->external_sku_id;
-                $list["good_name"]          =$getGoods->good_name;
-                $list["good_english_name"]  =$getGoods->good_english_name;
-                $list["good_target_unit"]   =$getGoods->wms_target_unit;
-                $list["good_scale"]         =$getGoods->wms_scale;
-                $list["good_unit"]          =$getGoods->wms_unit;
-                $list["good_info"]          =json_encode($getGoods,JSON_UNESCAPED_UNICODE);
-                $list['spec']               =$getGoods->wms_spec;
-                $list['initial_num']        =$v['now_num'];
-                $list['now_num']            =$v['now_num'];
-                $list['storage_number']     =$v['now_num'];
-                $list["group_code"]         =$user_info->group_code;
-                $list["group_name"]         =$user_info->group_name;
-                $list['create_time']        =$now_time;
-                $list["update_time"]        =$now_time;
-                $list["create_user_id"]     =$user_info->admin_id;
-                $list["create_user_name"]   =$user_info->name;
-                $list["grounding_status"]   ='Y';
-                $list["good_remark"]        =$v['good_remark'];
-                $list["use_flag"]           ='N';
-                $datalist[]=$list;
-
-                /**保存费用**/
+                    /**保存费用**/
 //                $money['pay_type']           = 'fuel';
 //                $money['money']              = $v['now_num']*$v['price'];
 //                $money['pay_state']          = 'Y';
 //                $money['process_state']      = 'Y';
 //                $moneyList[] = $money;
+                }
+                /***保存数据**/
+                $wheres['self_id'] = $self_id;
+                $old_info=WmsLibraryOrder::where($wheres)->first();
+                if ($old_info){
+                    $data['update_time']=$now_time;
+                    $id=WmsLibraryOrder::where($wheres)->update($data);
+
+                    $operationing->access_cause='修改入库信息';
+                    $operationing->operation_type='update';
+                }else{
+                    $data['self_id']            =$seld;
+                    $data["group_code"]         =$warehouse_info->group_code;
+                    $data["group_name"]         =$warehouse_info->group_name;
+                    $data["create_user_id"]     =$user_info->admin_id;
+                    $data["create_user_name"]   =$user_info->name;
+                    $data['create_time']        =$now_time;
+                    $data["update_time"]        =$now_time;
+                    $id=WmsLibraryOrder::insert($data);
+                }
+                $operationing->table_id=$data['self_id'];
+                $operationing->old_info=null;
+                $operationing->new_info=$data;
+
+                if($id){
+                    WmsLibrarySige::insert($datalist);
+                    $change->change($datalist,'preentry');
+                    DB::commit();
+                    $msg['code']=200;
+                    $msg['msg']='操作成功';
+                    return $msg;
+                }else{
+                    DB::rollBack();
+                    $msg['code']=301;
+                    $msg['msg']='操作失败';
+                    return $msg;
+                }
+            }catch (\Exception $exception){
+                DB::rollBack();
+                $msg['code']=300;
+                $msg['msg']='操作失败!';
+                return $msg;
             }
 
-            $count=count($datalist);
 
-
-
-            $id=WmsLibraryOrder::insert($data);
 //            TmsMoney::insert($moneyList);
-            $operationing->table_id=$data['self_id'];
-            $operationing->old_info=null;
-            $operationing->new_info=$data;
 
-            if($id){
-                WmsLibrarySige::insert($datalist);
-                $change->change($datalist,'preentry');
-
-                $msg['code']=200;
-                $msg['msg']='操作成功';
-
-                return $msg;
-            }else{
-                $msg['code']=301;
-                $msg['msg']='操作失败';
-                return $msg;
-            }
         }else{
             //前端用户验证没有通过
             $erro=$validator->errors()->all();
