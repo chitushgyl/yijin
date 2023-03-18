@@ -1280,7 +1280,7 @@ class OrderController extends CommonController{
         $order_select = ['self_id','status','create_user_name','create_time','group_name','warehouse_name','total_flag','total_time',
             'picker','operator','purchase','car_num','delivery_time','out_time'];
         $order_list_select= ['self_id','good_name','good_unit','spec','num','order_id','external_sku_id','remarks','price','total_price','out_library_state'];
-        $wms_out_sige_select= ['self_id','sku_id','library_sige_id','external_sku_id','order_list_id','good_name','spec','','num','good_unit','good_target_unit','good_scale','good_english_name'
+        $wms_out_sige_select= ['self_id','sku_id','library_sige_id','external_sku_id','order_list_id','good_name','spec','num','good_unit','good_target_unit','good_scale','good_english_name'
         ,'price','total_price'];
 
         $info=wmsOutOrder::with(['wmsOutOrderList'=>function($query)use($order_list_select,$wms_out_sige_select){
