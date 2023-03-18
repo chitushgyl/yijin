@@ -310,8 +310,8 @@ class WarehouseController extends CommonController{
     public function getWarehouse(Request $request){
         $group_code            =$request->input('group_code');
         $search=[
-            ['delete_flag','=','Y'],
-            ['group_code','=',$group_code],
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'group_code','value'=>$group_code],
         ];
         $where=get_list_where($search);
 	    $select=['self_id','warehouse_name','group_code','group_name','delete_flag','use_flag'];
