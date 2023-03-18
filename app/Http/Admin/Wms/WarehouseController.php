@@ -309,11 +309,11 @@ class WarehouseController extends CommonController{
      */
     public function getWarehouse(Request $request){
         $group_code            =$request->input('group_code');
-        $where=[
+        $search=[
             ['delete_flag','=','Y'],
             ['group_code','=',$group_code],
         ];
-
+        $where=get_list_where($search);
 	    $select=['self_id','warehouse_name','group_code','group_name','delete_flag','use_flag'];
 
 	    $data['info']=WmsWarehouse::where($where)->select($select)->get();
