@@ -45,7 +45,7 @@ class HistoryController  extends CommonController{
 
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
-            ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+            ['type'=>'=','name'=>'use_flag','value'=>'Y'],
             ['type'=>'like','name'=>'warehouse_id','value'=>$warehouse_id],
             ['type'=>'like','name'=>'sku_id','value'=>$sku_id],
 			['type'=>'like','name'=>'external_sku_id','value'=>$external_sku_id],

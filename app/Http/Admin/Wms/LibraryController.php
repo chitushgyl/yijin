@@ -973,8 +973,11 @@ class LibraryController extends CommonController{
             return $msg;
         }
 
-
     }
+
+    /**
+     * 取消入库审核
+     * */
 
     /**
      * 入库修改  wms/library/createSku
