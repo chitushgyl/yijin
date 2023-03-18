@@ -1361,12 +1361,15 @@ class OrderController extends CommonController{
         $input              = $request->all();
         $warehouse_id       = $request->input('warehouse_id');
         $goods              = json_decode($request->input('goods'),true);
-        $delivery_time      = $request->input('delivery_time');
         $car_num            = $request->input('car_num');
         $picker             = $request->input('picker');
         $operator           = $request->input('operator');
         $purchase           = $request->input('purchase');
         $out_time           = $request->input('out_time');
+        $self_id            = $request->input('self_id');
+        $good_list          = json_decode($request->input('good_list'),true);//产品ID集合
+        $group_code         = $request->input('group_code');
+        $group_name         = $request->input('group_name');
 
 
         /***
@@ -1409,18 +1412,11 @@ class OrderController extends CommonController{
                 $msg['msg'] = '仓库不存在';
                 return $msg;
             }
-
-
-            $order_2['self_id']             =generate_id('order_');
-            $order_2['group_code']          =$user_info->group_code;
-            $order_2['group_name']          =$user_info->group_name;
+            $order_id = generate_id('order_');
+            $datalist = [];
             $order_2['count']               =count($goods);
             $order_2['warehouse_id']        =$warehouse_info->self_id;
             $order_2['warehouse_name']      =$warehouse_info->warehouse_name;
-            $order_2['create_user_id']      =$user_info->admin_id;
-            $order_2['create_user_name']    =$user_info->name;
-            $order_2['create_time']         =$order_2['update_time']            =$now_time;
-            $order_2['delivery_time']       =$delivery_time;
             $order_2['car_num']             =$car_num;
             $order_2['picker']              =$picker;
             $order_2['operator']            =$operator;
@@ -1428,51 +1424,89 @@ class OrderController extends CommonController{
             $order_2['out_time']            =$out_time;
             $order_2['status']              =2;
 
-            $list=[];
-            foreach($goods as $k =>$v){
+            DB::beginTransaction();
+            try{
+                /***有产品信息 说明是编辑 先删除之前添加的数据 **/
+                if (count($good_list)>0){
+                    $order_update['delete_flag'] = 'N';
+                    $order_update['update_time'] = $now_time;
+                    WmsOutOrderList::where('order_id',$self_id)->update($order_update);
+                }
+                /***处理本次添加或修改的产品数据**/
+                $list=[];
+                foreach($goods as $k =>$v){
+                    $where_sku=[
+                        ['delete_flag','=','Y'],
+                        ['self_id','=',$v['sku_id']],
+                    ];
+                    $select_ErpShopGoodsSku=['self_id','group_code','group_name','external_sku_id','wms_unit','good_name','wms_spec'];
+                    $sku_info = ErpShopGoodsSku::where($where_sku)->select($select_ErpShopGoodsSku)->first();
 
-                $where_sku=[
-                    ['delete_flag','=','Y'],
-                    ['self_id','=',$v['sku_id']],
-                ];
-                $select_ErpShopGoodsSku=['self_id','group_code','group_name','external_sku_id','wms_unit','good_name','wms_spec'];
-                $sku_info = ErpShopGoodsSku::where($where_sku)->select($select_ErpShopGoodsSku)->first();
+                    //dd($vv);
+                    $list['self_id']            =generate_id('list_');
+                    $list['good_name']          = $sku_info->good_name;
+                    $list['spec']               = $sku_info->wms_spec;
+                    $list['num']                = $v['num'];
+                    $list['good_unit']          = $v['wms_unit'];
+                    $list['group_code']         = $sku_info->group_code;
+                    $list['group_name']         = $sku_info->group_name;
+                    if ($self_id){
+                        $list['order_id']           = $order_2['self_id'];
+                    }else{
+                        $list['order_id']           = $order_id;
+                    }
 
-                //dd($vv);
-                $list['self_id']            =generate_id('list_');
-                $list['good_name']          = $sku_info->good_name;
-                $list['spec']               = $sku_info->wms_spec;
-                $list['num']                = $v['num'];
-                $list['good_unit']          = $v['wms_unit'];
-                $list['group_code']         = $sku_info->group_code;
-                $list['group_name']         = $sku_info->group_name;
-                $list['order_id']           = $order_2['self_id'];
-                $list['sku_id']             = $sku_info->self_id;
-                $list['create_user_id']     = $user_info->admin_id;
-                $list['create_user_name']   = $user_info->name;
-                $list['create_time']        = $list['update_time']=$now_time;
-                $list['price']              = $v['price'];
-                $list['total_price']        = $v['total_price'];
-                $list['remarks']            = $v['remark'];
+                    $list['sku_id']             = $sku_info->self_id;
+                    $list['create_user_id']     = $user_info->admin_id;
+                    $list['create_user_name']   = $user_info->name;
+                    $list['create_time']        = $list['update_time']=$now_time;
+                    $list['price']              = $v['price'];
+                    $list['total_price']        = $v['total_price'];
+                    $list['remarks']            = $v['remark'];
 //                $list['out_library_state']  = $v['out_library_state'];
-                $datalist[]=$list;
+                    $datalist[]=$list;
 
-            }
+                }
+                $wheres['self_id'] = $self_id;
+                $old_info=WmsOutOrder::where($wheres)->first();
 
-            WmsOutOrderList::insert($datalist);
-            $id= WmsOutOrder::insert($order_2);
+                if ($old_info){
+                    $order_2['update_time']=$now_time;
+                    $id=WmsOutOrder::where($wheres)->update($order_2);
 
-            if($id){
-                $msg['code']=200;
-                $msg['msg']='操作成功!';
+                    $operationing->access_cause='修改入库信息';
+                    $operationing->operation_type='update';
+                }else{
+                    $order_2['self_id']             =$order_id;
+                    $order_2['group_code']          =$group_code;
+                    $order_2['group_name']          =$group_name;
+                    $order_2['create_user_id']      =$user_info->admin_id;
+                    $order_2['create_user_name']    =$user_info->name;
+                    $order_2['create_time']         =$order_2['update_time']            =$now_time;
+                    $id=WmsLibraryOrder::insert($order_2);
 
+                    $operationing->access_cause='添加出库信息';
+                    $operationing->operation_type='add';
+                }
+                if($id){
+                    WmsOutOrderList::insert($datalist);
+                    DB::commit();
+                    $msg['code']=200;
+                    $msg['msg']='操作成功!';
+                    return $msg;
+                }else{
+                    DB::rollBack();
+                    $msg['code']=301;
+                    $msg['msg']='操作失败';
+                    return $msg;
+                }
+            }catch(\Exception $e){
+                DB::rollBack();
+                dd($e);
+                $msg['code'] = '300';
+                $msg['msg']  = '操作失败！';
                 return $msg;
-            }else{
-                $msg['code']=301;
-                $msg['msg']='操作失败';
-                return $msg;
             }
-
         }else{
             $erro = $validator->errors()->all();
             $msg['msg'] = null;

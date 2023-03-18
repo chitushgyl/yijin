@@ -1075,6 +1075,8 @@ class LibraryController extends CommonController{
         $enter_time         = $request->input('enter_time');//入库时间
         $purchase_date      = $request->input('purchase_date');//采购时间
         $voucher            = json_decode($request->input('voucher'),true);//凭证
+        $group_code         = $request->input('group_code');//采购时间
+        $group_name         = $request->input('group_name');//
 
         /*** 虚拟数据
         $input['group_code']=$group_code='1234';
@@ -1176,8 +1178,8 @@ class LibraryController extends CommonController{
                     $list['storage_number']     =$v['now_num'];
                     $list['price']              =$v['price'];
                     $list['total_price']        =$v['total_price'];
-                    $list["group_code"]         =$user_info->group_code;
-                    $list["group_name"]         =$user_info->group_name;
+                    $list["group_code"]         =$group_code;
+                    $list["group_name"]         =$group_name;
                     $list['create_time']        =$now_time;
                     $list["update_time"]        =$now_time;
                     $list["create_user_id"]     =$user_info->admin_id;
@@ -1193,10 +1195,10 @@ class LibraryController extends CommonController{
 //                $money['pay_state']          = 'Y';
 //                $money['process_state']      = 'Y';
 //                $moneyList[] = $money;
-                }
-                /***保存数据**/
+                } /***保存数据**/
                 $wheres['self_id'] = $self_id;
                 $old_info=WmsLibraryOrder::where($wheres)->first();
+
                 if ($old_info){
                     $data['update_time']=$now_time;
                     $id=WmsLibraryOrder::where($wheres)->update($data);
