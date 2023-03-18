@@ -47,6 +47,7 @@ class CountController extends CommonController{
         $firstrow            =($page-1)*$listrows;
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'use_flag','value'=>'Y'],
             ['type'=>'=','name'=>'type','value'=>'WMS'],
             ['type'=>'like','name'=>'good_name','value'=>$good_name],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
@@ -59,6 +60,7 @@ class CountController extends CommonController{
         $search1=[
             ['type'=>'like','name'=>'warehouse_name','value'=>$warehouse_name],
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'use_flag','value'=>'Y'],
             ['type'=>'>','name'=>'now_num','value'=>0],
         ];
 
