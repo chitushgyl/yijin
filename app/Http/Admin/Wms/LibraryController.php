@@ -861,7 +861,8 @@ class LibraryController extends CommonController{
 
 		$WmsLibrarySigeSelect=[
             'self_id','grounding_status','in_library_state','grounding_type','good_remark','good_lot','order_id','external_sku_id','good_name','spec',
-            'production_date','expire_time','initial_num as now_num','good_unit','good_target_unit','good_scale','can_use', 'delete_flag'
+            'production_date','expire_time','initial_num as now_num','good_unit','good_target_unit','good_scale','can_use', 'delete_flag','price','total_price'
+            ,'sku_id'
 		];
 
         $info=WmsLibraryOrder::with(['wmsLibrarySige' => function($query)use($WmsLibrarySigeSelect) {
@@ -996,7 +997,7 @@ class LibraryController extends CommonController{
 
         $WmsLibrarySigeSelect=[
             'self_id','grounding_status','in_library_state','grounding_type','good_remark','good_lot','order_id','external_sku_id','good_name','spec',
-            'production_date','expire_time','initial_num as now_num','good_unit','good_target_unit','good_scale','can_use', 'delete_flag','sku_id'
+            'production_date','expire_time','initial_num as now_num','good_unit','good_target_unit','good_scale','can_use', 'delete_flag','sku_id','price','total_price'
         ];
 
         $info=WmsLibraryOrder::with(['wmsLibrarySige' => function($query)use($WmsLibrarySigeSelect) {
@@ -1170,6 +1171,8 @@ class LibraryController extends CommonController{
                     $list['initial_num']        =$v['now_num'];
                     $list['now_num']            =$v['now_num'];
                     $list['storage_number']     =$v['now_num'];
+                    $list['price']              =$v['price'];
+                    $list['total_price']        =$v['total_price'];
                     $list["group_code"]         =$user_info->group_code;
                     $list["group_name"]         =$user_info->group_name;
                     $list['create_time']        =$now_time;
