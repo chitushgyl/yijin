@@ -278,7 +278,7 @@ class OrderController extends CommonController{
                     $list['group_code']         = $sku_info->group_code;
                     $list['group_name']         = $sku_info->group_name;
                     if ($self_id){
-                        $list['order_id']           = $order_2['self_id'];
+                        $list['order_id']           = $self_id;
                     }else{
                         $list['order_id']           = $order_id;
                     }
