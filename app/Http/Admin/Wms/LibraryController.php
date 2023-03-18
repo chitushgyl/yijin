@@ -1153,7 +1153,11 @@ class LibraryController extends CommonController{
                     $list=[];
 
                     $list["self_id"]            =generate_id('LSID_');
-                    $list["order_id"]           =$seld;
+                    if ($self_id){
+                        $list["order_id"]           =$self_id;
+                    }else{
+                        $list["order_id"]           =$seld;
+                    }
                     $list["sku_id"]             =$getGoods->self_id;
                     $list["external_sku_id"]    =$getGoods->external_sku_id;
                     $list["good_name"]          =$getGoods->good_name;
