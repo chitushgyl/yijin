@@ -72,8 +72,6 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'car_number','value'=>$car_number],
             ['type'=>'>=','name'=>'out_time','value'=>$start_time],
             ['type'=>'<','name'=>'out_time','value'=>$end_time],
-            ['type'=>'=','name'=>'spec','value'=>$spec],
-            ['type'=>'=','name'=>'num','value'=>$number],
         ];
 
         $where = get_list_where($search);
@@ -90,10 +88,10 @@ class OrderController extends CommonController{
                         $query->where('good_name','like',$good_name);
                     }
                     if ($spec){
-                        $query->where('spec','like',$spec);
+                        $query->where('spec','=',$spec);
                     }
                     if ($number){
-                        $query->where('num','like',$number);
+                        $query->where('num','=',$number);
                     }
                     $query->select($order_list_select);
                 }]) ->where($where)
@@ -110,10 +108,10 @@ class OrderController extends CommonController{
                         $query->where('good_name','like',$good_name);
                     }
                     if ($spec){
-                        $query->where('spec','like',$spec);
+                        $query->where('spec','=',$spec);
                     }
                     if ($number){
-                        $query->where('num','like',$number);
+                        $query->where('num','=',$number);
                     }
                     $query->where('delete_flag','=','Y');
                     $query->select($order_list_select);
@@ -131,10 +129,10 @@ class OrderController extends CommonController{
                         $query->where('good_name','like',$good_name);
                     }
                     if ($spec){
-                        $query->where('spec','like',$spec);
+                        $query->where('spec','=',$spec);
                     }
                     if ($number){
-                        $query->where('num','like',$number);
+                        $query->where('num','=',$number);
                     }
                     $query->select($order_list_select);
                 }]) ->where($where)->whereIn('group_code', $group_info['group_code'])
