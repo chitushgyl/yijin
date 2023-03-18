@@ -1061,7 +1061,7 @@ class LibraryController extends CommonController{
 
         $input=$request->all();
         /** 接收数据*/
-        $self_id            = $request->self_id;
+        $self_id            = $request->input('self_id');
         $warehouse_id       = $request->input('warehouse_id');//仓库ID
         $sige_id            = $request->input('sige_id');
         $library_sige       = json_decode($request->input('library_sige'), true);//产品信息
