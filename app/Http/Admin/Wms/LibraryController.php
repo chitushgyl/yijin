@@ -98,9 +98,9 @@ class LibraryController extends CommonController{
         $grounding_status   =$request->input('grounding_status');
         $order_status       =$request->input('order_status');
         $purchase           =$request->input('purchase');
-        $start_time           =$request->input('start_time');
+        $start_time         =$request->input('start_time');
         $end_time           =$request->input('end_time');
-        $good_name           =$request->input('good_name');
+        $good_name          =$request->input('good_name');
         $listrows           =$num;
         $firstrow           =($page-1)*$listrows;
 

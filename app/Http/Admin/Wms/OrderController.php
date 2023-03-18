@@ -56,7 +56,9 @@ class OrderController extends CommonController{
         $car_number         = $request->input('car_number');
         $start_time         = $request->input('start_time');
         $end_time           = $request->input('end_time');
-        $good_name           = $request->input('good_name');
+        $good_name          = $request->input('good_name');
+        $spec               = $request->input('spec');
+        $number             = $request->input('number');
         $listrows           = $num;
         $firstrow           = ($page - 1) * $listrows;
 
@@ -68,8 +70,10 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'status','value'=>$status],
             ['type'=>'like','name'=>'picker','value'=>$picker],
             ['type'=>'=','name'=>'car_number','value'=>$car_number],
-            ['type'=>'>=','name'=>'start_time','value'=>$start_time],
-            ['type'=>'<','name'=>'end_time','value'=>$end_time],
+            ['type'=>'>=','name'=>'out_time','value'=>$start_time],
+            ['type'=>'<','name'=>'out_time','value'=>$end_time],
+            ['type'=>'=','name'=>'spec','value'=>$spec],
+            ['type'=>'=','name'=>'num','value'=>$number],
         ];
 
         $where = get_list_where($search);
@@ -80,10 +84,16 @@ class OrderController extends CommonController{
         switch ($group_info['group_id']) {
             case 'all':
                 $data['total'] = WmsOutOrder::where($where)->count(); //总的数据量
-                $data['items'] = WmsOutOrder::with(['wmsOutOrderList'=>function($query)use($order_list_select,$good_name){
+                $data['items'] = WmsOutOrder::with(['wmsOutOrderList'=>function($query)use($order_list_select,$good_name,$spec,$number){
                     $query->where('delete_flag','=','Y');
                     if ($good_name){
                         $query->where('good_name','like',$good_name);
+                    }
+                    if ($spec){
+                        $query->where('spec','like',$spec);
+                    }
+                    if ($number){
+                        $query->where('num','like',$number);
                     }
                     $query->select($order_list_select);
                 }]) ->where($where)
@@ -95,9 +105,15 @@ class OrderController extends CommonController{
             case 'one':
                 $where[] = ['group_code', '=', $group_info['group_code']];
                 $data['total'] = WmsOutOrder::where($where)->count(); //总的数据量
-                $data['items'] = WmsOutOrder::with(['wmsOutOrderList'=>function($query)use($order_list_select,$good_name){
+                $data['items'] = WmsOutOrder::with(['wmsOutOrderList'=>function($query)use($order_list_select,$good_name,$spec,$number){
                     if ($good_name){
                         $query->where('good_name','like',$good_name);
+                    }
+                    if ($spec){
+                        $query->where('spec','like',$spec);
+                    }
+                    if ($number){
+                        $query->where('num','like',$number);
                     }
                     $query->where('delete_flag','=','Y');
                     $query->select($order_list_select);
@@ -109,10 +125,16 @@ class OrderController extends CommonController{
 
             case 'more':
                 $data['total'] = WmsOutOrder::where($where)->whereIn('group_code', $group_info['group_code'])->count(); //总的数据量
-                $data['items'] = WmsOutOrder::with(['wmsOutOrderList'=>function($query)use($order_list_select,$good_name){
+                $data['items'] = WmsOutOrder::with(['wmsOutOrderList'=>function($query)use($order_list_select,$good_name,$spec,$number){
                     $query->where('delete_flag','=','Y');
                     if ($good_name){
                         $query->where('good_name','like',$good_name);
+                    }
+                    if ($spec){
+                        $query->where('spec','like',$spec);
+                    }
+                    if ($number){
+                        $query->where('num','like',$number);
                     }
                     $query->select($order_list_select);
                 }]) ->where($where)->whereIn('group_code', $group_info['group_code'])
@@ -641,7 +663,7 @@ class OrderController extends CommonController{
             $data['quhuo_list']=$quhuo_list;
             $msg['code']=200;
             $msg['data']=$data;
-            $msg['msg']="拉去数据成功";
+            $msg['msg']="获取数据成功";
             return $msg;
 
         }else{
@@ -1240,6 +1262,82 @@ class OrderController extends CommonController{
                 $kk=$k+1;
                 $msg['msg'].=$kk.'：'.$v.'</br>';
             }
+            return $msg;
+        }
+    }
+
+    /**
+     *获取数据  wms/order/createOrder
+     * */
+    public function createOrder(Request $request){
+        $self_id=$request->input('self_id');
+//        $self_id='order_202012221122071857614366';
+        $out_store_status  =array_column(config('wms.out_store_status'),'name','key');
+        $where=[
+            ['self_id','=',$self_id],
+            ['delete_flag','=','Y'],
+        ];
+        $order_select = ['self_id','status','create_user_name','create_time','group_name','warehouse_name','total_flag','total_time',
+            'picker','operator','purchase','car_num','delivery_time','out_time'];
+        $order_list_select= ['self_id','good_name','good_unit','spec','num','order_id','external_sku_id','remarks','price','total_price','out_library_state'];
+        $wms_out_sige_select= ['order_list_id','num','good_unit','good_target_unit','good_scale','good_english_name'];
+
+        $info=wmsOutOrder::with(['wmsOutOrderList'=>function($query)use($order_list_select,$wms_out_sige_select){
+            $query->where('delete_flag','=','Y');
+            $query->select($order_list_select);
+            $query->with(['wmsOutSige' => function($query)use($wms_out_sige_select){
+                $query->select($wms_out_sige_select);
+                $query->where('delete_flag','=','Y');
+            }]);
+        }])->where($where)
+            ->select($order_select)->first();
+
+        if($info){
+            $list=[];
+            $list2=[];
+            $quhuo_list=[];
+            $out_list=[];
+            foreach ($info->wmsOutOrderList as $k=>$v){
+                $v->out_library_state_show  = $out_store_status[$v->out_library_state] ?? null;
+                if($v->quehuo == 'Y'){
+                    $data['quehuo_flag']         ='Y';
+                    $list2['external_sku_id']    =$v->external_sku_id;
+                    $list2['good_name']          =$v->good_name;
+                    $list2['spec']               =$v->spec;
+                    $list2['num']                =$v->quehuo_num;
+                    $list2['good_unit']          =$v->good_unit;
+                    $quhuo_list[]=$list2;
+                }
+                //dd($v->toArray());
+                if($v->wmsOutSige){
+                    $data['out_flag']        ='Y';
+                    foreach ($v->wmsOutSige as $kk => $vv){
+                        $list['external_sku_id']    =$v->external_sku_id;
+                        $list['good_name']          =$v->good_name;
+                        $list['good_english_name']  =$vv->good_english_name;
+                        $list['spec']               =$v->spec;
+                        $list['num']                =$vv->num;
+                        $list['good_unit']          =$vv->good_unit;
+                        $list['sign']               =$vv->area.'-'.$vv->row.'-'.$vv->column.'-'.$vv->tier;
+                        $list['good_describe']      =unit_do($vv->good_unit , $vv->good_target_unit, $vv->good_scale, $vv->num);
+                        //dd($vv->toArray());
+                        $out_list[]=$list;
+                    }
+                }
+
+            }
+
+            $data['info']=$info;
+            $data['out_list']=$out_list;
+            $data['quhuo_list']=$quhuo_list;
+            $msg['code']=200;
+            $msg['data']=$data;
+            $msg['msg']="获取数据成功";
+            return $msg;
+
+        }else{
+            $msg['code']=300;
+            $msg['msg']="没有查询到数据";
             return $msg;
         }
     }
