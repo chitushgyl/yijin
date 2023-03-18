@@ -64,7 +64,7 @@ class WaresController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','use_flag','wares_name','un_num','type','group_code','group_name','use_flag','delete_flag','create_time','update_time'];
+        $select=['self_id','use_flag','wares_name','un_num','type','group_code','group_name','use_flag','delete_flag','create_time','update_time','safe_card'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -159,6 +159,7 @@ class WaresController extends CommonController{
         $un_num             =$request->input('un_num');//un编号
         $wares_name         =$request->input('wares_name');//货物名称
         $type               =$request->input('type');// 12345678910  类型
+        $safe_card          =$request->input('safe_card');// 12345678910  类型
 
         $rules=[
             'wares_name'=>'required',
@@ -182,6 +183,7 @@ class WaresController extends CommonController{
             $data['wares_name']           = $wares_name;
             $data['un_num']               = $un_num;
             $data['type']                 = $type;
+            $data['safe_card']            = $safe_card;
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsWares::where($wheres)->first();

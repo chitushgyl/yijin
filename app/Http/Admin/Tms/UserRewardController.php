@@ -105,7 +105,7 @@ class UserRewardController extends CommonController{
 
         $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
-            ,'cash_back','cash_flag','type','user_name','bear'];
+            ,'cash_back','cash_flag','type','user_name','bear','company_fine'];
         $select1=['self_id','name'];
         switch ($group_info['group_id']){
             case 'all':
@@ -300,6 +300,7 @@ class UserRewardController extends CommonController{
         $cash_back               =$request->input('cash_back');//奖金返还
         $cash_flag               =$request->input('cash_flag');//奖金是否发放
         $bear                    =$request->input('bear');//承担多少责任
+        $company_fine            =$request->input('company_fine');//公司罚款
 
         $rules=[
             'car_id'=>'required',
@@ -322,12 +323,15 @@ class UserRewardController extends CommonController{
                     $data['escort']                 =$escort;
                     $data['violation_connect']      =$violation_connect;
                     $data['payment']                =$payment;
+                    $data['cash_back']              =$cash_back;
                     break;
                 case 'rule':
                     $data['handle_connect']         =$handle_connect;
                     $data['violation_connect']      =$violation_connect;
                     $data['score']                  =$score;
                     $data['payment']                =$payment;
+                    $data['company_fine']           =$company_fine;
+                    $data['cash_back']              =$cash_back;
                     break;
                 case 'accident':
                     $data['fault_address']          =$fault_address;
@@ -337,6 +341,8 @@ class UserRewardController extends CommonController{
                     $data['bear']                   =$bear;
                     $data['score']                  =$score;
                     $data['payment']                =$payment;
+                    $data['company_fine']           =$company_fine;
+                    $data['cash_back']              =$cash_back;
                     break;
                 case 'reward':
                     $data['escort']                 =$escort;
@@ -376,16 +382,27 @@ class UserRewardController extends CommonController{
             $wheres['self_id'] = $self_id;
             $old_info=UserReward::where($wheres)->first();
             if($old_info){
+                $user = AwardRemind::where('user_id',$user_id)->first();
+                $escort_user = AwardRemind::where('user_id',$escort)->first();
+                if ($user){
+                    $update['user_id']            = $user_id;
+                    $update['user_name']          = $user_name;
+                    $update['cash_back']          = $cash_back;
+                    $update['update_time']=$now_time;
+                    AwardRemind::where('user_id',$user_id)->update($update);
+                }
+                if ($escort_user){
+                    $update['escort']            = $escort;
+                    $update['cash_back']          = $cash_back;
+                    $update['update_time']=$now_time;
+                    AwardRemind::where('user_id',$escort)->update($update);
+                }
                 if ($type == 'reward'){
                     $update['user_id']            = $user_id;
                     $update['user_name']          = $user_name;
                     $update['money_award']        = $safe_reward;
                     $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
                     $update['cash_back']          = $time;
-                    $update['group_code']         = $group_code;
-                    $update['group_name']         = $group_name;
-                    $update['create_user_id']     = $user_info->admin_id;
-                    $update['create_user_name']   = $user_info->name;
                     $update['update_time']=$now_time;
                     AwardRemind::where('reward_id',$self_id)->update($update);
                 }
@@ -1010,6 +1027,10 @@ class UserRewardController extends CommonController{
 
         return $msg;
     }
+
+    /**
+     * 获取
+     * */
 
 }
 ?>

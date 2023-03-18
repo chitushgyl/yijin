@@ -1118,21 +1118,14 @@ class LibraryController extends CommonController{
             $datalist=[];       //初始化数组为空
             $seld=generate_id('SID_');
 
-            $data['self_id']            =$seld;
-            $data['create_time']        =$now_time;
-            $data["update_time"]        =$now_time;
+
             $data["grounding_status"]   ='Y';
-            $data["group_code"]         =$warehouse_info->group_code;
-            $data["group_name"]         =$warehouse_info->group_name;
-            $data["create_user_id"]     =$user_info->admin_id;
-            $data["create_user_name"]   =$user_info->name;
             $data["warehouse_id"]       =$warehouse_id;
             $data["warehouse_name"]     =$warehouse_info->warehouse_name;
             $data['count']              =count($library_sige);
             $data['type']               ='preentry';
             $data['enter_time']         =$enter_time;
             $data['purchase_date']      =$purchase_date;
-
             $data['check_time']         =$now_time;
             $data['voucher']            =img_for($voucher,'in');
             $data['order_status']       = 'W';
@@ -1140,10 +1133,38 @@ class LibraryController extends CommonController{
             $data['operator']           =$operator;
             $data['accepted']           =$accepted;
 
-            if ($self_id){
+            DB::beginTransaction();
+            try{
+                if(count($sige_id)>0){
+                    $sige_update['delete_flag'] = 'Y';
+                    $sige_update['update_time'] = $now_time;
+                    WmsLibrarySige::whereIn('self_id',$sige_id)->update($sige_update);
+                    WmsLibraryChange::whereIn('library_sige_id',$sige_id)->update($sige_update);
+                }
 
+            }catch (\Exception $exception){
+                DB::rollBack();
+                $msg['code']=300;
+                $msg['msg']='操作失败!';
+            }
+
+
+            $wheres['self_id'] = $self_id;
+            $old_info=WmsLibraryOrder::where($wheres)->first();
+            if ($old_info){
+                $data['update_time']=$now_time;
+                $id=WmsLibraryOrder::where($wheres)->update($data);
+
+                $operationing->access_cause='修改入库信息';
+                $operationing->operation_type='update';
             }else{
-
+                $data['self_id']            =$seld;
+                $data["group_code"]         =$warehouse_info->group_code;
+                $data["group_name"]         =$warehouse_info->group_name;
+                $data["create_user_id"]     =$user_info->admin_id;
+                $data["create_user_name"]   =$user_info->name;
+                $data['create_time']        =$now_time;
+                $data["update_time"]        =$now_time;
             }
             foreach($library_sige as $k => $v){
                 $where100['self_id']=$v['sku_id'];
