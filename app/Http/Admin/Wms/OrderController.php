@@ -69,7 +69,7 @@ class OrderController extends CommonController{
             ['type'=>'like','name'=>'warehouse_name','value'=>$warehouse_name],
             ['type'=>'=','name'=>'status','value'=>$status],
             ['type'=>'like','name'=>'picker','value'=>$picker],
-            ['type'=>'=','name'=>'car_number','value'=>$car_number],
+            ['type'=>'=','name'=>'car_num','value'=>$car_number],
             ['type'=>'>=','name'=>'out_time','value'=>$start_time],
             ['type'=>'<','name'=>'out_time','value'=>$end_time],
         ];
