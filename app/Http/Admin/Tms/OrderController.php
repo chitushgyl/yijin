@@ -295,29 +295,10 @@ class OrderController extends CommonController{
             /** 开始处理正式的数据*/
             $data['send_name']               = $send_name;
             $data['send_tel']                = $send_tel;
-            $data['send_sheng']              = $send_sheng;
-            $data['send_shi']                = $send_shi;
-            $data['send_qu']                 = $send_qu;
-            $data['send_sheng_name']         = $send_sheng_name;
-            $data['send_shi_name']           = $send_shi_name;
-            $data['send_qu_name']            = $send_qu_name;
             $data['send_address']            = $send_address;
-            $data['send_address_longitude']  = $send_address_longitude;
-            $data['send_address_latitude']   = $send_address_latitude;
             $data['gather_name']             = $gather_name;
-            $data['gather_tel']              = $gather_tel;
-            $data['gather_sheng']            = $gather_sheng;
-            $data['gather_shi']              = $gather_shi;
-            $data['gather_qu']               = $gather_qu;
-            $data['gather_sheng_name']       = $gather_sheng_name;
-            $data['gather_shi_name']         = $gather_shi_name;
-            $data['gather_qu_name']          = $gather_qu_name;
             $data['gather_address']          = $gather_address;
-            $data['gather_address_longitude']= $gather_address_longitude;
-            $data['gather_address_latitude'] = $gather_address_latitude;
             $data['good_name']               = $good_name;
-            $data['more_money']              = $more_money;
-            $data['price']                   = $price;
             $data['total_money']             = $total_money;
             $data['enter_time']              = $enter_time;
             $data['leave_time']              = $leave_time;
@@ -401,7 +382,6 @@ class OrderController extends CommonController{
                     $wages['goodsname']    = $good_name;
                     $wages['pick_weight']  = $real_weight;
                     $wages['unload_weight']= $upload_weight;
-                    $wages['price']        = $price;
                     $wages['total_money']  = $total_money;
                     $wages['remark']       = $remark;
                     TmsWages::insert($wages);
