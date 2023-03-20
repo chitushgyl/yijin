@@ -242,7 +242,7 @@ class OrderController extends CommonController{
         $order_weight              = $request->input('order_weight');//装货吨位
         $real_weight               = $request->input('real_weight');//实际提货量
         $upload_weight             = $request->input('upload_weight');//卸货吨位
-        $transport_type             = $request->input('transport_type');//运输方式
+        $pack_type                 = $request->input('pack_type');//运输方式
         $different_weight          = $request->input('different_weight');//装卸货量差
         $bill_flag                 = $request->input('bill_flag');//开票状态
         $payment_state             = $request->input('payment_state');//结算状态
@@ -258,7 +258,6 @@ class OrderController extends CommonController{
         $trailer_num               = $request->input('trailer_num');//挂车号
         $car_id                    = $request->input('car_id');//车牌号
         $car_number                = $request->input('car_number');//车牌号
-        $social_flag               = $request->input('social_flag');//驾驶员是否参加社保
         $company_id                = $request->input('company_id');//所属组织
         $company_name              = $request->input('company_name');//所属组织
         $ordertypes                = $request->input('ordertypes');//
@@ -270,6 +269,7 @@ class OrderController extends CommonController{
         $carriage_id               = $request->input('carriage_id');//
         $carriage_name             = $request->input('carriage_name');//
         $car_tel                   = $request->input('car_tel');//电话
+        $pick_time                 = $request->input('pick_time');//提货时间段
 
 
         $rules=[
@@ -325,14 +325,28 @@ class OrderController extends CommonController{
             $data['driver_id']               = $driver_id;
             $data['user_name']               = $user_name;
             $data['escort']                  = $escort;
+            $data['escort_name']             = $escort_name;
             $data['trailer_num']             = $trailer_num;
             $data['car_id']                  = $car_id;
             $data['car_number']              = $car_number;
             $data['company_id']              = $company_id;
             $data['company_name']            = $company_name;
-            $data['ordertypes']            = $ordertypes;
-//            $data['social_flag']             = $social_flag;
-
+            $data['ordertypes']              = $ordertypes;
+            $data['order_type']              = $order_type;
+            $data['send_time']               = $send_time;
+            $data['gather_time']             = $gather_time;
+            $data['order_number']            = $order_number;
+            $data['leave_time']              = $leave_time;
+            $data['transport_type']          = $transport_type;
+            $data['area']                    = $area;
+            $data['order_mark']              = $order_mark;
+            $data['road_card']               = $road_card;
+            $data['carriage_group']          = $carriage_group;
+            $data['carriage_id']             = $carriage_id;
+            $data['carriage_name']           = $carriage_name;
+            $data['car_tel']                 = $car_tel;
+            $data['pick_time']               = $pick_time;
+            $data['pack_type']               = $pack_type;
 
             $old_info = TmsOrder::where('self_id',$self_id)->first();
 
@@ -344,76 +358,67 @@ class OrderController extends CommonController{
                 $operationing->operation_type='update';
             }else{
                 $data['self_id']            = generate_id('order_');
-                $data['order_number']       = generate_id('');
                 $data['group_code']         = $group_info->group_code;
                 $data['group_name']         = $group_info->group_name;
                 $data['create_user_id']     = $user_info->admin_id;
                 $data['create_user_name']   = $user_info->name;
                 $data['create_time']        = $data['update_time']=$now_time;
-                $order_log['self_id'] = generate_id('log_');
-                $order_log['info'] = '创建运单:'.'预约单号'.$data['odd_number'].','.'运单号：'.$data['order_number'];
-                $order_log['create_time'] = $order_log['update_time'] = $now_time;
-                $order_log['order_id']    = $data['self_id'];
-                $order_log['group_code']    = $group_info->group_code;
-                $order_log['group_name']    = $group_info->group_name;
-                $order_log['create_user_id']       = $user_info->admin_id;
-                $order_log['create_user_name']     = $user_info->admin_name;
-                $id=TmsOrder::insert($data);
-                OrderLog::insert($order_log);
 
-                /**保存费用**/
-                $money['self_id']                = generate_id('money_');
-                $money['pay_type']               = 'freight';
-                $money['money']                  = $total_money;
-                $money['pay_state']              = 'Y';
-                $money['order_id']               = $data['self_id'];
-                $money['process_state']          = 'Y';
-                $money['type_state']             = 'in';
-                $money['company_id']             = $company_id;
-                $money['company_name']           = $company_name;
-                $money['group_code']             = $group_code;
-//                $money['group_name']             = $group_name;
-                $money['create_user_id']         = $user_info->admin_id;
-                $money['create_user_name']       = $user_info->name;
-                $money['create_time']            = $money['update_time'] = $now_time;
-                TmsMoney::insert($money);
+                $id=TmsOrder::insert($data);
+
+//                /**保存费用**/
+//                $money['self_id']                = generate_id('money_');
+//                $money['pay_type']               = 'freight';
+//                $money['money']                  = $total_money;
+//                $money['pay_state']              = 'Y';
+//                $money['order_id']               = $data['self_id'];
+//                $money['process_state']          = 'Y';
+//                $money['type_state']             = 'in';
+//                $money['company_id']             = $company_id;
+//                $money['company_name']           = $company_name;
+//                $money['group_code']             = $group_code;
+////                $money['group_name']             = $group_name;
+//                $money['create_user_id']         = $user_info->admin_id;
+//                $money['create_user_name']       = $user_info->name;
+//                $money['create_time']            = $money['update_time'] = $now_time;
+//                TmsMoney::insert($money);
 
                 /***生成工资表**/
-                if ($car_id){
-                    $wages['self_id']      = generate_id('wages_');
-                    $wages['order_id']     = $data['self_id'];
-                    $wages['car_id']       = $car_id;
-                    $wages['car_number']   = $car_number;
-                    $wages['driver_id']    = $driver_id;
-                    $wages['driver_name']  = $user_name;
-                    $wages['social_flag']  = $social_flag;
-                    $wages['date']         = $enter_time;
-                    $wages['escort']       = $escort;
-                    $wages['goodsname']    = $good_name;
-                    $wages['pick_weight']  = $real_weight;
-                    $wages['unload_weight']= $upload_weight;
-                    $wages['total_money']  = $total_money;
-                    $wages['remark']       = $remark;
-                    TmsWages::insert($wages);
-
-                    $payment['self_id']                = generate_id('money_');
-                    $payment['pay_type']               = 'salary';
-                    $payment['money']                  = $total_money;
-                    $payment['pay_state']              = 'Y';
-                    $payment['order_id']               = $data['self_id'];
-                    $payment['process_state']          = 'Y';
-                    $payment['type_state']             = 'out';
-                    $payment['car_id']                 = $car_id;
-                    $payment['car_number']             = $car_number;
-                    $payment['user_id']                = $driver_id;
-                    $payment['user_name']              = $user_name;
-                    $payment['group_code']             = $group_code;
-                    $payment['create_user_id']         = $user_info->admin_id;
-                    $payment['create_user_name']       = $user_info->name;
-                    $payment['create_time']            = $payment['update_time'] = $now_time;
-                    TmsMoney::insert($payment);
-
-                }
+//                if ($car_id){
+//                    $wages['self_id']      = generate_id('wages_');
+//                    $wages['order_id']     = $data['self_id'];
+//                    $wages['car_id']       = $car_id;
+//                    $wages['car_number']   = $car_number;
+//                    $wages['driver_id']    = $driver_id;
+//                    $wages['driver_name']  = $user_name;
+//                    $wages['social_flag']  = $social_flag;
+//                    $wages['date']         = $enter_time;
+//                    $wages['escort']       = $escort;
+//                    $wages['goodsname']    = $good_name;
+//                    $wages['pick_weight']  = $real_weight;
+//                    $wages['unload_weight']= $upload_weight;
+//                    $wages['total_money']  = $total_money;
+//                    $wages['remark']       = $remark;
+//                    TmsWages::insert($wages);
+//
+//                    $payment['self_id']                = generate_id('money_');
+//                    $payment['pay_type']               = 'salary';
+//                    $payment['money']                  = $total_money;
+//                    $payment['pay_state']              = 'Y';
+//                    $payment['order_id']               = $data['self_id'];
+//                    $payment['process_state']          = 'Y';
+//                    $payment['type_state']             = 'out';
+//                    $payment['car_id']                 = $car_id;
+//                    $payment['car_number']             = $car_number;
+//                    $payment['user_id']                = $driver_id;
+//                    $payment['user_name']              = $user_name;
+//                    $payment['group_code']             = $group_code;
+//                    $payment['create_user_id']         = $user_info->admin_id;
+//                    $payment['create_user_name']       = $user_info->name;
+//                    $payment['create_time']            = $payment['update_time'] = $now_time;
+//                    TmsMoney::insert($payment);
+//
+//                }
 
 
                 $operationing->access_cause='新建订单';
