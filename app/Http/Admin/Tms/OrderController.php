@@ -93,9 +93,7 @@ class OrderController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code',
-            'order_status','send_time','send_name','send_tel','send_sheng','send_shi','send_qu','send_sheng_name','send_shi_name','send_qu_name','send_address',
-            'send_address_longitude','send_address_latitude','gather_time','gather_name','gather_tel','gather_sheng','gather_shi','gather_qu','gather_sheng_name',
-            'gather_shi_name','gather_qu_name','gather_address','gather_address_longitude','gather_address_latitude','total_money','good_name','more_money','price',
+            'order_status','send_time','send_name','gather_time','gather_name','gather_address','gather_address_longitude','gather_address_latitude','total_money','good_name','more_money','price',
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
             'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes'];
 
@@ -229,24 +227,28 @@ class OrderController extends CommonController{
 
 //        /** 接收数据*/
         $self_id                   = $request->input('self_id');
+        $order_type                = $request->input('order_type');// 1硫磺一队  2硫磺二队 3危废队
         $group_code                = $request->input('group_code');//
-        $send_name                 = $request->input('send_name');//发货地联系人
-        $send_tel                  = $request->input('send_tel');//发货地人联系方式
-        $send_address              = $request->input('send_address');//详细地址
-        $gather_name               = $request->input('gather_name');//卸货地联系人
-        $gather_address            = $request->input('gather_address');//详细地址
+        $send_id                   = $request->input('send_id');//装车点ID
+        $send_name                 = $request->input('send_name');//装车点
+        $gather_id                 = $request->input('gather_id');//卸车点ID
+        $gather_name               = $request->input('gather_name');//卸车点
+        $send_time                 = $request->input('send_time');//发货时间
+        $gather_time               = $request->input('gather_time');//交货时间
         $good_name                 = $request->input('good_name');//货物品名/危废名称
+        $order_number              = $request->input('order_number');//标识
         $enter_time                = $request->input('enter_time');//进厂时间
         $leave_time                = $request->input('leave_time');//出厂时间
-        $order_weight              = $request->input('order_weight');//预约提货量
+        $order_weight              = $request->input('order_weight');//装货吨位
         $real_weight               = $request->input('real_weight');//实际提货量
-        $upload_weight             = $request->input('upload_weight');//卸货量
+        $upload_weight             = $request->input('upload_weight');//卸货吨位
+        $transport_type             = $request->input('transport_type');//运输方式
         $different_weight          = $request->input('different_weight');//装卸货量差
         $bill_flag                 = $request->input('bill_flag');//开票状态
         $payment_state             = $request->input('payment_state');//结算状态
-        $odd_number                = $request->input('odd_number');//预约单号
+        $odd_number                = $request->input('odd_number');//运单号
         $remark                    = $request->input('remark');//备注
-        $car_num                   = $request->input('car_num');//备车数
+        $car_num                   = $request->input('car_num');//车数
         $sale_price                = $request->input('sale_price');//单价
         $total_money               = $request->input('total_money');//运费总额
         $driver_id                 = $request->input('driver_id');//驾驶员
@@ -258,7 +260,8 @@ class OrderController extends CommonController{
         $social_flag               = $request->input('social_flag');//驾驶员是否参加社保
         $company_id                = $request->input('company_id');//托运人
         $company_name              = $request->input('company_name');//托运人
-        $ordertypes                = $request->input('ordertypes');//托运人
+        $ordertypes                = $request->input('ordertypes');//
+        $area                      = $request->input('area');//区域
 
 
         $rules=[
@@ -293,11 +296,10 @@ class OrderController extends CommonController{
             /** 处理一下发货地址  及联系人 结束**/
 
             /** 开始处理正式的数据*/
+            $data['send_id']                 = $send_id;
             $data['send_name']               = $send_name;
-            $data['send_tel']                = $send_tel;
-            $data['send_address']            = $send_address;
+            $data['gather_id']               = $gather_id;
             $data['gather_name']             = $gather_name;
-            $data['gather_address']          = $gather_address;
             $data['good_name']               = $good_name;
             $data['total_money']             = $total_money;
             $data['enter_time']              = $enter_time;
