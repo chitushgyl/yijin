@@ -93,7 +93,7 @@ class OrderController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code',
-            'order_status','send_time','send_name','gather_time','gather_name','gather_address','gather_address_longitude','gather_address_latitude','total_money','good_name','more_money','price',
+            'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price',
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
             'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes'];
 
