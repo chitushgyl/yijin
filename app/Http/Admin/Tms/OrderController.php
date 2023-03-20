@@ -236,7 +236,7 @@ class OrderController extends CommonController{
         $send_time                 = $request->input('send_time');//发货时间
         $gather_time               = $request->input('gather_time');//交货时间
         $good_name                 = $request->input('good_name');//货物品名/危废名称
-        $order_number              = $request->input('order_number');//标识
+        $order_number              = $request->input('order_number');//订单编码
         $enter_time                = $request->input('enter_time');//进厂时间
         $leave_time                = $request->input('leave_time');//出厂时间
         $order_weight              = $request->input('order_weight');//装货吨位
@@ -251,17 +251,25 @@ class OrderController extends CommonController{
         $car_num                   = $request->input('car_num');//车数
         $sale_price                = $request->input('sale_price');//单价
         $total_money               = $request->input('total_money');//运费总额
-        $driver_id                 = $request->input('driver_id');//驾驶员
-        $user_name                 = $request->input('user_name');//驾驶员
-        $escort                    = $request->input('escort');//押运员
+        $driver_id                 = $request->input('driver_id');//驾驶员ID
+        $user_name                 = $request->input('user_name');//驾驶员名称
+        $escort                    = $request->input('escort');//押运员ID
+        $escort_name               = $request->input('escort_name');//押运员名称
         $trailer_num               = $request->input('trailer_num');//挂车号
         $car_id                    = $request->input('car_id');//车牌号
         $car_number                = $request->input('car_number');//车牌号
         $social_flag               = $request->input('social_flag');//驾驶员是否参加社保
-        $company_id                = $request->input('company_id');//托运人
-        $company_name              = $request->input('company_name');//托运人
+        $company_id                = $request->input('company_id');//所属组织
+        $company_name              = $request->input('company_name');//所属组织
         $ordertypes                = $request->input('ordertypes');//
         $area                      = $request->input('area');//区域
+        $transport_type            = $request->input('transport_type');//运输方式
+        $order_mark                = $request->input('order_mark');//标识
+        $road_card                 = $request->input('road_card');//路卡
+        $carriage_group            = $request->input('carriage_group');//承运商组别
+        $carriage_id               = $request->input('carriage_id');//
+        $carriage_name             = $request->input('carriage_name');//
+        $car_tel                   = $request->input('car_tel');//电话
 
 
         $rules=[

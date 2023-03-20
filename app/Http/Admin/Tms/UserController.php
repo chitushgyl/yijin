@@ -915,7 +915,7 @@ class UserController extends CommonController{
                         $sex = '女';
                     }
                     $list['sex']=$sex;
-                    $list['identity_num']=$v->identity_num;
+                    $list['identity_num']=$v->identity_num."\t";
                     $list['birthday']=$v->birthday;
                     $list['age']=$v->age;
                     $list['tel']=$v->tel;
@@ -939,7 +939,7 @@ class UserController extends CommonController{
                     $list['drive_type']=$v->drive_type;
                     $list['drive_validity']=$v->drive_validity;
                     $list['drive_organ']=$v->drive_organ;
-                    $list['nvq_num']=$v->nvq_num;
+                    $list['nvq_num']=$v->nvq_num."\t";
                     $list['nvq_validity']=$v->nvq_validity;
                     $list['nvq_organ']=$v->nvq_organ;
 
