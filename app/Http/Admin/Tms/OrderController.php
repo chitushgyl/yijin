@@ -267,8 +267,8 @@ class OrderController extends CommonController{
         $order_mark                = $request->input('order_mark');//标识
         $road_card                 = $request->input('road_card');//路卡
         $carriage_group            = $request->input('carriage_group');//承运商组别
-        $carriage_id               = $request->input('carriage_id');//
-        $carriage_name             = $request->input('carriage_name');//
+        $carriage_id               = $request->input('carriage_id');//委托单位
+        $carriage_name             = $request->input('carriage_name');//委托单位
         $car_tel                   = $request->input('car_tel');//电话
         $pick_time                 = $request->input('pick_time');//提货时间段
 
