@@ -209,8 +209,8 @@ class OrderController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $select=['self_id'];
-        $detail = TmsOrder::where($where)->select($select)->first();
+     
+        $detail = TmsOrder::where($where)->first();
         if ($detail) {
 
 
