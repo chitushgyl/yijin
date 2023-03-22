@@ -162,13 +162,13 @@ class ExamineController extends CommonController{
         $group_code         =$request->input('group_code');
         $user_name          =$request->input('user_name');//员工名称
         $user_id            =$request->input('user_id');
-        $fine_time          =$request->input('fine_time');//罚款时间
-        $fine_price         =$request->input('fine_price');//罚款金额
-        $reward_price       =$request->input('reward_price');//奖励金额
-        $reward_time        =$request->input('reward_time');//奖励日期
+        $start_time         =$request->input('start_time');//罚款时间
+        $end_time           =$request->input('end_time');//奖励日期
         $absence_duty       =$request->input('absence_duty');// 缺勤日期
         $remark             =$request->input('remark');//备注
-
+        $date_num           =$request->input('date_num');//备注
+        $approver           =$request->input('approver');//备注
+        $reason             =$request->input('reason');//备注
         $rules=[
             'user_name'=>'required',
         ];
@@ -188,31 +188,15 @@ class ExamineController extends CommonController{
 
             $data['user_name']           =$user_name;
             $data['user_id']             =$user_id;
-            $data['fine_time']           =$fine_time;
-            $data['fine_price']          =$fine_price;
-            $data['reward_time']         =$reward_time;
-            $data['reward_price']        =$reward_price;
+            $data['start_time']          =$start_time;
+            $data['end_time']            =$end_time;
             $data['absence_duty']        =$absence_duty;
             $data['remark']              =$remark;
+            $data['date_num']           =$date_num;
+            $data['approver']           =$approver;
+            $data['reason']             =$reason;
 
-            /**保存费用**/
-            if ($fine_price ||$reward_price){
-                $money['pay_type']           = 'other';
-                if($fine_price){
-                    $money['money']              = $fine_price;
-                    $money['type_state']         = 'out';
-                    $money['create_time']        = $money['update_time']=$fine_time;
-                }
-                if ($reward_price){
-                    $money['money']              = $reward_price;
-                    $money['type_state']         = 'in';
-                    $money['create_time']        = $money['update_time']=$reward_time;
-                }
-                $money['pay_state']          = 'Y';
-                $money['user_id']             = $user_id;
-                $money['user_name']         = $user_name;
-                $money['process_state']      = 'Y';
-            }
+
 
             $wheres['self_id'] = $self_id;
             $old_info=UserExamine::where($wheres)->first();
@@ -233,14 +217,6 @@ class ExamineController extends CommonController{
                 $data['create_time']        =$data['update_time']=$now_time;
 
                 $id=UserExamine::insert($data);
-                if($fine_price ||$reward_price){
-                    $money['self_id']            = generate_id('money_');
-                    $money['group_code']         = $group_code;
-                    $money['group_name']         = $group_name;
-                    $money['create_user_id']     = $user_info->admin_id;
-                    $money['create_user_name']   = $user_info->name;
-                    TmsMoney::insert($money);
-                }
                 $operationing->access_cause='新建考核记录';
                 $operationing->operation_type='create';
 
@@ -540,8 +516,8 @@ class ExamineController extends CommonController{
     public function  details(Request $request,Details $details){
         $self_id=$request->input('self_id');
         $table_name='car_accident';
-        $select=['self_id','car_number','car_id','falt_time','falt_name','falt_address','falt_price','create_user_id','create_user_name',
-            'remark','create_time','update_time','use_flag','delete_flag','group_code'];
+        $select=['self_id','user_id','user_name','absence_duty','start_time','end_time','create_user_id','create_user_name',
+            'remark','create_time','update_time','use_flag','delete_flag','group_code','date_num','approver','reason'];
         // $self_id='car_202012291341297595587871';
         $info=$details->details($self_id,$table_name,$select);
 

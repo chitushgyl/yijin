@@ -271,7 +271,7 @@ class OrderController extends CommonController{
         $carriage_name             = $request->input('carriage_name');//委托单位
         $car_tel                   = $request->input('car_tel');//电话
         $pick_time                 = $request->input('pick_time');//提货时间段
-       
+
 
         $rules=[
             'car_number'=>'required',
