@@ -53,8 +53,10 @@ class UserController extends CommonController{
         $self_id        =$request->input('self_id');
         $type           =$request->input('type');
         $social_flag    =$request->input('social_flag');
-        $entry_time     =$request->input('entry_time');//入职时间
-        $leave_time     =$request->input('leave_time');//离职时间
+        $entry_start    =$request->input('entry_start');//入职时间
+        $entry_end      =$request->input('entry_end');//入职时间
+        $leave_start    =$request->input('leave_start');//离职时间
+        $leave_end      =$request->input('leave_end');//离职时间
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -66,8 +68,10 @@ class UserController extends CommonController{
             ['type'=>'=','name'=>'self_id','value'=>$self_id],
             ['type'=>'=','name'=>'type','value'=>$type],
             ['type'=>'=','name'=>'social_flag','value'=>$social_flag],
-            ['type'=>'=','name'=>'entry_time','value'=>$entry_time],
-            ['type'=>'=','name'=>'leave_time','value'=>$leave_time],
+            ['type'=>'>=','name'=>'entry_time','value'=>$entry_start],
+            ['type'=>'<','name'=>'entry_time','value'=>$entry_end],
+            ['type'=>'>=','name'=>'leave_time','value'=>$leave_start],
+            ['type'=>'<','name'=>'leave_time','value'=>$leave_end],
         ];
 
         $where=get_list_where($search);
