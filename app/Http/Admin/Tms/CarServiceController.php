@@ -218,7 +218,11 @@ class CarServiceController extends CommonController{
 
             /**保存费用**/
             if ($service_price){
-                $money['pay_type']           = 'repair';
+                if ($type == 'service'){
+                    $money['pay_type']           = 'repair';
+                }else{
+                    $money['pay_type']           = 'preserve';
+                }
                 $money['money']              = $service_price;
                 $money['pay_state']          = 'Y';
                 $money['car_id']             = $car_id;
