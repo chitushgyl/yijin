@@ -112,7 +112,7 @@ class OrderController extends CommonController{
             'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
             'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
-            ,'road_card','escort_name','pack_type','pick_time'];
+            ,'road_card','escort_name','pack_type','pick_time','user_name'];
 
         switch ($group_info['group_id']){
             case 'all':
