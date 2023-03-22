@@ -831,8 +831,9 @@ class OrderController extends CommonController{
             foreach($info_wait as $k => $v){
                 $company = TmsGroup::where('type','check')->where('company_name',$v['company_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $car = TmsCar::where('car_number',$v['car_number'])->select('self_id','car_number')->first();
+                $car_go = TmsCar::where('car_number',$v['trailer_num'])->select('self_id','car_number')->first();
                 if ($v['user_name']){
-                    $driver = SystemUser::where('type','driver')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','use_flag','delete_flag','social_flag')->first();
+                    $driver = SystemUser::where('type','driver')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$driver){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
@@ -842,7 +843,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if($v['escort']){
-                    $cargo = SystemUser::where('type','cargo')->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','use_flag','delete_flag','social_flag')->first();
+                    $cargo = SystemUser::where('type','cargo')->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$cargo){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
@@ -861,7 +862,14 @@ class OrderController extends CommonController{
                 }
                 if (!$car){
                     if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行车辆不存在".'</br>';
+                        $strs .= '数据中的第'.$a."行车牌号不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                if (!$car_go){
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行挂车号不存在".'</br>';
                         $cando='N';
                         $abcd++;
                     }
@@ -882,29 +890,41 @@ class OrderController extends CommonController{
                     }
                 }
                 $list=[];
-                $order_log=[];
-                $money = [];
+            
                 if($cando =='Y'){
-
                     $list['self_id']                 = generate_id('order_');
                     $list['order_number']            = $v['order_number'];
-                    $list['send_address']            = $v['send_address'];
-                    $list['gather_address']          = $v['gather_address'];
+                    $list['company_id']              = $company->self_id;
+                    $list['company_name']            = $company->company_name;
+                    $list['carriage_id']             = $v['carriage_id'];
+                    $list['carriage_name']           = $v['carriage_name'];
                     $list['good_name']               = $v['good_name'];
-                    $list['enter_time']              = $v['enter_time'];
                     $list['car_id']                  = $car->self_id;
                     $list['car_number']              = $car->car_number;
                     $list['trailer_num']             = $v['trailer_num'];
                     if ($v['user_name']){
                         $list['driver_id']               = $driver->self_id;
                         $list['user_name']               = $driver->name;
+                        $list['car_tel']                 = $driver->tel;
                     }
                     if($v['escort']){
                         $list['escort']                  = $cargo->self_id;
+                        $list['escort_name']             = $cargo->name;
+                        $list['escort_tel']              = $cargo->tel;
                     }
+                    $list['odd_number']              = $v['odd_number'];
+                    $list['send_time']               = $v['send_time'];
+                    $list['gather_time']             = $v['gather_time'];
+                    $list['send_id']                 = $v['send_id'];
+                    $list['send_name']               = $v['send_name'];
+                    $list['gather_id']               = $v['gather_id'];
+                    $list['gather_name']             = $v['gather_name'];
+                    $list['pick_time']               = $v['pick_time'];
+                    $list['area']                    = $v['area'];
+                    $list['pack_type']               = $v['pack_type'];
+                    $list['road_card']               = $v['road_card'];
+                    $list['carriage_group']          = $v['carriage_group'];
 
-                    $list['company_id']              = $company->self_id;
-                    $list['company_name']            = $company->company_name;
                     $list['group_code']              = $info->group_code;
                     $list['group_name']              = $info->group_name;
                     $list['create_user_id']          = $user_info->admin_id;
@@ -913,73 +933,6 @@ class OrderController extends CommonController{
                     $list['file_id']                 = $file_id;
 
                     $datalist[]=$list;
-
-                    $order_log['self_id'] = generate_id('log_');
-                    $order_log['info'] = '创建运单:'.','.'标识：'.$list['order_number'];
-                    $order_log['create_time'] = $order_log['update_time'] = $now_time;
-                    $order_log['order_id']    = $list['self_id'];
-                    $order_log['group_code']    = $info->group_code;
-                    $order_log['group_name']    = $info->group_name;
-                    $order_log['create_user_id']       = $user_info->admin_id;
-                    $order_log['create_user_name']     = $user_info->admin_name;
-
-                    $order_log_list[] = $order_log;
-
-
-                    /**保存费用**/
-//                    $money['self_id']                = generate_id('money');
-//                    $money['pay_type']               = 'freight';
-//                    $money['money']                  = $list['total_money'];
-//                    $money['pay_state']              = 'Y';
-//                    $money['order_id']               = $list['self_id'];
-//                    $money['process_state']          = 'Y';
-//                    $money['type_state']             = 'in';
-//                    $money['group_code']             = $group_code;
-////                $money['group_name']             = $group_name;
-//                    $money['create_user_id']         = $user_info->admin_id;
-//                    $money['create_user_name']       = $user_info->name;
-//                    $money['create_time']            = $money['update_time'] = $now_time;
-//                    $money['company_id']             = $company->self_id;
-//                    $money['company_name']           = $company->company_name;
-//
-//                    $money_list[] = $money;
-
-                    /**生成工资***/
-//                    $wages['self_id']      = generate_id('wages_');
-//                    $wages['order_id']     = $list['self_id'];
-//                    $wages['car_id']       = $car->self_id;
-//                    $wages['car_number']   = $car->car_number;
-//                    $wages['driver_id']    = $driver->self_id;
-//                    $wages['driver_name']  = $driver->name;
-//                    $wages['social_flag']  = $driver->social_flag;
-//                    $wages['date']         = $v['enter_time'];
-//                    $wages['escort']       = $cargo->self_id;
-//                    $wages['goodsname']    = $v['good_name'];
-//                    $wages['pick_weight']  = $v['real_weight'];
-//                    $wages['unload_weight']= $v['upload_weight'];
-//                    $wages['price']        = $v['price'];
-//                    $wages['total_money']  = $v['total_money'];
-//                    $wages['remark']       = $v['remark'];
-//
-//                    $wages_list[] = $wages;
-
-
-//                    $payment['self_id']                = generate_id('money');
-//                    $payment['pay_type']               = 'salary';
-//                    $payment['money']                  = $v['total_money'];
-//                    $payment['pay_state']              = 'Y';
-//                    $payment['order_id']               = $list['self_id'];
-//                    $payment['process_state']          = 'Y';
-//                    $payment['type_state']             = 'out';
-//                    $payment['car_id']                 = $car->self_id;
-//                    $payment['car_number']             = $car->car_number;
-//                    $payment['user_id']                = $car->self_id;
-//                    $payment['user_name']              = $car->name;
-//                    $payment['group_code']             = $group_code;
-//                    $payment['create_user_id']         = $user_info->admin_id;
-//                    $payment['create_user_name']       = $user_info->name;
-//                    $payment['create_time']            = $payment['update_time'] = $now_time;
-//                    $payment_list[] = $payment;
 
                 }
 
@@ -1000,10 +953,6 @@ class OrderController extends CommonController{
             }
             $count=count($datalist);
             $id= TmsOrder::insert($datalist);
-            OrderLog::insert($order_log_list);
-//            TmsMoney::insert($money_list);
-//            TmsMoney::insert($payment_list);
-//            TmsWages::insert($wages_list);
 
             if($id){
                 $msg['code']=200;
