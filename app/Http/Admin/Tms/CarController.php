@@ -73,7 +73,7 @@ class CarController extends CommonController{
         'medallion_num','curb_weight','all_weight','medallion_change','license_begin','production_date','scrap_date','business_scope','goods','medallion_change_end',
         'design_code','operation_date','tank_num','tank_type','car_color','car_brand','car_model','type',
             'car_made','engine_num','fuel_type','displacement_power','maker','turn_view','tread','trye_num','steel_plate','wheel_base','axles_num','outline',
-            'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model'];
+            'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model','sgs_cert','sgs_date'];
         $select1 = ['self_id','parame_name','type'];
         switch ($group_info['group_id']){
             case 'all':
@@ -142,7 +142,7 @@ class CarController extends CommonController{
             'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model','license_back','medallion_back','registr_date','medallion_begin',
             'license_start','compulsory_cert','commercial_cert','registr_cert_date','carrier_insurer','carrier_insurer_num','carrier_baoe','carrier_zrx','carrier_zr','carrier_good',
             'compulsory_insurer','compulsory_num','compulsory_sc','compulsory_yl','compulsory_property','commercial_insurer','commercial_num','commercial_tz','commercial_zr','commercial_driver',
-            'commercial_user','car_unit','type','goods_type'];
+            'commercial_user','car_unit','type','goods_type','sgs_cert','sgs_date'];
         $select1 = ['self_id','parame_name','type'];
         $data['info']= TmsCar::with(['TmsCarType' => function($query) use($select1){
             $query->select($select1);
@@ -278,6 +278,8 @@ class CarController extends CommonController{
         $commercial_driver  =$request->input('commercial_driver');//车上司机责任险（万元）
         $commercial_user    =$request->input('commercial_user');//车上乘客责任险（万元）
         $car_unit           =$request->input('car_unit');//规格
+        $sgs_cert           =$request->input('sgs_cert');//SGS证书
+        $sgs_date           =$request->input('sgs_date');//SGS有效期截止
 
 
         $rules=[
@@ -408,6 +410,8 @@ class CarController extends CommonController{
             $data['commercial_driver']  =$commercial_driver;
             $data['commercial_user']    =$commercial_user;
             $data['car_unit']           =$car_unit;
+            $data['sgs_cert']           =img_for($sgs_cert,'one_in');
+            $data['sgs_date']           =$sgs_date;
             $wheres['self_id'] = $self_id;
             $old_info=TmsCar::where($wheres)->first();
 
@@ -813,7 +817,7 @@ class CarController extends CommonController{
             'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model','license_back','medallion_back','registr_date','medallion_begin',
             'license_start','compulsory_cert','commercial_cert','registr_cert_date','carrier_insurer','carrier_insurer_num','carrier_baoe','carrier_zrx','carrier_zr','carrier_good',
             'compulsory_insurer','compulsory_num','compulsory_sc','compulsory_yl','compulsory_property','commercial_insurer','commercial_num','commercial_tz','commercial_zr','commercial_driver',
-            'commercial_user','car_unit','goods_type'];
+            'commercial_user','car_unit','goods_type','sgs_cert','sgs_date'];
         $select1 = ['self_id','parame_name'];
 
 

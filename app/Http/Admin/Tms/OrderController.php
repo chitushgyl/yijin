@@ -271,12 +271,14 @@ class OrderController extends CommonController{
         $carriage_name             = $request->input('carriage_name');//委托单位
         $car_tel                   = $request->input('car_tel');//电话
         $pick_time                 = $request->input('pick_time');//提货时间段
-
+        dd($input);
 
         $rules=[
+            'car_number'=>'required',
             'good_name'=>'required',
         ];
         $message=[
+            'car_number.required'=>'请填写车牌号',
             'good_name.required'=>'请填写货物品名',
         ];
 
@@ -294,11 +296,11 @@ class OrderController extends CommonController{
                 return $msg;
             }
 
-            if (empty($good_name)) {
-                $msg['code'] = 306;
-                $msg['msg'] = '货物名称不能为空！';
-                return $msg;
-            }
+//            if (empty($good_name)) {
+//                $msg['code'] = 306;
+//                $msg['msg'] = '货物品名不能为空！';
+//                return $msg;
+//            }
 
             /** 处理一下发货地址  及联系人 结束**/
 

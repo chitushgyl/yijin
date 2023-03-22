@@ -75,7 +75,7 @@ class UserController extends CommonController{
         $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','safe_reward','salary',
         'group_insurance','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','birthday','sex','age','contract_date','working_age','id_validity',
             'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address','driver_nvq_num','driver_nvq_validity','driver_nvq_organ','driver_nvq'];
-        $select1 = ['self_id','section_name'];
+        $select1 = ['self_id','section_name','nation'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=SystemUser::where($where)->count(); //总的数据量
@@ -145,7 +145,7 @@ class UserController extends CommonController{
         ];
         $select=['self_id','type','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
             ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','contract_back','license_back','work_license'
-        ,'birthday','sex','age','contract_date','working_age','id_validity','id_address','salary','department_name',
+        ,'birthday','sex','age','contract_date','working_age','id_validity','id_address','salary','department_name','nation',
             'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','driver_nvq_num','driver_nvq_validity','driver_nvq_organ','driver_nvq'];
         $data['info']=SystemUser::where($where)->select($select)->first();
         if($data['info']){
@@ -228,6 +228,7 @@ class UserController extends CommonController{
         $driver_nvq_validity     =$request->input('driver_nvq_validity');//驾驶员资格证有效期截止
         $driver_nvq_organ        =$request->input('driver_nvq_organ');//驾驶员资格证发证机构
         $driver_nvq              =$request->input('driver_nvq');//驾驶员资格证
+        $nation                  =$request->input('nation');//民族
 
 
 
@@ -294,6 +295,7 @@ class UserController extends CommonController{
             $data['driver_nvq_validity']  =$driver_nvq_validity;
             $data['driver_nvq_organ']     =$driver_nvq_organ;
             $data['driver_nvq']           =img_for($driver_nvq,'one_in');
+            $data['nation']               =$nation;
 
             $wheres['self_id'] = $self_id;
             $old_info=SystemUser::where($wheres)->first();
@@ -778,7 +780,7 @@ class UserController extends CommonController{
         $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
             ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','contract_back','license_back','work_license','birthday',
             'sex','age','contract_date','working_age','id_validity','salary','drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address','driver_nvq_num','driver_nvq_validity',
-            'driver_nvq_organ','driver_nvq','department_name',
+            'driver_nvq_organ','driver_nvq','department_name','nation'
         ];
         // $self_id='address_202012301359512962811465';
         $select1 = ['self_id','section_name'];
@@ -857,7 +859,7 @@ class UserController extends CommonController{
             $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
                 ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','contract_back','license_back','work_license',
                 'birthday','sex','age','contract_date','working_age','id_validity','salary','drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address',
-                'driver_nvq_num','driver_nvq_validity','driver_nvq_organ','driver_nvq'];
+                'driver_nvq_num','driver_nvq_validity','driver_nvq_organ','driver_nvq','nation'];
             $select1 = ['self_id','section_name'];
             $info=SystemUser::with(['SystemSection' => function($query) use($select1){
                 $query->select($select1);
@@ -869,6 +871,7 @@ class UserController extends CommonController{
                     "id"=>'ID',
                     "name"=>'姓名',
                     "sex"=>'性别',
+                    "nation"=>'民族',
                     "identity_num"=>'身份证号',
                     "birthday"=>'出生日期',
                     "age"=>'年龄',
@@ -915,6 +918,7 @@ class UserController extends CommonController{
                         $sex = '女';
                     }
                     $list['sex']=$sex;
+                    $list['nation'] = $v->nation;
                     $list['identity_num']=$v->identity_num."\t";
                     $list['birthday']=$v->birthday;
                     $list['age']=$v->age;
