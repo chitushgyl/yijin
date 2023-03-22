@@ -104,15 +104,18 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'odd_number','value'=>$odd_number],
             ['type'=>'=','name'=>'order_type','value'=>$order_type],
         ];
-        if ($order_state == 1){
-            $search=[
-                ['type'=>'!=','name'=>'order_type','value'=>3],
-            ];
-        }else{
-            $search=[
-                ['type'=>'=','name'=>'order_type','value'=>3],
-            ];
+        if ($order_state){
+            if ($order_state == 1){
+                $search=[
+                    ['type'=>'!=','name'=>'order_type','value'=>3],
+                ];
+            }else{
+                $search=[
+                    ['type'=>'=','name'=>'order_type','value'=>3],
+                ];
+            }
         }
+
 
         $where=get_list_where($search);
 
@@ -176,9 +179,9 @@ class OrderController extends CommonController{
 
         foreach ($data['items'] as $k=>$v) {
             $v->order_type_show=$order_type[$v->order_status]??null;
-//            $v->button_info = $button_info;
+            $v->button_info = $button_info;
 
-           
+
         }
 
 //        dd($data['items']);
