@@ -74,8 +74,8 @@ class UserController extends CommonController{
 
         $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','safe_reward','salary',
         'group_insurance','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','birthday','sex','age','contract_date','working_age','id_validity',
-            'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address','driver_nvq_num','driver_nvq_validity','driver_nvq_organ','driver_nvq'];
-        $select1 = ['self_id','section_name','nation'];
+            'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address','driver_nvq_num','driver_nvq_validity','driver_nvq_organ','driver_nvq','nation'];
+        $select1 = ['self_id','section_name'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=SystemUser::where($where)->count(); //总的数据量
