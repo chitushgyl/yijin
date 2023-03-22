@@ -310,7 +310,7 @@ class OrderController extends CommonController{
                     $order_2['create_user_id']      =$user_info->admin_id;
                     $order_2['create_user_name']    =$user_info->name;
                     $order_2['create_time']         =$order_2['update_time']            =$now_time;
-                    $id=WmsLibraryOrder::insert($order_2);
+                    $id=WmsOutOrder::insert($order_2);
 
                     $operationing->access_cause='添加出库信息';
                     $operationing->operation_type='add';
