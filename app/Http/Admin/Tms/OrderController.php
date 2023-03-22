@@ -82,13 +82,13 @@ class OrderController extends CommonController{
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
         $company_id     =$request->input('company_id');
-        $state          =$request->input('order_status');
         $order_type     =$request->input('order_type');
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
         $enter_time     =$request->input('enter_time');
         $leave_time     =$request->input('leave_time');
         $odd_number     =$request->input('odd_number');
+        $order_state     =$request->input('order_state');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -97,7 +97,6 @@ class OrderController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'company_id','value'=>$company_id],
-            ['type'=>'=','name'=>'order_status','value'=>$state],
             ['type'=>'=','name'=>'create_time','value'=>$start_time],
             ['type'=>'=','name'=>'create_time','value'=>$end_time],
             ['type'=>'=','name'=>'enter_time','value'=>$enter_time],
@@ -105,7 +104,15 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'odd_number','value'=>$odd_number],
             ['type'=>'=','name'=>'order_type','value'=>$order_type],
         ];
-
+        if ($order_state == 1){
+            $search=[
+                ['type'=>'!=','name'=>'order_type','value'=>3],
+            ];
+        }else{
+            $search=[
+                ['type'=>'=','name'=>'order_type','value'=>3],
+            ];
+        }
 
         $where=get_list_where($search);
 
@@ -170,12 +177,8 @@ class OrderController extends CommonController{
         foreach ($data['items'] as $k=>$v) {
             $v->order_type_show=$order_type[$v->order_status]??null;
 //            $v->button_info = $button_info;
-            if ($v->order_status == 1){
-                $v->button_info = $button_info3;
-            }
-            if (in_array($v->order_status,[2,3,4,5,6])){
-                $v->button_info = $button_info4;
-            }
+
+           
         }
 
 //        dd($data['items']);
