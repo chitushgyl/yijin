@@ -275,11 +275,9 @@ class OrderController extends CommonController{
 
         $rules=[
             'good_name'=>'required',
-            'price'=>'required',
         ];
         $message=[
-            'good_name.required'=>'请填写物料名称',
-            'price.required'=>'请填写运费',
+            'good_name.required'=>'请填写货物品名',
         ];
 
         $validator=Validator::make($input,$rules,$message);
