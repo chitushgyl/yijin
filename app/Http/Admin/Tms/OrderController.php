@@ -109,7 +109,7 @@ class OrderController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code',
-            'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price',
+            'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
             'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
             ,'road_card','escort_name','pack_type','pick_time'];
@@ -287,6 +287,7 @@ class OrderController extends CommonController{
         $carriage_name             = $request->input('carriage_name');//委托单位
         $car_tel                   = $request->input('car_tel');//电话
         $pick_time                 = $request->input('pick_time');//提货时间段
+        $escort_tel                 = $request->input('escort_tel');//提货时间段
 
 
         $rules=[
@@ -343,6 +344,7 @@ class OrderController extends CommonController{
             $data['user_name']               = $user_name;
             $data['escort']                  = $escort;
             $data['escort_name']             = $escort_name;
+            $data['escort_tel']              = $escort_tel;
             $data['trailer_num']             = $trailer_num;
             $data['car_id']                  = $car_id;
             $data['car_number']              = $car_number;
@@ -591,160 +593,7 @@ class OrderController extends CommonController{
 
     }
 
-    /**
-     * 装货
-     * */
-    public function pickOrder(Request $request){
-        $operationing   = $request->get('operationing');//接收中间件产生的参数
-        $now_time       =date('Y-m-d H:i:s',time());
-        $table_name     ='tms_order';
 
-        $operationing->access_cause     ='调度订单';
-        $operationing->table            =$table_name;
-        $operationing->operation_type   ='update';
-        $operationing->now_time         =$now_time;
-        $operationing->type             ='update';
-        $user_info = $request->get('user_info');//接收中间件产生的参数
-        $input                          =$request->all();
-
-//        /** 接收数据*/
-        $order_id                  = $request->input('order_id');//订单ID
-        $real_weight               = $request->input('real_weight');//实际装货量
-
-
-        $rules=[
-            'order_id'=>'required',
-            'real_weight'=>'required',
-        ];
-        $message=[
-            'order_id.required'=>'请选择要调度的订单',
-            'real_weight.required'=>'请填写实际装货量',
-        ];
-
-        $validator=Validator::make($input,$rules,$message);
-        if($validator->passes()) {
-
-
-            $data['real_weight']              = $real_weight;
-            $data['order_status']             = 3;
-            $data['create_time']              = $data['update_time'] = $now_time;
-            $old_info = TmsOrder::where('self_id',$order_id)->select('self_id','odd_number','car_number','order_status','gather_shi_name','send_shi_name','real_weight')->first();
-
-            $id = TmsOrder::where('self_id',$order_id)->update($data);
-            $order_log['self_id'] = generate_id('log_');
-            $order_log['info'] = '装货:'.'预约单号'.$old_info->odd_number.','.'车牌号：'.$old_info->car_number;
-            $order_log['create_time'] = $order_log['update_time'] = $now_time;
-            $order_log['order_id']    = $order_id;
-            $order_log['state']       = 3;
-            $order_log['group_code']    = $user_info->group_code;
-            $order_log['group_name']    = $user_info->group_name;
-            $order_log['create_user_id']       = $user_info->admin_id;
-            $order_log['create_user_name']     = $user_info->admin_name;
-            OrderLog::insert($order_log);
-
-            $operationing->access_cause='装货,预约单号：'.$old_info->odd_number;
-            $operationing->operation_type='update';
-            $operationing->table_id=$old_info?$order_id:$data['self_id'];
-            $operationing->old_info=$old_info;
-            $operationing->new_info=$data;
-            if($id){
-                $msg['code'] = 200;
-                $msg['msg'] = "操作成功";
-                return $msg;
-            }else{
-                $msg['code'] = 302;
-                $msg['msg'] = "操作失败";
-                return $msg;
-            }
-        }else{
-            //前端用户验证没有通过
-            $erro=$validator->errors()->all();
-            $msg['code']=300;
-            $msg['msg']=null;
-            foreach ($erro as $k => $v){
-                $kk=$k+1;
-                $msg['msg'].=$kk.'：'.$v.'</br>';
-            }
-            return $msg;
-        }
-    }
-
-    /**
-     * 卸货
-     * */
-    public function upOrder(Request $request){
-        $operationing   = $request->get('operationing');//接收中间件产生的参数
-        $now_time       =date('Y-m-d H:i:s',time());
-        $table_name     ='tms_order';
-
-        $operationing->access_cause     ='调度订单';
-        $operationing->table            =$table_name;
-        $operationing->operation_type   ='update';
-        $operationing->now_time         =$now_time;
-        $operationing->type             ='update';
-        $user_info = $request->get('user_info');//接收中间件产生的参数
-        $input                          =$request->all();
-
-//        /** 接收数据*/
-        $order_id                  = $request->input('order_id');//订单ID
-        $upload_weight               = $request->input('upload_weight');//实际卸货量
-
-
-        $rules=[
-            'order_id'=>'required',
-            'upload_weight'=>'required',
-        ];
-        $message=[
-            'order_id.required'=>'请选择要调度的订单',
-            'upload_weight.required'=>'请填写实际卸货量',
-        ];
-
-        $validator=Validator::make($input,$rules,$message);
-        if($validator->passes()) {
-            $old_info = TmsOrder::where('self_id',$order_id)->select('self_id','odd_number','car_number','order_status','gather_shi_name','send_shi_name','upload_weight','real_weight')->first();
-
-            $data['upload_weight']              = $upload_weight;
-            $data['order_status']               = 5;
-            $data['different_weight']           = $old_info->real_weight - $upload_weight;
-            $data['create_time']                = $data['update_time'] = $now_time;
-            $id = TmsOrder::where('self_id',$order_id)->update($data);
-            $order_log['self_id'] = generate_id('log_');
-            $order_log['info'] = '卸货:'.'预约单号'.$old_info->odd_number.','.'车牌号：'.$old_info->car_number;
-            $order_log['create_time'] = $order_log['update_time'] = $now_time;
-            $order_log['order_id']    = $order_id;
-            $order_log['state']       = 6;
-            $order_log['group_code']    = $user_info->group_code;
-            $order_log['group_name']    = $user_info->group_name;
-            $order_log['create_user_id']       = $user_info->admin_id;
-            $order_log['create_user_name']     = $user_info->admin_name;
-            OrderLog::insert($order_log);
-
-            $operationing->access_cause='卸货,预约单号：'.$old_info->odd_number;
-            $operationing->operation_type='update';
-            $operationing->table_id=$old_info?$order_id:$data['self_id'];
-            $operationing->old_info=$old_info;
-            $operationing->new_info=$data;
-            if($id){
-                $msg['code'] = 200;
-                $msg['msg'] = "操作成功";
-                return $msg;
-            }else{
-                $msg['code'] = 302;
-                $msg['msg'] = "操作失败";
-                return $msg;
-            }
-        }else{
-            //前端用户验证没有通过
-            $erro=$validator->errors()->all();
-            $msg['code']=300;
-            $msg['msg']=null;
-            foreach ($erro as $k => $v){
-                $kk=$k+1;
-                $msg['msg'].=$kk.'：'.$v.'</br>';
-            }
-            return $msg;
-        }
-    }
 
     /**
      * 上传回单  /tms/order/uploadReceipt
@@ -832,38 +681,6 @@ class OrderController extends CommonController{
             return $msg;
         }
     }
-
-    /**
-     * 获取日志记录
-     * */
-    public function getOrderLog(Request $request){
-        /** 接收数据*/
-        $order_type    =array_column(config('tms.order_log_type'),'name','key');
-        $self_id=$request->input('order_id');
-//        $self_id = 'car_20210313180835367958101';
-
-        $where=[
-            ['delete_flag','=','Y'],
-            ['order_id','=',$self_id],
-        ];
-
-        $select = ['self_id','order_id','info','state','create_time','create_user_id','create_user_name','group_code',
-           ];
-        $data['info']=OrderLog::where($where)->select($select)->get();
-
-        if ($data['info']){
-            foreach($data['info'] as $k =>$v){
-                $v->type_show=$order_type[$v->state]??null;
-            }
-        }
-
-        $msg['code']=200;
-        $msg['msg']="数据拉取成功";
-        $msg['data']=$data;
-//        dd($msg);
-        return $msg;
-    }
-
 
     /***    订单删除     /tms/order/orderDelFlag
      */
@@ -972,16 +789,21 @@ class OrderController extends CommonController{
              */
             $shuzu=[
                 '标识' =>['Y','N','100','order_number'],
-                '所属组织' =>['Y','N','100','group_name'],
-                '货物品名' =>['Y','N','64','good_name'],
-                '承运人' =>['Y','N','64','company_name'],
-                '车牌号' =>['Y','N','64','car_number'],
-                '挂车号' =>['Y','N','64','trailer_num'],
-                '驾驶员' =>['N','N','64','user_name'],
-                '副驾驶员' =>['N','N','64','escort'],
-                '发货日期' =>['Y','N','64','enter_time'],
-                '装车点' =>['Y','N','100','send_address'],
-                '卸车点' =>['Y','N','100','gather_address'],
+                '所属组织' =>['Y','Y','100','company_name'],
+                '委托单位' =>['Y','Y','100','carriage_name'],
+                '货物品名' =>['Y','Y','64','good_name'],
+                '承运人' =>['Y','Y','64','company_name'],
+                '车牌号' =>['Y','Y','64','car_number'],
+                '挂车号' =>['Y','Y','64','trailer_num'],
+                '驾驶员' =>['N','Y','64','user_name'],
+                '电话' =>['N','Y','64','car_tel'],
+                '副驾驶员' =>['N','Y','64','escort'],
+                '运单号' =>['N','Y','64','escort'],
+                '发货日期' =>['Y','Y','64','enter_time'],
+                '交货日期' =>['Y','Y','64','enter_time'],
+                '装车点' =>['Y','Y','100','send_name'],
+                '卸车点' =>['Y','Y','100','gather_name'],
+                '卸车点' =>['Y','Y','100','gather_name'],
             ];
 
             $ret=arr_check($shuzu,$info_check);
