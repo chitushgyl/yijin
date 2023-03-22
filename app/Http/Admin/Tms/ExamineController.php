@@ -73,8 +73,8 @@ class ExamineController extends CommonController{
         ];
 
         $where=get_list_where($search);
-        $select=['self_id','user_id','user_name','absence_duty','fine_price','fine_time','reward_price','reward_time','create_user_id','create_user_name',
-            'remark','create_time','update_time','use_flag','delete_flag','group_code'];
+        $select=['self_id','user_id','user_name','absence_duty','start_time','end_time','create_user_id','create_user_name',
+            'remark','create_time','update_time','use_flag','delete_flag','group_code','date_num','approver','reason'];
 
         switch ($group_info['group_id']){
             case 'all':

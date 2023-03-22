@@ -167,7 +167,7 @@ class RoadTollController extends CommonController{
         $address            =$request->input('address');//出入口
         $etc_balance            =$request->input('etc_balance');//扣费后余额
 
-
+        dd($input);
         $rules=[
             'car_number'=>'required',
         ];
