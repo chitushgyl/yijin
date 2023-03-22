@@ -474,13 +474,17 @@ class CarOilController extends CommonController{
                 $list=[];
                 $money=[];
                 if($cando =='Y'){
-
+                    $total_num = TmsOil::where('use_flag','Y')->where('delete_flag','Y')->where('group_code',$group_code)->sum('num');
+                    $total_price = TmsOil::where('use_flag','Y')->where('delete_flag','Y')->where('group_code',$group_code)->sum('total_price');
+                    if ($total_num){
+                        $price = round($total_price/$total_num,2);
+                    }
                     $list['self_id']            = generate_id('oil_');
                     $list['car_number']         = $v['car_number'];
                     $list['ic_number']          = $v['ic_number'];
                     $list['number']             = $v['number'];
-                    $list['price']              = $v['price'];
-                    $list['total_money']        = $v['price']*$v['number'];
+                    $list['price']              = $price;
+                    $list['total_money']        = $price*$v['number'];
                     $list['add_time']           = $v['add_time'];
                     $list['address']            = $v['address'];
 

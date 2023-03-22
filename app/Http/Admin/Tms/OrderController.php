@@ -792,18 +792,23 @@ class OrderController extends CommonController{
                 '所属组织' =>['Y','Y','100','company_name'],
                 '委托单位' =>['Y','Y','100','carriage_name'],
                 '货物品名' =>['Y','Y','64','good_name'],
-                '承运人' =>['Y','Y','64','company_name'],
+                '承运人' =>['Y','Y','64','group_name'],
                 '车牌号' =>['Y','Y','64','car_number'],
                 '挂车号' =>['Y','Y','64','trailer_num'],
                 '驾驶员' =>['N','Y','64','user_name'],
                 '电话' =>['N','Y','64','car_tel'],
                 '副驾驶员' =>['N','Y','64','escort'],
-                '运单号' =>['N','Y','64','escort'],
-                '发货日期' =>['Y','Y','64','enter_time'],
-                '交货日期' =>['Y','Y','64','enter_time'],
+                '运单号' =>['N','Y','64','odd_number'],
+                '发货日期' =>['Y','Y','64','send_time'],
+                '交货日期' =>['Y','Y','64','gather_time'],
                 '装车点' =>['Y','Y','100','send_name'],
                 '卸车点' =>['Y','Y','100','gather_name'],
-                '卸车点' =>['Y','Y','100','gather_name'],
+                '提货时间段' =>['Y','Y','100','pick_time'],
+                '区域' =>['Y','Y','100','area'],
+                '运输方式' =>['Y','Y','100','pack_type'],
+                '订单编码' =>['Y','Y','100','order_number'],
+                '路卡' =>['Y','Y','100','road_card'],
+                '承运商组别' =>['Y','Y','100','carriage_group'],
             ];
 
             $ret=arr_check($shuzu,$info_check);
@@ -830,22 +835,6 @@ class OrderController extends CommonController{
             //dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
-                $where=[
-                    ['delete_flag','=','Y'],
-                    ['order_number','=',$v['order_number']],
-                ];
-
-                $area_info = TmsOrder::where($where)->value('order_number');
-
-                if($area_info){
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行预约单号已存在".'</br>';
-                        $cando='N';
-                        $abcd++;
-                    }
-                }
-
-
                 $company = TmsGroup::where('type','check')->where('company_name',$v['company_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $car = TmsCar::where('car_number',$v['car_number'])->select('self_id','car_number')->first();
                 if ($v['user_name']){
