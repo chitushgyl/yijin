@@ -83,7 +83,7 @@ class OrderController extends CommonController{
         $group_code     =$request->input('group_code');
         $company_id     =$request->input('company_id');
         $state          =$request->input('order_status');
-        $order_status   =$request->input('status') ?? null;
+        $order_type     =$request->input('order_type');
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
         $enter_time     =$request->input('enter_time');
@@ -103,6 +103,7 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'enter_time','value'=>$enter_time],
             ['type'=>'=','name'=>'leave_time','value'=>$leave_time],
             ['type'=>'=','name'=>'odd_number','value'=>$odd_number],
+            ['type'=>'=','name'=>'order_type','value'=>$order_type],
         ];
 
 
@@ -112,25 +113,12 @@ class OrderController extends CommonController{
             'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
             'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
-            ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel'];
+            ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name'];
 
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsOrder::where($where)->count(); //总的数据量
                 $data['items']=TmsOrder::where($where);
-                if ($order_status){
-                    if ($order_status == 1){
-                        $data['items'] = $data['items']->where('order_status',3);
-                    }elseif($order_status == 2){
-                        $data['items'] = $data['items']->whereIn('order_status',[4,5]);
-                    }elseif($order_status == 3){
-                        $data['items'] = $data['items']->where('order_status',6);
-                    }elseif($order_status == 6){
-                        $data['items'] = $data['items']->where('order_status',2);
-                    }else{
-                        $data['items'] = $data['items']->where('order_status',7);
-                    }
-                }
                 $data['items'] = $data['items']
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
@@ -209,7 +197,7 @@ class OrderController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-     
+
         $detail = TmsOrder::where($where)->first();
         if ($detail) {
 
