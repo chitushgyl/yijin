@@ -225,7 +225,7 @@ class OrderController extends CommonController{
          * **/
         $rules = [
             'goods' => 'required',
-            'bill_flag' => 'required',
+            'bill_fiag' => 'required',
         ];
         $message = [
             'goods.required' => '请选择要出库的产品',
