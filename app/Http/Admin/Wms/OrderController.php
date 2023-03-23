@@ -308,7 +308,7 @@ class OrderController extends CommonController{
                         $money['pay_state']          = 'Y';
                         $money['order_id']           = $order_id;
 //                    $money['car_id']             = $car_id;
-                        $money['car_number']         = $v['car_num'];
+                        $money['car_number']         = $car_num;
                         $money['user_id']            = $user_id;
                         $money['user_name']          = $picker;
                         $money['process_state']      = 'Y';
