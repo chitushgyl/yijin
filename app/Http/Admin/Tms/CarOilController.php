@@ -501,7 +501,7 @@ class CarOilController extends CommonController{
                     $datalist[]=$list;
 
                      $money['pay_type']           = 'fuel';
-                     $money['money']              = $list['total_money'];
+                     $money['money']              = $price*$v['number'];
                      $money['pay_state']          = 'Y';
 //                     $money['car_id']             = $car_id;
                      $money['car_number']         = $v['car_number'];
@@ -841,12 +841,7 @@ class CarOilController extends CommonController{
             $data['enter_time']        =$enter_time;
 
 
-            /**保存费用**/
-            $money['pay_type']           = 'fuel';
-            $money['money']              = $total_price;
-            $money['pay_state']          = 'Y';
-            $money['process_state']      = 'Y';
-            $money['type_state']         = 'out';
+
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsOil::where($wheres)->first();
@@ -864,15 +859,10 @@ class CarOilController extends CommonController{
                 $data['create_user_id']     =$user_info->admin_id;
                 $data['create_user_name']   =$user_info->name;
                 $data['create_time']        =$data['update_time']=$now_time;
-                $money['self_id']            = generate_id('money_');
-                $money['group_code']         = $group_code;
-                $money['group_name']         = $group_name;
-                $money['create_user_id']     = $user_info->admin_id;
-                $money['create_user_name']   = $user_info->name;
-                $money['create_time']        =$money['update_time']=$now_time;
+
 
                 $id=TmsOil::insert($data);
-                TmsMoney::insert($money);
+
                 $operationing->access_cause='新建加油记录';
                 $operationing->operation_type='create';
 
