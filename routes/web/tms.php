@@ -121,6 +121,7 @@ Route::group([
     Route::any('/order/details', 'OrderController@details');
     Route::any('/order/getOrder','OrderController@getOrder');
     Route::any('/order/addOrder','OrderController@addOrder');
+    Route::any('/order/editOrder','OrderController@editOrder');
     Route::any('/order/orderUseFlag', 'OrderController@orderUseFlag');
     Route::any('/order/orderDelFlag', 'OrderController@orderDelFlag');
 	Route::any('/order/addOrder','OrderController@addOrder');

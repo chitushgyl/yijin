@@ -473,6 +473,154 @@ class OrderController extends CommonController{
 
     }
 
+    public function editOrder(Request $request,Tms $tms){
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='tms_order';
+
+        $operationing->access_cause     ='创建/修改订单';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='add';
+        $user_info = $request->get('user_info');//接收中间件产生的参数
+        $input                          =$request->all();
+
+//        /** 接收数据*/
+        $self_id                   = $request->input('self_id');
+        $group_code                = $request->input('group_code');//
+        $leave_time                = $request->input('leave_time');//出厂时间
+        $order_weight              = $request->input('order_weight');//装货吨位
+        $upload_weight             = $request->input('upload_weight');//卸货吨位
+        $sale_price                = $request->input('sale_price');//单价
+        $total_money               = $request->input('total_money');//运费总额
+
+
+        $rules=[
+
+        ];
+        $message=[
+
+        ];
+
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()) {
+            /***开始做二次效验**/
+            $where_group=[
+                ['delete_flag','=','Y'],
+                ['self_id','=',$group_code],
+            ];
+            $group_info    =SystemGroup::where($where_group)->select('group_code','group_name')->first();
+            if(empty($group_info)){
+                $msg['code'] = 301;
+                $msg['msg'] = '公司不存在';
+                return $msg;
+            }
+
+            /** 开始处理正式的数据*/
+            $data['total_money']             = $total_money;
+            $data['leave_time']              = $leave_time;
+            $data['order_weight']            = $order_weight;
+            $data['upload_weight']           = $upload_weight;
+            $data['leave_time']              = $leave_time;
+
+
+            $old_info = TmsOrder::where('self_id',$self_id)->first();
+
+            $data['update_time']=$now_time;
+            $id=TmsOrder::where('self_id',$self_id)->update($data);
+            $operationing->access_cause='修改订单';
+            $operationing->operation_type='update';
+
+
+//                /**保存费用**/
+//                $money['self_id']                = generate_id('money_');
+//                $money['pay_type']               = 'freight';
+//                $money['money']                  = $total_money;
+//                $money['pay_state']              = 'Y';
+//                $money['order_id']               = $data['self_id'];
+//                $money['process_state']          = 'Y';
+//                $money['type_state']             = 'in';
+//                $money['company_id']             = $company_id;
+//                $money['company_name']           = $company_name;
+//                $money['group_code']             = $group_code;
+////                $money['group_name']             = $group_name;
+//                $money['create_user_id']         = $user_info->admin_id;
+//                $money['create_user_name']       = $user_info->name;
+//                $money['create_time']            = $money['update_time'] = $now_time;
+//                TmsMoney::insert($money);
+
+                /***生成工资表**/
+//                if ($car_id){
+//                    $wages['self_id']      = generate_id('wages_');
+//                    $wages['order_id']     = $data['self_id'];
+//                    $wages['car_id']       = $car_id;
+//                    $wages['car_number']   = $car_number;
+//                    $wages['driver_id']    = $driver_id;
+//                    $wages['driver_name']  = $user_name;
+//                    $wages['social_flag']  = $social_flag;
+//                    $wages['date']         = $enter_time;
+//                    $wages['escort']       = $escort;
+//                    $wages['goodsname']    = $good_name;
+//                    $wages['pick_weight']  = $real_weight;
+//                    $wages['unload_weight']= $upload_weight;
+//                    $wages['total_money']  = $total_money;
+//                    $wages['remark']       = $remark;
+//                    TmsWages::insert($wages);
+//
+//                    $payment['self_id']                = generate_id('money_');
+//                    $payment['pay_type']               = 'salary';
+//                    $payment['money']                  = $total_money;
+//                    $payment['pay_state']              = 'Y';
+//                    $payment['order_id']               = $data['self_id'];
+//                    $payment['process_state']          = 'Y';
+//                    $payment['type_state']             = 'out';
+//                    $payment['car_id']                 = $car_id;
+//                    $payment['car_number']             = $car_number;
+//                    $payment['user_id']                = $driver_id;
+//                    $payment['user_name']              = $user_name;
+//                    $payment['group_code']             = $group_code;
+//                    $payment['create_user_id']         = $user_info->admin_id;
+//                    $payment['create_user_name']       = $user_info->name;
+//                    $payment['create_time']            = $payment['update_time'] = $now_time;
+//                    TmsMoney::insert($payment);
+//
+//                }
+
+
+
+
+
+
+            $operationing->table_id=$old_info?$self_id:$data['self_id'];
+            $operationing->old_info=$old_info;
+            $operationing->new_info=$data;
+
+            if($id){
+                $msg['code'] = 200;
+                $msg['msg'] = "操作成功";
+                return $msg;
+            }else{
+                $msg['code'] = 302;
+                $msg['msg'] = "操作失败";
+                return $msg;
+            }
+
+            /***二次效验结束**/
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
+
+    }
+
     /**
      * 调度  tms/order/dispatchOrder
      * */
