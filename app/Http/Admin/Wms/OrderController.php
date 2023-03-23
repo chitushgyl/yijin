@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Admin\Wms;
-use App\Http\Controllers\WmschangeController as Change;use App\Models\Wms\WmsLibraryChange;
+use App\Http\Controllers\WmschangeController as Change;
+use App\Models\Tms\TmsMoney;
+use App\Models\Wms\WmsLibraryChange;
 use App\Models\Wms\WmsOutSige;
 use App\Models\Wms\WmsTotal;
 use Illuminate\Http\Request;
@@ -189,6 +191,7 @@ class OrderController extends CommonController{
         $warehouse_id       = $request->input('warehouse_id');
         $goods              = json_decode($request->input('goods'),true);
         $car_num            = $request->input('car_num');
+        $user_id            = $request->input('user_id');
         $picker             = $request->input('picker');
         $operator           = $request->input('operator');
         $purchase           = $request->input('purchase');
@@ -197,6 +200,7 @@ class OrderController extends CommonController{
         $good_list          = json_decode($request->input('good_list'),true);//产品ID集合
         $group_code         = $request->input('group_code');
         $group_name         = $request->input('group_name');
+        $bill_flag          = $request->input('bill_flag');
 
 
         /***
@@ -221,9 +225,11 @@ class OrderController extends CommonController{
          * **/
         $rules = [
             'goods' => 'required',
+            'bill_flag' => 'required',
         ];
         $message = [
             'goods.required' => '请选择要出库的产品',
+            'bill_flag.required' => '请选择有无发票',
         ];
         $validator = Validator::make($input, $rules, $message);
 
@@ -250,6 +256,7 @@ class OrderController extends CommonController{
             $order_2['purchase']            =$purchase;
             $order_2['out_time']            =$out_time;
             $order_2['status']              =2;
+            $order_2['bill_flag']           =$bill_flag;
 
             DB::beginTransaction();
             try{
@@ -258,6 +265,7 @@ class OrderController extends CommonController{
                     $order_update['delete_flag'] = 'N';
                     $order_update['update_time'] = $now_time;
                     WmsOutOrderList::where('order_id',$self_id)->update($order_update);
+                    TmsMoney::where('order_id',$self_id)->update($order_update);
                 }
                 /***处理本次添加或修改的产品数据**/
                 $list=[];
@@ -293,6 +301,27 @@ class OrderController extends CommonController{
 //                $list['out_library_state']  = $v['out_library_state'];
                     $datalist[]=$list;
 
+                    /***保存费用**/
+                    if ($bill_flag == 'Y'){
+                        $money['pay_type']           = 'delivery_fee';
+                        $money['money']              = $v['total_price'];
+                        $money['pay_state']          = 'Y';
+                        $money['order_id']           = $order_id;
+//                    $money['car_id']             = $car_id;
+                        $money['car_number']         = $v['car_num'];
+                        $money['user_id']            = $user_id;
+                        $money['user_name']          = $picker;
+                        $money['process_state']      = 'Y';
+                        $money['type_state']         = 'out';
+                        $money['self_id']            = generate_id('money');
+                        $money['group_code']         = $group_code;
+                        $money['group_name']         = $group_name;
+                        $money['create_user_id']     = $user_info->admin_id;
+                        $money['create_user_name']   = $user_info->name;
+                        $money['create_time']       =$money['update_time']=$v['road_time'];
+                        $moneylist[]=$money;
+                    }
+
                 }
                 $wheres['self_id'] = $self_id;
                 $old_info=WmsOutOrder::where($wheres)->first();
@@ -301,7 +330,7 @@ class OrderController extends CommonController{
                     $order_2['update_time']=$now_time;
                     $id=WmsOutOrder::where($wheres)->update($order_2);
 
-                    $operationing->access_cause='修改入库信息';
+                    $operationing->access_cause='修改出库信息';
                     $operationing->operation_type='update';
                 }else{
                     $order_2['self_id']             =$order_id;
@@ -317,6 +346,10 @@ class OrderController extends CommonController{
                 }
                 if($id){
                     WmsOutOrderList::insert($datalist);
+                    if ($bill_flag == 'Y'){
+                        TmsMoney::insert($moneylist);
+                    }
+
                     DB::commit();
                     $msg['code']=200;
                     $msg['msg']='操作成功!';
