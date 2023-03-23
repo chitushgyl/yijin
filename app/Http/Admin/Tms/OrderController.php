@@ -534,22 +534,22 @@ class OrderController extends CommonController{
             $operationing->operation_type='update';
 
 
-//                /**保存费用**/
-//                $money['self_id']                = generate_id('money_');
-//                $money['pay_type']               = 'freight';
-//                $money['money']                  = $total_money;
-//                $money['pay_state']              = 'Y';
-//                $money['order_id']               = $data['self_id'];
-//                $money['process_state']          = 'Y';
-//                $money['type_state']             = 'in';
-//                $money['company_id']             = $company_id;
-//                $money['company_name']           = $company_name;
-//                $money['group_code']             = $group_code;
-////                $money['group_name']             = $group_name;
-//                $money['create_user_id']         = $user_info->admin_id;
-//                $money['create_user_name']       = $user_info->name;
-//                $money['create_time']            = $money['update_time'] = $now_time;
-//                TmsMoney::insert($money);
+                /**保存费用**/
+                $money['self_id']                = generate_id('money_');
+                $money['pay_type']               = 'freight';
+                $money['money']                  = $total_money;
+                $money['pay_state']              = 'N';
+                $money['order_id']               = $self_id;
+                $money['process_state']          = 'Y';
+                $money['type_state']             = 'in';
+                $money['company_id']             = $old_info->company_id;
+                $money['company_name']           = $old_info->company_name;
+                $money['group_code']             = $group_code;
+//                $money['group_name']             = $group_name;
+                $money['create_user_id']         = $user_info->admin_id;
+                $money['create_user_name']       = $user_info->name;
+                $money['create_time']            = $money['update_time'] = $now_time;
+                TmsMoney::insert($money);
 
                 /***生成工资表**/
 //                if ($car_id){
@@ -593,7 +593,7 @@ class OrderController extends CommonController{
 
 
 
-            $operationing->table_id=$old_info?$self_id:$data['self_id'];
+            $operationing->table_id=$old_info?$self_id:$self_id;
             $operationing->old_info=$old_info;
             $operationing->new_info=$data;
 
