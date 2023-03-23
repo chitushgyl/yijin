@@ -200,7 +200,7 @@ class OrderController extends CommonController{
         $good_list          = json_decode($request->input('good_list'),true);//产品ID集合
         $group_code         = $request->input('group_code');
         $group_name         = $request->input('group_name');
-        $bill_flag          = $request->input('bill_flag');
+        $bill_flag          = $request->input('bill_fiag');
 
 
         /***
@@ -229,7 +229,7 @@ class OrderController extends CommonController{
         ];
         $message = [
             'goods.required' => '请选择要出库的产品',
-            'bill_flag.required' => '请选择有无发票',
+            'bill_fiag.required' => '请选择有无发票',
         ];
         $validator = Validator::make($input, $rules, $message);
 
