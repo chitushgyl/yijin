@@ -134,6 +134,8 @@ Route::group([
 	Route::any('/order/dispatchOrder','OrderController@dispatchOrder');
 	Route::any('/order/getOrderLog','OrderController@getOrderLog');
 	Route::any('/order/import','OrderController@import');
+	Route::any('/order/importOrder','OrderController@importOrder');
+	Route::any('/order/improtDanger','OrderController@improtDanger');
 	Route::any('/order/excel','OrderController@excel');
 
     Route::group([
