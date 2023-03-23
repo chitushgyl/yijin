@@ -839,6 +839,7 @@ class OrderController extends CommonController{
                 $trailer = TmsCar::where('car_number',$v['trailer_num'])->where('group_code',$group_code)->select('self_id','car_number')->first();
                 $send = TmsGroup::where('company_name',$v['send_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 if (!$send){
                     if($abcd<$errorNum){
                         $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
@@ -877,6 +878,13 @@ class OrderController extends CommonController{
                 if (!$company){
                     if($abcd<$errorNum){
                         $strs .= '数据中的第'.$a."行承运人不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                if (!$carriage){
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行委托单位不存在".'</br>';
                         $cando='N';
                         $abcd++;
                     }
@@ -1017,7 +1025,7 @@ class OrderController extends CommonController{
     /**
      * 硫磺二队订单导入  /tms/order/importOrder
      * */
-    public function improtOrder(Request $request){
+    public function importOrder(Request $request){
         $table_name         ='wms_warehouse_area';
         $now_time           = date('Y-m-d H:i:s', time());
 
