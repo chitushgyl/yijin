@@ -427,7 +427,7 @@ class CarOilController extends CommonController{
                 'IC卡卡号' =>['Y','Y','10','ic_number'],
                 '车牌号' =>['N','Y','20','car_number'],
                 '会员名称' =>['Y','Y','20','car_number'],
-                '总价' =>['N','Y','30','total_money'],
+//                '总价' =>['N','Y','30','total_money'],
                 '加注量' =>['N','Y','30','number'],
                 '单价' =>['N','Y','30','price'],
                 '交易时间' =>['Y','Y','50','add_time'],
