@@ -523,6 +523,7 @@ class OrderController extends CommonController{
             $data['order_weight']            = $order_weight;
             $data['upload_weight']           = $upload_weight;
             $data['leave_time']              = $leave_time;
+            $data['sale_price']              = $sale_price;
 
 
             $old_info = TmsOrder::where('self_id',$self_id)->first();
