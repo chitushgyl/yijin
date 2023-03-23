@@ -105,6 +105,7 @@ class HistoryController  extends CommonController{
                 $v->change_num='增加'.$v->change_num;
 				$v->good_describe ='增加'.$abc;
             }
+            $v->create_time = date('Y-m-d',strtotime($v->create_time));
 
             $v->button_info=$button_info;
 
