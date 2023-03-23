@@ -57,4 +57,10 @@ class ErpShopGoodsSku extends Model{
         return $this->hasMany('App\Models\Wms\WmsLibrarySige','sku_id','self_id');
     }
 
+    public function wmsLibraryChange(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Wms\WmsLibraryChange','sku_id','self_id');
+    }
+
 }
