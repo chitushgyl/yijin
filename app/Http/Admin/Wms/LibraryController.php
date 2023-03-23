@@ -169,10 +169,25 @@ class LibraryController extends CommonController{
                 $data['group_show']='Y';
                 break;
         }
-
+        $button_info1=[];
+        $button_info2=[];
+        foreach ($button_info as $k => $v){
+            if($v->id == 182){
+                $button_info1[] = $v;
+                $button_info2[] = $v;
+            }
+            if($v->id == 185){
+                $button_info1[] = $v;
+            }
+        }
         foreach ($data['items'] as $k=>$v) {
             $v->type_show=$wms_order_type_show[$v->type]??null;
             $v->button_info=$button_info;
+            if ($v->order_status == 'Y'){
+                $v->button_info = $button_info2;
+            }else{
+                $v->button_info = $button_info1;
+            }
         }
 
         $msg['code']=200;
