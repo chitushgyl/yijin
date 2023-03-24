@@ -160,6 +160,7 @@ class CarController extends CommonController{
             $data['info']->commercial_cert     =img_for($data['info']->commercial_cert,'no_json');
             $data['info']->license_back     =img_for($data['info']->license_back,'no_json');
             $data['info']->medallion_back     =img_for($data['info']->medallion_back,'no_json');
+            $data['info']->sgs_cert     =img_for($data['info']->sgs_cert,'no_json');
             $data['info']->type_show     = $data['info']->TmsCarType->parame_name;
         }
 
