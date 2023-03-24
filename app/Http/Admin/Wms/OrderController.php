@@ -1063,7 +1063,6 @@ class OrderController extends CommonController{
                 try {
                     $datalist= [];
                     foreach ($order_do as $k => $v) {
-                        dd($v);
                         $where2 = [
                                 ['sku_id', '=', $v['sku_id']],
                                 ['now_num', '>', 0],
@@ -1108,7 +1107,6 @@ class OrderController extends CommonController{
                     $msg['msg']='操作成功!';
                     return $msg;
                 }catch (\Exception $e){
-                    dd($e);
                     DB::rollBack();
                     $msg['code']=301;
                     $msg['msg']='操作失败';
@@ -1185,6 +1183,7 @@ class OrderController extends CommonController{
                     $out["create_user_name"]    =$user_info->name;
                     $out["create_time"]         =$now_time;
                     $out["update_time"]         =$now_time;
+                    $out["out_time"]            =$vv['out_time'];
 
                     $out['price']               =$data['price'];
                     $out['total_price']         =$data['price']*$shiji_number;
