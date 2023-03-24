@@ -43,7 +43,7 @@ class WmschangeController extends Controller{
                     $list['now_num']            =$v['now_num'];
                     $list['change_num']         =$list['now_num']-$list['initial_num'];
                     $list['use_flag']           ='N';
-                    $list['inout_time']         =$v['enter_time'];
+                    $list['inout_time']         =$v['entry_time'];
                     break;
 
                 case 'change':
