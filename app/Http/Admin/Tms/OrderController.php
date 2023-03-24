@@ -1689,11 +1689,10 @@ class OrderController extends CommonController{
             $where=get_list_where($search);
 
             $select=['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code',
-                'order_status','send_time','send_name','send_tel','send_sheng','send_shi','send_qu','send_sheng_name','send_shi_name','send_qu_name','send_address',
-                'send_address_longitude','send_address_latitude','gather_time','gather_name','gather_tel','gather_sheng','gather_shi','gather_qu','gather_sheng_name',
-                'gather_shi_name','gather_qu_name','gather_address','gather_address_longitude','gather_address_latitude','total_money','good_name','more_money','price',
+                'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
                 'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
-                'car_number','car_id','car_conact','car_tel','user_name','trailer_num','sale_price','car_num','escort'];
+                'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
+                ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name'];
             $select1 = ['self_id','parame_name'];
             $info=TmsOrder::where($where)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
@@ -1702,25 +1701,28 @@ class OrderController extends CommonController{
                 $row = [[
                     "id"=>'ID',
                     "order_number"=>'标识',
-                    "odd_number" =>'预约单号',
-                    "send_adress"=>'装货点',
-                    "gather_address"=>'卸货点',
+                    "company_name" =>'所属组织',
+                    "carriage_name" =>'委托单位',
+                    "good_name"=>'货物品名',
+                    "group_name"=>'承运人',
                     "car_number"=>'车牌号',
                     "trailer_num"=>'挂车号',
                     "user_name"=>'驾驶员',
-                    "escort"=>'押运员',
-                    "good_name"=>'货物名称',
-                    "sale_price"=>'单价',
-                    "car_num"=>'车数',
-                    "real_weight"=>'装货数量',
-                    "upload_weight"=>'卸货数量',
-                    "company_name"=>'托运人',
-                    "enter_time"=>'日期',
-                    "price"=>'运费',
-                    "more_money"=>'其他费用',
-                    "total_money"=>'总运费',
-                    "remark"=>'备注'
+                    "car_tel"=>'电话',
+                    "escort_name"=>'副驾驶员',
+                    "odd_number"=>'运单号',
+                    "send_time"=>'发货日期',
+                    "gather_time"=>'交货日期',
+                    "send_name"=>'装车点',
+                    "gather_name"=>'卸车点',
+                    "pick_time"=>'提货时间段',
+                    "area"=>'区域',
+                    "pack_type"=>'运输方式',
+                    "order_number"=>'订单编号',
+                    "road_card"=>'路卡',
+                    "carriage_group"=>'承运商组别',
                 ]];
+
                 /** 现在根据查询到的数据去做一个导出的数据**/
                 $data_execl=[];
 
@@ -1728,29 +1730,209 @@ class OrderController extends CommonController{
                     $list=[];
                     $list['id']=($k+1);
                     $list['order_number']        = $v['order_number'];
-                    $list['send_address']        = $v['send_address'];
-                    $list['gather_address']      = $v['gather_address'];
-                    $list['odd_number']          = $v['odd_number'];
-                    $list['good_name']           = $v['good_name'] ;
-                    $list['real_weight']         = $v['real_weight'];
-                    $list['upload_weight']       = $v['upload_weight'];
-                    $list['enter_time']          = $v['enter_time'];
-                    $list['price']               = $v['price'];
-                    $list['more_money']          = $v['more_money'];
-                    $list['total_money']         = $v['total_money'];
+                    $list['company_name']        = $v['company_name'];
+                    $list['carriage_name']       = $v['carriage_name'];
+                    $list['good_name']           = $v['good_name'];
+                    $list['group_name']          = $v['group_name'] ;
                     $list['car_number']          = $v['car_number'];
                     $list['trailer_num']         = $v['trailer_num'];
                     $list['user_name']           = $v['user_name'];
-                    $cargo = SystemUser::where('self_id',$v['escort'])->select('self_id','name','use_flag','delete_flag','social_flag')->first();
-                    if($cargo){
-                        $list['escort']              = $cargo->name;
-                    }else{
-                        $list['escort']              = null;
-                    }
+                    $list['car_tel']             = $v['car_tel'];
+                    $list['escort_name']         = $v['escort_name'];
+                    $list['odd_number']          = $v['odd_number'];
+                    $list['send_time']           = $v['send_time'];
+                    $list['gather_time']         = $v['gather_time'];
+                    $list['send_name']           = $v['send_name'];
+                    $list['gather_name']         = $v['gather_name'];
+                    $list['pick_time']           = $v['pick_time'];
+                    $list['area']                = $v['area'];
+                    $list['pack_type']           = $v['pack_type'];
+                    $list['order_number']        = $v['order_number'];
+                    $list['road_card']           = $v['road_card'];
+                    $list['carriage_group']      = $v['carriage_group'];
+                    $data_execl[]=$list;
+                }
+                /** 调用EXECL导出公用方法，将数据抛出来***/
+                $browse_type=$request->path();
+                $msg=$file->export($data_execl,$row,$group_code,$group_name,$browse_type,$user_info,$where,$now_time);
+
+                //dd($msg);
+                return $msg;
+
+            }else{
+                $msg['code']=301;
+                $msg['msg']="没有数据可以导出";
+                return $msg;
+            }
+        }else{
+            $erro=$validator->errors()->all();
+            $msg['msg']=null;
+            foreach ($erro as $k=>$v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code']=300;
+            return $msg;
+        }
+    }
+
+    /***二队**/
+    public function excelOrder(Request $request,File $file){
+        $user_info  = $request->get('user_info');//接收中间件产生的参数
+        $now_time   =date('Y-m-d H:i:s',time());
+        $input      =$request->all();
+        /** 接收数据*/
+        $group_code     =$request->input('group_code');
+//        $group_code  =$input['group_code']   ='group_202012251449437824125582';
+        //dd($group_code);
+        $rules=[
+            'group_code'=>'required',
+        ];
+        $message=[
+            'group_code.required'=>'必须选择公司',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()){
+            /** 下面开始执行导出逻辑**/
+            $group_name     =SystemGroup::where('group_code','=',$group_code)->value('group_name');
+            //查询条件
+            $search=[
+                ['type'=>'=','name'=>'group_code','value'=>$group_code],
+                ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ];
+            $where=get_list_where($search);
+
+            $select=['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code',
+                'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
+                'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
+                'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
+                ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name'];
+            $select1 = ['self_id','parame_name'];
+            $info=TmsOrder::where($where)->orderBy('create_time', 'desc')->select($select)->get();
+//dd($info);
+            if($info){
+                //设置表头
+                $row = [[
+                    "id"=>'ID',
+                    "send_time"=>'发货日期',
+                    "good_name"=>'货物品名',
+                    "carriage_name" =>'委托单位',
+                    "send_name"=>'装车点',
+                    "gather_name"=>'卸车点',
+                    "car_number"=>'车牌号',
+                    "user_name"=>'驾驶员',
+                    "car_tel"=>'电话',
+                    "escort_name"=>'副驾驶员',
+                    "escort_tel"=>'副驾驶员电话',
+                ]];
+                /** 现在根据查询到的数据去做一个导出的数据**/
+                $data_execl=[];
+
+                foreach ($info as $k=>$v){
+                    $list=[];
+                    $list['id']=($k+1);
+                    $list['send_time']           = $v['send_time'];
+                    $list['good_name']           = $v['good_name'];
                     $list['company_name']        = $v['company_name'];
-                    $list['sale_price']          = $v['sale_price'];
-                    $list['car_num']             = $v['car_num'];
-                    $list['remark']              = $v['remark'];
+                    $list['carriage_name']       = $v['carriage_name'];
+                    $list['send_name']           = $v['send_name'];
+                    $list['gather_name']         = $v['gather_name'];
+                    $list['car_number']          = $v['car_number'];
+                    $list['user_name']           = $v['user_name'];
+                    $list['car_tel']             = $v['car_tel'];
+                    $list['escort_name']         = $v['escort_name'];
+
+                    $data_execl[]=$list;
+                }
+                /** 调用EXECL导出公用方法，将数据抛出来***/
+                $browse_type=$request->path();
+                $msg=$file->export($data_execl,$row,$group_code,$group_name,$browse_type,$user_info,$where,$now_time);
+
+                //dd($msg);
+                return $msg;
+
+            }else{
+                $msg['code']=301;
+                $msg['msg']="没有数据可以导出";
+                return $msg;
+            }
+        }else{
+            $erro=$validator->errors()->all();
+            $msg['msg']=null;
+            foreach ($erro as $k=>$v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code']=300;
+            return $msg;
+        }
+    }
+
+    /***危废队导出**/
+    public function excelDanger(Request $request,File $file){
+        $user_info  = $request->get('user_info');//接收中间件产生的参数
+        $now_time   =date('Y-m-d H:i:s',time());
+        $input      =$request->all();
+        /** 接收数据*/
+        $group_code     =$request->input('group_code');
+//        $group_code  =$input['group_code']   ='group_202012251449437824125582';
+        //dd($group_code);
+        $rules=[
+            'group_code'=>'required',
+        ];
+        $message=[
+            'group_code.required'=>'必须选择公司',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()){
+            /** 下面开始执行导出逻辑**/
+            $group_name     =SystemGroup::where('group_code','=',$group_code)->value('group_name');
+            //查询条件
+            $search=[
+                ['type'=>'=','name'=>'group_code','value'=>$group_code],
+                ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ];
+            $where=get_list_where($search);
+
+            $select=['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code',
+                'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
+                'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
+                'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
+                ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name'];
+            $select1 = ['self_id','parame_name'];
+            $info=TmsOrder::where($where)->orderBy('create_time', 'desc')->select($select)->get();
+//dd($info);
+            if($info){
+                //设置表头
+                $row = [[
+                    "id"=>'ID',
+                    "send_time"=>'发货日期',
+                    "good_name"=>'货物品名',
+                    "carriage_name" =>'委托单位',
+                    "send_name"=>'装车点',
+                    "gather_name"=>'卸车点',
+                    "car_number"=>'车牌号',
+                    "user_name"=>'驾驶员',
+                    "car_tel"=>'电话',
+                    "pack_type"=>'包装方式',
+
+                ]];
+                /** 现在根据查询到的数据去做一个导出的数据**/
+                $data_execl=[];
+
+                foreach ($info as $k=>$v){
+                    $list=[];
+                    $list['id']=($k+1);
+                    $list['send_time']           = $v['send_time'];
+                    $list['good_name']           = $v['good_name'];
+                    $list['company_name']        = $v['company_name'];
+                    $list['carriage_name']       = $v['carriage_name'];
+                    $list['send_name']           = $v['send_name'];
+                    $list['gather_name']         = $v['gather_name'];
+                    $list['car_number']          = $v['car_number'];
+                    $list['user_name']           = $v['user_name'];
+                    $list['car_tel']             = $v['car_tel'];
+                    $list['pack_type']         = $v['pack_type'];
 
                     $data_execl[]=$list;
                 }
