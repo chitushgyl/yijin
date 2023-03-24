@@ -139,8 +139,8 @@ class CountController extends CommonController{
 
                 $vv->good_describe =unit_do($v->wms_unit , $v->wms_target_unit, $v->wms_scale, $vv->now_num);
                 $v->count +=$vv->now_num;
-                $v->count1 +=$vv->now_num;
-                $v->count2 +=$vv->now_num;
+                $v->count1 +=$vv->storage_number;
+                $v->count2 +=$vv->initial_num;
             }
             $v->count3 = $v->count1-$v->count;
             $v->good_describe =unit_do($v->wms_unit , $v->wms_target_unit, $v->wms_scale, $v->count);
