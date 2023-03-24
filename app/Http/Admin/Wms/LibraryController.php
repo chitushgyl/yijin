@@ -1203,6 +1203,7 @@ class LibraryController extends CommonController{
                     $list["grounding_status"]   ='Y';
                     $list["good_remark"]        =$v['good_remark'];
                     $list["use_flag"]           ='N';
+                    $list["entry_time"]         =$enter_time;
                     $datalist[]=$list;
 
                     /**保存费用**/
