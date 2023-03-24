@@ -1149,7 +1149,7 @@ class OrderController extends CommonController{
         if($resssss){
             foreach($resssss as $kk=>$vv){
                 if($number > 0){
-                    dd($vv);
+//                    dd($vv);
                     if($number - $vv['now_num']  > 0){
                         $shiji_number=$vv['now_num'];
 
