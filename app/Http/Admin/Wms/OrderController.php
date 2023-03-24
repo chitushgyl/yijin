@@ -1063,6 +1063,7 @@ class OrderController extends CommonController{
                 try {
                     $datalist= [];
                     foreach ($order_do as $k => $v) {
+                        dd($v);
                         $where2 = [
                                 ['sku_id', '=', $v['sku_id']],
                                 ['now_num', '>', 0],
