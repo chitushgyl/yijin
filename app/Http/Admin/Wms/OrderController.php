@@ -1344,7 +1344,7 @@ class OrderController extends CommonController{
             ['delete_flag','=','Y'],
         ];
         $order_select = ['self_id','status','create_user_name','create_time','group_name','warehouse_name','total_flag','total_time',
-            'picker','operator','purchase','car_num','delivery_time','out_time'];
+            'picker','operator','purchase','car_num','delivery_time','out_time','picker_id'];
         $order_list_select= ['self_id','sku_id','external_sku_id','good_name','good_unit','spec','num','order_id','external_sku_id','remarks','price','total_price','out_library_state'];
         $wms_out_sige_select= ['self_id','sku_id','library_sige_id','external_sku_id','order_list_id','good_name','spec','num','good_unit','good_target_unit','good_scale','good_english_name'
         ,'price','total_price'];
@@ -1430,6 +1430,7 @@ class OrderController extends CommonController{
         $delivery_time      = $request->input('delivery_time');
         $car_num            = $request->input('car_num');
         $picker             = $request->input('picker');
+        $picker_id          = $request->input('picker_id');
         $operator           = $request->input('operator');
         $purchase           = $request->input('purchase');
         $out_time           = $request->input('out_time');
@@ -1489,6 +1490,7 @@ class OrderController extends CommonController{
             $order_2['delivery_time']       =$delivery_time;
             $order_2['car_num']             =$car_num;
             $order_2['picker']              =$picker;
+            $order_2['picker_id']           =$picker_id;
             $order_2['operator']            =$operator;
             $order_2['purchase']            =$purchase;
             $order_2['out_time']            =$out_time;

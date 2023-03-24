@@ -616,5 +616,22 @@ class TryeController extends CommonController{
         }
     }
 
+    /**
+     * 库存记录
+     * */
+    public function tryeCountList(Request $request){
+        $data['page_info']      =config('page.listrows');
+        $data['button_info']    =$request->get('anniu');
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
+
+    public function tryeCountPage(Request $request){
+
+    }
+
 }
 ?>
