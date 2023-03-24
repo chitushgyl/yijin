@@ -212,7 +212,7 @@ class CountController extends CommonController{
         }
 
 
-//        dump($data['items']->toArray());
+        dd($data['items']->toArray());
 
         foreach ($data['items'] as $k=>$v) {
             $v->count=0;
@@ -224,7 +224,7 @@ class CountController extends CommonController{
             $v->good_describe =unit_do($v->wms_unit , $v->wms_target_unit, $v->wms_scale, $v->count);
             $v->button_info=$button_info;
         }
-//        dd($data['items']->toArray());
+        dd($data['items']->toArray());
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;

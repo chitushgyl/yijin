@@ -298,6 +298,7 @@ class OrderController extends CommonController{
                     $list['price']              = $v['price'];
                     $list['total_price']        = $v['total_price'];
                     $list['remarks']            = $v['remark'];
+                    $list['out_time']           = $out_time;
 //                $list['out_library_state']  = $v['out_library_state'];
                     $datalist[]=$list;
 
