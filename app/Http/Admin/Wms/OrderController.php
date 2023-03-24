@@ -1025,8 +1025,8 @@ class OrderController extends CommonController{
                 ['delete_flag','=','Y'],
 
             ];
-            $select = ['self_id','status','count','total_flag','warehouse_id','warehouse_name','group_code','group_name'];
-            $select2 = ['self_id','good_name','spec','num','order_id','sku_id','external_sku_id','price','total_price'];
+            $select = ['self_id','status','count','total_flag','warehouse_id','warehouse_name','group_code','group_name','out_time'];
+            $select2 = ['self_id','good_name','spec','num','order_id','sku_id','external_sku_id','price','total_price','out_time'];
             $order = WmsOutOrder::with(['wmsOutOrderList' => function($query) use($select2){
                 $query->select($select2);
                 $query->where('delete_flag','=','Y');
