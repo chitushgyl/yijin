@@ -1149,7 +1149,7 @@ class OrderController extends CommonController{
         if($resssss){
             foreach($resssss as $kk=>$vv){
                 if($number > 0){
-                    //dd($vv);
+                    dd($vv);
                     if($number - $vv['now_num']  > 0){
                         $shiji_number=$vv['now_num'];
 
@@ -1184,7 +1184,7 @@ class OrderController extends CommonController{
                     $out["create_user_name"]    =$user_info->name;
                     $out["create_time"]         =$now_time;
                     $out["update_time"]         =$now_time;
-                    $out["out_time"]            =$vv['out_time'];
+                    $out["out_time"]            =$data['out_time'];
 
                     $out['price']               =$data['price'];
                     $out['total_price']         =$data['price']*$shiji_number;
