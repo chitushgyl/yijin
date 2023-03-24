@@ -1694,7 +1694,7 @@ class OrderController extends CommonController{
                 'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
                 ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name'];
             $select1 = ['self_id','parame_name'];
-            $info=TmsOrder::where($where)->orderBy('create_time', 'desc')->select($select)->get();
+            $info=TmsOrder::where($where)->where('order_type',1)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头
@@ -1808,7 +1808,7 @@ class OrderController extends CommonController{
                 'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
                 ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name'];
             $select1 = ['self_id','parame_name'];
-            $info=TmsOrder::where($where)->orderBy('create_time', 'desc')->select($select)->get();
+            $info=TmsOrder::where($where)->where('order_type',2)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头
@@ -1841,6 +1841,7 @@ class OrderController extends CommonController{
                     $list['user_name']           = $v['user_name'];
                     $list['car_tel']             = $v['car_tel'];
                     $list['escort_name']         = $v['escort_name'];
+                    $list['escort_tel']          = $v['escort_tel'];
 
                     $data_execl[]=$list;
                 }
@@ -1900,7 +1901,7 @@ class OrderController extends CommonController{
                 'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
                 ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name'];
             $select1 = ['self_id','parame_name'];
-            $info=TmsOrder::where($where)->orderBy('create_time', 'desc')->select($select)->get();
+            $info=TmsOrder::where($where)->where('order_type',3)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头
