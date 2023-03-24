@@ -4,6 +4,7 @@ use App\Http\Controllers\FileController as File;
 use App\Models\Group\SystemGroup;
 use App\Models\Group\SystemUser;
 use App\Models\Wms\WmsLibraryChange;
+use App\Models\Wms\WmsLibrarySige;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
@@ -82,13 +83,6 @@ class CountController extends CommonController{
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
-                $data['info']=ErpShopGoodsSku::with(['wmsLibrarySige' => function($query)use($Signselect,$where1,$start_time) {
-                    $query->where('entry_time','<=',$start_time);
-//                    $query->where('now_num','>','0');
-                    $query->select($Signselect);
-                }])->where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
-                    ->select($select)->get();
                 $data['group_show']='Y';
                 break;
 
@@ -97,13 +91,6 @@ class CountController extends CommonController{
                 $data['total']=ErpShopGoodsSku::where($where)->count(); //总的数据量
                 $data['items']=ErpShopGoodsSku::with(['wmsLibrarySige' => function($query)use($Signselect,$where1) {
                     $query->where($where1);
-                    $query->select($Signselect);
-                }])->where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
-                    ->select($select)->get();
-                $data['info']=ErpShopGoodsSku::with(['wmsLibrarySige' => function($query)use($Signselect,$where1,$start_time) {
-                    $query->where('entry_time','<=',$start_time);
-//                    $query->where('now_num','>','0');
                     $query->select($Signselect);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
@@ -119,13 +106,6 @@ class CountController extends CommonController{
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->select($select)
                     ->get();
-                $data['info']=ErpShopGoodsSku::with(['wmsLibrarySige' => function($query)use($Signselect,$where1,$start_time) {
-                    $query->where('entry_time','<=',$start_time);
-//                    $query->where('now_num','>','0');
-                    $query->select($Signselect);
-                }])->where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
-                    ->select($select)->get();
                 $data['group_show']='Y';
                 break;
         }
@@ -142,6 +122,8 @@ class CountController extends CommonController{
                 $v->count1 +=$vv->storage_number;
                 $v->count2 +=$vv->initial_num;
             }
+            $count = WmsLibrarySige::where('entry_time','<=',$start_time)->where('sku_id',$v->self_id)->sum('initial_num');
+            $v->count4 = $count;
             $v->count3 = $v->count1-$v->count;
             $v->good_describe =unit_do($v->wms_unit , $v->wms_target_unit, $v->wms_scale, $v->count);
             $v->button_info=$button_info;
