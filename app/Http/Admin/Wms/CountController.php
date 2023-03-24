@@ -53,8 +53,6 @@ class CountController extends CommonController{
             ['type'=>'like','name'=>'good_name','value'=>$good_name],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'external_sku_id','value'=>$external_sku_id],
-//            ['type'=>'>=','name'=>'create_time','value'=>$start_time],
-//            ['type'=>'<','name'=>'create_time','value'=>$end_time],
 
         ];
 
@@ -63,6 +61,8 @@ class CountController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'=','name'=>'use_flag','value'=>'Y'],
             ['type'=>'>','name'=>'now_num','value'=>0],
+            ['type'=>'>','name'=>'entry_time','value'=>$start_time],
+            ['type'=>'<=','name'=>'entry_time','value'=>$end_time],
         ];
 
         $where=get_list_where($search);
@@ -70,13 +70,20 @@ class CountController extends CommonController{
         $select=['self_id','good_name','good_english_name','wms_unit','wms_target_unit','wms_scale','wms_spec',
             'group_name','use_flag','external_sku_id'];
 
-        $Signselect=['sku_id','production_date','expire_time','can_use','create_time','warehouse_name','area','row','column','tier','now_num','warehouse_sign_id'];
+        $Signselect=['sku_id','production_date','expire_time','can_use','create_time','warehouse_name','area','row','column','tier','storage_number','initial_num','now_num','warehouse_sign_id','entry_time'];
 //        dd($select);
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=ErpShopGoodsSku::where($where)->count(); //总的数据量
                 $data['items']=ErpShopGoodsSku::with(['wmsLibrarySige' => function($query)use($Signselect,$where1) {
                     $query->where($where1);
+//                    $query->where('now_num','>','0');
+                    $query->select($Signselect);
+                }])->where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['info']=ErpShopGoodsSku::with(['wmsLibrarySige' => function($query)use($Signselect,$where1,$start_time) {
+                    $query->where('entry_time','<=',$start_time);
 //                    $query->where('now_num','>','0');
                     $query->select($Signselect);
                 }])->where($where)
@@ -94,6 +101,13 @@ class CountController extends CommonController{
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
+                $data['info']=ErpShopGoodsSku::with(['wmsLibrarySige' => function($query)use($Signselect,$where1,$start_time) {
+                    $query->where('entry_time','<=',$start_time);
+//                    $query->where('now_num','>','0');
+                    $query->select($Signselect);
+                }])->where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
                 $data['group_show']='N';
                 break;
 
@@ -105,6 +119,13 @@ class CountController extends CommonController{
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->select($select)
                     ->get();
+                $data['info']=ErpShopGoodsSku::with(['wmsLibrarySige' => function($query)use($Signselect,$where1,$start_time) {
+                    $query->where('entry_time','<=',$start_time);
+//                    $query->where('now_num','>','0');
+                    $query->select($Signselect);
+                }])->where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
                 $data['group_show']='Y';
                 break;
         }
@@ -118,7 +139,10 @@ class CountController extends CommonController{
 
                 $vv->good_describe =unit_do($v->wms_unit , $v->wms_target_unit, $v->wms_scale, $vv->now_num);
                 $v->count +=$vv->now_num;
+                $v->count1 +=$vv->now_num;
+                $v->count2 +=$vv->now_num;
             }
+            $v->count3 = $v->count1-$v->count;
             $v->good_describe =unit_do($v->wms_unit , $v->wms_target_unit, $v->wms_scale, $v->count);
             $v->button_info=$button_info;
         }
