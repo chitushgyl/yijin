@@ -61,7 +61,7 @@ class CountController extends CommonController{
             ['type'=>'like','name'=>'warehouse_name','value'=>$warehouse_name],
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'=','name'=>'use_flag','value'=>'Y'],
-            ['type'=>'>','name'=>'now_num','value'=>0],
+//            ['type'=>'>','name'=>'now_num','value'=>0],
             ['type'=>'>','name'=>'entry_time','value'=>$start_time],
             ['type'=>'<=','name'=>'entry_time','value'=>$end_time],
         ];
