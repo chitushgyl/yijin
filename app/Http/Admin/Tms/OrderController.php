@@ -1090,8 +1090,8 @@ class OrderController extends CommonController{
                     $list['order_number']            = $v['order_number'];
                     $list['company_id']              = $company->self_id;
                     $list['company_name']            = $company->company_name;
-                    $list['carriage_id']             = $v['carriage_id'];
-                    $list['carriage_name']           = $v['carriage_name'];
+                    $list['carriage_id']             = $carriage->carriage_id;
+                    $list['carriage_name']           = $carriage->company_name;
                     $list['good_name']               = $v['good_name'];
                     $list['car_id']                  = $car->self_id;
                     $list['car_number']              = $car->car_number;
