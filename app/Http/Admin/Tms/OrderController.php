@@ -1088,6 +1088,7 @@ class OrderController extends CommonController{
                 if($cando =='Y'){
                     $list['self_id']                 = generate_id('order_');
                     $list['order_number']            = $v['order_number'];
+                    $list['order_type']              = 1;
                     $list['company_id']              = $company->self_id;
                     $list['company_name']            = $company->company_name;
                     $list['carriage_id']             = $carriage->carriage_id;
@@ -1349,6 +1350,7 @@ class OrderController extends CommonController{
 
                 if($cando =='Y'){
                     $list['self_id']                 = generate_id('order_');
+                    $list['order_type']              = 2;
                     $list['carriage_id']             = $carriage->self_id;
                     $list['carriage_name']           = $carriage->company_name;
                     $list['good_name']               = $v['good_name'];
@@ -1591,6 +1593,7 @@ class OrderController extends CommonController{
 
                 if($cando =='Y'){
                     $list['self_id']                 = generate_id('order_');
+                    $list['order_type']              = 3;
                     $list['carriage_id']             = $carriage->self_id;
                     $list['carriage_name']           = $carriage->company_name;
                     $list['good_name']               = $v['good_name'];
