@@ -1703,7 +1703,7 @@ class OrderController extends CommonController{
                 //设置表头
                 $row = [[
                     "id"=>'ID',
-                    "order_number"=>'标识',
+                    "order_mark"=>'标识',
                     "company_name" =>'所属组织',
                     "carriage_name" =>'委托单位',
                     "good_name"=>'货物品名',
@@ -1732,7 +1732,7 @@ class OrderController extends CommonController{
                 foreach ($info as $k=>$v){
                     $list=[];
                     $list['id']=($k+1);
-                    $list['order_number']        = $v['order_number'];
+                    $list['order_number']        = $v['order_mark'];
                     $list['company_name']        = $v['company_name'];
                     $list['carriage_name']       = $v['carriage_name'];
                     $list['good_name']           = $v['good_name'];
