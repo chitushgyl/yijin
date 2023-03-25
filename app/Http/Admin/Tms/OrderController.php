@@ -943,7 +943,7 @@ class OrderController extends CommonController{
                 '承运人' =>['Y','Y','64','group_name'],
                 '车牌号' =>['Y','Y','64','car_number'],
                 '挂车号' =>['Y','Y','64','trailer_num'],
-                '驾驶员' =>['N','Y','64','user_name'],
+                '驾驶员' =>['Y','Y','64','user_name'],
                 '电话' =>['N','Y','64','car_tel'],
                 '副驾驶员' =>['N','Y','64','escort'],
                 '运单号' =>['N','Y','64','odd_number'],
@@ -951,12 +951,12 @@ class OrderController extends CommonController{
                 '交货日期' =>['Y','Y','64','gather_time'],
                 '装车点' =>['Y','Y','100','send_name'],
                 '卸车点' =>['Y','Y','100','gather_name'],
-                '提货时间段' =>['Y','Y','100','pick_time'],
-                '区域' =>['Y','Y','100','area'],
-                '运输方式' =>['Y','Y','100','pack_type'],
-                '订单编码' =>['Y','Y','100','order_number'],
-                '路卡' =>['Y','Y','100','road_card'],
-                '承运商组别' =>['Y','Y','100','carriage_group'],
+                '提货时间段' =>['N','Y','100','pick_time'],
+                '区域' =>['N','Y','100','area'],
+                '运输方式' =>['N','Y','100','pack_type'],
+                '订单编码' =>['N','Y','100','order_number'],
+                '路卡' =>['N','Y','100','road_card'],
+                '承运商组别' =>['N','Y','100','carriage_group'],
             ];
 
             $ret=arr_check($shuzu,$info_check);
@@ -1246,7 +1246,7 @@ class OrderController extends CommonController{
                 '装车点' =>['Y','Y','100','send_name'],
                 '卸车点' =>['Y','Y','100','gather_name'],
                 '车牌号' =>['Y','Y','64','car_number'],
-                '驾驶员' =>['N','Y','64','user_name'],
+                '驾驶员' =>['Y','Y','64','user_name'],
                 '电话' =>['N','Y','64','car_tel'],
                 '副驾驶员' =>['N','Y','64','escort'],
             ];
@@ -1498,7 +1498,7 @@ class OrderController extends CommonController{
                 '装车点' =>['Y','Y','100','send_name'],
                 '卸车点' =>['Y','Y','100','gather_name'],
                 '车牌号' =>['Y','Y','64','car_number'],
-                '驾驶员' =>['N','Y','64','user_name'],
+                '驾驶员' =>['Y','Y','64','user_name'],
                 '电话' =>['N','Y','64','car_tel'],
                 '包装方式' =>['N','Y','64','pack_type'],
             ];
