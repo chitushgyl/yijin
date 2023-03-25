@@ -128,7 +128,7 @@ class OrderController extends CommonController{
             'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
             'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
-            ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name'];
+            ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name','order_mark'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -258,7 +258,7 @@ class OrderController extends CommonController{
         $order_weight              = $request->input('order_weight');//装货吨位
         $real_weight               = $request->input('real_weight');//实际提货量
         $upload_weight             = $request->input('upload_weight');//卸货吨位
-        $pack_type                 = $request->input('pack_type');//运输方式
+        $pack_type                 = $request->input('pack_type');//包装方式
         $different_weight          = $request->input('different_weight');//装卸货量差
         $bill_flag                 = $request->input('bill_flag');//开票状态
         $payment_state             = $request->input('payment_state');//结算状态
@@ -953,7 +953,7 @@ class OrderController extends CommonController{
                 '卸车点' =>['Y','Y','100','gather_name'],
                 '提货时间段' =>['N','Y','100','pick_time'],
                 '区域' =>['N','Y','100','area'],
-                '运输方式' =>['N','Y','100','pack_type'],
+                '运输方式' =>['N','Y','100','transport_type'],
                 '订单编码' =>['N','Y','100','order_number'],
                 '路卡' =>['N','Y','100','road_card'],
                 '承运商组别' =>['N','Y','100','carriage_group'],
@@ -1116,7 +1116,7 @@ class OrderController extends CommonController{
                     $list['gather_name']             = $gather->name;
                     $list['pick_time']               = $v['pick_time'];
                     $list['area']                    = $v['area'];
-                    $list['pack_type']               = $v['pack_type'];
+                    $list['transport_type']               = $v['transport_type'];
                     $list['road_card']               = $v['road_card'];
                     $list['carriage_group']          = $v['carriage_group'];
 
@@ -1720,7 +1720,7 @@ class OrderController extends CommonController{
                     "gather_name"=>'卸车点',
                     "pick_time"=>'提货时间段',
                     "area"=>'区域',
-                    "pack_type"=>'运输方式',
+                    "transport_type"=>'运输方式',
                     "order_number"=>'订单编号',
                     "road_card"=>'路卡',
                     "carriage_group"=>'承运商组别',
@@ -1749,7 +1749,7 @@ class OrderController extends CommonController{
                     $list['gather_name']         = $v['gather_name'];
                     $list['pick_time']           = $v['pick_time'];
                     $list['area']                = $v['area'];
-                    $list['pack_type']           = $v['pack_type'];
+                    $list['transport_type']      = $v['transport_type'];
                     $list['order_number']        = $v['order_number'];
                     $list['road_card']           = $v['road_card'];
                     $list['carriage_group']      = $v['carriage_group'];
