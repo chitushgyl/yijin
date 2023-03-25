@@ -36,6 +36,8 @@ class WmschangeController extends Controller{
 
             $list['type']               =$type;
             $list['library_sige_id']    =$v['self_id'];
+            $list['price']              =$v['price'];
+            $list['total_price']        =$v['total_price'];
 
             switch ($type){
                 case 'preentry':
