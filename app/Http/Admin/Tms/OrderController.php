@@ -1026,14 +1026,14 @@ class OrderController extends CommonController{
 
                 if (!$company){
                     if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行承运人不存在".'</br>';
+                        $strs .= '数据中的第'.$a."行所属组织不存在".'</br>';
                         $cando='N';
                         $abcd++;
                     }
                 }
                 if (!$carriage){
                     if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行所属组织不存在".'</br>';
+                        $strs .= '数据中的第'.$a."行委托单位不存在".'</br>';
                         $cando='N';
                         $abcd++;
                     }
