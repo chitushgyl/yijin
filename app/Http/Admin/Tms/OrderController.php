@@ -983,7 +983,7 @@ class OrderController extends CommonController{
             //dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
-                $company = TmsGroup::where('type','check')->where('company_name',$v['company_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $company = TmsGroup::where('company_name',$v['company_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $car = TmsCar::where('car_number',$v['car_number'])->where('group_code',$group_code)->select('self_id','car_number')->first();
                 $trailer = TmsCar::where('car_number',$v['trailer_num'])->where('group_code',$group_code)->select('self_id','car_number')->first();
                 $send = TmsGroup::where('company_name',$v['send_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
@@ -991,14 +991,14 @@ class OrderController extends CommonController{
                 $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 if (!$send){
                     if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
+                        $strs .= '数据中的第'.$a."行装车点不存在".'</br>';
                         $cando='N';
                         $abcd++;
                     }
                 }
                 if (!$gather) {
                     if ($abcd < $errorNum) {
-                        $strs .= '数据中的第' . $a . "行驾驶员不存在" . '</br>';
+                        $strs .= '数据中的第' . $a . "行卸车点不存在" . '</br>';
                         $cando = 'N';
                         $abcd++;
                     }

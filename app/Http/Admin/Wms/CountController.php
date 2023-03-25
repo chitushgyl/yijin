@@ -112,9 +112,13 @@ class CountController extends CommonController{
 
 
 //        dump($data['items']->toArray());
-
+        $count3=0;
+        $count4=0;
         foreach ($data['items'] as $k=>$v) {
             $v->count=0;
+            $v->count1=0;
+            $v->count2=0;
+
             foreach ($v->wmsLibrarySige as $kk=>$vv) {
 
                 $vv->good_describe =unit_do($v->wms_unit , $v->wms_target_unit, $v->wms_scale, $vv->now_num);
@@ -123,8 +127,8 @@ class CountController extends CommonController{
                 $v->count2 +=$vv->initial_num;
             }
             $count = WmsLibrarySige::where('entry_time','<=',$start_time)->where('sku_id',$v->self_id)->sum('initial_num');
-            $v->count4 = $count;
-            $v->count3 = $v->count1-$v->count;
+            $v->count4 = $count??$count3;
+            $v->count3 = ($v->count1-$v->count)??$count4;
             $v->good_describe =unit_do($v->wms_unit , $v->wms_target_unit, $v->wms_scale, $v->count);
             $v->button_info=$button_info;
         }
