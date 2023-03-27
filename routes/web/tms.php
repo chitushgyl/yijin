@@ -324,6 +324,8 @@ Route::group([
     Route::any('/trye/details','TryeController@details');
     Route::any('/trye/excel','TryeController@excel');
     Route::any('/trye/getWares','TryeController@getWares');
+    Route::any('/trye/inTrye','TryeController@inTrye');
+    Route::any('/trye/outTrye','TryeController@outTrye');
 
     /**二级维护***/
     Route::any('/diplasic/diplasicList','DiplasicController@diplasicList');
