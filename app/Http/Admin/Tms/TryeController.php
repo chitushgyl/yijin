@@ -5,6 +5,7 @@ use App\Models\Group\SystemGroup;
 use App\Models\Tms\TmsTrye;
 use App\Models\Tms\TmsTryeCount;
 use App\Models\Tms\TmsTryeList;
+use App\Models\Tms\TryeOutList;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
@@ -122,8 +123,11 @@ class TryeController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $select=['self_id','car_number','model','model','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag'];
-        $data['info']=TmsTrye::where($where)->select($select)->first();
+        $select=['self_id','car_number','model','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag'];
+        $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag'];
+        $data['info']=TmsTrye::with(['TryeOutList'=>function($query)use($select1){
+             $query->select($select1);
+        }])->where($where)->select($select)->first();
         if($data['info']){
 
         }
@@ -503,7 +507,7 @@ class TryeController extends CommonController{
                             }
 
                         }
-                       
+
                         foreach ($wms_library_sige as $kkk => $vvv){
                             $where21['self_id']=$vvv['self_id'];
 
@@ -537,7 +541,25 @@ class TryeController extends CommonController{
                 $data['group_code']         = $user_info->group_code;
                 $data['group_name']         = $user_info->group_name;
                 $id=TmsTrye::insert($data);
-
+                $trye_out_list = [];
+                foreach(json_decode($trye_list,true) as $key => $value){
+                      $list['self_id']            = generate_id('list_');
+                      $list['model']              = $value['model'];
+                      $list['trye_num']           = $value['trye_num'];
+                      $list['num']                = $value['num'];
+                      $list['price']              = $value['price'];
+                      $list['order_id']           = $data['self_id'];
+                      $list['kilo']               = $value['kilo'];
+                      $list['change']             = $value['change'];
+                      $list['trye_img']           = $value['trye_img'];
+                      $list['create_user_id']     = $user_info->admin_id;
+                      $list['create_user_name']   = $user_info->name;
+                      $list['create_time']        = $list['update_time']=$now_time;
+                      $list['group_code']         = $user_info->group_code;
+                      $list['group_name']         = $user_info->group_name;
+                      $trye_out_list[] = $list;
+                }
+                TryeOutList::insert($trye_out_list);
                 $operationing->access_cause='新建入库';
                 $operationing->operation_type='create';
             }
