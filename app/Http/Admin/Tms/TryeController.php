@@ -499,9 +499,11 @@ class TryeController extends CommonController{
                                 $library_sige['yuan_num'] = $vv['now_num'];
                                 $library_sige['chuku_number'] = $shiji_number;
                                 $wms_library_sige[] = $library_sige;
+                                $number -=  $vv['now_num'];
                             }
+
                         }
-                        dd($wms_library_sige);
+                       
                         foreach ($wms_library_sige as $kkk => $vvv){
                             $where21['self_id']=$vvv['self_id'];
 
