@@ -1221,7 +1221,7 @@ class OrderController extends CommonController{
             }
 
             WmsOutSige::insert($wms_out_sige);
-            dd($wms_library_sige);
+
             $change->change($wms_library_change,'out');
             foreach ($wms_library_sige as $k => $v){
                 $where21['self_id']=$v['self_id'];

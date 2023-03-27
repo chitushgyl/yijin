@@ -465,6 +465,7 @@ class TryeController extends CommonController{
             $data['in_time']           =$in_time;
             $data['operator']          =$operator;
 
+            $wms_library_sige = [];
             foreach (json_decode($trye_list,true) as $k => $v) {
                 $where2 = [
                     ['model', '=', $v['model']],
@@ -476,7 +477,7 @@ class TryeController extends CommonController{
 
                 $resssss = TmsTryeCount::where($where2)->orderBy('create_time', 'asc')->get()->toArray();
                 if ($resssss) {
-                    $wms_library_sige = [];
+
                     $totalNum = array_sum(array_column($resssss, 'now_num'));
                     $numds = $v['num'] - $totalNum;
                     if ($numds > 0) {
@@ -499,7 +500,6 @@ class TryeController extends CommonController{
                                 $wms_library_sige[] = $library_sige;
                             }
                         }
-
                         foreach ($wms_library_sige as $k => $v){
                             $where21['self_id']=$v['self_id'];
 
