@@ -433,7 +433,7 @@ class TryeController extends CommonController{
         $in_time            =$request->input('in_time');//时间
         $driver_name        =$request->input('driver_name');//驾驶员
         $change             =$request->input('change');//更换位置
-        $trye_list          =json_decode($request->input('trye_list'),true);//更换位置
+        $trye_list          =$request->input('trye_list');//更换位置
 
         /**
         $trye_list = [[
@@ -465,7 +465,7 @@ class TryeController extends CommonController{
             $data['in_time']           =$in_time;
             $data['operator']          =$operator;
 
-            foreach ($trye_list as $k => $v) {
+            foreach (json_decode($trye_list,true) as $k => $v) {
                 $where2 = [
                     ['model', '=', $v['model']],
                     ['now_num', '>', 0],
