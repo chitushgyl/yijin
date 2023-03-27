@@ -456,7 +456,7 @@ class TryeController extends CommonController{
 
             foreach ($trye_list as $k => $v) {
                 $where2 = [
-                    ['model', '=', $v['sku_id']],
+                    ['model', '=', $v['model']],
                     ['now_num', '>', 0],
                     ['delete_flag', '=', 'Y'],
 //                                ['create_time', '>',$now_time]
