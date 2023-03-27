@@ -329,7 +329,7 @@ class TryeController extends CommonController{
 
 
             $count['model'] = $model;
-            $count['inital_num'] = $num;
+            $count['initial_num'] = $num;
             $count['change_num'] = $num;
             $count['now_num'] = $num;
 
