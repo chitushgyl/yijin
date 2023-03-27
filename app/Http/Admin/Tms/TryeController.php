@@ -985,10 +985,7 @@ class TryeController extends CommonController{
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'=','name'=>'use_flag','value'=>'Y'],
-            ['type'=>'=','name'=>'type','value'=>'WMS'],
-            ['type'=>'like','name'=>'good_name','value'=>$good_name],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'like','name'=>'external_sku_id','value'=>$external_sku_id],
 
         ];
 
@@ -997,8 +994,8 @@ class TryeController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'=','name'=>'use_flag','value'=>'Y'],
             ['type'=>'>=','name'=>'now_num','value'=>0],
-            ['type'=>'>','name'=>'entry_time','value'=>$start_time],
-            ['type'=>'<=','name'=>'entry_time','value'=>$end_time],
+//            ['type'=>'>','name'=>'entry_time','value'=>$start_time],
+//            ['type'=>'<=','name'=>'entry_time','value'=>$end_time],
         ];
 
         $where=get_list_where($search);
