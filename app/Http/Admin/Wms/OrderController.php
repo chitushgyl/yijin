@@ -1144,7 +1144,7 @@ class OrderController extends CommonController{
         $int_cold_num = 0;
         $int_freeze_num = 0;
         $int_normal_num = 0;
-        //dump($data);dd($resssss);
+        dump($data);dd($resssss);
         if($resssss){
             foreach($resssss as $kk=>$vv){
                 if($number > 0){
