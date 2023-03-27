@@ -479,7 +479,6 @@ class TryeController extends CommonController{
                     $wms_library_sige = [];
                     $totalNum = array_sum(array_column($resssss, 'now_num'));
                     $numds = $v['num'] - $totalNum;
-                    dump($totalNum,$numds);
                     if ($numds > 0) {
                         $msg['code']=301;
                         $msg['msg']='库存不足！';
@@ -500,7 +499,7 @@ class TryeController extends CommonController{
                                 $wms_library_sige[] = $library_sige;
                             }
                         }
-                        dd($wms_library_sige);
+
                         foreach ($wms_library_sige as $k => $v){
                             $where21['self_id']=$v['self_id'];
 
@@ -516,17 +515,6 @@ class TryeController extends CommonController{
                     return $msg;
                 }
             }
-
-            $count['order_id'] = $self_id;
-            $count['model'] = $model;
-            $count['inital_num'] = $num;
-            $count['change_num'] = $num;
-            $count['now_num'] = $num;
-            $count['create_user_id']     =$user_info->admin_id;
-            $count['create_user_name']   =$user_info->name;
-            $count['create_time']        =$count['update_time']=$now_time;
-            $count['group_code']         = $user_info->group_code;
-            $count['group_name']         = $user_info->group_name;
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsTrye::where($wheres)->first();
