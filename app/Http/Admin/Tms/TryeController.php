@@ -465,7 +465,7 @@ class TryeController extends CommonController{
             $data['in_time']           =$in_time;
             $data['operator']          =$operator;
 
-            $wms_library_sige = [];
+
             foreach (json_decode($trye_list,true) as $k => $v) {
                 $where2 = [
                     ['model', '=', $v['model']],
@@ -485,6 +485,7 @@ class TryeController extends CommonController{
                         $msg['msg']='库存不足！';
                         return $msg;
                     } else {
+                        $wms_library_sige = [];
                         $number=$v['num'];
                         foreach ($resssss as $kk =>$vv){
                             if($number > 0) {
@@ -501,10 +502,10 @@ class TryeController extends CommonController{
                             }
                         }
                         dd($wms_library_sige);
-                        foreach ($wms_library_sige as $k => $v){
-                            $where21['self_id']=$v['self_id'];
+                        foreach ($wms_library_sige as $kkk => $vvv){
+                            $where21['self_id']=$vvv['self_id'];
 
-                            $librarySignUpdate['now_num']           =$v['yuan_num']-$v['chuku_number'];
+                            $librarySignUpdate['now_num']           =$vvv['yuan_num']-$vvv['chuku_number'];
                             $librarySignUpdate['update_time']       =$now_time;
                             TmsTryeCount::where($where21)->update($librarySignUpdate);
                         }
