@@ -534,9 +534,6 @@ class TryeController extends CommonController{
                 $data['group_code']         = $user_info->group_code;
                 $data['group_name']         = $user_info->group_name;
                 $id=TmsTrye::insert($data);
-                if ($type == 'in'){
-                    TmsTryeCount::insert($count);
-                }
 
                 $operationing->access_cause='新建入库';
                 $operationing->operation_type='create';
@@ -957,7 +954,93 @@ class TryeController extends CommonController{
     }
 
     public function tryeCountPage(Request $request){
+        /** 接收中间件参数**/
+        $group_info     = $request->get('group_info');//接收中间件产生的参数
+        $button_info    = $request->get('anniu');//接收中间件产生的参数
 
+        /**接收数据*/
+        $num            =$request->input('num')??10;
+        $page           =$request->input('page')??1;
+        $use_flag       =$request->input('use_flag');
+        $group_code     =$request->input('group_code');
+
+        $warehouse_name      =$request->input('warehouse_name');
+        $external_sku_id     =$request->input('external_sku_id');
+        $good_name           =$request->input('good_name');
+        $start_time          =$request->input('start_time');
+        $end_time            =$request->input('end_time');
+        $listrows            =$num;
+        $firstrow            =($page-1)*$listrows;
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'use_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'type','value'=>'WMS'],
+            ['type'=>'like','name'=>'good_name','value'=>$good_name],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'like','name'=>'external_sku_id','value'=>$external_sku_id],
+
+        ];
+
+        $search1=[
+            ['type'=>'like','name'=>'warehouse_name','value'=>$warehouse_name],
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'use_flag','value'=>'Y'],
+            ['type'=>'>=','name'=>'now_num','value'=>0],
+            ['type'=>'>','name'=>'entry_time','value'=>$start_time],
+            ['type'=>'<=','name'=>'entry_time','value'=>$end_time],
+        ];
+
+//        $where=get_list_where($search);
+//        $where1 = get_list_where($search1);
+        $select=['self_id','good_name','good_english_name','wms_unit','wms_target_unit','wms_scale','wms_spec',
+            'group_name','use_flag','external_sku_id'];
+
+        $Signselect=['sku_id','production_date','expire_time','can_use','create_time','warehouse_name','area','row','column','tier','storage_number','initial_num','now_num','warehouse_sign_id','entry_time'];
+//        dd($select);
+        switch ($group_info['group_id']){
+            case 'all':
+//                $data['total']=ErpShopGoodsSku::where($where)->count(); //总的数据量
+                $data['items']=TmsTryeCount::
+                    offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->get();
+                $data['group_show']='Y';
+                break;
+
+            case 'one':
+                $where[]=['group_code','=',$group_info['group_code']];
+//                $data['total']=ErpShopGoodsSku::where($where)->count(); //总的数据量
+                $data['items']=TmsTryeCount::
+                offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->get();
+                $data['group_show']='N';
+                break;
+
+            case 'more':
+//                $data['total']=ErpShopGoodsSku::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=TmsTryeCount::whereIn('group_code',$group_info['group_code'])
+                ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->get();
+                $data['group_show']='Y';
+                break;
+        }
+
+
+//        dump($data['items']->toArray());
+        $count3=0;
+        $count4=0;
+        foreach ($data['items'] as $k=>$v) {
+            $v->count=0;
+            $v->count1=0;
+            $v->count2=0;
+            $v->count +=$v->now_num;
+            $v->button_info=$button_info;
+        }
+//        dd($data['items']->toArray());
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        //dd($msg);
+        return $msg;
     }
 
 }
