@@ -422,7 +422,7 @@ class TryeController extends CommonController{
         $in_time            =$request->input('in_time');//时间
         $driver_name        =$request->input('driver_name');//驾驶员
         $change             =$request->input('change');//更换位置
-        $trye_list          =$request->input('trye_list');//更换位置
+        $trye_list          =json_decode($request->input('trye_list'),true);//更换位置
 
         /**
         $trye_list = [[
