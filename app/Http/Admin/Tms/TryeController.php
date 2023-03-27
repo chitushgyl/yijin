@@ -465,9 +465,10 @@ class TryeController extends CommonController{
 
                 $resssss = TmsTryeCount::where($where2)->orderBy('create_time', 'asc')->get()->toArray();
                 if ($resssss) {
+                    $wms_library_sige = [];
                     $totalNum = array_sum(array_column($resssss, 'now_num'));
                     $numds = $v['num'] - $totalNum;
-                    dd($totalNum,$numds);
+                    dump($totalNum,$numds);
                     if ($numds > 0) {
                         $msg['code']=301;
                         $msg['msg']='库存不足！';
@@ -488,6 +489,7 @@ class TryeController extends CommonController{
                                 $wms_library_sige[] = $library_sige;
                             }
                         }
+                        dd($wms_library_sige);
                         foreach ($wms_library_sige as $k => $v){
                             $where21['self_id']=$v['self_id'];
 
