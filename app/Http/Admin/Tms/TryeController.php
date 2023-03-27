@@ -4,6 +4,7 @@ namespace App\Http\Admin\Tms;
 use App\Models\Group\SystemGroup;
 use App\Models\Tms\TmsTrye;
 use App\Models\Tms\TmsTryeCount;
+use App\Models\Tms\TmsTryeList;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
@@ -326,6 +327,7 @@ class TryeController extends CommonController{
             $data['trye_num']          =$trye_num;
             $data['in_time']           =$in_time;
             $data['operator']          =$operator;
+            $trye_model = TmsTryeList::where('model',$model)->first();
 
 
             $count['model'] = $model;
@@ -360,7 +362,16 @@ class TryeController extends CommonController{
                 $count['group_name']         = $user_info->group_name;
                 $id=TmsTrye::insert($data);
                 TmsTryeCount::insert($count);
-
+                if (!$trye_model){
+                    $model_list['self_id'] = generate_id('model_');
+                    $model_list['model']   = $model;
+                    $model_list['create_user_id']     =$user_info->admin_id;
+                    $model_list['create_user_name']   =$user_info->name;
+                    $model_list['create_time']        =$model_list['update_time']=$now_time;
+                    $model_list['group_code']         = $user_info->group_code;
+                    $model_list['group_name']         = $user_info->group_name;
+                   TmsTryeList::insert($model_list);
+                }
 
                 $operationing->access_cause='新建入库';
                 $operationing->operation_type='create';
@@ -990,35 +1001,44 @@ class TryeController extends CommonController{
             ['type'=>'<=','name'=>'entry_time','value'=>$end_time],
         ];
 
-//        $where=get_list_where($search);
-//        $where1 = get_list_where($search1);
-        $select=['self_id','good_name','good_english_name','wms_unit','wms_target_unit','wms_scale','wms_spec',
-            'group_name','use_flag','external_sku_id'];
+        $where=get_list_where($search);
+        $where1 = get_list_where($search1);
+        $select=['self_id','model','group_name','use_flag'];
 
-        $Signselect=['sku_id','production_date','expire_time','can_use','create_time','warehouse_name','area','row','column','tier','storage_number','initial_num','now_num','warehouse_sign_id','entry_time'];
+        $Signselect=['self_id','model','initial_num','change_num','create_time','now_num','trye_list'];
 //        dd($select);
         switch ($group_info['group_id']){
             case 'all':
-//                $data['total']=ErpShopGoodsSku::where($where)->count(); //总的数据量
-                $data['items']=TmsTryeCount::
-                    offset($firstrow)->limit($listrows)->groupBy('model')
-                    ->get();
+                $data['total']=TmsTryeList::where($where)->count(); //总的数据量
+                $data['items']=TmsTryeList::with(['TmsTryeCount' => function($query)use($Signselect,$where1) {
+                    $query->where($where1);
+//                    $query->where('now_num','>','0');
+                    $query->select($Signselect);
+                }])->where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
                 $data['group_show']='Y';
                 break;
 
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
-//                $data['total']=ErpShopGoodsSku::where($where)->count(); //总的数据量
-                $data['items']=TmsTryeCount::
-                offset($firstrow)->limit($listrows)->groupBy('model')
-                    ->get();
+                $data['total']=TmsTryeList::where($where)->count(); //总的数据量
+                $data['items']=TmsTryeList::with(['TmsTryeCount' => function($query)use($Signselect,$where1) {
+                    $query->where($where1);
+                    $query->select($Signselect);
+                }])->where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
                 $data['group_show']='N';
                 break;
 
             case 'more':
-//                $data['total']=ErpShopGoodsSku::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=TmsTryeCount::whereIn('group_code',$group_info['group_code'])
-                ->offset($firstrow)->limit($listrows)->groupBy('model')
+                $data['total']=TmsTryeList::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=TmsTryeList::with(['TmsTryeCount' => function($query)use($Signselect,$where1) {
+                    $query->where($where1);
+                    $query->select($Signselect);
+                }])->where($where)->whereIn('group_code',$group_info['group_code'])
+                    ->select($select)
                     ->get();
                 $data['group_show']='Y';
                 break;
@@ -1032,7 +1052,11 @@ class TryeController extends CommonController{
             $v->count=0;
             $v->count1=0;
             $v->count2=0;
-            $v->count +=$v->now_num;
+            foreach ($v->TmsTryeCount as $kk=>$vv) {
+                $v->count +=$vv->now_num;
+                $v->count1 +=$vv->storage_number;
+            }
+
             $v->button_info=$button_info;
         }
 //        dd($data['items']->toArray());
