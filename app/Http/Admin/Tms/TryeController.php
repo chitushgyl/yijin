@@ -423,7 +423,7 @@ class TryeController extends CommonController{
         $driver_name        =$request->input('driver_name');//驾驶员
         $change             =$request->input('change');//更换位置
         $trye_list          =json_decode($request->input('trye_list'),true);//更换位置
-        dd($trye_list);
+
         /**
         $trye_list = [[
         trye_num=>'',//轮胎编号
@@ -467,7 +467,7 @@ class TryeController extends CommonController{
                 if ($resssss) {
                     $totalNum = array_sum(array_column($resssss, 'now_num'));
                     $numds = $v['num'] - $totalNum;
-
+                    dd($totalNum,$numds);
                     if ($numds > 0) {
                         $msg['code']=301;
                         $msg['msg']='库存不足！';
