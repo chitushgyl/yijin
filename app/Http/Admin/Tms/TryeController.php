@@ -416,6 +416,13 @@ class TryeController extends CommonController{
     }
 
     /**
+     * 获取轮胎  根据规格获取当前已入库的轮胎参数
+     * */
+    public function getTrye(Request $request){
+
+    }
+
+    /**
      * 出库
      * */
     public function outTrye(Request $request){
@@ -556,7 +563,7 @@ class TryeController extends CommonController{
                       $list['num']                = $value['num'];
                       $list['price']              = $value['price'];
                       $list['order_id']           = $data['self_id'];
-                      $list['kilo']               = $value['kilo'];
+                      $list['kilo']               = $value['kilo_num'];
                       $list['change']             = $value['change'];
                       $list['trye_img']           = $value['trye_img'];
                       $list['create_user_id']     = $user_info->admin_id;
