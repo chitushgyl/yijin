@@ -8,6 +8,7 @@ use App\Models\Tms\TmsTryeList;
 use App\Models\Tms\TryeOutList;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
@@ -311,6 +312,7 @@ class TryeController extends CommonController{
         $driver_name        =$request->input('driver_name');//驾驶员
         $change             =$request->input('change');//更换位置
         $trye_list          =$request->input('trye_list');//更换位置
+        $price              =$request->input('price');//更换位置
 
         /**
         $trye_list = [[
@@ -338,6 +340,7 @@ class TryeController extends CommonController{
             $data['trye_num']          =$trye_num;
             $data['in_time']           =$in_time;
             $data['operator']          =$operator;
+            $data['price']             =$price;
             $trye_model = TmsTryeList::where('model',$model)->first();
 
 
@@ -376,6 +379,7 @@ class TryeController extends CommonController{
                 if (!$trye_model){
                     $model_list['self_id'] = generate_id('model_');
                     $model_list['model']   = $model;
+                    $model_list['price']   = $price;
                     $model_list['create_user_id']     =$user_info->admin_id;
                     $model_list['create_user_name']   =$user_info->name;
                     $model_list['create_time']        =$model_list['update_time']=$now_time;
@@ -419,7 +423,23 @@ class TryeController extends CommonController{
      * 获取轮胎  根据规格获取当前已入库的轮胎参数
      * */
     public function getTrye(Request $request){
+        $group_code=$request->input('group_code');
 
+//        $input['group_code'] =  $group_code = '1234';
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+        ];
+
+        $where=get_list_where($search);
+        $select = ['self_id','model','price','use_flag','delete_flag','group_code','group_name','create_time'];
+        $data['info']=TmsTryeList::where($where)->select($select)->get();
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
     }
 
     /**
@@ -483,114 +503,124 @@ class TryeController extends CommonController{
             $data['in_time']           =$in_time;
             $data['operator']          =$operator;
 
-
-            foreach (json_decode($trye_list,true) as $k => $v) {
-                $where2 = [
-                    ['model', '=', $v['model']],
-                    ['now_num', '>', 0],
-                    ['delete_flag', '=', 'Y'],
+            DB::beginTransaction();
+            try{
+                foreach (json_decode($trye_list,true) as $k => $v) {
+                    $where2 = [
+                        ['model', '=', $v['model']],
+                        ['now_num', '>', 0],
+                        ['delete_flag', '=', 'Y'],
 //                                ['create_time', '>',$now_time]
 //                                ['create_time', '>', substr($now_time, 0, -9)]
-                ];
+                    ];
 
-                $resssss = TmsTryeCount::where($where2)->orderBy('create_time', 'asc')->get()->toArray();
-                if ($resssss) {
+                    $resssss = TmsTryeCount::where($where2)->orderBy('create_time', 'asc')->get()->toArray();
+                    if ($resssss) {
 
-                    $totalNum = array_sum(array_column($resssss, 'now_num'));
-                    $numds = $v['num'] - $totalNum;
-                    if ($numds > 0) {
-                        $msg['code']=301;
-                        $msg['msg']='库存不足！';
-                        return $msg;
-                    } else {
-                        $wms_library_sige = [];
-                        $number=$v['num'];
-                        foreach ($resssss as $kk =>$vv){
-                            if($number > 0) {
-                                if ($number - $vv['now_num'] > 0) {
-                                    $shiji_number = $vv['now_num'];
+                        $totalNum = array_sum(array_column($resssss, 'now_num'));
+                        $numds = $v['num'] - $totalNum;
+                        if ($numds > 0) {
+                            $msg['code']=301;
+                            $msg['msg']='库存不足！';
+                            return $msg;
+                        } else {
+                            $wms_library_sige = [];
+                            $number=$v['num'];
+                            foreach ($resssss as $kk =>$vv){
+                                if($number > 0) {
+                                    if ($number - $vv['now_num'] > 0) {
+                                        $shiji_number = $vv['now_num'];
 
-                                } else {
-                                    $shiji_number = $number;
+                                    } else {
+                                        $shiji_number = $number;
+                                    }
+                                    $library_sige['self_id'] = $vv['self_id'];
+                                    $library_sige['yuan_num'] = $vv['now_num'];
+                                    $library_sige['chuku_number'] = $shiji_number;
+                                    $wms_library_sige[] = $library_sige;
+                                    $number -=  $vv['now_num'];
                                 }
-                                $library_sige['self_id'] = $vv['self_id'];
-                                $library_sige['yuan_num'] = $vv['now_num'];
-                                $library_sige['chuku_number'] = $shiji_number;
-                                $wms_library_sige[] = $library_sige;
-                                $number -=  $vv['now_num'];
+
                             }
 
+                            foreach ($wms_library_sige as $kkk => $vvv){
+                                $where21['self_id']=$vvv['self_id'];
+
+                                $librarySignUpdate['now_num']           =$vvv['yuan_num']-$vvv['chuku_number'];
+                                $librarySignUpdate['update_time']       =$now_time;
+                                TmsTryeCount::where($where21)->update($librarySignUpdate);
+                            }
                         }
 
-                        foreach ($wms_library_sige as $kkk => $vvv){
-                            $where21['self_id']=$vvv['self_id'];
-
-                            $librarySignUpdate['now_num']           =$vvv['yuan_num']-$vvv['chuku_number'];
-                            $librarySignUpdate['update_time']       =$now_time;
-                            TmsTryeCount::where($where21)->update($librarySignUpdate);
-                        }
+                    } else {
+                        $msg['code']=301;
+                        $msg['msg']='暂时无货，请稍后重试！';
+                        return $msg;
                     }
+                }
 
-                } else {
-                    $msg['code']=301;
-                    $msg['msg']='暂时无货，请稍后重试！';
+                $wheres['self_id'] = $self_id;
+                $old_info=TmsTrye::where($wheres)->first();
+
+                if($old_info){
+                    $data['update_time']=$now_time;
+                    $id=TmsTrye::where($wheres)->update($data);
+                    $operationing->access_cause='修改入库';
+                    $operationing->operation_type='update';
+
+                }else{
+                    $data['self_id']            =generate_id('trye_');
+                    $data['create_user_id']     =$user_info->admin_id;
+                    $data['create_user_name']   =$user_info->name;
+                    $data['create_time']        =$data['update_time']=$now_time;
+                    $data['group_code']         = $user_info->group_code;
+                    $data['group_name']         = $user_info->group_name;
+                    $id=TmsTrye::insert($data);
+                    $trye_out_list = [];
+                    foreach(json_decode($trye_list,true) as $key => $value){
+                        $list['self_id']            = generate_id('list_');
+                        $list['model']              = $value['model'];
+                        $list['trye_num']           = $value['trye_num'];
+                        $list['num']                = $value['num'];
+                        $list['price']              = $value['price'];
+                        $list['order_id']           = $data['self_id'];
+                        $list['kilo']               = $value['kilo_num'];
+                        $list['change']             = $value['change'];
+                        $list['trye_img']           = $value['trye_img'];
+                        $list['create_user_id']     = $user_info->admin_id;
+                        $list['create_user_name']   = $user_info->name;
+                        $list['create_time']        = $list['update_time']=$now_time;
+                        $list['group_code']         = $user_info->group_code;
+                        $list['group_name']         = $user_info->group_name;
+                        $trye_out_list[] = $list;
+                    }
+                    TryeOutList::insert($trye_out_list);
+                    $operationing->access_cause='新建入库';
+                    $operationing->operation_type='create';
+                }
+
+                $operationing->table_id=$old_info?$self_id:$data['self_id'];
+                $operationing->old_info=$old_info;
+                $operationing->new_info=$data;
+
+                if($id){
+                    DB::commit();
+                    $msg['code'] = 200;
+                    $msg['msg'] = "操作成功";
+                    return $msg;
+                }else{
+                    DB::rollBack();
+                    $msg['code'] = 302;
+                    $msg['msg'] = "操作失败";
                     return $msg;
                 }
-            }
-
-            $wheres['self_id'] = $self_id;
-            $old_info=TmsTrye::where($wheres)->first();
-
-            if($old_info){
-                $data['update_time']=$now_time;
-                $id=TmsTrye::where($wheres)->update($data);
-                $operationing->access_cause='修改入库';
-                $operationing->operation_type='update';
-
-            }else{
-                $data['self_id']            =generate_id('trye_');
-                $data['create_user_id']     =$user_info->admin_id;
-                $data['create_user_name']   =$user_info->name;
-                $data['create_time']        =$data['update_time']=$now_time;
-                $data['group_code']         = $user_info->group_code;
-                $data['group_name']         = $user_info->group_name;
-                $id=TmsTrye::insert($data);
-                $trye_out_list = [];
-                foreach(json_decode($trye_list,true) as $key => $value){
-                      $list['self_id']            = generate_id('list_');
-                      $list['model']              = $value['model'];
-                      $list['trye_num']           = $value['trye_num'];
-                      $list['num']                = $value['num'];
-                      $list['price']              = $value['price'];
-                      $list['order_id']           = $data['self_id'];
-                      $list['kilo']               = $value['kilo_num'];
-                      $list['change']             = $value['change'];
-                      $list['trye_img']           = $value['trye_img'];
-                      $list['create_user_id']     = $user_info->admin_id;
-                      $list['create_user_name']   = $user_info->name;
-                      $list['create_time']        = $list['update_time']=$now_time;
-                      $list['group_code']         = $user_info->group_code;
-                      $list['group_name']         = $user_info->group_name;
-                      $trye_out_list[] = $list;
-                }
-                TryeOutList::insert($trye_out_list);
-                $operationing->access_cause='新建入库';
-                $operationing->operation_type='create';
-            }
-
-            $operationing->table_id=$old_info?$self_id:$data['self_id'];
-            $operationing->old_info=$old_info;
-            $operationing->new_info=$data;
-
-            if($id){
-                $msg['code'] = 200;
-                $msg['msg'] = "操作成功";
-                return $msg;
-            }else{
+            }catch(\Exception $e){
+                DB::rollBack();
                 $msg['code'] = 302;
                 $msg['msg'] = "操作失败";
                 return $msg;
             }
+
 
         }else{
             //前端用户验证没有通过
