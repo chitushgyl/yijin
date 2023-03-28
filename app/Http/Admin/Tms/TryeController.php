@@ -2,6 +2,7 @@
 namespace App\Http\Admin\Tms;
 
 use App\Models\Group\SystemGroup;
+use App\Models\Tms\TmsMoney;
 use App\Models\Tms\TmsTrye;
 use App\Models\Tms\TmsTryeCount;
 use App\Models\Tms\TmsTryeList;
@@ -582,6 +583,7 @@ class TryeController extends CommonController{
                     $data['group_name']         = $user_info->group_name;
                     $id=TmsTrye::insert($data);
                     $trye_out_list = [];
+                    $moneylist[] = [];
                     foreach(json_decode($trye_list,true) as $key => $value){
                         $list['self_id']            = generate_id('list_');
                         $list['model']              = $value['model'];
@@ -617,10 +619,12 @@ class TryeController extends CommonController{
                         $money['create_user_id']     = $user_info->admin_id;
                         $money['create_user_name']   = $user_info->name;
                         $money['create_time']        =$money['update_time']=$now_time;
+                        $moneylist[]=$money;
                     }
                     TryeOutList::insert($trye_out_list);
+                    TmsMoney::insert($moneylist);
 
-                    $moneylist[]=$money;
+
                     $operationing->access_cause='新建入库';
                     $operationing->operation_type='create';
                 }
