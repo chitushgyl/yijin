@@ -131,7 +131,7 @@ class TryeController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $select=['self_id','car_number','model','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag'];
+        $select=['self_id','car_number','car_number','model','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag'];
         $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag'];
         $data['info']=TmsTrye::with(['TryeOutList'=>function($query)use($select1){
              $query->select($select1);
@@ -284,7 +284,9 @@ class TryeController extends CommonController{
 
 
     }
-
+    /**
+     * 入库操作
+     * */
     public function inTrye(Request $request){
         $user_info = $request->get('user_info');//接收中间件产生的参数
         $operationing   = $request->get('operationing');//接收中间件产生的参数
@@ -481,6 +483,7 @@ class TryeController extends CommonController{
         kilo_num=>'25062',//里程数
         change=>'',//更换位置
         trye_img=>'',//图片
+        price=>'',//轮胎单价
         ]]
          * */
         $rules=[
@@ -494,6 +497,7 @@ class TryeController extends CommonController{
         if($validator->passes()) {
 
             $data['type']              =$type;
+            $data['car_id']            =$car_id;
             $data['car_number']        =$car_number;
             $data['num']               =$num;
             $data['change']            =$change;
@@ -557,6 +561,7 @@ class TryeController extends CommonController{
                         $msg['msg']='暂时无货，请稍后重试！';
                         return $msg;
                     }
+
                 }
 
                 $wheres['self_id'] = $self_id;
@@ -593,8 +598,29 @@ class TryeController extends CommonController{
                         $list['group_code']         = $user_info->group_code;
                         $list['group_name']         = $user_info->group_name;
                         $trye_out_list[] = $list;
+
+                        /***保存费用**/
+                        $money['pay_type']           = 'trye';
+                        $money['money']              = $value['price'];
+                        $money['pay_state']          = 'Y';
+                        $money['order_id']           = $data['self_id'];
+                        $money['car_id']             = $car_id;
+                        $money['car_number']         = $car_number;
+//                        $money['user_id']            = $user_id;
+                        $money['user_name']          = $driver_name;
+                        $money['process_state']      = 'Y';
+                        $money['type_state']         = 'out';
+//                        $money['use_flag']           = 'N';
+                        $money['self_id']            = generate_id('money');
+                        $money['group_code']         = $user_info->group_code;
+                        $money['group_name']         = $user_info->group_name;
+                        $money['create_user_id']     = $user_info->admin_id;
+                        $money['create_user_name']   = $user_info->name;
+                        $money['create_time']        =$money['update_time']=$now_time;
                     }
                     TryeOutList::insert($trye_out_list);
+
+                    $moneylist[]=$money;
                     $operationing->access_cause='新建入库';
                     $operationing->operation_type='create';
                 }

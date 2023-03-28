@@ -314,6 +314,7 @@ class OrderController extends CommonController{
                         $money['user_name']          = $picker;
                         $money['process_state']      = 'Y';
                         $money['type_state']         = 'out';
+                        $money['use_flag']           = 'N';
                         $money['self_id']            = generate_id('money');
                         $money['group_code']         = $group_code;
                         $money['group_name']         = $group_name;
@@ -1102,6 +1103,7 @@ class OrderController extends CommonController{
                     $data['use_flag'] = 'Y';
                     $data['update_time'] = $now_time;
                     WmsLibraryChange::whereIn('order_id',$order_id)->update($data);
+                    TmsMoney::whereIn('order_id',$order_id)->update($data);
                     DB::commit();
                     $msg['code']=200;
                     $msg['msg']='操作成功!';
