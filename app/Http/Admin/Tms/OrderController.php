@@ -2258,6 +2258,96 @@ class OrderController extends CommonController{
         }
     }
 
+    /***
+     *获取员工当月订单记录
+     **/
+    public function getUserOrder(Request $request){
+        /** 接收中间件参数**/
+        $order_type    =array_column(config('tms.order_type'),'name','key');
+        $group_info     = $request->get('group_info');//接收中间件产生的参数
+        $user_info     = $request->get('user_info');//接收中间件产生的参数
+        $button_info    = $request->get('anniu');//接收中间件产生的参数
+        $buttonInfo     = $request->get('buttonInfo');
+
+        /**接收数据*/
+        $num            =$request->input('num')??10;
+        $page           =$request->input('page')??1;
+        $use_flag       =$request->input('use_flag');
+        $group_code     =$request->input('group_code');
+        $start_time     =$request->input('start_time');
+        $end_time       =$request->input('end_time');
+        $user_name      =$request->input('user_name');
+        $listrows       =$num;
+        $firstrow       =($page-1)*$listrows;
+
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'like','name'=>'user_name','value'=>$user_name],
+            ['type'=>'>=','name'=>'send_time','value'=>$start_time],
+            ['type'=>'<','name'=>'send_time','value'=>$end_time.' 23:59:59'],
+        ];
+        $search1=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'like','name'=>'escort_name','value'=>$user_name],
+            ['type'=>'>=','name'=>'send_time','value'=>$start_time],
+            ['type'=>'<','name'=>'send_time','value'=>$end_time.' 23:59:59'],
+        ];
+
+        $where=get_list_where($search);
+        $where1=get_list_where($search1);
+        $select=['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code',
+            'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
+            'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
+            'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
+            ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name','order_mark'];
+
+        switch ($group_info['group_id']){
+            case 'all':
+                $data['total']=TmsOrder::where($where)->count(); //总的数据量
+                $data['items']=TmsOrder::where($where)
+                    ->orWhere($where1)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='Y';
+                break;
+
+            case 'one':
+                $where[]=['group_code','=',$group_info['group_code']];
+                $data['total']=TmsOrder::where($where)->count(); //总的数据量
+                $data['items']=TmsOrder::where($where)
+                    ->orWhere($where1)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='N';
+                break;
+
+            case 'more':
+                $data['total']=TmsOrder::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=TmsOrder::where($where)
+                    ->orWhere($where1)
+                    ->whereIn('group_code',$group_info['group_code'])
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='Y';
+                break;
+        }
+
+        foreach ($data['items'] as $k=>$v) {
+            $v->order_type_show=$order_type[$v->order_status]??null;
+
+        }
+
+//        dd($data['items']);
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
+
 
 }
 ?>

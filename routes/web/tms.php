@@ -140,6 +140,7 @@ Route::group([
 	Route::any('/order/excel','OrderController@excel');
 	Route::any('/order/excelOrder','OrderController@excelOrder');
 	Route::any('/order/excelDanger','OrderController@excelDanger');
+	Route::any('/order/getUserOrder','OrderController@getUserOrder');
 
     Route::group([
         "middleware"=>['daily'],
