@@ -989,17 +989,33 @@ class OrderController extends CommonController{
                 $send = TmsGroup::where('company_name',$v['send_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
-                if (!$send){
+                if ($v['send_name']){
+                    if ($send){
+                        $v['send_id']                 = $send->self_id;
+                        $v['send_name']               = $send->company_name;
+                    }else{
+                        $v['send_id']                 = null;
+                        $v['send_name']               = $v['send_name'];
+                    }
+                }else{
                     if($abcd<$errorNum){
                         $strs .= '数据中的第'.$a."行装车点不存在".'</br>';
                         $cando='N';
                         $abcd++;
                     }
                 }
-                if (!$gather) {
-                    if ($abcd < $errorNum) {
-                        $strs .= '数据中的第' . $a . "行卸车点不存在" . '</br>';
-                        $cando = 'N';
+                if ($v['gather_name']){
+                    if ($gather){
+                        $v['gather_id']                 = $gather->self_id;
+                        $v['gather_name']               = $gather->company_name;
+                    }else{
+                        $v['gather_id']                 = null;
+                        $v['gather_name']               = $v['gather_name'];
+                    }
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行卸车点不存在".'</br>';
+                        $cando='N';
                         $abcd++;
                     }
                 }
@@ -1031,7 +1047,15 @@ class OrderController extends CommonController{
                         $abcd++;
                     }
                 }
-                if (!$carriage){
+                if ($v['carriage_name']){
+                    if ($gather){
+                        $v['carriage_id']                 = $carriage->self_id;
+                        $v['carriage_name']               = $carriage->company_name;
+                    }else{
+                        $v['carriage_id']                 = null;
+                        $v['carriage_name']               = $v['carriage_name'];
+                    }
+                }else{
                     if($abcd<$errorNum){
                         $strs .= '数据中的第'.$a."行委托单位不存在".'</br>';
                         $cando='N';
@@ -1091,8 +1115,8 @@ class OrderController extends CommonController{
                     $list['order_type']              = 1;
                     $list['company_id']              = $company->self_id;
                     $list['company_name']            = $company->company_name;
-                    $list['carriage_id']             = $carriage->carriage_id;
-                    $list['carriage_name']           = $carriage->company_name;
+                    $list['carriage_id']             = $v['carriage_id'];
+                    $list['carriage_name']           = $v['carriage_name'];
                     $list['good_name']               = $v['good_name'];
                     $list['car_id']                  = $car->self_id;
                     $list['car_number']              = $car->car_number;
@@ -1110,10 +1134,10 @@ class OrderController extends CommonController{
                     $list['odd_number']              = $v['odd_number'];
                     $list['send_time']               = $v['send_time'];
                     $list['gather_time']             = $v['gather_time'];
-                    $list['send_id']                 = $send->self_id;
-                    $list['send_name']               = $send->company_name;
-                    $list['gather_id']               = $gather->id;
-                    $list['gather_name']             = $gather->name;
+                    $list['send_id']                 = $v['send_id'];
+                    $list['send_name']               = $v['send_name'];
+                    $list['gather_id']               = $v['gather_id'];
+                    $list['gather_name']             = $v['gather_name'];
                     $list['pick_time']               = $v['pick_time'];
                     $list['area']                    = $v['area'];
                     $list['transport_type']               = $v['transport_type'];
@@ -1280,24 +1304,48 @@ class OrderController extends CommonController{
                 $send = TmsGroup::where('company_name',$v['send_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
-                if (!$send){
+                if ($v['send_name']){
+                    if ($send){
+                        $v['send_id']                 = $send->self_id;
+                        $v['send_name']               = $send->company_name;
+                    }else{
+                        $v['send_id']                 = null;
+                        $v['send_name']               = $v['send_name'];
+                    }
+                }else{
                     if($abcd<$errorNum){
                         $strs .= '数据中的第'.$a."行装车点不存在".'</br>';
                         $cando='N';
                         $abcd++;
                     }
                 }
-                if (!$gather) {
-                    if ($abcd < $errorNum) {
-                        $strs .= '数据中的第' . $a . "行卸车点不存在" . '</br>';
-                        $cando = 'N';
+                if ($v['gather_name']){
+                    if ($gather){
+                        $v['gather_id']                 = $gather->self_id;
+                        $v['gather_name']               = $gather->company_name;
+                    }else{
+                        $v['gather_id']                 = null;
+                        $v['gather_name']               = $v['gather_name'];
+                    }
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行卸车点不存在".'</br>';
+                        $cando='N';
                         $abcd++;
                     }
                 }
-                if (!$carriage) {
-                    if ($abcd < $errorNum) {
-                        $strs .= '数据中的第' . $a . "行委托单位不存在" . '</br>';
-                        $cando = 'N';
+                if ($v['carriage_name']){
+                    if ($gather){
+                        $v['carriage_id']                 = $carriage->self_id;
+                        $v['carriage_name']               = $carriage->company_name;
+                    }else{
+                        $v['carriage_id']                 = null;
+                        $v['carriage_name']               = $v['carriage_name'];
+                    }
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行委托单位不存在".'</br>';
+                        $cando='N';
                         $abcd++;
                     }
                 }
@@ -1351,8 +1399,8 @@ class OrderController extends CommonController{
                 if($cando =='Y'){
                     $list['self_id']                 = generate_id('order_');
                     $list['order_type']              = 2;
-                    $list['carriage_id']             = $carriage->self_id;
-                    $list['carriage_name']           = $carriage->company_name;
+                    $list['carriage_id']             = $v['carriage_id'];
+                    $list['carriage_name']           = $v['carriage_name'];
                     $list['good_name']               = $v['good_name'];
                     $list['car_id']                  = $car->self_id;
                     $list['car_number']              = $car->car_number;
@@ -1368,10 +1416,10 @@ class OrderController extends CommonController{
                     }
 
                     $list['send_time']               = $v['send_time'];
-                    $list['send_id']                 = $send->self_id;
-                    $list['send_name']               = $send->company_name;
-                    $list['gather_id']               = $gather->self_id;
-                    $list['gather_name']             = $gather->company_name;
+                    $list['send_id']                 = $v['send_id'];
+                    $list['send_name']               = $v['send_name'];
+                    $list['gather_id']               = $v['gather_id'];
+                    $list['gather_name']             = $v['gather_name'];
 
                     $list['group_code']              = $info->group_code;
                     $list['group_name']              = $info->group_name;
@@ -1426,7 +1474,7 @@ class OrderController extends CommonController{
     }
 
     /**
-     * 硫磺二队订单导入  /tms/order/improtDanger
+     * 危废队订单导入  /tms/order/improtDanger
      * */
     public function improtDanger(Request $request){
         $table_name         ='wms_warehouse_area';
@@ -1533,24 +1581,48 @@ class OrderController extends CommonController{
                 $send = TmsGroup::where('company_name',$v['send_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
-                if (!$send){
+                if ($v['send_name']){
+                    if ($send){
+                        $v['send_id']                 = $send->self_id;
+                        $v['send_name']               = $send->company_name;
+                    }else{
+                        $v['send_id']                 = null;
+                        $v['send_name']               = $v['send_name'];
+                    }
+                }else{
                     if($abcd<$errorNum){
                         $strs .= '数据中的第'.$a."行装车点不存在".'</br>';
                         $cando='N';
                         $abcd++;
                     }
                 }
-                if (!$gather) {
-                    if ($abcd < $errorNum) {
-                        $strs .= '数据中的第' . $a . "行卸车点不存在" . '</br>';
-                        $cando = 'N';
+                if ($v['gather_name']){
+                    if ($gather){
+                        $v['gather_id']                 = $gather->self_id;
+                        $v['gather_name']               = $gather->company_name;
+                    }else{
+                        $v['gather_id']                 = null;
+                        $v['gather_name']               = $v['gather_name'];
+                    }
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行卸车点不存在".'</br>';
+                        $cando='N';
                         $abcd++;
                     }
                 }
-                if (!$carriage) {
-                    if ($abcd < $errorNum) {
-                        $strs .= '数据中的第' . $a . "行委托单位不存在" . '</br>';
-                        $cando = 'N';
+                if ($v['carriage_name']){
+                    if ($gather){
+                        $v['carriage_id']                 = $carriage->self_id;
+                        $v['carriage_name']               = $carriage->company_name;
+                    }else{
+                        $v['carriage_id']                 = null;
+                        $v['carriage_name']               = $v['carriage_name'];
+                    }
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行委托单位不存在".'</br>';
+                        $cando='N';
                         $abcd++;
                     }
                 }
@@ -1594,8 +1666,8 @@ class OrderController extends CommonController{
                 if($cando =='Y'){
                     $list['self_id']                 = generate_id('order_');
                     $list['order_type']              = 3;
-                    $list['carriage_id']             = $carriage->self_id;
-                    $list['carriage_name']           = $carriage->company_name;
+                    $list['carriage_id']             = $v['carriage_id'];
+                    $list['carriage_name']           = $v['carriage_name'];
                     $list['good_name']               = $v['good_name'];
                     $list['car_id']                  = $car->self_id;
                     $list['car_number']              = $car->car_number;
@@ -1605,10 +1677,10 @@ class OrderController extends CommonController{
                         $list['car_tel']                 = $driver->tel;
                     }
                     $list['send_time']               = $v['send_time'];
-                    $list['send_id']                 = $send->self_id;
-                    $list['send_name']               = $send->company_name;
-                    $list['gather_id']               = $gather->self_id;
-                    $list['gather_name']             = $gather->company_name;
+                    $list['send_id']                 = $v['send_id'];
+                    $list['send_name']               = $v['send_name'];
+                    $list['gather_id']               = $v['gather_id'];
+                    $list['gather_name']             = $v['gather_name'];
                     $list['pack_type']               = $v['pack_type'];
 
                     $list['group_code']              = $info->group_code;
