@@ -123,6 +123,7 @@ class UserRewardController extends CommonController{
                     $data['price']=UserReward::where($where)->sum('safe_reward');
                 }else{
                     $data['price']=UserReward::where($where)->sum('payment');
+                    $data['total_price']=UserReward::where($where)->sum('company_fine');
                 }
 
                 $data['group_show']='Y';
@@ -144,6 +145,7 @@ class UserRewardController extends CommonController{
                     $data['price']=UserReward::where($where)->sum('safe_reward');
                 }else{
                     $data['price']=UserReward::where($where)->sum('payment');
+                    $data['total_price']=UserReward::where($where)->sum('company_fine');
                 }
                 $data['group_show']='N';
                 break;
@@ -163,6 +165,7 @@ class UserRewardController extends CommonController{
                     $data['price']=UserReward::where($where)->whereIn('group_code',$group_info['group_code'])->sum('safe_reward');
                 }else{
                     $data['price']=UserReward::where($where)->whereIn('group_code',$group_info['group_code'])->sum('payment');
+                    $data['price']=UserReward::where($where)->whereIn('group_code',$group_info['group_code'])->sum('company_fine');
                 }
                 $data['group_show']='Y';
                 break;
