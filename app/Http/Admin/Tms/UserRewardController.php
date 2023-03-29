@@ -1069,12 +1069,8 @@ class UserRewardController extends CommonController{
                     ->where($where)->orWhere($where1)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
-                if ($type == 'reward'){
-                    $data['price']=UserReward::where($where)->orWhere($where1)->sum('safe_reward');
-                }else{
-                    $data['price']=UserReward::where($where)->orWhere($where1)->sum('payment');
-                }
 
+                $data['price']=UserReward::where($where)->orWhere($where1)->sum('company_fine');
                 $data['group_show']='Y';
                 break;
 
@@ -1090,11 +1086,8 @@ class UserRewardController extends CommonController{
                     ->where($where)->orWhere($where1)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
-                if ($type == 'reward'){
-                    $data['price']=UserReward::where($where)->orWhere($where1)->sum('safe_reward');
-                }else{
-                    $data['price']=UserReward::where($where)->orWhere($where1)->sum('payment');
-                }
+
+                $data['price']=UserReward::where($where)->orWhere($where1)->sum('company_fine');
                 $data['group_show']='N';
                 break;
 
@@ -1109,11 +1102,8 @@ class UserRewardController extends CommonController{
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
 
-                if ($type == 'reward'){
-                    $data['price']=UserReward::where($where)->orWhere($where1)->whereIn('group_code',$group_info['group_code'])->sum('safe_reward');
-                }else{
-                    $data['price']=UserReward::where($where)->orWhere($where1)->whereIn('group_code',$group_info['group_code'])->sum('payment');
-                }
+                $data['price']=UserReward::where($where)->orWhere($where1)->whereIn('group_code',$group_info['group_code'])->sum('company_fine');
+
                 $data['group_show']='Y';
                 break;
         }
