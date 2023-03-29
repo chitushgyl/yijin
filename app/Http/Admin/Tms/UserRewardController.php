@@ -363,23 +363,6 @@ class UserRewardController extends CommonController{
             $data['remark']                 =$remark;
             $data['event_time']             =$event_time;
 
-
-            /**保存费用**/
-            if ($payment || $safe_reward){
-                if ($safe_reward){
-                    $money['money']              = $safe_reward;
-                }else{
-                    $money['money']              = $payment;
-                }
-            }
-            $money['pay_type']           = 'reward';
-            $money['pay_state']          = 'Y';
-            $money['car_id']             = $car_id;
-            $money['car_number']         = $car_number;
-            $money['process_state']      = 'Y';
-            $money['type_state']         = 'out';
-
-
             $wheres['self_id'] = $self_id;
             $old_info=UserReward::where($wheres)->first();
             if($old_info){
@@ -422,16 +405,6 @@ class UserRewardController extends CommonController{
                 $data['group_name']         =$group_name;
 
                 $id=UserReward::insert($data);
-                if ($payment){
-                    $money['self_id']            = generate_id('money_');
-                    $money['order_id']           = $data['self_id'];
-                    $money['group_code']         = $group_code;
-                    $money['group_name']         = $group_name;
-                    $money['create_user_id']     = $user_info->admin_id;
-                    $money['create_user_name']   = $user_info->name;
-                    $money['create_time']        =$money['update_time']=$now_time;
-                    TmsMoney::insert($money);
-                }
                 if ($type == 'reward'){
                     $award['self_id']            = generate_id('award_');
                     $award['reward_id']          = $data['self_id'];
