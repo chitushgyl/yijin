@@ -56,7 +56,7 @@ class SystemUser extends Model{
         //如果主键是id可以省略
         return $this->hasOne('App\Models\Group\SystemSection','self_id','department');
     }
-    
+
 
 
 

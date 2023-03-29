@@ -1035,16 +1035,23 @@ class UserRewardController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'like','name'=>'car_number','value'=>$car_number],
             ['type'=>'=','name'=>'user_id','value'=>$user_id],
+            ['type'=>'!=','name'=>'type','value'=>$type],
+            ['type'=>'>=','name'=>'event_time','value'=>$start_time],
+            ['type'=>'<=','name'=>'event_time','value'=>$end_time],
+        ];
+        $search1=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'escort','value'=>$user_id],
             ['type'=>'!=','name'=>'type','value'=>$type],
             ['type'=>'>=','name'=>'event_time','value'=>$start_time],
             ['type'=>'<=','name'=>'event_time','value'=>$end_time],
         ];
 
-
         $where=get_list_where($search);
+        $where1=get_list_where($search1);
 
         $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
@@ -1059,7 +1066,7 @@ class UserRewardController extends CommonController{
                     ->with(['user' => function($query) use($select1){
                         $query->select($select1);
                     }])
-                    ->where($where)
+                    ->where($where)->orWhere($where1)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 if ($type == 'reward'){
@@ -1080,7 +1087,7 @@ class UserRewardController extends CommonController{
                     ->with(['user' => function($query) use($select1){
                         $query->select($select1);
                     }])
-                    ->where($where)
+                    ->where($where)->orWhere($where1)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 if ($type == 'reward'){
@@ -1098,7 +1105,7 @@ class UserRewardController extends CommonController{
                 }])
                     ->with(['user' => function($query) use($select1){
                         $query->select($select1);
-                    }])->where($where)->whereIn('group_code',$group_info['group_code'])
+                    }])->where($where)->orWhere($where1)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
 
