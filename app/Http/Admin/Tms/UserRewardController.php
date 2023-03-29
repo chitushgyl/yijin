@@ -105,7 +105,7 @@ class UserRewardController extends CommonController{
 
         $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
-            ,'cash_back','cash_flag','type','user_name','bear','company_fine'];
+            ,'cash_back','cash_flag','type','user_name','bear','company_fine','escort_name'];
         $select1=['self_id','name'];
         switch ($group_info['group_id']){
             case 'all':
@@ -251,7 +251,7 @@ class UserRewardController extends CommonController{
         ];
         $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
-         ,'cash_back','cash_flag','type','user_name','bear'];
+         ,'cash_back','cash_flag','type','user_name','bear','escort_name'];
         $data['info']=UserReward::where($where)->select($select)->first();
 
         $msg['code']=200;
@@ -304,6 +304,7 @@ class UserRewardController extends CommonController{
         $cash_flag               =$request->input('cash_flag');//奖金是否发放
         $bear                    =$request->input('bear');//承担多少责任
         $company_fine            =$request->input('company_fine');//公司罚款
+        $escort_name            =$request->input('escort_name');//公司罚款
 
         $rules=[
             'car_id'=>'required',
@@ -324,6 +325,7 @@ class UserRewardController extends CommonController{
             switch($type){
                 case 'violation':
                     $data['escort']                 =$escort;
+                    $data['escort_name']            =$escort_name;
                     $data['violation_connect']      =$violation_connect;
                     $data['payment']                =$payment;
                     $data['company_fine']           =$company_fine;
@@ -350,6 +352,7 @@ class UserRewardController extends CommonController{
                     break;
                 case 'reward':
                     $data['escort']                 =$escort;
+                    $data['escort_name']            =$escort_name;
                     $data['safe_reward']            =$safe_reward;
                     $data['reward_view']            =$reward_view;
                     $data['cash_back']              =$cash_back;
@@ -1021,6 +1024,7 @@ class UserRewardController extends CommonController{
         $group_code     =$request->input('group_code');
         $car_number     =$request->input('car_number');
         $user_id        =$request->input('user_id');
+        $user_name        =$request->input('user_name');
         $type           =$request->input('type');
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
@@ -1033,6 +1037,7 @@ class UserRewardController extends CommonController{
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
             ['type'=>'=','name'=>'user_id','value'=>$user_id],
+            ['type'=>'=','name'=>'escort','value'=>$user_id],
             ['type'=>'!=','name'=>'type','value'=>$type],
             ['type'=>'>=','name'=>'event_time','value'=>$start_time],
             ['type'=>'<=','name'=>'event_time','value'=>$end_time],
@@ -1043,7 +1048,7 @@ class UserRewardController extends CommonController{
 
         $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
-            ,'cash_back','cash_flag','type','user_name','bear','company_fine'];
+            ,'cash_back','cash_flag','type','user_name','bear','company_fine','escort_name'];
         $select1=['self_id','name'];
         switch ($group_info['group_id']){
             case 'all':
