@@ -323,6 +323,7 @@ class UserRewardController extends CommonController{
                     $data['escort']                 =$escort;
                     $data['violation_connect']      =$violation_connect;
                     $data['payment']                =$payment;
+                    $data['company_fine']           =$company_fine;
                     $data['cash_back']              =$cash_back;
                     break;
                 case 'rule':
