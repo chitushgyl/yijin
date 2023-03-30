@@ -997,6 +997,7 @@ class OrderController extends CommonController{
                         }
                     }
                 }
+                dd($v['user_name'],$driver);
                 if($v['escort']){
                     $cargo = SystemUser::where('type','cargo')->orWhere('type','dr_cargo')->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$cargo){
