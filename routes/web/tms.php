@@ -342,6 +342,15 @@ Route::group([
     Route::any('/diplasic/details','DiplasicController@details');
     Route::any('/diplasic/import','DiplasicController@import');
     Route::any('/diplasic/excel','DiplasicController@excel');
+
+    /***专线**/
+    Route::any('/line/lineList','LineController@lineList');
+    Route::any('/line/linePage','LineController@linePage');
+    Route::any('/line/createLine','LineController@createLine');
+    Route::any('/line/addLine','LineController@addLine');
+    Route::any('/line/lineUseFlag','LineController@lineUseFlag');
+    Route::any('/line/lineDelFlag','LineController@lineDelFlag');
+    Route::any('/line/getLine','LineController@getLine');
 });
 
 
