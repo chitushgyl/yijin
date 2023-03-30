@@ -113,10 +113,28 @@ class OrderController extends CommonController{
             if ($order_state == 1){
                 $search=[
                     ['type'=>'!=','name'=>'order_type','value'=>3],
+                    ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+                    ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+                    ['type'=>'=','name'=>'group_code','value'=>$group_code],
+                    ['type'=>'=','name'=>'company_id','value'=>$company_id],
+                    ['type'=>'=','name'=>'create_time','value'=>$start_time],
+                    ['type'=>'=','name'=>'create_time','value'=>$end_time],
+                    ['type'=>'=','name'=>'enter_time','value'=>$enter_time],
+                    ['type'=>'=','name'=>'leave_time','value'=>$leave_time],
+                    ['type'=>'=','name'=>'odd_number','value'=>$odd_number],
                 ];
             }else{
                 $search=[
                     ['type'=>'=','name'=>'order_type','value'=>3],
+                    ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+                    ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+                    ['type'=>'=','name'=>'group_code','value'=>$group_code],
+                    ['type'=>'=','name'=>'company_id','value'=>$company_id],
+                    ['type'=>'=','name'=>'create_time','value'=>$start_time],
+                    ['type'=>'=','name'=>'create_time','value'=>$end_time],
+                    ['type'=>'=','name'=>'enter_time','value'=>$enter_time],
+                    ['type'=>'=','name'=>'leave_time','value'=>$leave_time],
+                    ['type'=>'=','name'=>'odd_number','value'=>$odd_number],
                 ];
             }
         }
