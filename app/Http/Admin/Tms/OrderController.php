@@ -153,7 +153,7 @@ class OrderController extends CommonController{
                 $data['total']=TmsOrder::where($where)->count(); //总的数据量
                 $data['items']=TmsOrder::where($where);
                 $data['items'] = $data['items']
-                    ->offset($firstrow)->limit($listrows)->orderBy('order_mark', 'asc')->orderBy('send_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('send_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
@@ -163,7 +163,7 @@ class OrderController extends CommonController{
                 $data['total']=TmsOrder::where($where)->count(); //总的数据量
                 $data['items']=TmsOrder::where($where);
                 $data['items'] = $data['items']
-                    ->offset($firstrow)->limit($listrows)->orderBy('order_mark', 'asc')->orderBy('send_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('send_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
@@ -174,7 +174,7 @@ class OrderController extends CommonController{
 
                 $data['items'] = $data['items']
                     ->whereIn('group_code',$group_info['group_code'])
-                    ->offset($firstrow)->limit($listrows)->orderBy('order_mark', 'asc')->orderBy('send_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('send_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
