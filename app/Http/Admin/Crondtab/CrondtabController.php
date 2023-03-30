@@ -95,6 +95,13 @@ class CrondtabController extends Controller {
         }
     }
 
+    /**
+     * 更新员工每月奖金金额
+     * */
+    public function updateReward(Request $request){
+
+    }
+
 
 
 

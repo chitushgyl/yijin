@@ -630,7 +630,7 @@ class MoneyController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name','bill_flag','receipt',
-            'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money'];
+            'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money','company_id','company_name'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -718,7 +718,30 @@ class MoneyController extends CommonController{
     public function countWages(Request $request){
         //查询员工基本工资和当月奖金
         $self_id = $request->input('self_id');
-        $userInfo = SystemUser::where('self_id',$self_id)->select('self_id','salary','safe_reward','social_flag')->first();
+        $userInfo = SystemUser::where('self_id',$self_id)->select('self_id','type','salary','safe_reward','social_flag')->first();
+        $type = $userInfo->type;
+        $deduct = 0;//初始化提成费用
+        switch ($type){
+            case 'driver':
+                //查询当月运送订单量 计算提成
+                break;
+            case 'cargo':
+                break;
+            case 'dr_cargo':
+                break;
+            case 'manager':
+                break;
+        }
+        //查询当月是否有奖励返还
+        $data['salary'] = 0;//基本工资
+        $data['reward'] = 0;//奖金
+        $data['reward_back'] = 0;//奖励返还
+        $data['deduct'] = 0;//提成
+        $msg['code'] = 200;
+        $msg['msg'] = '';
+        $msg['data'] = $data;
+        return $msg;
+
     }
 
 
