@@ -988,7 +988,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if ($v['user_name']){
-                    $driver = SystemUser::where('type','driver')->orWhere('type','dr_cargo')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','tel','use_flag','delete_flag','social_flag')->first();
+                    $driver = SystemUser::where('type','driver')->orWhere('type','dr_cargo')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$driver){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
@@ -997,9 +997,8 @@ class OrderController extends CommonController{
                         }
                     }
                 }
-                dd($v['user_name'],$driver);
                 if($v['escort']){
-                    $cargo = SystemUser::where('type','cargo')->orWhere('type','dr_cargo')->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','tel','use_flag','delete_flag','social_flag')->first();
+                    $cargo = SystemUser::where('type','cargo')->orWhere('type','dr_cargo')->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$cargo){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
@@ -1319,7 +1318,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if ($v['user_name']){
-                    $driver = SystemUser::where('type','driver')->orWhere('type','dr_cargo')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','tel','use_flag','delete_flag','social_flag')->first();
+                    $driver = SystemUser::where('type','driver')->orWhere('type','dr_cargo')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$driver){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
@@ -1329,7 +1328,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if($v['escort']){
-                    $cargo = SystemUser::where('type','cargo')->orWhere('type','dr_cargo')->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','tel','use_flag','delete_flag','social_flag')->first();
+                    $cargo = SystemUser::where('type','cargo')->orWhere('type','dr_cargo')->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$cargo){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
@@ -1596,7 +1595,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if ($v['user_name']){
-                    $driver = SystemUser::where('type','driver')->orWhere('type','dr_cargo')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','tel','use_flag','delete_flag','social_flag')->first();
+                    $driver = SystemUser::where('type','driver')->orWhere('type','dr_cargo')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$driver){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
