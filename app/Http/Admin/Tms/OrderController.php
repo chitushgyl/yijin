@@ -817,7 +817,7 @@ class OrderController extends CommonController{
         $old_info = TmsOrder::whereIn('self_id',explode(',',$self_id))->select('use_flag','self_id','delete_flag','group_code')->get();
         $data['delete_flag']='N';
         $data['update_time']=$now_time;
-        
+
         DB::beginTransaction();
         try{
             $id=TmsOrder::whereIn('self_id',explode(',',$self_id))->update($data);
