@@ -807,14 +807,21 @@ class OrderController extends CommonController{
         $medol_name='TmsOrder';
         $self_id=$request->input('self_id');
         $flag='delFlag';
-        //$self_id='car_202012242220439016797353';
-        $old_info = TmsOrder::where('self_id',$self_id)->select('self_id','order_status','delete_flag')->first();
-        $data['delete_flag'] = 'N';
-        $data['update_time'] = $now_time;
+        $now_time=date('Y-m-d H:i:s',time());
+        $operationing = $request->get('operationing');//接收中间件产生的参数
+        $table_name='road_toll';
+        $medol_name='RoadToll';
+        $self_id=$request->input('self_id');
+        $flag='delFlag';
 
+        $old_info = TmsOrder::whereIn('self_id',explode(',',$self_id))->select('use_flag','self_id','delete_flag','group_code')->get();
+        $data['delete_flag']='N';
+        $data['update_time']=$now_time;
+        
         DB::beginTransaction();
         try{
-            TmsOrder::where('self_id',$self_id)->update($data);
+            $id=TmsOrder::whereIn('self_id',explode(',',$self_id))->update($data);
+            TmsMoney::whereIn('order_id',explode(',',$self_id))->update($data);
             DB::commit();
             $msg['code']=200;
             $msg['msg']='删除成功！';

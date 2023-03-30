@@ -344,13 +344,13 @@ Route::group([
     Route::any('/diplasic/excel','DiplasicController@excel');
 
     /***专线**/
-    Route::any('/line/lineList','LineController@lineList');
-    Route::any('/line/linePage','LineController@linePage');
-    Route::any('/line/createLine','LineController@createLine');
-    Route::any('/line/addLine','LineController@addLine');
-    Route::any('/line/lineUseFlag','LineController@lineUseFlag');
-    Route::any('/line/lineDelFlag','LineController@lineDelFlag');
-    Route::any('/line/getLine','LineController@getLine');
+    Route::any('/line/lineList','LineController@lineList');//头部
+    Route::any('/line/linePage','LineController@linePage');//列表
+    Route::any('/line/createLine','LineController@createLine');//
+    Route::any('/line/addLine','LineController@addLine');//添加
+    Route::any('/line/lineUseFlag','LineController@lineUseFlag');//启用/禁用
+    Route::any('/line/lineDelFlag','LineController@lineDelFlag');//删除
+    Route::any('/line/getLine','LineController@getLine');//获取线路
 });
 
 
