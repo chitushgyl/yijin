@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Admin\Wms;
+use App\Models\Group\SystemUser;
 use App\Models\Tms\TmsMoney;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
@@ -587,6 +588,139 @@ class MoneyController extends CommonController{
             return $msg;
         }
     }
+
+    /**
+     * 应收账款列表
+     * */
+    public function countMoney(Request $request){
+        $money_type_show    =array_column(config('tms.money_type'),'name','key');
+
+        /** 接收中间件参数**/
+        $group_info     = $request->get('group_info');//接收中间件产生的参数
+        $button_info    = $request->get('anniu');//接收中间件产生的参数
+
+        /**接收数据*/
+        $num            =$request->input('num')??10;
+        $page           =$request->input('page')??1;
+        $use_flag       =$request->input('use_flag');
+        $group_code     =$request->input('group_code');
+        $car_number     =$request->input('car_number');
+        $user_name      =$request->input('user_name');
+        $start_time     =$request->input('start_time');
+        $end_time       =$request->input('end_time');
+        $type_state     =$request->input('type_state');
+        $bill_falg     =$request->input('bill_flag');
+        $listrows       =$num;
+        $firstrow       =($page-1)*$listrows;
+
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'=','name'=>'pay_type','value'=>'freight'],
+            ['type'=>'like','name'=>'car_number','value'=>$car_number],
+            ['type'=>'like','name'=>'user_name','value'=>$user_name],
+            ['type'=>'>=','name'=>'create_time','value'=>$start_time],
+            ['type'=>'<','name'=>'create_time','value'=>$end_time],
+            ['type'=>'=','name'=>'type_state','value'=>$type_state],
+            ['type'=>'=','name'=>'bill_flag','value'=>$bill_falg],
+        ];
+
+
+        $where=get_list_where($search);
+
+        $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name','bill_flag','receipt',
+            'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money'];
+
+        switch ($group_info['group_id']){
+            case 'all':
+                $data['total']=TmsMoney::where($where)->count(); //总的数据量
+                $data['items']=TmsMoney::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
+                    ->select($select)->get();
+                $data['info']=TmsMoney::where($where)->select('pay_type',DB::raw('sum(money) as price'))->groupBy('pay_type')->get();
+                $data['cost']=TmsMoney::where($where)->select('type_state',DB::raw('sum(money) as total_price'))->groupBy('type_state')->get();
+                $data['group_show']='Y';
+                break;
+
+            case 'one':
+                $where[]=['group_code','=',$group_info['group_code']];
+                $data['total']=TmsMoney::where($where)->count(); //总的数据量
+                $data['items']=TmsMoney::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
+                    ->select($select)->get();
+                $data['info']=TmsMoney::where($where)->select('pay_type',DB::raw('sum(money) as price'))->groupBy('pay_type')->get();
+                $data['cost']=TmsMoney::where($where)->select('type_state',DB::raw('sum(money) as total_price'))->groupBy('type_state')->get();
+                $data['group_show']='N';
+                break;
+
+            case 'more':
+                $data['total']=TmsMoney::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=TmsMoney::where($where)->whereIn('group_code',$group_info['group_code'])
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
+                    ->select($select)->get();
+                $data['info']=TmsMoney::where($where)->whereIn('group_code',$group_info['group_code'])->select('pay_type',DB::raw('sum(money) as price'))->groupBy('pay_type')->get();
+                $data['cost']=TmsMoney::where($where)->whereIn('group_code',$group_info['group_code'])
+                    ->select('type_state',DB::raw('sum(money) as total_price'))->groupBy('type_state')->get();
+                $data['group_show']='Y';
+                break;
+        }
+
+        $button_info1=[];
+        $button_info2=[];
+        $button_info3=[];
+        $button_info4=[];
+        foreach ($button_info as $k => $v){
+            if($v->id == 99){
+                $button_info1[] = $v;
+                $button_info3[] = $v;
+            }
+            if($v->id == 174){
+                $button_info2[] = $v;
+                $button_info3[] = $v;
+            }
+
+        }
+        foreach ($data['items'] as $k=>$v) {
+            $v->pay_type=$money_type_show[$v->pay_type]??null;
+            $v->button_info=$button_info;
+            if ($v->pay_state == 'N'){
+                $v->button_info=$button_info3;
+            }
+            if ($v->pay_state == 'Y'){
+                $v->button_info=$button_info4;
+            }
+
+        }
+        foreach ($data['info'] as $k=>$v) {
+            $v->pay_type=$money_type_show[$v->pay_type]??null;
+        }
+        $in = $out = 0;
+        foreach ($data['cost'] as $k=>$v) {
+            if ($v->type_state == 'in'){
+                $in = $v->total_price;
+            }
+            if ($v->type_state == 'out'){
+                $out = $v->total_price;
+            }
+        }
+        $data['diff_price'] = $in-$out;
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        //dd($msg);
+        return $msg;
+    }
+
+    /**
+     * 生成工资
+     * */
+    public function countWages(Request $request){
+        //查询员工基本工资和当月奖金
+        $self_id = $request->input('self_id');
+        $userInfo = SystemUser::where('self_id',$self_id)->select('self_id','salary','safe_reward','social_flag')->first();
+    }
+
 
 }
 ?>

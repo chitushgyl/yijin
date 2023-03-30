@@ -287,6 +287,7 @@ Route::group([
     Route::any('/money/addMoney', 'MoneyController@addMoney');//收款方确认
     Route::any('/money/moneyState', 'MoneyController@moneyState');//收款方确认
     Route::any('/money/updateMoney', 'MoneyController@updateMoney');//收款方确认
+    Route::any('/money/countMoney', 'MoneyController@countMoney');//收款方确认
     Route::group([
         "middleware"=>['daily'],
     ], function(){
