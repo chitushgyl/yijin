@@ -152,15 +152,20 @@ class LineController extends CommonController{
         /** 接收数据*/
         $self_id            =$request->input('self_id');
         $group_code         =$request->input('group_code');
-
-
-
+        $send_id            =$request->input('send_id');
+        $send_name          =$request->input('send_name');//装
+        $gather_id          =$request->input('gather_id');
+        $gather_name        =$request->input('gather_name');//卸
+        $kilo_num           =$request->input('kilo_num');//里程
+        $num                =$request->input('num');//编号
 
         $rules=[
-            'car_number'=>'required',
+            'send_name'=>'required',
+            'gather_name'=>'required',
         ];
         $message=[
-            'car_number.required'=>'车牌号必须填写',
+            'send_name.required'=>'请填写装车点',
+            'gather_name.required'=>'请填写卸车点',
         ];
 
         $validator=Validator::make($input,$rules,$message);
@@ -173,13 +178,16 @@ class LineController extends CommonController{
                 return $msg;
             }
 
-
-
-            $data['car_number']        =$car_number;
+            $data['send_id']          =$send_id;
+            $data['send_name']        =$send_name;
+            $data['gather_id']        =$gather_id;
+            $data['gather_name']      =$gather_name;
+            $data['kilo_num']         =$kilo_num;
+            $data['num']              =$num;
 
 
             $wheres['self_id'] = $self_id;
-            $old_info=TmsCar::where($wheres)->first();
+            $old_info=TmsLine::where($wheres)->first();
 
             if($old_info){
                 $data['update_time']=$now_time;
@@ -267,8 +275,8 @@ class LineController extends CommonController{
     public function lineDelFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='tms_car';
-        $medol_name='TmsCar';
+        $table_name='tms_line';
+        $medol_name='TmsLine';
         $self_id=$request->input('self_id');
         $flag='delFlag';
 //        $self_id='car_202012242220439016797353';
