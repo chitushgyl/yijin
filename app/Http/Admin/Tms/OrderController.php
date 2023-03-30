@@ -904,7 +904,7 @@ class OrderController extends CommonController{
              * 第四个位置为数据库的对应字段
              */
             $shuzu=[
-                '标识' =>['Y','N','100','order_number'],
+                '标识' =>['Y','N','100','order_mark'],
                 '所属组织' =>['Y','Y','100','company_name'],
                 '委托单位' =>['Y','Y','100','carriage_name'],
                 '货物品名' =>['Y','Y','64','good_name'],
@@ -997,7 +997,6 @@ class OrderController extends CommonController{
                         }
                     }
                 }
-                dd($v['user_name'],$driver);
                 if($v['escort']){
                     $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$cargo){
@@ -1080,7 +1079,7 @@ class OrderController extends CommonController{
 
                 if($cando =='Y'){
                     $list['self_id']                 = generate_id('order_');
-                    $list['order_number']            = $v['order_number'];
+                    $list['order_mark']              = $v['order_mark'];
                     $list['order_type']              = 1;
                     $list['company_id']              = $company->self_id;
                     $list['company_name']            = $company->company_name;
@@ -1101,6 +1100,7 @@ class OrderController extends CommonController{
                         $list['escort_tel']              = $cargo->tel;
                     }
                     $list['odd_number']              = $v['odd_number'];
+                    $list['order_number']            = $v['order_number'];
                     $list['send_time']               = $v['send_time'];
                     $list['gather_time']             = $v['gather_time'];
                     $list['send_id']                 = $v['send_id'];
@@ -1319,7 +1319,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if ($v['user_name']){
-                    $driver = SystemUser::where('type','driver')->orWhere('type','dr_cargo')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$driver){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
@@ -1329,7 +1329,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if($v['escort']){
-                    $cargo = SystemUser::where('type','cargo')->orWhere('type','dr_cargo')->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$cargo){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
@@ -1596,7 +1596,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if ($v['user_name']){
-                    $driver = SystemUser::where('type','driver')->orWhere('type','dr_cargo')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$driver){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
