@@ -47,11 +47,12 @@ class CrondtabController extends Controller {
                 'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
                 ,'cash_back','cash_flag','type','user_name'];
             $order_list = UserReward::where($where1)->orWhere($where2)->select($select)->get();
+
             if(count($order_list)>0){
                 $time = date('Y-m', strtotime('+6 month', strtotime($month_start)));
                 $update['cash_back']          = $time;
                 $update['update_time']        = date('Y-m-d H:i:s',time());
-                AwardRemind::where('user_id',$v->user_id)->update($update);
+                AwardRemind::where('user_id',$v->user_id)->where('cash_flag','N')->update($update);
             }
 
         }
