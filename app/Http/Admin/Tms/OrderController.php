@@ -522,7 +522,7 @@ class OrderController extends CommonController{
             'total_money'=>'required',
         ];
         $message=[
-            'leave_time.required'=>'请填写出厂时间！',
+            'leave_time.required'=>'请填写卸货时间！',
             'order_weight.required'=>'请填写装货吨位！',
             'upload_weight.required'=>'请填写卸货吨位！',
             'sale_price.required'=>'请填写单价！',

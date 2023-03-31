@@ -670,14 +670,21 @@ class MoneyController extends CommonController{
         $button_info2=[];
         $button_info3=[];
         $button_info4=[];
+        $button_info5=[];
+        $button_info6=[];
         foreach ($button_info as $k => $v){
             if($v->id == 99){
                 $button_info1[] = $v;
                 $button_info3[] = $v;
+                $button_info4[] = $v;
             }
             if($v->id == 174){
                 $button_info2[] = $v;
                 $button_info3[] = $v;
+            }
+            if($v->id == 174){
+                $button_info4[] = $v;
+                $button_info5[] = $v;
             }
 
         }
@@ -689,6 +696,9 @@ class MoneyController extends CommonController{
             }
             if ($v->pay_state == 'Y'){
                 $v->button_info=$button_info4;
+            }
+            if($v->bill_flag == 'N'){
+                $v->button_info=$button_info5;
             }
 
         }
