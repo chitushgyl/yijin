@@ -20,6 +20,7 @@ class CrondtabController extends Controller {
      */
     public function userReword(Request $request){
         $now_time  = date('Y-m',time());
+        $now_time  = '2023-04';
         $month_start = date('Y-m-01',strtotime(date('Y-m-d')));
         $month_end = date('Y-m-d',strtotime("$month_start+1 month-1 day"));
         $where = [
