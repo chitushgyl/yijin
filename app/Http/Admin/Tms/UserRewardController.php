@@ -384,7 +384,7 @@ class UserRewardController extends CommonController{
                 }
                 if ($escort_user){
                     $update['user_id']            = $escort;
-                    $update['user_name']          = $user_id;
+                    $update['user_name']          = $escort_name;
                     $update['cash_back']          = $cash_back;
                     $update['money_award']        = $company_fine;
                     $update['update_time']=$now_time;
