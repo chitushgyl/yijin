@@ -412,12 +412,12 @@ class UserRewardController extends CommonController{
                 $data['group_name']         =$group_name;
 
                 $id=UserReward::insert($data);
-                if ($type == 'reward'){
+                if ($type != 'reward'){
                     $award['self_id']            = generate_id('award_');
                     $award['reward_id']          = $data['self_id'];
-                    $award['user_id']            = $user_id;
-                    $award['user_name']          = $user_name;
-                    $award['money_award']        = $safe_reward;
+                    $award['user_id']            = $user_id??$escort;
+                    $award['user_name']          = $user_name??$escort_name;
+                    $award['money_award']        = $company_fine;
                     $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
                     $award['cash_back']          = $time;
                     $award['group_code']         = $group_code;

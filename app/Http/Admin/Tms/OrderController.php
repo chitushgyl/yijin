@@ -2035,7 +2035,7 @@ class OrderController extends CommonController{
     public function  details(Request $request,Details $details){
         $self_id=$request->input('self_id');
 //        $self_id = 'order_202106231710070766328312';
-        
+
         $select2 = ['self_id','name','type'];
         $where = [
             ['delete_flag','=','Y'],
