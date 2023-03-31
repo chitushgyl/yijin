@@ -414,19 +414,37 @@ class UserRewardController extends CommonController{
 
                 $id=UserReward::insert($data);
                 if ($type != 'reward'){
-                    $award['self_id']            = generate_id('award_');
-                    $award['reward_id']          = $data['self_id'];
-                    $award['user_id']            = $user_id??$escort;
-                    $award['user_name']          = $user_name??$escort_name;
-                    $award['money_award']        = $company_fine;
-                    $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
-                    $award['cash_back']          = $time;
-                    $award['group_code']         = $group_code;
-                    $award['group_name']         = $group_name;
-                    $award['create_user_id']     = $user_info->admin_id;
-                    $award['create_user_name']   = $user_info->name;
-                    $award['create_time']        = $award['update_time']=$now_time;
-                    AwardRemind::insert($award);
+                    if ($user_id){
+                        $award['self_id']            = generate_id('award_');
+                        $award['reward_id']          = $data['self_id'];
+                        $award['user_id']            = $user_id;
+                        $award['user_name']          = $user_name;
+                        $award['money_award']        = $company_fine;
+                        $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
+                        $award['cash_back']          = $time;
+                        $award['group_code']         = $group_code;
+                        $award['group_name']         = $group_name;
+                        $award['create_user_id']     = $user_info->admin_id;
+                        $award['create_user_name']   = $user_info->name;
+                        $award['create_time']        = $award['update_time']=$now_time;
+                        AwardRemind::insert($award);
+                    }
+                    if ($escort){
+                        $award['self_id']            = generate_id('award_');
+                        $award['reward_id']          = $data['self_id'];
+                        $award['user_id']            = $escort;
+                        $award['user_name']          = $escort_name;
+                        $award['money_award']        = $company_fine;
+                        $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
+                        $award['cash_back']          = $time;
+                        $award['group_code']         = $group_code;
+                        $award['group_name']         = $group_name;
+                        $award['create_user_id']     = $user_info->admin_id;
+                        $award['create_user_name']   = $user_info->name;
+                        $award['create_time']        = $award['update_time']=$now_time;
+                        AwardRemind::insert($award);
+                    }
+
                 }
 
                 $operationing->access_cause='添加员工奖惩记录';
