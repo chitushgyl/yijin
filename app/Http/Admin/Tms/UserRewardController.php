@@ -377,15 +377,16 @@ class UserRewardController extends CommonController{
                 if ($user){
                     $update['user_id']            = $user_id;
                     $update['user_name']          = $user_name;
-                    $update['money_award']       = $company_fine;
+                    $update['money_award']        = $company_fine;
                     $update['cash_back']          = $cash_back;
                     $update['update_time']=$now_time;
                     AwardRemind::where('user_id',$user_id)->where('reward_id',$self_id)->update($update);
                 }
                 if ($escort_user){
-                    $update['escort']            = $escort;
+                    $update['user_id']            = $escort;
+                    $update['user_name']          = $user_id;
                     $update['cash_back']          = $cash_back;
-                    $update['money_award']       = $company_fine;
+                    $update['money_award']        = $company_fine;
                     $update['update_time']=$now_time;
                     AwardRemind::where('user_id',$escort)->where('reward_id',$self_id)->update($update);
                 }
