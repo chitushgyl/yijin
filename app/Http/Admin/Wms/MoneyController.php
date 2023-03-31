@@ -364,7 +364,9 @@ class MoneyController extends CommonController{
         $user_name          =$request->input('user_name');//人员名称
         $process_state      =$request->input('process_state');//审核状态
         $create_time        =$request->input('create_time');//审核状态
-        $type_state        =$request->input('type_state');//审核状态
+        $type_state         =$request->input('type_state');//审核状态
+        $approver           =$request->input('approver');//审批人
+        $submit_connect     =$request->input('submit_connect');//报销内容
 
 
         $rules=[
@@ -390,6 +392,8 @@ class MoneyController extends CommonController{
             $data['user_name']          = $user_name;
             $data['process_state']      = $process_state;
             $data['type_state']         = $type_state;
+            $data['approver']           = $approver;
+            $data['submit_connect']     = $submit_connect;
 
 
             $wheres['self_id'] = $self_id;
