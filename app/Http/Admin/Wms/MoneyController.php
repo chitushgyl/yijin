@@ -64,7 +64,7 @@ class MoneyController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name',
-            'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money'];
+            'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money','bill_flag','receipt'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -172,7 +172,7 @@ class MoneyController extends CommonController{
         $self_id=$request->input('self_id');
         //$self_id='money_202012231738203885359374';
         $table_name='wms_money';
-        $select=['self_id','type','group_name','warehouse_name','create_user_name','create_time','use_flag','company_name',
+        $select=['self_id','type','group_name','warehouse_name','create_user_name','create_time','use_flag','company_name','bill_flag','receipt',
             'payee_affirm_flag','payee_user_name','payee_time','payment_affirm_flag','payment_user_name','payment_time','settle_flag','settle_id','money','before_money'];
 
 
