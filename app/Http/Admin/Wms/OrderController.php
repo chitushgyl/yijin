@@ -159,22 +159,20 @@ class OrderController extends CommonController{
         foreach ($data['items'] as $k => $v) {
 			$v->status_show=null;
             $v->button_info = $button_info;
-            if ($v->status == 'Y'){
-                $v->button_info = $button_info2;
-            }else{
-                $v->button_info = $button_info1;
-            }
+          
 			switch ($v->status) {
 				case '1':
-				$v->status_show='待出库';
+				    $v->status_show='待出库';
+                    $v->button_info = $button_info1;
 					break;
 
 				case '2':
-				$v->status_show='未完成';
+				    $v->status_show='未完成';
 					break;
 
 				case '3':
-				$v->status_show='已完成';
+				    $v->status_show='已完成';
+                    $v->button_info = $button_info2;
 					break;
 			}
 
