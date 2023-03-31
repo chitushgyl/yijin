@@ -560,7 +560,7 @@ class OrderController extends CommonController{
             $operationing->operation_type='update';
             $update['delete_flag'] = 'N';
             $update['update_time'] = $now_time;
-            TmsMoney::where('order_id',$self_id)->update();
+            TmsMoney::where('order_id',$self_id)->update($update);
 
             /**保存费用**/
             $money['self_id']                = generate_id('money_');
