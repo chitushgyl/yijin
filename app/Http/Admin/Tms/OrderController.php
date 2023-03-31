@@ -146,7 +146,7 @@ class OrderController extends CommonController{
             'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
             'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
-            ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name','order_mark'];
+            ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name','order_mark','sale_price'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -2035,20 +2035,14 @@ class OrderController extends CommonController{
     public function  details(Request $request,Details $details){
         $self_id=$request->input('self_id');
 //        $self_id = 'order_202106231710070766328312';
-
-
-        $select1 = ['self_id','receipt','order_id','total_user_id','group_code','group_name'];
+        
         $select2 = ['self_id','name','type'];
         $where = [
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
 
-        $info = TmsOrder::with(['tmsReceipt'=>function($query)use($select1,$select2){
-            $query->where('delete_flag','=','Y');
-            $query->select($select1);
-        }])
-            ->with(['systemuser'=>function($query)use($select2){
+        $info = TmsOrder::with(['systemuser'=>function($query)use($select2){
                 $query->where('delete_flag','=','Y');
                 $query->select($select2);
             }])->where($where)->first();
