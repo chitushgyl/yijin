@@ -613,7 +613,7 @@ class TryeController extends CommonController{
                         $money['process_state']      = 'Y';
                         $money['type_state']         = 'out';
 //                        $money['use_flag']           = 'N';
-                        $money['self_id']            = generate_id('money');
+                        $money['self_id']            = generate_id('money_');
                         $money['group_code']         = $user_info->group_code;
                         $money['group_name']         = $user_info->group_name;
                         $money['create_user_id']     = $user_info->admin_id;

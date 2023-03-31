@@ -840,9 +840,6 @@ class CarOilController extends CommonController{
             $data['operator']          =$operator;
             $data['enter_time']        =$enter_time;
 
-
-
-
             $wheres['self_id'] = $self_id;
             $old_info=TmsOil::where($wheres)->first();
 

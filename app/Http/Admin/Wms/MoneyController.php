@@ -693,8 +693,7 @@ class MoneyController extends CommonController{
             $v->button_info=$button_info;
             if ($v->pay_state == 'N'){
                 $v->button_info=$button_info3;
-            }
-            if ($v->pay_state == 'Y'){
+            }else{
                 $v->button_info=$button_info4;
             }
             if($v->bill_flag == 'N'){
