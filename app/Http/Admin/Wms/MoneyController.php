@@ -761,8 +761,8 @@ class MoneyController extends CommonController{
                 $msg['msg'] = "已上传发票请勿重复操作！";
                 return $msg;
             }
-
-            $data['receipt'] = img_for($receipt,'more');
+            $data['bill_flag'] = 'Y';
+            $data['receipt'] = img_for($receipt,'in');
             $data['update_time']   = $now_time;
             $id = TmsMoney::where('self_id',$self_id)->update($data);
 
