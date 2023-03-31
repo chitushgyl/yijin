@@ -20,9 +20,10 @@ class CrondtabController extends Controller {
      */
     public function userReword(Request $request){
         $now_time  = date('Y-m',time());
-        $now_time  = '2023-04';
-        $month_start = date('Y-m-01',strtotime(date('Y-m-d')));
-        $month_end = date('Y-m-d',strtotime("$month_start+1 month-1 day"));
+        $month_start = date('Y-m-01 00:00:00',strtotime(date('Y-m-d')));
+        $month_end = date('Y-m-d 23:59:59',strtotime("$month_start+1 month-1 day"));
+        $month_start = '2023-04-01 00:00:00';
+        $month_end = '2023-04-30 23:59:59';
         $where = [
             ['delete_flag','=','Y'],
             ['award_flag','=','N'],
