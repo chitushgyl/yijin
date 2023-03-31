@@ -558,7 +558,9 @@ class OrderController extends CommonController{
             $id=TmsOrder::where('self_id',$self_id)->update($data);
             $operationing->access_cause='修改订单';
             $operationing->operation_type='update';
-
+            $update['delete_flag'] = 'N';
+            $update['update_time'] = $now_time;
+            TmsMoney::where('order_id',$self_id)->update();
 
             /**保存费用**/
             $money['self_id']                = generate_id('money_');
