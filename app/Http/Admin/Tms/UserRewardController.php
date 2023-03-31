@@ -377,7 +377,7 @@ class UserRewardController extends CommonController{
                 if ($user){
                     $update['user_id']            = $user_id;
                     $update['user_name']          = $user_name;
-                    $update['company_fine']       = $company_fine;
+                    $update['money_award']       = $company_fine;
                     $update['cash_back']          = $cash_back;
                     $update['update_time']=$now_time;
                     AwardRemind::where('user_id',$user_id)->update($update);
@@ -385,19 +385,19 @@ class UserRewardController extends CommonController{
                 if ($escort_user){
                     $update['escort']            = $escort;
                     $update['cash_back']          = $cash_back;
-                    $update['company_fine']       = $company_fine;
+                    $update['money_award']       = $company_fine;
                     $update['update_time']=$now_time;
                     AwardRemind::where('user_id',$escort)->update($update);
                 }
-                if ($type == 'reward'){
-                    $update['user_id']            = $user_id;
-                    $update['user_name']          = $user_name;
-                    $update['money_award']        = $safe_reward;
-                    $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
-                    $update['cash_back']          = $time;
-                    $update['update_time']=$now_time;
-                    AwardRemind::where('reward_id',$self_id)->update($update);
-                }
+//                if ($type == 'reward'){
+//                    $update['user_id']            = $user_id;
+//                    $update['user_name']          = $user_name;
+//                    $update['money_award']        = $safe_reward;
+//                    $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
+//                    $update['cash_back']          = $time;
+//                    $update['update_time']=$now_time;
+//                    AwardRemind::where('reward_id',$self_id)->update($update);
+//                }
                 $data['update_time']=$now_time;
                 $id=UserReward::where($wheres)->update($data);
                 $operationing->access_cause='修改员工奖惩记录';
