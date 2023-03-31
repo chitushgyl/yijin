@@ -374,7 +374,7 @@ class UserRewardController extends CommonController{
             if($old_info){
                 $user = AwardRemind::where('user_id',$user_id)->first();
                 $escort_user = AwardRemind::where('user_id',$escort)->first();
-                dd($escort_user);
+                dd($data,$escort_user);
                 if ($user){
                     $update['user_id']            = $user_id;
                     $update['user_name']          = $user_name;
