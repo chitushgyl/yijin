@@ -485,6 +485,7 @@ class MoneyController extends CommonController{
             $old_info=TmsMoney::where($wheres)->first();
 
             $data['process_state'] = $process_state;
+            $data['pay_state'] = $process_state;
             $data['update_time']   = $now_time;
             $id = TmsMoney::where('self_id',$self_id)->update($data);
 
