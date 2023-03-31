@@ -415,7 +415,7 @@ class UserRewardController extends CommonController{
 
                 $id=UserReward::insert($data);
                 if ($type != 'reward'){
-                    if ($user_id){
+                    if ($user_id && ($company_fine || $company_fine>0)){
                         $award['self_id']            = generate_id('award_');
                         $award['reward_id']          = $data['self_id'];
                         $award['user_id']            = $user_id;
@@ -430,7 +430,7 @@ class UserRewardController extends CommonController{
                         $award['create_time']        = $award['update_time']=$now_time;
                         AwardRemind::insert($award);
                     }
-                    if ($escort){
+                    if ($escort && ($company_fine || $company_fine>0)){
                         $award['self_id']            = generate_id('award_');
                         $award['reward_id']          = $data['self_id'];
                         $award['user_id']            = $escort;
