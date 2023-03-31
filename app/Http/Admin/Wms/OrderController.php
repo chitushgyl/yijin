@@ -159,7 +159,7 @@ class OrderController extends CommonController{
         foreach ($data['items'] as $k => $v) {
 			$v->status_show=null;
             $v->button_info = $button_info;
-          
+
 			switch ($v->status) {
 				case '1':
 				    $v->status_show='待出库';
