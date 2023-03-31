@@ -145,10 +145,25 @@ class OrderController extends CommonController{
         }
 
 //dd($data);
-
+        $button_info1=[];
+        $button_info2=[];
+        foreach ($button_info as $k => $v){
+            if($v->id == 183){
+                $button_info1[] = $v;
+                $button_info2[] = $v;
+            }
+            if($v->id == 187){
+                $button_info1[] = $v;
+            }
+        }
         foreach ($data['items'] as $k => $v) {
 			$v->status_show=null;
             $v->button_info = $button_info;
+            if ($v->status == 'Y'){
+                $v->button_info = $button_info2;
+            }else{
+                $v->button_info = $button_info1;
+            }
 			switch ($v->status) {
 				case '1':
 				$v->status_show='待出库';

@@ -3,6 +3,7 @@ namespace App\Http\Admin\Crondtab;
 
 
 use App\Http\Controllers\Controller;
+use App\Models\Group\SystemUser;
 use App\Models\Tms\AwardRemind;
 use App\Models\Tms\TmsDiplasic;
 use App\Models\Tms\TmsPayment;
@@ -22,28 +23,25 @@ class CrondtabController extends Controller {
         $now_time  = date('Y-m',time());
         $month_start = date('Y-m-01 00:00:00',strtotime(date('Y-m-d')));
         $month_end = date('Y-m-d 23:59:59',strtotime("$month_start+1 month-1 day"));
-        $month_start = '2023-04-01 00:00:00';
-        $month_end = '2023-04-30 23:59:59';
         $where = [
             ['delete_flag','=','Y'],
-            ['award_flag','=','N'],
-            ['cash_back','=',$now_time],
+            ['use_flag','=','Y'],
         ];
-        $user_list = AwardRemind::where($where)->get();
+        $user_list = SystemUser::where($where)->select('self_id','name')->get();
         foreach ($user_list as $k => $v) {
             $where1 = [
                 ['type','!=','reward'],
                 ['delete_flag','=','Y'],
                 ['event_time','>=',$month_start],
                 ['event_time','<=',$month_end],
-                ['user_id','=',$v->user_id],
+                ['user_id','=',$v->self_id],
             ];
             $where2 = [
                 ['type','!=','reward'],
                 ['delete_flag','=','Y'],
                 ['event_time','>=',$month_start],
                 ['event_time','<=',$month_end],
-                ['escort','=',$v->user_id],
+                ['escort','=',$v->self_id],
             ];
             $select = ['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
                 'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
