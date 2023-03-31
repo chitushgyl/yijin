@@ -372,11 +372,12 @@ class UserRewardController extends CommonController{
             $wheres['self_id'] = $self_id;
             $old_info=UserReward::where($wheres)->first();
             if($old_info){
-                $user = AwardRemind::where('user_id',$user_id)->first();
-                $escort_user = AwardRemind::where('user_id',$escort)->first();
+                $user = AwardRemind::where('user_id',$user_id)->where('reward_id',$self_id)->first();
+                $escort_user = AwardRemind::where('user_id',$escort)->where('reward_id',$self_id)->first();
                 if ($user){
                     $update['user_id']            = $user_id;
                     $update['user_name']          = $user_name;
+                    $update['company_fine']       = $company_fine;
                     $update['cash_back']          = $cash_back;
                     $update['update_time']=$now_time;
                     AwardRemind::where('user_id',$user_id)->update($update);
@@ -384,6 +385,7 @@ class UserRewardController extends CommonController{
                 if ($escort_user){
                     $update['escort']            = $escort;
                     $update['cash_back']          = $cash_back;
+                    $update['company_fine']       = $company_fine;
                     $update['update_time']=$now_time;
                     AwardRemind::where('user_id',$escort)->update($update);
                 }
