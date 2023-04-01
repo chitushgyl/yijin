@@ -351,6 +351,13 @@ Route::group([
     Route::any('/line/lineUseFlag','LineController@lineUseFlag');//启用/禁用
     Route::any('/line/lineDelFlag','LineController@lineDelFlag');//删除
     Route::any('/line/getLine','LineController@getLine');//获取线路
+
+    Route::any('/wages/wagesList','LineController@wagesList');//获取线路
+    Route::any('/wages/wagesPage','LineController@wagesPage');//获取线路
+    Route::any('/wages/createWages','LineController@createWages');//获取线路
+    Route::any('/wages/addWages','LineController@addWages');//获取线路
+    Route::any('/wages/wagesDelFlag','LineController@wagesDelFlag');//获取线路
+    Route::any('/wages/details','LineController@details');//获取线路
 });
 
 
