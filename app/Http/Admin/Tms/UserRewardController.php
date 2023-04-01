@@ -531,6 +531,13 @@ class UserRewardController extends CommonController{
         $update['delete_flag'] = 'N';
         $update['update_time'] = $now_time;
         $id = UserReward::where('self_id',$self_id)->update($update);
+        $reward = AwardRemind::where('reward_id',$self_id)->get();
+        foreach ($reward as $key => $value){
+            if ($value->cash_flag == 'N'){
+                AwardRemind::where('reward_id',$self_id)->update($update);
+            }
+        }
+
 
         $operationing->access_cause='删除员工奖惩记录';
         $operationing->table=$table_name;
