@@ -172,7 +172,7 @@ class MoneyController extends CommonController{
         $self_id=$request->input('self_id');
         //$self_id='money_202012231738203885359374';
         $table_name='tms_money';
-        $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name',
+        $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name','approver','submit_connect',
             'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money','bill_flag','receipt'];
 
         $where=[
@@ -184,11 +184,6 @@ class MoneyController extends CommonController{
 
 
         if($info){
-			foreach ($info->WmsMoneyList as $k=>$v){
-				$v->sign                =$v->area.'-'.$v->row.'-'.$v->column.'-'.$v->tier;
-				$v->good_describe      =unit_do($v->good_unit , $v->good_target_unit, $v->good_scale, $v->num);
-			}
-
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
             $info->total_show=$wms_money_type_show[$info->type];
             $info->money = number_format($info->money/100, 2);
