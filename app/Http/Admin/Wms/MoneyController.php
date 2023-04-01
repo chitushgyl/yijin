@@ -185,7 +185,6 @@ class MoneyController extends CommonController{
 
         if($info){
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
-            $info->total_show=$wms_money_type_show[$info->type];
             $info->money = number_format($info->money/100, 2);
             $data['info']=$info;
 
@@ -199,7 +198,6 @@ class MoneyController extends CommonController{
                 $data['log_data']=$details->change($self_id,$log_num);
 
             }
-
 
             $msg['code']=200;
             $msg['msg']="数据拉取成功";
