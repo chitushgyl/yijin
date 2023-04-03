@@ -38,9 +38,7 @@ class WagesController extends CommonController{
     /***    商品分页     /tms/wages/wagesPage
      */
     public function wagesPage(Request $request){
-        $period  =array_column(config('wms.period'),'name','key');
-        $wares_type  =array_column(config('tms.wares_type'),'name','key');
-
+        $user_type    =array_column(config('tms.user_type'),'name','key');
         /** 接收中间件参数**/
         $group_info     = $request->get('group_info');//接收中间件产生的参数
         $button_info    = $request->get('anniu');//接收中间件产生的参数
@@ -50,8 +48,8 @@ class WagesController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-        $start_time     =$request->input('start_time')??'2023-03-01 00:00:00';
-        $end_time       =$request->input('end_time')??'2023-03-31 23:59:59';
+        $start_time     =$request->input('start_time');
+        $end_time       =$request->input('end_time');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -110,7 +108,7 @@ class WagesController extends CommonController{
 
         foreach ($data['items'] as $k=>$v) {
             $v->button_info=$button_info;
-
+            $v->position               =$user_type[$v->position]??null;
         }
         //exit;
         $msg['code']=200;
