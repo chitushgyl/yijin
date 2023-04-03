@@ -50,6 +50,8 @@ class WagesController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
+        $start_time     =$request->input('start_time')??'2023-03-01 00:00:00';
+        $end_time       =$request->input('end_time')??'2023-03-31 23:59:59';
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -58,16 +60,24 @@ class WagesController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
         ];
-
+        $search1=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'>=','name'=>'send_time','value'=>$start_time],
+            ['type'=>'<=','name'=>'send_time','value'=>$end_time],
+        ];
         $where=get_list_where($search);
+        $where1=get_list_where($search1);
 
         $select=['self_id','user_id','user_name','position','date','base_pay','reward','reward_back','ti_money','remark','total_money','group_code','group_name','use_flag','delete_flag','create_time','update_time'];
-        $select1=['self_id','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag'];
+        $select1=['self_id','driver_id','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsWages::where($where)->count(); //总的数据量
-                $data['items']=TmsWages::with(['tmsOrder' => function($query) use($select1){
+                $data['items']=TmsWages::with(['tmsOrder' => function($query) use($select1,$where1){
                     $query->select($select1);
+                    $query->where($where1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select)->get();
@@ -77,8 +87,9 @@ class WagesController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=TmsWages::where($where)->count(); //总的数据量
-                $data['items']=TmsWages::with(['tmsOrder' => function($query) use($select1){
+                $data['items']=TmsWages::with(['tmsOrder' => function($query) use($select1,$where1){
                     $query->select($select1);
+                    $query->where($where1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select)->get();
@@ -87,8 +98,9 @@ class WagesController extends CommonController{
 
             case 'more':
                 $data['total']=TmsWages::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=TmsWages::with(['tmsOrder' => function($query) use($select1){
+                $data['items']=TmsWages::with(['tmsOrder' => function($query) use($select1,$where1){
                     $query->select($select1);
+                    $query->where($where1);
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select)->get();
