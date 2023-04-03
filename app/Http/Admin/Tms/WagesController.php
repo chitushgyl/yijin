@@ -50,7 +50,6 @@ class WagesController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-        $wares_name     =$request->input('wares_name');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -58,8 +57,6 @@ class WagesController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'like','name'=>'wares_name','value'=>$wares_name],
-
         ];
 
         $where=get_list_where($search);
@@ -94,8 +91,6 @@ class WagesController extends CommonController{
         }
 
         foreach ($data['items'] as $k=>$v) {
-
-            $v->type = $wares_type[$v->type]??null;
             $v->button_info=$button_info;
 
         }
