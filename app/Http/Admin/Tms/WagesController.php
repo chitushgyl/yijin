@@ -167,12 +167,10 @@ class WagesController extends CommonController{
         $total_money         =$request->input('total_money');//合计
 
         $rules=[
-            'wares_name'=>'required',
-            'un_num'=>'required',
+            
         ];
         $message=[
-            'wares_name.required'=>'请填写货物名称',
-            'un_num.required'=>'请填写UN编号',
+
         ];
         $validator=Validator::make($input,$rules,$message);
         //操作的表
@@ -208,7 +206,7 @@ class WagesController extends CommonController{
                 $operationing->operation_type='update';
 
             }else{
-                
+
                 $data['self_id']=generate_id('wages_');		//优惠券表ID
                 $data['group_code'] = $info2->group_code;
                 $data['group_name'] = $info2->group_name;
