@@ -62,11 +62,13 @@ class WagesController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','user_id','user_name','position','date','base_pay','reward','reward_back','ti_money','remark','total_money','group_code','group_name','use_flag','delete_flag','create_time','update_time'];
-
+        $select1=['self_id','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsWages::where($where)->count(); //总的数据量
-                $data['items']=TmsWages::where($where)
+                $data['items']=TmsWages::with(['tmsOrder' => function($query) use($select1){
+                    $query->select($select1);
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -75,7 +77,9 @@ class WagesController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=TmsWages::where($where)->count(); //总的数据量
-                $data['items']=TmsWages::where($where)
+                $data['items']=TmsWages::with(['tmsOrder' => function($query) use($select1){
+                    $query->select($select1);
+                }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
@@ -83,7 +87,9 @@ class WagesController extends CommonController{
 
             case 'more':
                 $data['total']=TmsWages::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=TmsWages::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['items']=TmsWages::with(['tmsOrder' => function($query) use($select1){
+                    $query->select($select1);
+                }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';

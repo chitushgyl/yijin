@@ -51,11 +51,11 @@ class TmsWages extends Model{
     ];
 
 //一对一
-    // public function CarType(){
-    //    //参数：关联模型名称，外键，主键
-    //    //如果主键是id可以省略
-    //    return $this->hasMany('App\Models\Tms\TmsCar','car_type_id','self_id');
-    // }
+     public function tmsOrder(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Tms\TmsOrder','driver_id','user_id');
+     }
 
 
 
