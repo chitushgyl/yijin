@@ -61,7 +61,7 @@ class WagesController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','user_id','user_name','position','date','base_pay','reward','reward_back','ti_money','remark','total_money','group_code','group_name','use_flag','delete_flag','create_time','update_time','safe_card'];
+        $select=['self_id','user_id','user_name','position','date','base_pay','reward','reward_back','ti_money','remark','total_money','group_code','group_name','use_flag','delete_flag','create_time','update_time'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -579,7 +579,7 @@ class WagesController extends CommonController{
 
         $self_id=$request->input('self_id');
         $table_name='tms_wages';
-        $select=['self_id','user_id','user_name','position','date','base_pay','reward','reward_back','ti_money','remark','total_money','group_code','group_name','use_flag','delete_flag','create_time','update_time','safe_card'];
+        $select=['self_id','user_id','user_name','position','date','base_pay','reward','reward_back','ti_money','remark','total_money','group_code','group_name','use_flag','delete_flag','create_time','update_time'];
         //$self_id='group_202009282038310201863384';
         $info=$details->details($self_id,$table_name,$select);
 
