@@ -194,7 +194,7 @@ class WagesController extends CommonController{
             $data['reward_back']      = $reward_back;
             $data['ti_money']         = $ti_money;
             $data['remark']           = $remark;
-            $data['total_money']      = $base_pay + $reward + $reward_back +$ti_money;
+            $data['total_money']      = $base_pay + $reward + $reward_back + $ti_money;
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsWages::where($wheres)->first();
@@ -207,9 +207,8 @@ class WagesController extends CommonController{
                 $operationing->access_cause='修改货物';
                 $operationing->operation_type='update';
 
-
             }else{
-
+                
                 $data['self_id']=generate_id('wages_');		//优惠券表ID
                 $data['group_code'] = $info2->group_code;
                 $data['group_name'] = $info2->group_name;
