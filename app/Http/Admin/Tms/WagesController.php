@@ -48,8 +48,8 @@ class WagesController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-        $start_time     =$request->input('start_time');
-        $end_time       =$request->input('end_time');
+        $start_time     =$request->input('start_time').'-01 00:00:00';
+        $end_time       =$request->input('end_time').'-';
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -167,7 +167,7 @@ class WagesController extends CommonController{
         $total_money         =$request->input('total_money');//合计
 
         $rules=[
-            
+
         ];
         $message=[
 
