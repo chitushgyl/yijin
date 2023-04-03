@@ -194,7 +194,7 @@ class WagesController extends CommonController{
             $data['reward_back']      = $reward_back;
             $data['ti_money']         = $ti_money;
             $data['remark']           = $remark;
-            $data['total_money']      = $total_money;
+            $data['total_money']      = $base_pay + $reward + $reward_back +$ti_money;
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsWages::where($wheres)->first();
