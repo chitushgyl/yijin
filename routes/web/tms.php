@@ -352,12 +352,12 @@ Route::group([
     Route::any('/line/lineDelFlag','LineController@lineDelFlag');//删除
     Route::any('/line/getLine','LineController@getLine');//获取线路
 
-    Route::any('/wages/wagesList','LineController@wagesList');//获取线路
-    Route::any('/wages/wagesPage','LineController@wagesPage');//获取线路
-    Route::any('/wages/createWages','LineController@createWages');//获取线路
-    Route::any('/wages/addWages','LineController@addWages');//获取线路
-    Route::any('/wages/wagesDelFlag','LineController@wagesDelFlag');//获取线路
-    Route::any('/wages/details','LineController@details');//获取线路
+    Route::any('/wages/wagesList','WagesController@wagesList');//获取线路
+    Route::any('/wages/wagesPage','WagesController@wagesPage');//获取线路
+    Route::any('/wages/createWages','WagesController@createWages');//获取线路
+    Route::any('/wages/addWages','WagesController@addWages');//获取线路
+    Route::any('/wages/wagesDelFlag','WagesController@wagesDelFlag');//获取线路
+    Route::any('/wages/details','WagesController@details');//获取线路
 });
 
 
