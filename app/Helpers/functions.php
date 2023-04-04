@@ -134,10 +134,10 @@ function arr_check($shuzu,$arr){
             $list=[];
             array_shift($arr);      //把数组的第一个项目去掉
             foreach ($arr as $k => $v){
-                if (empty($v)){
-                    break;
-                }
                 foreach ($v as $kk => $vv){
+                    if (empty($v)){
+                        break;
+                    }
                     if(array_key_exists($kk, $new)){
                          //判断数据的必填
                         if($new[$kk]['must'] == 'Y'){
