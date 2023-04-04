@@ -136,7 +136,7 @@ function arr_check($shuzu,$arr){
 //            dd($arr);
             foreach ($arr as $k => $v){
                 if (empty($v)){
-                    continue;
+                    break;
                 }
                 foreach ($v as $kk => $vv){
                     if(array_key_exists($kk, $new)){
