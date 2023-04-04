@@ -135,8 +135,7 @@ function arr_check($shuzu,$arr){
             array_shift($arr);      //把数组的第一个项目去掉
 
             foreach ($arr as $k => $v){
-                dd(array_filter($v));
-                if (empty($v)){
+                if (empty(array_filter($v))){
                     continue;
                 }
                 foreach ($v as $kk => $vv){
