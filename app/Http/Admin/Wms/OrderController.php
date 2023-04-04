@@ -1090,7 +1090,7 @@ class OrderController extends CommonController{
 //                                ['expire_time', '>', substr($now_time, 0, -9)]
                         ];
 
-                        $resssss = WmsLibrarySige::where($where2)->orderBy('expire_time','asc')->orderBy('create_time', 'asc')->get()->toArray();
+                        $resssss = WmsLibrarySige::where($where2)->orderBy('create_time', 'asc')->get()->toArray();
                         if ($resssss) {
                             $totalNum = array_sum(array_column($resssss, 'now_num'));
                             $numds = $v['num'] - $totalNum;
