@@ -985,7 +985,7 @@ class OrderController extends CommonController{
                 $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 if ($v['send_name']){
-                    if ($send){
+                    if (!empty((array)$send)){
                         $v['send_id']                 = $send->self_id;
                         $v['send_name']               = $send->company_name;
                     }else{
@@ -1000,7 +1000,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if ($v['gather_name']){
-                    if ($gather){
+                    if (!empty((array)$gather)){
                         $v['gather_id']                 = $gather->self_id;
                         $v['gather_name']               = $gather->company_name;
                     }else{
@@ -1301,7 +1301,7 @@ class OrderController extends CommonController{
                 $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 if ($v['send_name']){
-                    if ($send){
+                    if (empty($send)){
                         $v['send_id']                 = $send->self_id;
                         $v['send_name']               = $send->company_name;
                     }else{
@@ -1316,7 +1316,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if ($v['gather_name']){
-                    if ($gather){
+                    if (empty($gather)){
                         $v['gather_id']                 = $gather->self_id;
                         $v['gather_name']               = $gather->company_name;
                     }else{
@@ -1331,7 +1331,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if ($v['carriage_name']){
-                    if ($gather){
+                    if (empty($gather)){
                         $v['carriage_id']                 = $carriage->self_id;
                         $v['carriage_name']               = $carriage->company_name;
                     }else{
@@ -1582,7 +1582,7 @@ class OrderController extends CommonController{
                 $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 if ($v['send_name']){
-                    if ($send){
+                    if (!empty((array)$send)){
                         $v['send_id']                 = $send->self_id;
                         $v['send_name']               = $send->company_name;
                     }else{
@@ -1597,7 +1597,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if ($v['gather_name']){
-                    if ($gather){
+                    if (!empty((array)$gather)){
                         $v['gather_id']                 = $gather->self_id;
                         $v['gather_name']               = $gather->company_name;
                     }else{
@@ -1612,7 +1612,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if ($v['carriage_name']){
-                    if ($gather){
+                    if ($carriage){
                         $v['carriage_id']                 = $carriage->self_id;
                         $v['carriage_name']               = $carriage->company_name;
                     }else{
