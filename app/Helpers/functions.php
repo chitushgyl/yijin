@@ -133,13 +133,9 @@ function arr_check($shuzu,$arr){
             $errorNum=50;       //控制错误数据的条数
             $list=[];
             array_shift($arr);      //把数组的第一个项目去掉
-//            dd($arr);
+            dd(count($arr));
             foreach ($arr as $k => $v){
                 foreach ($v as $kk => $vv){
-                    if (!empty($v)){
-                        dd($v);
-                        break;
-                    }
                     if(array_key_exists($kk, $new)){
                          //判断数据的必填
                         if($new[$kk]['must'] == 'Y'){
