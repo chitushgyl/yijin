@@ -1080,16 +1080,17 @@ class OrderController extends CommonController{
                 try {
                     $datalist= [];
                     foreach ($order_do as $k => $v) {
+
                         $where2 = [
                                 ['sku_id', '=', $v['sku_id']],
                                 ['now_num', '>', 0],
                                 ['can_use', '=', 'Y'],
                                 ['delete_flag', '=', 'Y'],
-//                                ['create_time', '>',$now_time]
 //                                ['create_time', '>', substr($now_time, 0, -9)]
+//                                ['expire_time', '>', substr($now_time, 0, -9)]
                         ];
 
-                        $resssss = WmsLibrarySige::where($where2)->orderBy('create_time', 'asc')->get()->toArray();
+                        $resssss = WmsLibrarySige::where($where2)->orderBy('expire_time','asc')->orderBy('create_time', 'asc')->get()->toArray();
                         if ($resssss) {
                             $totalNum = array_sum(array_column($resssss, 'now_num'));
                             $numds = $v['num'] - $totalNum;
