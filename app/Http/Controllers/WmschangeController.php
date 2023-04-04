@@ -27,6 +27,8 @@ class WmschangeController extends Controller{
             $list["good_unit"]          =$v['good_unit'];
             $list['spec']               =$v['spec'];
             $list["good_info"]          =$v['good_info'];
+            $list["production_date"]    =$v['production_date'];
+            $list["expire_time"]        =$v['expire_time'];
 
             $list['create_time']        =$v['create_time'];
             $list["update_time"]        =$v['update_time'];

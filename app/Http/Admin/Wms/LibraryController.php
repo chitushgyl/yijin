@@ -1194,6 +1194,8 @@ class LibraryController extends CommonController{
                     $list['storage_number']     =$v['now_num'];
                     $list['price']              =$v['price'];
                     $list['total_price']        =$v['total_price'];
+                    $list['production_date']    =$v['production_date'];
+                    $list['expire_time']        =$v['expire_time'];
                     $list["group_code"]         =$group_code;
                     $list["group_name"]         =$group_name;
                     $list['create_time']        =$now_time;
