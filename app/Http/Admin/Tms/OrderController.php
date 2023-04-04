@@ -1331,7 +1331,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if ($v['carriage_name']){
-                    if (empty($gather)){
+                    if (empty($carriage)){
                         $v['carriage_id']                 = $carriage->self_id;
                         $v['carriage_name']               = $carriage->company_name;
                     }else{
