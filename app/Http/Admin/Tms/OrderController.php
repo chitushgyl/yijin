@@ -1544,8 +1544,11 @@ class OrderController extends CommonController{
                 '装车点' =>['Y','Y','100','send_name'],
                 '卸车点' =>['Y','Y','100','gather_name'],
                 '车牌号' =>['Y','Y','64','car_number'],
+                '挂车号' =>['Y','Y','64','trailer_num'],
                 '驾驶员' =>['Y','Y','64','user_name'],
                 '电话' =>['N','Y','64','car_tel'],
+                '副驾驶员' =>['N','Y','64','escort'],
+                '副驾驶员电话' =>['N','Y','64','escort_tel'],
                 '包装方式' =>['N','Y','64','pack_type'],
             ];
 
@@ -1574,6 +1577,7 @@ class OrderController extends CommonController{
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
                 $car = TmsCar::where('car_number',$v['car_number'])->where('group_code',$group_code)->select('self_id','car_number')->first();
+                $trailer = TmsCar::where('car_number',$v['trailer_num'])->where('group_code',$group_code)->select('self_id','car_number')->first();
                 $send = TmsGroup::where('company_name',$v['send_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
@@ -1632,6 +1636,16 @@ class OrderController extends CommonController{
                         }
                     }
                 }
+                if($v['escort']){
+                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    if (!$cargo){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+                }
 
                 if (!$car){
                     if($abcd<$errorNum){
@@ -1640,7 +1654,13 @@ class OrderController extends CommonController{
                         $abcd++;
                     }
                 }
-
+                if (!$trailer){
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行挂车号不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
                 if ($v['send_time']){
                     if (is_numeric($v['send_time'])){
                         $v['send_time']              = gmdate('Y-m-d',($v['send_time'] - 25569) * 3600 * 24);
@@ -1667,10 +1687,16 @@ class OrderController extends CommonController{
                     $list['good_name']               = $v['good_name'];
                     $list['car_id']                  = $car->self_id;
                     $list['car_number']              = $car->car_number;
+                    $list['trailer_num']              = $trailer->car_number;;
                     if ($v['user_name']){
                         $list['driver_id']               = $driver->self_id;
                         $list['user_name']               = $driver->name;
                         $list['car_tel']                 = $driver->tel;
+                    }
+                    if($v['escort']){
+                        $list['escort']                  = $cargo->self_id;
+                        $list['escort_name']             = $cargo->name;
+                        $list['escort_tel']              = $cargo->tel;
                     }
                     $list['send_time']               = $v['send_time'];
                     $list['send_id']                 = $v['send_id'];
