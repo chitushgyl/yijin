@@ -133,7 +133,11 @@ function arr_check($shuzu,$arr){
             $errorNum=50;       //控制错误数据的条数
             $list=[];
             array_shift($arr);      //把数组的第一个项目去掉
+//            dd($arr);
             foreach ($arr as $k => $v){
+                if (empty($v)){
+                    continue;
+                }
                 foreach ($v as $kk => $vv){
                     if(array_key_exists($kk, $new)){
                          //判断数据的必填
