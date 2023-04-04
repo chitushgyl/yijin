@@ -136,7 +136,7 @@ function arr_check($shuzu,$arr){
 //            dd($arr);
             foreach ($arr as $k => $v){
                 foreach ($v as $kk => $vv){
-                    if (empty($v)){
+                    if (!empty($v)){
                         dd($v);
                         break;
                     }
