@@ -1198,6 +1198,8 @@ class OrderController extends CommonController{
                     $out['group_name']          =$vv['group_name'];
                     $out['warehouse_id']        =$vv['warehouse_id'];
                     $out['warehouse_name']      =$vv['warehouse_name'];
+                    $out['production_date']     =$vv['production_date'];
+                    $out['expire_time']         =$vv['expire_time'];
                     $out['shiji_num']           =$shiji_number;
                     $out['create_user_id']      =$user_info->admin_id;
                     $out["create_user_name"]    =$user_info->name;
