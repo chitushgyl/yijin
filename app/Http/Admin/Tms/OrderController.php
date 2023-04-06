@@ -92,7 +92,11 @@ class OrderController extends CommonController{
         $end_time       =$request->input('end_time');
         $enter_time     =$request->input('enter_time');
         $leave_time     =$request->input('leave_time');
-        $odd_number     =$request->input('odd_number');
+        $car_number     =$request->input('car_number');
+        $gather_name     =$request->input('gather_name');
+        $send_name     =$request->input('send_name');
+        $user_name     =$request->input('user_name');
+        $escort_name     =$request->input('escort_name');
         $order_state     =$request->input('order_state');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
@@ -106,7 +110,11 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'create_time','value'=>$end_time],
             ['type'=>'=','name'=>'enter_time','value'=>$enter_time],
             ['type'=>'=','name'=>'leave_time','value'=>$leave_time],
-            ['type'=>'=','name'=>'odd_number','value'=>$odd_number],
+            ['type'=>'=','name'=>'car_number','value'=>$car_number],
+            ['type'=>'=','name'=>'send_name','value'=>$send_name],
+            ['type'=>'=','name'=>'gather_name','value'=>$gather_name],
+            ['type'=>'=','name'=>'user_name','value'=>$user_name],
+            ['type'=>'=','name'=>'escort_name','value'=>$escort_name],
             ['type'=>'=','name'=>'order_type','value'=>$order_type],
         ];
         if ($order_state){
@@ -121,7 +129,11 @@ class OrderController extends CommonController{
                     ['type'=>'=','name'=>'create_time','value'=>$end_time],
                     ['type'=>'=','name'=>'enter_time','value'=>$enter_time],
                     ['type'=>'=','name'=>'leave_time','value'=>$leave_time],
-                    ['type'=>'=','name'=>'odd_number','value'=>$odd_number],
+                    ['type'=>'=','name'=>'car_number','value'=>$car_number],
+                    ['type'=>'=','name'=>'send_name','value'=>$send_name],
+                    ['type'=>'=','name'=>'gather_name','value'=>$gather_name],
+                    ['type'=>'=','name'=>'user_name','value'=>$user_name],
+                    ['type'=>'=','name'=>'escort_name','value'=>$escort_name],
                 ];
             }else{
                 $search=[
@@ -134,7 +146,11 @@ class OrderController extends CommonController{
                     ['type'=>'=','name'=>'create_time','value'=>$end_time],
                     ['type'=>'=','name'=>'enter_time','value'=>$enter_time],
                     ['type'=>'=','name'=>'leave_time','value'=>$leave_time],
-                    ['type'=>'=','name'=>'odd_number','value'=>$odd_number],
+                    ['type'=>'=','name'=>'car_number','value'=>$car_number],
+                    ['type'=>'=','name'=>'send_name','value'=>$send_name],
+                    ['type'=>'=','name'=>'gather_name','value'=>$gather_name],
+                    ['type'=>'=','name'=>'user_name','value'=>$user_name],
+                    ['type'=>'=','name'=>'escort_name','value'=>$escort_name],
                 ];
             }
         }
