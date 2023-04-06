@@ -278,7 +278,7 @@ class OrderController extends CommonController{
         $upload_weight             = $request->input('upload_weight');//卸货吨位
         $pack_type                 = $request->input('pack_type');//包装方式
         $different_weight          = $request->input('different_weight');//装卸货量差
-        $bill_flag                 = $request->input('bill_flag');//开票状态
+//        $bill_flag                 = $request->input('bill_flag');//开票状态
         $payment_state             = $request->input('payment_state');//结算状态
         $odd_number                = $request->input('odd_number');//运单号
         $remark                    = $request->input('remark');//备注
@@ -351,7 +351,7 @@ class OrderController extends CommonController{
             $data['real_weight']             = $real_weight;
             $data['upload_weight']           = $upload_weight;
             $data['different_weight']        = $different_weight;
-            $data['bill_flag']               = $bill_flag;
+//            $data['bill_flag']               = $bill_flag;
             $data['payment_state']           = $payment_state;
             $data['odd_number']              = $odd_number;
             $data['remark']                  = $remark;
