@@ -685,6 +685,7 @@ class MoneyController extends CommonController{
 //            if($v->bill_flag == 'N'){
 //                $v->button_info=$button_info5;
 //            }
+            $v->receipt = img_for($v->receipt,'more');
 
         }
         foreach ($data['info'] as $k=>$v) {
