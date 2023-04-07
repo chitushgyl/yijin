@@ -674,19 +674,17 @@ class MoneyController extends CommonController{
             }
 
         }
-        dd($button_info);
         foreach ($data['items'] as $k=>$v) {
             $v->pay_type=$money_type_show[$v->pay_type]??null;
             $v->button_info=$button_info;
-            if ($v->pay_state == 'N'){
-                $v->button_info=$button_info3;
-            }else{
-                $v->button_info=$button_info4;
-            }
-            if($v->bill_flag == 'N'){
-                $v->button_info=$button_info5;
-            }
-            $v->receipt = img_for($v->receipt,'more');
+//            if ($v->pay_state == 'N'){
+//                $v->button_info=$button_info3;
+//            }else{
+//                $v->button_info=$button_info4;
+//            }
+//            if($v->bill_flag == 'N'){
+//                $v->button_info=$button_info5;
+//            }
 
         }
         foreach ($data['info'] as $k=>$v) {
