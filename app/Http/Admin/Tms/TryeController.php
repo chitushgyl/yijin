@@ -1099,8 +1099,8 @@ class TryeController extends CommonController{
                     $query->where($where1);
                     $query->select($Signselect);
                 }])
-                    ->with(['tryeOutList' => function($query)use($where1) {
-                    $query->where($where1);
+                    ->with(['tryeOutList' => function($query)use($where) {
+                    $query->where($where);
                 }])
                     ->with(['tmsTrye' => function($query)use($where) {
                         $query->where($where);
@@ -1118,8 +1118,8 @@ class TryeController extends CommonController{
                     $query->where($where1);
                     $query->select($Signselect);
                 }])
-                    ->with(['tryeOutList' => function($query)use($where1) {
-                        $query->where($where1);
+                    ->with(['tryeOutList' => function($query)use($where) {
+                        $query->where($where);
                     }])
                     ->with(['tmsTrye' => function($query)use($where) {
                         $query->where($where);
@@ -1136,8 +1136,8 @@ class TryeController extends CommonController{
                     $query->where($where1);
                     $query->select($Signselect);
                 }])
-                    ->with(['tryeOutList' => function($query)use($where1) {
-                        $query->where($where1);
+                    ->with(['tryeOutList' => function($query)use($where) {
+                        $query->where($where);
                     }])
                     ->with(['tmsTrye' => function($query)use($where) {
                         $query->where($where);
