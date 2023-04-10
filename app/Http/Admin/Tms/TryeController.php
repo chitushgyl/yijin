@@ -585,7 +585,7 @@ class TryeController extends CommonController{
                     $data['group_name']         = $user_info->group_name;
                     $id=TmsTrye::insert($data);
                     $trye_out_list = [];
-                    $moneylist[] = [];
+                    $moneylist = [];
                     foreach(json_decode($trye_list,true) as $key => $value){
                         $list['self_id']            = generate_id('list_');
                         $list['model']              = $value['model'];
@@ -623,7 +623,6 @@ class TryeController extends CommonController{
                         $money['create_time']        =$money['update_time']=$now_time;
                         $moneylist[]=$money;
                     }
-                    dd($moneylist);
                     TryeOutList::insert($trye_out_list);
                     TmsMoney::insert($moneylist);
 
@@ -648,7 +647,6 @@ class TryeController extends CommonController{
                     return $msg;
                 }
             }catch(\Exception $e){
-                dd($e);
                 DB::rollBack();
                 $msg['code'] = 302;
                 $msg['msg'] = "操作失败";
