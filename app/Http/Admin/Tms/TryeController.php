@@ -1090,7 +1090,6 @@ class TryeController extends CommonController{
         $where=get_list_where($search);
         $where1 = get_list_where($search1);
         $select=['self_id','model','group_name','use_flag'];
-
         $Signselect=['self_id','model','initial_num','change_num','create_time','now_num','trye_list'];
 //        dd($select);
         switch ($group_info['group_id']){
@@ -1098,9 +1097,15 @@ class TryeController extends CommonController{
                 $data['total']=TmsTryeList::where($where)->count(); //总的数据量
                 $data['items']=TmsTryeList::with(['TmsTryeCount' => function($query)use($Signselect,$where1) {
                     $query->where($where1);
-//                    $query->where('now_num','>','0');
                     $query->select($Signselect);
-                }])->where($where)
+                }])
+                    ->with(['tryeOutList' => function($query)use($where1) {
+                    $query->where($where1);
+                }])
+                    ->with(['tmsTrye' => function($query)use($where) {
+                        $query->where($where);
+                    }])
+                    ->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -1112,7 +1117,14 @@ class TryeController extends CommonController{
                 $data['items']=TmsTryeList::with(['TmsTryeCount' => function($query)use($Signselect,$where1) {
                     $query->where($where1);
                     $query->select($Signselect);
-                }])->where($where)
+                }])
+                    ->with(['tryeOutList' => function($query)use($where1) {
+                        $query->where($where1);
+                    }])
+                    ->with(['tmsTrye' => function($query)use($where) {
+                        $query->where($where);
+                    }])
+                    ->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
@@ -1123,7 +1135,14 @@ class TryeController extends CommonController{
                 $data['items']=TmsTryeList::with(['TmsTryeCount' => function($query)use($Signselect,$where1) {
                     $query->where($where1);
                     $query->select($Signselect);
-                }])->where($where)->whereIn('group_code',$group_info['group_code'])
+                }])
+                    ->with(['tryeOutList' => function($query)use($where1) {
+                        $query->where($where1);
+                    }])
+                    ->with(['tmsTrye' => function($query)use($where) {
+                        $query->where($where);
+                    }])
+                    ->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->select($select)
                     ->get();
                 $data['group_show']='Y';

@@ -57,6 +57,17 @@ class TmsTryeList extends Model{
         return $this->hasMany('App\Models\Tms\TmsTryeCount','model','model');
      }
 
+    public function tryeOutList(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Tms\TryeOutList','model','model');
+    }
+    public function tmsTrye(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\Tms\TmsTrye','model','model');
+    }
+
 
 
 }
