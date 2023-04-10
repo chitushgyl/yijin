@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Admin\Tms;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -39,6 +40,8 @@ class GroupController extends CommonController{
         $group_info         = $request->get('group_info');//接收中间件产生的参数
         $button_info        = $request->get('anniu');//接收中间件产生的参数
         $tms_group_type     =array_column(config('tms.company_type'),'name','key');
+        $now_time       =date('Y-m-d H:i:s',time());
+        $ago_time       =date(strtotime("-1 months",$now_time));
         /**接收数据*/
         $num            =$request->input('num')??10;
         $page           =$request->input('page')??1;
@@ -72,7 +75,7 @@ class GroupController extends CommonController{
             case 'all':
                 $data['total']=TmsGroup::where($where)->count(); //总的数据量
                 $data['items']=TmsGroup::where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('agreement_date', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderByRaw(DB::raw("CASE WHERE $ago_time <agreement_date< $now_time"))->orderBy('agreement_date', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
@@ -81,7 +84,7 @@ class GroupController extends CommonController{
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=TmsGroup::where($where)->count(); //总的数据量
                 $data['items']=TmsGroup::where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('agreement_date', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderByRaw(DB::raw("CASE WHERE $ago_time <agreement_date< $now_time"))->orderBy('agreement_date', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
@@ -89,7 +92,7 @@ class GroupController extends CommonController{
             case 'more':
                 $data['total']=TmsGroup::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=TmsGroup::where($where)->whereIn('group_code',$group_info['group_code'])
-                    ->offset($firstrow)->limit($listrows)->orderBy('agreement_date', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderByRaw(DB::raw("CASE WHERE $ago_time <agreement_date< $now_time"))->orderBy('agreement_date', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
