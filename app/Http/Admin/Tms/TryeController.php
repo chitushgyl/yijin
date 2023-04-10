@@ -1144,7 +1144,9 @@ class TryeController extends CommonController{
                 $v->count1 +=$vv->storage_number;
                 $v->count2 +=$vv->initial_num;
             }
-            $count = TmsTryeCount::where('date_time','<=',$start_time)->where('sku_id',$v->self_id)->sum('initial_num');
+            $count = TmsTryeCount::where('date_time','<=',$start_time)
+//                ->where('sku_id',$v->self_id)
+                ->sum('initial_num');
             $v->count4 = $count??$count3;
             $v->count3 = ($v->count1-$v->count)??$count4;
 
