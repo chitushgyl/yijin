@@ -623,6 +623,7 @@ class TryeController extends CommonController{
                         $money['create_time']        =$money['update_time']=$now_time;
                         $moneylist[]=$money;
                     }
+                    dd($moneylist);
                     TryeOutList::insert($trye_out_list);
                     TmsMoney::insert($moneylist);
 
