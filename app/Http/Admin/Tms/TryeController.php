@@ -1066,7 +1066,6 @@ class TryeController extends CommonController{
         $group_code     =$request->input('group_code');
 
         $warehouse_name      =$request->input('warehouse_name');
-        $external_sku_id     =$request->input('external_sku_id');
         $good_name           =$request->input('good_name');
         $start_time          =$request->input('start_time');
         $end_time            =$request->input('end_time');
@@ -1141,7 +1140,7 @@ class TryeController extends CommonController{
             $v->count2=0;
             foreach ($v->TmsTryeCount as $kk=>$vv) {
                 $v->count +=$vv->now_num;
-                $v->count1 +=$vv->storage_number;
+                $v->count1 +=$vv->change_num;
                 $v->count2 +=$vv->initial_num;
             }
             $count = TmsTryeCount::where('date_time','<=',$start_time)
