@@ -41,7 +41,7 @@ class GroupController extends CommonController{
         $button_info        = $request->get('anniu');//接收中间件产生的参数
         $tms_group_type     =array_column(config('tms.company_type'),'name','key');
         $now_time       =date('Y-m-d H:i:s',time());
-        $ago_time       =date(strtotime("-1 months",$now_time));
+        $ago_time       =date('Y-m-d H:i:s',strtotime("-1 months",$now_time));
         /**接收数据*/
         $num            =$request->input('num')??10;
         $page           =$request->input('page')??1;
