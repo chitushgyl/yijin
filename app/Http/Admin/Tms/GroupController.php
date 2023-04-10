@@ -77,7 +77,7 @@ class GroupController extends CommonController{
                 $data['items']=TmsGroup::where($where)
                     ->offset($firstrow)->limit($listrows)
 //                    ->orderByRaw(DB::raw("CASE WHERE $ago_time <agreement_date< $now_time then 3000-01-01 else  end"))
-                    ->orderByRaw(DB::raw("CASE WHERE $ago_time < agreement_date then 1 else 2 end"))
+                    ->orderByRaw(DB::raw("CASE WHERE cost_type=day  then 1 else 2 end"))
                     ->orderBy('agreement_date', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
@@ -89,7 +89,7 @@ class GroupController extends CommonController{
                 $data['items']=TmsGroup::where($where)
                     ->offset($firstrow)->limit($listrows)
 //                    ->orderByRaw(DB::raw("CASE WHERE $ago_time <agreement_date< $now_time then 3000-01-01 else  end"))
-                    ->orderByRaw(DB::raw("CASE WHERE $ago_time < agreement_date then 1 else 2 end"))
+                    ->orderByRaw(DB::raw("CASE WHERE cost_type=day  then 1 else 2 end"))
                     ->orderBy('agreement_date', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
@@ -100,7 +100,7 @@ class GroupController extends CommonController{
                 $data['items']=TmsGroup::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)
 //                    ->orderByRaw(DB::raw("CASE WHERE $ago_time <agreement_date< $now_time then 3000-01-01 else  end"))
-                    ->orderByRaw(DB::raw("CASE WHERE $ago_time < agreement_date then 1 else 2 end"))
+                    ->orderByRaw(DB::raw("CASE WHERE cost_type=day  then 1 else 2 end"))
                     ->orderBy('agreement_date', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
