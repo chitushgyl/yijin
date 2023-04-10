@@ -75,7 +75,9 @@ class GroupController extends CommonController{
             case 'all':
                 $data['total']=TmsGroup::where($where)->count(); //总的数据量
                 $data['items']=TmsGroup::where($where)
-                    ->offset($firstrow)->limit($listrows)->orderByRaw(DB::raw("CASE WHERE $ago_time <agreement_date< $now_time"))->orderBy('agreement_date', 'desc')
+                    ->offset($firstrow)->limit($listrows)
+//                    ->orderByRaw(DB::raw("CASE WHERE $ago_time <agreement_date< $now_time"))
+                    ->orderBy('agreement_date', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
@@ -84,7 +86,9 @@ class GroupController extends CommonController{
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=TmsGroup::where($where)->count(); //总的数据量
                 $data['items']=TmsGroup::where($where)
-                    ->offset($firstrow)->limit($listrows)->orderByRaw(DB::raw("CASE WHERE $ago_time <agreement_date< $now_time"))->orderBy('agreement_date', 'desc')
+                    ->offset($firstrow)->limit($listrows)
+//                    ->orderByRaw(DB::raw("CASE WHERE $ago_time <agreement_date< $now_time"))
+                    ->orderBy('agreement_date', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
@@ -92,7 +96,9 @@ class GroupController extends CommonController{
             case 'more':
                 $data['total']=TmsGroup::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=TmsGroup::where($where)->whereIn('group_code',$group_info['group_code'])
-                    ->offset($firstrow)->limit($listrows)->orderByRaw(DB::raw("CASE WHERE $ago_time <agreement_date< $now_time"))->orderBy('agreement_date', 'desc')
+                    ->offset($firstrow)->limit($listrows)
+//                    ->orderByRaw(DB::raw("CASE WHERE $ago_time <agreement_date< $now_time"))
+                    ->orderBy('agreement_date', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
