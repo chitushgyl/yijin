@@ -243,6 +243,7 @@ class CountController extends CommonController{
                 $v->count +=$vv->now_num;
             }
             $v->jie_count = $v->in_count - $v->out_count;
+            $v->initial_count = WmsLibraryChange::where('inout_time','<=',$start_time)->where('sku_id',$v->self_id)->sum('initial_num');
             $v->good_describe =unit_do($v->wms_unit , $v->wms_target_unit, $v->wms_scale, $v->count);
             $v->button_info=$button_info;
         }
