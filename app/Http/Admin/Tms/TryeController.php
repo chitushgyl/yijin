@@ -1058,21 +1058,36 @@ class TryeController extends CommonController{
         $medol_name='TmsTrye';
         $self_id=$request->input('self_id');
         $flag='delFlag';
-//        $self_id='car_202012242220439016797353';
+        $old_info = TmsTrye::whereIn('self_id',explode(',',$self_id))->select('use_flag','self_id','delete_flag','group_code','state')->get();
+        $data['delete_flag']='N';
+        $data['update_time']=$now_time;
+        foreach($old_info as $k => $v){
+            if ($v->state == 'N'){
+                TryeOutList::where('order_id',$v->self_id)->update($data);
+            }
+        }
+//        dd($old_info);
+        $id=CarOil::whereIn('self_id',explode(',',$self_id))->update($data);
+        if ($id){
+            $msg['code']=200;
+            $msg['msg']="数据拉取成功";
+        }else{
+            $msg['code']=301;
+            $msg['msg']="删除失败";
 
-        $status_info=$status->changeFlag($table_name,$medol_name,$self_id,$flag,$now_time);
+        }
 
         $operationing->access_cause='删除';
         $operationing->table=$table_name;
         $operationing->table_id=$self_id;
         $operationing->now_time=$now_time;
-        $operationing->old_info=$status_info['old_info'];
-        $operationing->new_info=$status_info['new_info'];
+        $operationing->old_info=$old_info;
+        $operationing->new_info=(object)$data;
         $operationing->operation_type=$flag;
 
-        $msg['code']=$status_info['code'];
-        $msg['msg']=$status_info['msg'];
-        $msg['data']=$status_info['new_info'];
+        $msg['code']=$msg['code'];
+        $msg['msg']=$msg['msg'];
+        $msg['data']=(object)$data;
 
         return $msg;
     }
