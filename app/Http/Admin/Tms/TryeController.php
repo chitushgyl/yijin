@@ -80,6 +80,7 @@ class TryeController extends CommonController{
             case 'all':
                 $data['total']=TmsTrye::where($where)->count(); //总的数据量
                 $data['items']=TmsTrye::with(['TryeOutList'=>function($query)use($select1){
+                    $query->where('delete_flag','Y');
                     $query->select($select1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
@@ -91,6 +92,7 @@ class TryeController extends CommonController{
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=TmsTrye::where($where)->count(); //总的数据量
                 $data['items']=TmsTrye::with(['TryeOutList'=>function($query)use($select1){
+                    $query->where('delete_flag','Y');
                     $query->select($select1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
@@ -101,6 +103,7 @@ class TryeController extends CommonController{
             case 'more':
                 $data['total']=TmsTrye::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=TmsTrye::with(['TryeOutList'=>function($query)use($select1){
+                    $query->where('delete_flag','Y');
                     $query->select($select1);
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
