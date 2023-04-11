@@ -167,7 +167,7 @@ class TryeController extends CommonController{
         $operationing->type             ='add';
 
         $input              =$request->all();
-        //dd($input);
+    
         /** 接收数据*/
         $self_id            =$request->input('self_id');
         $car_id             =$request->input('car_id');//车牌号
