@@ -588,7 +588,9 @@ class TryeController extends CommonController{
             if($old_info){
                 $data['update_time']=$now_time;
                 $id=TmsTrye::where($wheres)->update($data);
-                TryeOutList::where('order_id',$self_id)->update($data);
+                $del_data['delete_flag']='N';
+                $del_data['update_time']=$now_time;
+                TryeOutList::where('order_id',$self_id)->update($del_data);
                 $operationing->access_cause='修改入库';
                 $operationing->operation_type='update';
 
