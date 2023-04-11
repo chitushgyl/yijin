@@ -584,8 +584,53 @@ class TryeController extends CommonController{
     /**
      * 出库审核
      * */
-    public function outUpate(Request $request){
+    public function outUpdate(Request $request){
+        $now_time=date('Y-m-d H:i:s',time());
+        $operationing = $request->get('operationing');//接收中间件产生的参数
+        $user_info          = $request->get('user_info');                //接收中间件产生的参数
+        $order_id=$request->input('self_id');
+        $order_id=["trye_202304110936155324333258"];
 
+        /**循环处理数据**/
+
+        $where=[
+            ['delete_flag','=','Y'],
+        ];
+        $select=['self_id','car_number','price','model','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag'];
+        $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag'];
+        $order = TmsTrye::with(['TryeOutList' => function($query) use($select1){
+            $query->select($select1);
+            $query->where('delete_flag','=','Y');
+            }])->where($where)->whereIn('self_id',$order_id)
+            ->select($select)->get()->toArray();
+        if ($order) {
+                /**检查是否包含已审核数据**/
+                $check = array_column($order, 'state');
+                $order_check = array_count_values($check);
+
+                if (array_key_exists('Y', $order_check)) {
+                    $msg['code'] = 301;
+                    $msg['msg'] = '选中的选项中包含了已审核订单，请检查';
+                    return $msg;
+                }
+
+                /**做出库订单数据**/
+                $count = count($order_id);
+                $temp['total_flag'] = 'Y';
+                $temp['total_time'] = $temp['update_time'] = $now_time;
+                $temp['status'] = 3;
+
+
+                $order_do = [];
+                foreach ($order as $k => $v) {
+                    if ($v['wms_out_order_list']) {
+                        foreach ($v['wms_out_order_list'] as $kk => $vv) {
+                            $order_do[] = $vv;
+                        }
+                    }
+                }
+                dd($order_do);
+            }
     }
 
     /*

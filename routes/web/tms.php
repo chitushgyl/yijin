@@ -331,7 +331,7 @@ Route::group([
     Route::any('/trye/tryeCountList','TryeController@tryeCountList');
     Route::any('/trye/tryeCountPage','TryeController@tryeCountPage');
     Route::any('/trye/getTrye','TryeController@getTrye');
-    Route::any('/trye/outUpate','TryeController@outUpate');
+    Route::any('/trye/outUpdate','TryeController@outUpdate');
 
     /**二级维护***/
     Route::any('/diplasic/diplasicList','DiplasicController@diplasicList');

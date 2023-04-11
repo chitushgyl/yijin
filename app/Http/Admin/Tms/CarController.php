@@ -542,7 +542,7 @@ class CarController extends CommonController{
         ];
 
         $where=get_list_where($search);
-        $select = ['self_id','car_number','car_brand'];
+        $select = ['self_id','car_number','car_brand','group_code'];
         $data['info']=TmsCar::where($where)->select($select)->get();
 
         $msg['code']=200;
