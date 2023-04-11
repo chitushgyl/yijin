@@ -510,6 +510,147 @@ class TryeController extends CommonController{
             $data['in_time']           =$in_time;
             $data['operator']          =$operator;
 
+
+            $wheres['self_id'] = $self_id;
+            $old_info=TmsTrye::where($wheres)->first();
+
+            if($old_info){
+                $data['update_time']=$now_time;
+                $id=TmsTrye::where($wheres)->update($data);
+                TryeOutList::where('order_id',$self_id)->update($data);
+                $operationing->access_cause='修改入库';
+                $operationing->operation_type='update';
+
+            }else{
+                $data['self_id']            =generate_id('trye_');
+                $data['create_user_id']     =$user_info->admin_id;
+                $data['create_user_name']   =$user_info->name;
+                $data['create_time']        =$data['update_time']=$now_time;
+                $data['group_code']         = $user_info->group_code;
+                $data['group_name']         = $user_info->group_name;
+                $id=TmsTrye::insert($data);
+
+                $operationing->access_cause='新建入库';
+                $operationing->operation_type='create';
+            }
+
+                $operationing->table_id=$old_info?$self_id:$data['self_id'];
+                $operationing->old_info=$old_info;
+                $operationing->new_info=$data;
+
+                if($id){
+                    $trye_out_list = [];
+                    foreach(json_decode($trye_list,true) as $key => $value){
+                        $list['self_id']            = generate_id('list_');
+                        $list['model']              = $value['model'];
+                        $list['trye_num']           = $value['trye_num'];
+                        $list['num']                = $value['num'];
+                        $list['price']              = $value['price'];
+                        $list['order_id']           = $data['self_id'];
+                        $list['kilo']               = $value['kilo_num'];
+                        $list['change']             = $value['change'];
+                        $list['trye_img']           = $value['trye_img'];
+                        $list['use_flag']           = 'N';
+                        $list['create_user_id']     = $user_info->admin_id;
+                        $list['create_user_name']   = $user_info->name;
+                        $list['create_time']        = $list['update_time']=$now_time;
+                        $list['group_code']         = $user_info->group_code;
+                        $list['group_name']         = $user_info->group_name;
+                        $trye_out_list[] = $list;
+
+                    }
+                    TryeOutList::insert($trye_out_list);
+                    $msg['code'] = 200;
+                    $msg['msg'] = "操作成功";
+                    return $msg;
+                }else{
+                    $msg['code'] = 302;
+                    $msg['msg'] = "操作失败";
+                    return $msg;
+                }
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
+    }
+
+    /**
+     * 出库审核
+     * */
+    public function outUpate(Request $request){
+
+    }
+
+    /*
+     *
+     * */
+    public function abc(Request $request){
+        $user_info = $request->get('user_info');//接收中间件产生的参数
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='tms_trye';
+
+        $operationing->access_cause     ='创建/修改车辆类型';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='add';
+
+        $input              =$request->all();
+        //dd($input);
+        /** 接收数据*/
+        $self_id            =$request->input('self_id');
+        $car_id             =$request->input('car_id');//车牌号
+        $car_number         =$request->input('car_number');//车牌号
+        $model              =$request->input('model');//型号
+        $num                =$request->input('num');//数量
+        $trye_num           =$request->input('trye_num');//编号
+        $operator           =$request->input('operator');//经办人
+        $type               =$request->input('type');//类型：in入库  out出库
+        $in_time            =$request->input('in_time');//时间
+        $driver_name        =$request->input('driver_name');//驾驶员
+        $change             =$request->input('change');//更换位置
+        $trye_list          =$request->input('trye_list');//更换位置
+
+        /**
+        $trye_list = [[
+        trye_num=>'',//轮胎编号
+        model=>'',//型号
+        num=>2,//数量
+        kilo_num=>'25062',//里程数
+        change=>'',//更换位置
+        trye_img=>'',//图片
+        price=>'',//轮胎单价
+        ]]
+         * */
+        $rules=[
+            'num'=>'required',
+        ];
+        $message=[
+            'num.required'=>'数量必须填写',
+        ];
+
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()) {
+
+            $data['type']              =$type;
+            $data['car_id']            =$car_id;
+            $data['car_number']        =$car_number;
+            $data['num']               =$num;
+            $data['change']            =$change;
+            $data['driver_name']       =$driver_name;
+            $data['trye_list']         =$trye_list;
+            $data['trye_num']          =$trye_num;
+            $data['in_time']           =$in_time;
+            $data['operator']          =$operator;
+
             DB::beginTransaction();
             try{
                 foreach (json_decode($trye_list,true) as $k => $v) {
