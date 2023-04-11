@@ -183,7 +183,7 @@ class CountController extends CommonController{
         $select=['self_id','good_name','good_english_name','wms_unit','wms_target_unit','wms_scale','wms_spec',
             'group_name','use_flag','external_sku_id'];
 
-        $Signselect=['sku_id','type','produce_time','expire_time','can_use','create_time','warehouse_name','area','row','column','tier','now_num','warehouse_sign_id'];
+        $Signselect=['sku_id','inout_time','type','produce_time','expire_time','can_use','create_time','warehouse_name','area','row','column','tier','now_num','warehouse_sign_id'];
 //        dd($select);
         switch ($group_info['group_id']){
             case 'all':
