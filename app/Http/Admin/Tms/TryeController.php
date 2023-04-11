@@ -357,6 +357,7 @@ class TryeController extends CommonController{
             $count['initial_num'] = $num;
             $count['change_num'] = $num;
             $count['now_num'] = $num;
+            $count['date_time'] = $in_time;
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsTrye::where($wheres)->first();
@@ -1464,14 +1465,14 @@ class TryeController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'=','name'=>'use_flag','value'=>'Y'],
             ['type'=>'>=','name'=>'now_num','value'=>0],
-//            ['type'=>'>','name'=>'entry_time','value'=>$start_time],
-//            ['type'=>'<=','name'=>'entry_time','value'=>$end_time],
+            ['type'=>'>','name'=>'date_time','value'=>$start_time],
+            ['type'=>'<=','name'=>'date_time','value'=>$end_time],
         ];
 
         $where=get_list_where($search);
         $where1 = get_list_where($search1);
         $select=['self_id','model','group_name','use_flag'];
-        $Signselect=['self_id','model','initial_num','change_num','create_time','now_num','trye_list'];
+        $Signselect=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time'];
 //        dd($select);
         switch ($group_info['group_id']){
             case 'all':
