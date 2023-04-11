@@ -447,6 +447,75 @@ class TryeController extends CommonController{
         return $msg;
     }
 
+    public function getStateTrye(Request $request){
+        /** 接收中间件参数**/
+        $group_info     = $request->get('group_info');//接收中间件产生的参数
+        $button_info    = $request->get('anniu');//接收中间件产生的参数
+
+        /**接收数据*/
+        $num            =$request->input('num')??10;
+        $page           =$request->input('page')??1;
+        $use_flag       =$request->input('use_flag');
+        $group_code     =$request->input('group_code');
+
+        $listrows       =$num;
+        $firstrow       =($page-1)*$listrows;
+
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'=','name'=>'state','value'=>'N'],
+            ['type'=>'=','name'=>'type','value'=>'out'],
+        ];
+
+        $where=get_list_where($search);
+
+        $select=['self_id','car_number','price','model','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag','state','user_id'];
+        $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag'];
+        switch ($group_info['group_id']){
+            case 'all':
+                $data['total']=TmsTrye::where($where)->count(); //总的数据量
+                $data['items']=TmsTrye::with(['TryeOutList'=>function($query)use($select1){
+                    $query->select($select1);
+                }])->where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='Y';
+                break;
+
+            case 'one':
+                $where[]=['group_code','=',$group_info['group_code']];
+                $data['total']=TmsTrye::where($where)->count(); //总的数据量
+                $data['items']=TmsTrye::with(['TryeOutList'=>function($query)use($select1){
+                    $query->select($select1);
+                }])->where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='N';
+                break;
+
+            case 'more':
+                $data['total']=TmsTrye::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=TmsTrye::with(['TryeOutList'=>function($query)use($select1){
+                    $query->select($select1);
+                }])->where($where)->whereIn('group_code',$group_info['group_code'])
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='Y';
+                break;
+        }
+
+        foreach ($data['items'] as $k=>$v) {
+
+        }
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
+
     /**
      * 出库
      * */
