@@ -243,17 +243,18 @@ class CountController extends CommonController{
                 $v->count +=$vv->now_num;
             }
 //            $v->jie_count = $v->in_count - $v->out_count;
-            $v->in_initial_count = WmsLibraryChange::where('inout_time','<=',$start_time)->where('type','preentry')->where('sku_id',$v->self_id)->sum('change_num');
-            $v->out_initial_count = WmsLibraryChange::where('inout_time','<=',$start_time)->where('type','out')->where('sku_id',$v->self_id)->sum('change_num');
+            $v->in_initial_count = WmsLibraryChange::where('inout_time','<',$start_time)->where('type','preentry')->where('sku_id',$v->self_id)->sum('change_num');
+            $v->out_initial_count = WmsLibraryChange::where('inout_time','<',$start_time)->where('type','out')->where('sku_id',$v->self_id)->sum('change_num');
             $v->initial_count = $v->in_initial_count - $v->out_initial_count;
             $v->jie_count = $v->in_count + $v->initial_count;
+
             $v->good_describe =unit_do($v->wms_unit , $v->wms_target_unit, $v->wms_scale, $v->count);
             $v->button_info=$button_info;
         }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
-        //dd($msg);
+//        dd($msg);
         return $msg;
     }
 
