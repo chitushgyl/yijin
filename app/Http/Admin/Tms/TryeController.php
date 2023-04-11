@@ -1380,10 +1380,10 @@ class TryeController extends CommonController{
                     $query->select($Signselect);
                 }])
                     ->with(['tryeOutList' => function($query)use($where) {
-                    $query->where($where);
+
                 }])
                     ->with(['tmsTrye' => function($query)use($where) {
-                        $query->where($where);
+
                     }])
                     ->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
@@ -1399,10 +1399,10 @@ class TryeController extends CommonController{
                     $query->select($Signselect);
                 }])
                     ->with(['tryeOutList' => function($query)use($where) {
-                        $query->where($where);
+
                     }])
                     ->with(['tmsTrye' => function($query)use($where) {
-                        $query->where($where);
+
                     }])
                     ->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
@@ -1417,10 +1417,10 @@ class TryeController extends CommonController{
                     $query->select($Signselect);
                 }])
                     ->with(['tryeOutList' => function($query)use($where) {
-                        $query->where($where);
+                     
                     }])
                     ->with(['tmsTrye' => function($query)use($where) {
-                        $query->where($where);
+
                     }])
                     ->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->select($select)
