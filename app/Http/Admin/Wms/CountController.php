@@ -165,8 +165,7 @@ class CountController extends CommonController{
             ['type'=>'like','name'=>'good_name','value'=>$good_name],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'external_sku_id','value'=>$external_sku_id],
-//            ['type'=>'>=','name'=>'create_time','value'=>$start_time],
-//            ['type'=>'<','name'=>'create_time','value'=>$end_time],
+
 
         ];
 
@@ -175,6 +174,8 @@ class CountController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'=','name'=>'use_flag','value'=>'Y'],
             ['type'=>'>','name'=>'now_num','value'=>0],
+            ['type'=>'>=','name'=>'inout_time','value'=>$start_time],
+            ['type'=>'<','name'=>'inout_time','value'=>$end_time],
         ];
 
         $where=get_list_where($search);
@@ -182,7 +183,7 @@ class CountController extends CommonController{
         $select=['self_id','good_name','good_english_name','wms_unit','wms_target_unit','wms_scale','wms_spec',
             'group_name','use_flag','external_sku_id'];
 
-        $Signselect=['sku_id','production_date','expire_time','can_use','create_time','warehouse_name','area','row','column','tier','now_num','warehouse_sign_id'];
+        $Signselect=['sku_id','type','produce_time','expire_time','can_use','create_time','warehouse_name','area','row','column','tier','now_num','warehouse_sign_id'];
 //        dd($select);
         switch ($group_info['group_id']){
             case 'all':
@@ -222,19 +223,29 @@ class CountController extends CommonController{
         }
 
 
-        dd($data['items']->toArray());
+//        dd($data['items']->toArray());
 
         foreach ($data['items'] as $k=>$v) {
             $v->count=0;
-            foreach ($v->wmsLibrarySige as $kk=>$vv) {
+            $v->in_count=0;
+            $v->out_count=0;
+            $v->initial_count=0;
+            $v->jie_count=0;
+            foreach ($v->wmsLibraryChange as $kk=>$vv) {
+                if ($vv->type == 'preentry'){
+                    $v->in_count += $vv->now_num;
+                }else{
+                    $v->out_count += $vv->change_num;
+                }
+                $v->initial_count += $vv->initial_num;
 
                 $vv->good_describe =unit_do($v->wms_unit , $v->wms_target_unit, $v->wms_scale, $vv->now_num);
                 $v->count +=$vv->now_num;
             }
+            $v->jie_count = $v->in_count - $v->out_count;
             $v->good_describe =unit_do($v->wms_unit , $v->wms_target_unit, $v->wms_scale, $v->count);
             $v->button_info=$button_info;
         }
-        dd($data['items']->toArray());
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
