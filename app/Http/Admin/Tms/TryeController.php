@@ -793,7 +793,7 @@ class TryeController extends CommonController{
                         TmsMoney::insert($moneylist);
                         $data['use_flag'] = 'Y';
                         $data['update_time'] = $now_time;
-                        TmsTryeList::whereIn('order_id',$order_id)->update($data);
+                        TryeOutList::whereIn('order_id',$order_id)->update($data);
                         DB::commit();
                         $msg['code'] = 200;
                         $msg['msg'] = "操作成功";
@@ -805,7 +805,6 @@ class TryeController extends CommonController{
                         return $msg;
                     }
                 }catch(\Exception $e){
-                    dd($e);
                     DB::rollBack();
                     $msg['code'] = 302;
                     $msg['msg'] = "操作失败";
