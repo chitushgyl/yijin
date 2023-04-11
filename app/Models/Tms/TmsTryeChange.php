@@ -7,14 +7,14 @@
  */
 namespace App\Models\Tms;
 use  Illuminate\Database\Eloquent\Model;
-class TmsTryeList extends Model{
+class TmsTryeChange extends Model{
     //软删除
     //   use SoftDeletes;
     //模型的连接名称（单独连接其他数据库）
     //protected $connection = 'connection-name';
 
     //指定数据库表 如果表名后带s则不需要 不带则需要
-    protected $table = 'tms_trye_list';
+    protected $table = 'tms_trye_change';
 
     //指定主键字段 默认为id
     //protected $primaryKey = 'id';
@@ -51,30 +51,12 @@ class TmsTryeList extends Model{
     ];
 
 //一对一
- public function TmsTryeCount(){
+    public function TryeOutList(){
         //参数：关联模型名称，外键，主键
         //如果主键是id可以省略
-        return $this->hasMany('App\Models\Tms\TmsTryeCount','model','model');
-     }
-
-    public function tryeOutList(){
-        //参数：关联模型名称，外键，主键
-        //如果主键是id可以省略
-        return $this->hasMany('App\Models\Tms\TryeOutList','model','model');
-    }
-    public function tmsTrye(){
-        //参数：关联模型名称，外键，主键
-        //如果主键是id可以省略
-        return $this->hasMany('App\Models\Tms\TmsTrye','model','model');
-    }
-
-    public function tmsTryeChange(){
-        //参数：关联模型名称，外键，主键
-        //如果主键是id可以省略
-        return $this->hasMany('App\Models\Tms\TmsTryeChange','order_id','self_id');
+        return $this->hasMany('App\Models\Tms\TryeOutList','order_id','self_id');
     }
 
 
 
 }
-
