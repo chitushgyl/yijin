@@ -1453,6 +1453,7 @@ class TryeController extends CommonController{
                 }])
                     ->with(['tryeOutList' => function($query)use($where) {
                         $query->where('use_flag','Y');
+                        $query->where('delete_flag','Y');
                 }])
                     ->with(['tmsTrye' => function($query)use($where) {
                         $query->where('state','Y');
@@ -1472,6 +1473,7 @@ class TryeController extends CommonController{
                 }])
                     ->with(['tryeOutList' => function($query)use($where) {
                         $query->where('use_flag','Y');
+                        $query->where('delete_flag','Y');
                     }])
                     ->with(['tmsTrye' => function($query)use($where) {
                         $query->where('state','Y');
@@ -1490,6 +1492,7 @@ class TryeController extends CommonController{
                 }])
                     ->with(['tryeOutList' => function($query)use($where) {
                         $query->where('use_flag','Y');
+                        $query->where('delete_flag','Y');
                     }])
                     ->with(['tmsTrye' => function($query)use($where) {
                           $query->where('state','Y');
