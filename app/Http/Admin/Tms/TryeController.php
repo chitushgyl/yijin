@@ -619,7 +619,12 @@ class TryeController extends CommonController{
                         $list['trye_num']           = $value['trye_num'];
                         $list['num']                = $value['num'];
                         $list['price']              = $value['price'];
-                        $list['order_id']           = $data['self_id'];
+                        if ($self_id){
+                            $list['order_id']           = $self_id;
+                        }else{
+                            $list['order_id']           = $data['self_id'];
+                        }
+
                         $list['kilo']               = $value['kilo_num'];
                         $list['change']             = $value['change'];
                         $list['trye_img']           = $value['trye_img'];
