@@ -138,6 +138,7 @@ class TryeController extends CommonController{
         $select=['self_id','car_number','price','car_number','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag','state','user_id'];
         $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag'];
         $data['info']=TmsTrye::with(['TryeOutList'=>function($query)use($select1){
+            $query->where('delete_flag','Y');
              $query->select($select1);
         }])->where($where)->select($select)->first();
         if($data['info']){
