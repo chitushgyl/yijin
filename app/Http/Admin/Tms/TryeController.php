@@ -777,6 +777,9 @@ class TryeController extends CommonController{
                     $id = TmsTrye::whereIn('self_id',$order_id)->update($temp);
                     if($id){
                         TmsMoney::insert($moneylist);
+                        $data['use_flag'] = 'Y';
+                        $data['update_time'] = $now_time;
+                        TmsTryeList::whereIn('order_id',$order_id)->update($data);
                         DB::commit();
                         $msg['code'] = 200;
                         $msg['msg'] = "操作成功";
@@ -1449,7 +1452,7 @@ class TryeController extends CommonController{
                     $query->select($Signselect);
                 }])
                     ->with(['tryeOutList' => function($query)use($where) {
-
+                        $query->where('use_flag','Y');
                 }])
                     ->with(['tmsTrye' => function($query)use($where) {
                         $query->where('state','Y');
@@ -1468,7 +1471,7 @@ class TryeController extends CommonController{
                     $query->select($Signselect);
                 }])
                     ->with(['tryeOutList' => function($query)use($where) {
-
+                        $query->where('use_flag','Y');
                     }])
                     ->with(['tmsTrye' => function($query)use($where) {
                         $query->where('state','Y');
@@ -1486,7 +1489,7 @@ class TryeController extends CommonController{
                     $query->select($Signselect);
                 }])
                     ->with(['tryeOutList' => function($query)use($where) {
-
+                        $query->where('use_flag','Y');
                     }])
                     ->with(['tmsTrye' => function($query)use($where) {
                           $query->where('state','Y');
