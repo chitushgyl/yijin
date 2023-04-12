@@ -104,6 +104,12 @@ class LibraryController extends CommonController{
         $listrows           =$num;
         $firstrow           =($page-1)*$listrows;
 
+        if ($start_time) {
+            $start_time = $start_time.' 00:00:00';
+        }
+        if ($end_time) {
+            $end_time = $end_time.' 23:59:59';
+        }
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
@@ -112,8 +118,8 @@ class LibraryController extends CommonController{
 			['type'=>'like','name'=>'group_code','value'=>$group_code],
 			['type'=>'=','name'=>'order_status','value'=>$order_status],
 			['type'=>'like','name'=>'purchase','value'=>$purchase],
-			['type'=>'>=','name'=>'enter_time','value'=>$start_time.' 00:00:00'],
-			['type'=>'<','name'=>'enter_time','value'=>$end_time.' 23:59:59'],
+			['type'=>'>=','name'=>'enter_time','value'=>$start_time],
+			['type'=>'<','name'=>'enter_time','value'=>$end_time],
 
         ];
 

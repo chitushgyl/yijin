@@ -59,14 +59,20 @@ class CarOilController extends CommonController{
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
+        if ($start_time) {
+            $start_time = $start_time.' 00:00:00';
+        }
+        if ($end_time) {
+            $end_time = $end_time.' 23:59:59';
+        }
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
             ['type'=>'like','name'=>'ic_number','value'=>$ic_number],
-            ['type'=>'>=','name'=>'add_time','value'=>$start_time.' 00:00:00'],
-            ['type'=>'<','name'=>'add_time','value'=>$end_time.' 23:59:59'],
+            ['type'=>'>=','name'=>'add_time','value'=>$start_time],
+            ['type'=>'<','name'=>'add_time','value'=>$end_time],
         ];
 
         $where=get_list_where($search);

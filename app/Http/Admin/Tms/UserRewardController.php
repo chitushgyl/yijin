@@ -88,7 +88,12 @@ class UserRewardController extends CommonController{
         $end_time       =$request->input('end_time');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
-
+        if ($start_time) {
+            $start_time = $start_time.' 00:00:00';
+        }
+        if ($end_time) {
+            $end_time = $end_time.' 23:59:59';
+        }
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
@@ -96,8 +101,8 @@ class UserRewardController extends CommonController{
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
             ['type'=>'=','name'=>'user_id','value'=>$user_id],
             ['type'=>'=','name'=>'type','value'=>$type],
-            ['type'=>'>=','name'=>'event_time','value'=>$start_time.' 00:00:00'],
-            ['type'=>'<=','name'=>'event_time','value'=>$end_time.' 23:59:59'],
+            ['type'=>'>=','name'=>'event_time','value'=>$start_time],
+            ['type'=>'<=','name'=>'event_time','value'=>$end_time],
         ];
 
 

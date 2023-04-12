@@ -64,6 +64,12 @@ class OrderController extends CommonController{
         $listrows           = $num;
         $firstrow           = ($page - 1) * $listrows;
 
+        if ($start_time) {
+            $start_time = $start_time.' 00:00:00';
+        }
+        if ($end_time) {
+            $end_time = $end_time.' 23:59:59';
+        }
         $search = [
             ['type' => '=', 'name' => 'delete_flag', 'value' => 'Y'],
             ['type' => 'all', 'name' => 'use_flag', 'value' => $use_flag],
@@ -72,8 +78,8 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'status','value'=>$status],
             ['type'=>'like','name'=>'picker','value'=>$picker],
             ['type'=>'=','name'=>'car_num','value'=>$car_number],
-            ['type'=>'>=','name'=>'out_time','value'=>$start_time.' 00:00:00'],
-            ['type'=>'<','name'=>'out_time','value'=>$end_time.' 23:59:59'],
+            ['type'=>'>=','name'=>'out_time','value'=>$start_time],
+            ['type'=>'<','name'=>'out_time','value'=>$end_time],
         ];
 
         $where = get_list_where($search);

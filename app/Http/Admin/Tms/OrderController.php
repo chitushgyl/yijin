@@ -101,15 +101,20 @@ class OrderController extends CommonController{
         $order_state    =$request->input('order_state');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
-
+        if ($start_time) {
+            $start_time = $start_time.' 00:00:00';
+        }
+        if ($end_time) {
+            $end_time = $end_time.' 23:59:59';
+        }
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'company_id','value'=>$company_id],
             ['type'=>'=','name'=>'carriage_id','value'=>$carriage_id],
-            ['type'=>'=','name'=>'create_time','value'=>$start_time.' 00:00:00'],
-            ['type'=>'=','name'=>'create_time','value'=>$end_time.' 23:59:59'],
+            ['type'=>'=','name'=>'create_time','value'=>$start_time],
+            ['type'=>'=','name'=>'create_time','value'=>$end_time],
             ['type'=>'=','name'=>'enter_time','value'=>$enter_time],
             ['type'=>'=','name'=>'leave_time','value'=>$leave_time],
             ['type'=>'=','name'=>'car_number','value'=>$car_number],

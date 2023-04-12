@@ -60,14 +60,21 @@ class CarServiceController extends CommonController{
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
+        if ($start_time) {
+            $start_time = $start_time.' 00:00:00';
+        }
+        if ($end_time) {
+            $end_time = $end_time.' 23:59:59';
+        }
+
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
             ['type'=>'like','name'=>'driver_name','value'=>$driver_name],
-            ['type'=>'>=','name'=>'service_time','value'=>$start_time.' 00:00:00'],
-            ['type'=>'<','name'=>'service_time','value'=>$end_time.' 23:59:59'],
+            ['type'=>'>=','name'=>'service_time','value'=>$start_time],
+            ['type'=>'<','name'=>'service_time','value'=>$end_time],
             ['type'=>'=','name'=>'type','value'=>$type],
             ['type'=>'like','name'=>'service_partne','value'=>$service_partne],
         ];
