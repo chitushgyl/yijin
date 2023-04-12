@@ -67,8 +67,8 @@ class TryeController extends CommonController{
             ['type'=>'=','name'=>'type','value'=>$type],
             ['type'=>'=','name'=>'model','value'=>$model],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
-            ['type'=>'>','name'=>'in_time','value'=>$start_time],
-            ['type'=>'<=','name'=>'in_time','value'=>$end_time],
+            ['type'=>'>','name'=>'in_time','value'=>$start_time.' 00:00:00'],
+            ['type'=>'<=','name'=>'in_time','value'=>$end_time.' 23:59:59'],
         ];
 
 

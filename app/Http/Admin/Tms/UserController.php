@@ -68,10 +68,10 @@ class UserController extends CommonController{
             ['type'=>'=','name'=>'self_id','value'=>$self_id],
             ['type'=>'=','name'=>'type','value'=>$type],
             ['type'=>'=','name'=>'social_flag','value'=>$social_flag],
-            ['type'=>'>=','name'=>'entry_time','value'=>$entry_start],
-            ['type'=>'<','name'=>'entry_time','value'=>$entry_end],
-            ['type'=>'>=','name'=>'leave_time','value'=>$leave_start],
-            ['type'=>'<','name'=>'leave_time','value'=>$leave_end],
+            ['type'=>'>=','name'=>'entry_time','value'=>$entry_start.' 00:00:00'],
+            ['type'=>'<','name'=>'entry_time','value'=>$entry_end.' 23:59:59'],
+            ['type'=>'>=','name'=>'leave_time','value'=>$leave_start.' 00:00:00'],
+            ['type'=>'<','name'=>'leave_time','value'=>$leave_end.' 23:59:59'],
         ];
 
         $where=get_list_where($search);

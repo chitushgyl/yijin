@@ -72,8 +72,8 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'status','value'=>$status],
             ['type'=>'like','name'=>'picker','value'=>$picker],
             ['type'=>'=','name'=>'car_num','value'=>$car_number],
-            ['type'=>'>=','name'=>'out_time','value'=>$start_time],
-            ['type'=>'<','name'=>'out_time','value'=>$end_time],
+            ['type'=>'>=','name'=>'out_time','value'=>$start_time.' 00:00:00'],
+            ['type'=>'<','name'=>'out_time','value'=>$end_time.' 23:59:59'],
         ];
 
         $where = get_list_where($search);

@@ -87,17 +87,18 @@ class OrderController extends CommonController{
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
         $company_id     =$request->input('company_id');
+        $carriage_id    =$request->input('carriage_id');
         $order_type     =$request->input('order_type');
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
         $enter_time     =$request->input('enter_time');
         $leave_time     =$request->input('leave_time');
         $car_number     =$request->input('car_number');
-        $gather_name     =$request->input('gather_name');
-        $send_name     =$request->input('send_name');
-        $user_name     =$request->input('user_name');
-        $escort_name     =$request->input('escort_name');
-        $order_state     =$request->input('order_state');
+        $gather_name    =$request->input('gather_name');
+        $send_name      =$request->input('send_name');
+        $user_name      =$request->input('user_name');
+        $escort_name    =$request->input('escort_name');
+        $order_state    =$request->input('order_state');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -106,8 +107,9 @@ class OrderController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'company_id','value'=>$company_id],
-            ['type'=>'=','name'=>'create_time','value'=>$start_time],
-            ['type'=>'=','name'=>'create_time','value'=>$end_time],
+            ['type'=>'=','name'=>'carriage_id','value'=>$carriage_id],
+            ['type'=>'=','name'=>'create_time','value'=>$start_time.' 00:00:00'],
+            ['type'=>'=','name'=>'create_time','value'=>$end_time.' 23:59:59'],
             ['type'=>'=','name'=>'enter_time','value'=>$enter_time],
             ['type'=>'=','name'=>'leave_time','value'=>$leave_time],
             ['type'=>'=','name'=>'car_number','value'=>$car_number],
@@ -117,48 +119,11 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'escort_name','value'=>$escort_name],
             ['type'=>'=','name'=>'order_type','value'=>$order_type],
         ];
-        if ($order_state){
-            if ($order_state == 1){
-                $search=[
-                    ['type'=>'!=','name'=>'order_type','value'=>3],
-                    ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
-                    ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
-                    ['type'=>'=','name'=>'group_code','value'=>$group_code],
-                    ['type'=>'=','name'=>'company_id','value'=>$company_id],
-                    ['type'=>'=','name'=>'create_time','value'=>$start_time],
-                    ['type'=>'=','name'=>'create_time','value'=>$end_time],
-                    ['type'=>'=','name'=>'enter_time','value'=>$enter_time],
-                    ['type'=>'=','name'=>'leave_time','value'=>$leave_time],
-                    ['type'=>'=','name'=>'car_number','value'=>$car_number],
-                    ['type'=>'=','name'=>'send_name','value'=>$send_name],
-                    ['type'=>'=','name'=>'gather_name','value'=>$gather_name],
-                    ['type'=>'=','name'=>'user_name','value'=>$user_name],
-                    ['type'=>'=','name'=>'escort_name','value'=>$escort_name],
-                ];
-            }else{
-                $search=[
-                    ['type'=>'=','name'=>'order_type','value'=>3],
-                    ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
-                    ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
-                    ['type'=>'=','name'=>'group_code','value'=>$group_code],
-                    ['type'=>'=','name'=>'company_id','value'=>$company_id],
-                    ['type'=>'=','name'=>'create_time','value'=>$start_time],
-                    ['type'=>'=','name'=>'create_time','value'=>$end_time],
-                    ['type'=>'=','name'=>'enter_time','value'=>$enter_time],
-                    ['type'=>'=','name'=>'leave_time','value'=>$leave_time],
-                    ['type'=>'=','name'=>'car_number','value'=>$car_number],
-                    ['type'=>'=','name'=>'send_name','value'=>$send_name],
-                    ['type'=>'=','name'=>'gather_name','value'=>$gather_name],
-                    ['type'=>'=','name'=>'user_name','value'=>$user_name],
-                    ['type'=>'=','name'=>'escort_name','value'=>$escort_name],
-                ];
-            }
-        }
-
+        
 
         $where=get_list_where($search);
 
-        $select=['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code',
+        $select=['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code','id',
             'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
             'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
@@ -947,7 +912,7 @@ class OrderController extends CommonController{
              * 第四个位置为数据库的对应字段
              */
             $shuzu=[
-                '标识' =>['Y','N','100','order_mark'],
+                // '标识' =>['Y','N','100','order_mark'],
                 '所属组织' =>['Y','Y','100','company_name'],
                 '委托单位' =>['Y','Y','100','carriage_name'],
                 '货物品名' =>['Y','Y','64','good_name'],
