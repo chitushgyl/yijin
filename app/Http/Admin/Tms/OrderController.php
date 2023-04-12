@@ -59,7 +59,14 @@ class OrderController extends CommonController{
         if ($type == 1){
 
         }else{
-            $data['button_info'] = [];
+            $button_info1=[];
+            foreach ($button_info as $k => $v){
+                if($v->id == 200){
+                   $button_info1[] = $v;
+                }
+
+            }  
+            $data['button_info'] = $button_info1;
         }
 
 
