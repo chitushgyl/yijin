@@ -2,6 +2,7 @@
 namespace App\Http\Admin\Wms;
 use App\Models\Group\SystemUser;
 use App\Models\Tms\TmsMoney;
+use App\Models\Tms\TmsMoneyCount;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\DB;
@@ -713,11 +714,139 @@ class MoneyController extends CommonController{
         //dd($msg);
         return $msg;
     }
+    //应收账款列表头部
+    public function settleList(Request $request){
+        $data['page_info']      =config('page.listrows');
+        $data['type'] = config('tms.money_type');
+        $data['button_info']    =$request->get('anniu');
 
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
+
+    //应收账款列表
+    public function settlePage(Request $request){
+        $money_type_show    =array_column(config('tms.money_type'),'name','key');
+
+        /** 接收中间件参数**/
+        $group_info     = $request->get('group_info');//接收中间件产生的参数
+        $button_info    = $request->get('anniu');//接收中间件产生的参数
+
+        /**接收数据*/
+        $num            =$request->input('num')??10;
+        $page           =$request->input('page')??1;
+        $use_flag       =$request->input('use_flag');
+        $group_code     =$request->input('group_code');
+        $car_number     =$request->input('car_number');
+        $user_name      =$request->input('user_name');
+        $type           =$request->input('pay_type');
+        $start_time     =$request->input('start_time');
+        $end_time       =$request->input('end_time');
+        $type_state     =$request->input('type_state');
+        $listrows       =$num;
+        $firstrow       =($page-1)*$listrows;
+
+        if ($start_time) {
+            $start_time = $start_time.' 00:00:00';
+        }
+        if ($end_time) {
+            $end_time = $end_time.' 23:59:59';
+        }
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'=','name'=>'pay_type','value'=>$type],
+            ['type'=>'like','name'=>'car_number','value'=>$car_number],
+            ['type'=>'like','name'=>'user_name','value'=>$user_name],
+            ['type'=>'>=','name'=>'create_time','value'=>$start_time],
+            ['type'=>'<','name'=>'create_time','value'=>$end_time],
+            ['type'=>'=','name'=>'type_state','value'=>$type_state],
+        ];
+
+
+        $where=get_list_where($search);
+
+        $select=['self_id','total_money','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name','order_id',
+            'delete_flag','use_flag','pay_state','carriage_id','carriage_name','receive_money','settle_money','bill_time','bill_flag','receipt'];
+
+        switch ($group_info['group_id']){
+            case 'all':
+                $data['total']=TmsMoneyCount::where($where)->count(); //总的数据量
+                $data['items']=TmsMoneyCount::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
+                    ->select($select)->get();
+                $data['total_money']=TmsMoneyCount::where($where)->sum('total_money')
+                $data['receive_money']=TmsMoneyCount::where($where)->sum('receive_money');
+                $data['settle_money']=TmsMoneyCount::where($where)->sum('settle_money');
+                $data['group_show']='Y';
+                break;
+
+            case 'one':
+                $where[]=['group_code','=',$group_info['group_code']];
+                $data['total']=TmsMoneyCount::where($where)->count(); //总的数据量
+                $data['items']=TmsMoneyCount::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
+                    ->select($select)->get();
+                $data['total_money']=TmsMoneyCount::where($where)->sum('total_money')
+                $data['receive_money']=TmsMoneyCount::where($where)->sum('receive_money');
+                $data['settle_money']=TmsMoneyCount::where($where)->sum('settle_money');
+                $data['group_show']='N';
+                break;
+
+            case 'more':
+                $data['total']=TmsMoneyCount::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=TmsMoneyCount::where($where)->whereIn('group_code',$group_info['group_code'])
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
+                    ->select($select)->get();
+                $data['total_money']=TmsMoneyCount::where($where)->sum('total_money')
+                $data['receive_money']=TmsMoneyCount::where($where)->sum('receive_money');
+                $data['settle_money']=TmsMoneyCount::where($where)->sum('settle_money');
+                $data['group_show']='Y';
+                break;
+        }
+
+        $button_info1=[];
+        $button_info2=[];
+        $button_info3=[];
+        $button_info4=[];
+        foreach ($button_info as $k => $v){
+            if($v->id == 99){
+                $button_info1[] = $v;
+                $button_info3[] = $v;
+            }
+            if($v->id == 174){
+                $button_info2[] = $v;
+                $button_info3[] = $v;
+            }
+
+        }
+        foreach ($data['items'] as $k=>$v) {
+            $v->pay_type=$money_type_show[$v->pay_type]??null;
+            $v->button_info=$button_info;
+            if ($v->pay_state == 'N'){
+                $v->button_info=$button_info3;
+            }
+            if ($v->pay_state == 'Y'){
+                $v->button_info=$button_info4;
+            }
+
+        }
+        
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        //dd($msg);
+        return $msg;
+    }
+
+    //应收账款上传发票
     public function upReceipt(Request $request){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
-        $table_name     ='tms_money';
+        $table_name     ='tms_money_count';
 
         $operationing->access_cause     ='创建/修改商品';
         $operationing->table            =$table_name;
@@ -730,6 +859,7 @@ class MoneyController extends CommonController{
         /** 接收数据*/
         $self_id            =$request->input('self_id');
         $receipt            =$request->input('receipt');//修改金额
+        $bill_time          =$request->input('bill_time');//开票时间
 
         $rules=[
             'self_id'=>'required',
@@ -743,7 +873,8 @@ class MoneyController extends CommonController{
         //操作的表
         if($validator->passes()){
             $wheres['self_id'] = $self_id;
-            $old_info=TmsMoney::where($wheres)->first();
+            $old_info=TmsMoneyCount::where($wheres)->first();
+
             if ($old_info->bill_flag == 'Y'){
                 $msg['code'] = 303;
                 $msg['msg'] = "已上传发票请勿重复操作！";
@@ -751,8 +882,9 @@ class MoneyController extends CommonController{
             }
             $data['bill_flag'] = 'Y';
             $data['receipt'] = img_for($receipt,'in');
+            $data['bill_time'] = $bill_time;
             $data['update_time']   = $now_time;
-            $id = TmsMoney::where('self_id',$self_id)->update($data);
+            $id = TmsMoneyCount::where('self_id',$self_id)->update($data);
 
             $operationing->access_cause='上传发票';
             $operationing->operation_type='create';
@@ -782,6 +914,26 @@ class MoneyController extends CommonController{
             return $msg;
         }
     }
+
+     //获取结算订单明细
+    public function getSettleOrder(Request $request){
+        $order_id=$request->input('order_id');
+        
+//        $input['group_code'] =  $group_code = '1234';
+       
+        $select = ['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code','id','settle_flag',
+            'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
+            'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
+            'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
+            ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name','order_mark','sale_price'];
+        $data['info']=TmsOrder::whereIn('self_id',explode(',',$order_id))->select($select)->get();
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
+
 
     /**
      * 生成工资

@@ -289,7 +289,10 @@ Route::group([
     Route::any('/money/updateMoney', 'MoneyController@updateMoney');//收款方确认
     Route::any('/money/countMoney', 'MoneyController@countMoney');//收款方确认
     Route::any('/money/countWages', 'MoneyController@countWages');//计算工资
-    Route::any('/money/upReceipt', 'MoneyController@upReceipt');//计算工资
+    Route::any('/money/upReceipt', 'MoneyController@upReceipt');//应收账款上传发票
+    Route::any('/money/settleList', 'MoneyController@settleList');//应收账款列表头部
+    Route::any('/money/settlePage', 'MoneyController@settlePage');//应收账款列表
+    Route::any('/money/getSettleOrder', 'MoneyController@getSettleOrder');//获取应收跟单明细
     Route::group([
         "middleware"=>['daily'],
     ], function(){

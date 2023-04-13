@@ -555,50 +555,70 @@ class OrderController extends CommonController{
             $data['sale_price']              = $sale_price;
 
 
-            $old_info = TmsOrder::where('self_id',$self_id)->first();
+            $old_info = TmsOrder::where('self_id',$self_id)->select('self_id','car_id','car_number','carriage_id','carriage_name','group_code','group_name','use_flag')->first();
 
             $data['update_time']=$now_time;
+            DB::beginTransaction;
+            try{
             $id=TmsOrder::where('self_id',$self_id)->update($data);
-            $operationing->access_cause='修改订单';
+            
+            $old_money = TmsMoney::where('order_id',$self_id)->first();
+            if ($old_money) {
+                $money['money']                  = $total_money; 
+                $money['before_money']           = $total_money;
+                $money['update_time']            = $now_time;
+                TmsMoney::where('self_id',$self_id)->update($money);
+            }else{
+                /**保存费用**/
+                $money['self_id']                = generate_id('money_');
+                $money['pay_type']               = 'freight';
+                $money['money']                  = $total_money;
+                $money['before_money']           = $total_money;
+                $money['car_id']                 = $old_info->car_id;
+                $money['car_number']             = $old_info->car_number;
+                $money['user_id']                = $user_id;
+                $money['user_name']              = $picker;
+                $money['pay_state']              = 'N';
+                $money['order_id']               = $self_id;
+                $money['process_state']          = 'N';
+                $money['type_state']             = 'in';
+                $money['company_id']             = $old_info->carriage_id;
+                $money['company_name']           = $old_info->carriage_name;
+                $money['group_code']             = $old_info->group_code;
+                $money['group_name']             = $old_info->group_name;
+                $money['create_user_id']         = $user_info->admin_id;
+                $money['create_user_name']       = $user_info->name;
+                $money['create_time']            = $money['update_time'] = $now_time;
+                TmsMoney::insert($money);
+                if($id){
+                   DB::commit();
+                   $msg['code'] = 200;
+                   $msg['msg'] = "操作成功";
+                   return $msg;
+                }else{
+                   DB::rollBack();
+                   $msg['code'] = 302;
+                   $msg['msg'] = "操作失败";
+                   return $msg;
+                }
+            }
+
+            }catch(\Exception $e){
+                   DB::rollBack;
+                   $msg['code'] = 302;
+                   $msg['msg'] = "操作失败";
+                   return $msg;
+            }
+            
+            
+
+            $operationing->access_cause='修改跟单金额';
             $operationing->operation_type='update';
-            $update['delete_flag'] = 'N';
-            $update['update_time'] = $now_time;
-            TmsMoney::where('order_id',$self_id)->update($update);
-
-            /**保存费用**/
-            $money['self_id']                = generate_id('money_');
-            $money['pay_type']               = 'freight';
-            $money['money']                  = $total_money;
-            $money['before_money']           = $total_money;
-            $money['car_id']                 = $old_info->car_id;
-            $money['car_number']             = $old_info->car_number;
-            $money['pay_state']              = 'N';
-            $money['order_id']               = $self_id;
-            $money['process_state']          = 'N';
-            $money['type_state']             = 'in';
-            $money['company_id']             = $old_info->company_id;
-            $money['company_name']           = $old_info->company_name;
-            $money['group_code']             = $group_code;
-//               $money['group_name']             = $group_name;
-            $money['create_user_id']         = $user_info->admin_id;
-            $money['create_user_name']       = $user_info->name;
-            $money['create_time']            = $money['update_time'] = $now_time;
-            TmsMoney::insert($money);
-
-
             $operationing->table_id=$old_info?$self_id:$self_id;
             $operationing->old_info=$old_info;
             $operationing->new_info=$data;
 
-            if($id){
-                $msg['code'] = 200;
-                $msg['msg'] = "操作成功";
-                return $msg;
-            }else{
-                $msg['code'] = 302;
-                $msg['msg'] = "操作失败";
-                return $msg;
-            }
+            
 
             /***二次效验结束**/
         }else{
@@ -614,6 +634,7 @@ class OrderController extends CommonController{
         }
 
     }
+
 
     //结算订单
     public function settleOrder(Request $request){
@@ -631,6 +652,8 @@ class OrderController extends CommonController{
 
         //接收数据
         $order_id                 = $request->input('order_id');//订单ID
+        $carriage_id              = $request->input('carriage_id');//订单ID
+        $carriage_name            = $request->input('carriage_name');//订单ID
 
         $rules=[
             'order_id' => 'required',
@@ -640,9 +663,20 @@ class OrderController extends CommonController{
         ];
         $validator=Validator::make($input,$rules,$message);
         if($validator->passes()){
-
-           $total_money = TmsOrder::whereIn('self_id',$order_id)->sum('total_money');
+           TmsOrder::whereIn('self_id',$order_id)->select('self_id,car_id','car_number','total_money','')->get();
+           $total_money = TmsOrder::whereIn('self_id',explode(','$order_id))->sum('total_money');
            //保存运费结算表
+           $settle['self_id']   = generate_id('settle_');
+           $settle['money']     = $total_money;
+           $settle['total_money'] =$total_money;
+           $settle['carriage_id'] =$carriage_id;
+           $settle['carriage_name'] =$carriage_name;
+           $settle['order_id']    = $order_id;
+           $settle['group_code']  = $user_info->group_code;
+           $settle['group_name']  = $user_info->group_name;
+           $settle['create_user_id'] = $user_info->create_user_id;
+           $settle['create_user_name'] = $user_info->create_user_name;
+           $settle['create_time']  = $settle['update_time'] = $now_time;
            //修改订单结算记录
            $data['settle_flag'] = 'Y';
            $data['update_time'] = $now_time;
@@ -660,6 +694,7 @@ class OrderController extends CommonController{
 
     }
 
+   
     /**
      * 调度  tms/order/dispatchOrder
      * */

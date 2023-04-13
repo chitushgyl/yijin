@@ -141,6 +141,7 @@ Route::group([
 	Route::any('/order/excelOrder','OrderController@excelOrder');
 	Route::any('/order/excelDanger','OrderController@excelDanger');
 	Route::any('/order/getUserOrder','OrderController@getUserOrder');
+    Route::any('/order/settleOrder','OrderController@settleOrder');//跟单结算
 
     Route::group([
         "middleware"=>['daily'],

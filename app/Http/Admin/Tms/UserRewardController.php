@@ -103,12 +103,13 @@ class UserRewardController extends CommonController{
             ['type'=>'=','name'=>'type','value'=>$type],
             ['type'=>'>=','name'=>'event_time','value'=>$start_time],
             ['type'=>'<=','name'=>'event_time','value'=>$end_time],
+            ['type'=>'like','name'=>'self_id','value'=>$self_id],
         ];
 
 
         $where=get_list_where($search);
 
-        $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
+        $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag','reward_id',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
             ,'cash_back','cash_flag','type','user_name','bear','company_fine','escort_name','user_id'];
         $select1=['self_id','name'];
@@ -309,7 +310,8 @@ class UserRewardController extends CommonController{
         $cash_flag               =$request->input('cash_flag');//奖金是否发放
         $bear                    =$request->input('bear');//承担多少责任
         $company_fine            =$request->input('company_fine');//公司罚款
-        $escort_name            =$request->input('escort_name');//公司罚款
+        $escort_name             =$request->input('escort_name');//押运员名称
+        $fine_user               =$request->input('fine_user');//罚款对象
 
         $rules=[
             'car_id'=>'required',
@@ -329,8 +331,6 @@ class UserRewardController extends CommonController{
             }
             switch($type){
                 case 'violation':
-                    $data['escort']                 =$escort;
-                    $data['escort_name']            =$escort_name;
                     $data['violation_connect']      =$violation_connect;
                     $data['payment']                =$payment;
                     $data['company_fine']           =$company_fine;
@@ -356,8 +356,6 @@ class UserRewardController extends CommonController{
                     $data['cash_back']              =$cash_back;
                     break;
                 case 'reward':
-                    $data['escort']                 =$escort;
-                    $data['escort_name']            =$escort_name;
                     $data['safe_reward']            =$safe_reward;
                     $data['reward_view']            =$reward_view;
                     $data['cash_back']              =$cash_back;
@@ -368,6 +366,8 @@ class UserRewardController extends CommonController{
             $data['car_id']                 =$car_id;
             $data['user_id']                =$user_id;
             $data['user_name']              =$user_name;
+            $data['escort']                 =$escort;
+            $data['escort_name']            =$escort_name;
             $data['car_number']             =$car_number;
             $data['type']                   =$type;
             $data['handled_by']             =$handled_by;
@@ -424,6 +424,9 @@ class UserRewardController extends CommonController{
 
                 $id=UserReward::insert($data);
                 if ($type != 'reward'){
+                    if($fine_user == 'driver'){
+
+                    }
                     if ($user_id && ($company_fine || $company_fine>0)){
                         $award['self_id']            = generate_id('award_');
                         $award['reward_id']          = $data['self_id'];
@@ -1053,6 +1056,28 @@ class UserRewardController extends CommonController{
         return $msg;
     }
 
+    //删除奖金返还
+    public function delAwardMind(Request $request){
+
+    }
+
+    //获取奖金返还来源
+    public function getUserReward(Request $request){
+        $reward_id=$request->input('reward_id');
+        
+//        $input['group_code'] =  $group_code = '1234';
+       
+        $select = ['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
+            'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
+            ,'cash_back','cash_flag','type','user_name','bear','company_fine','escort_name','user_id'];
+        $data['info']=TmsUserReward::where('self_id',$reward_id)->select($select)->first();
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
+
     /**
      * 获取
      * */
@@ -1098,7 +1123,7 @@ class UserRewardController extends CommonController{
         $where=get_list_where($search);
         $where1=get_list_where($search1);
 
-        $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
+        $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag','reward_id',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
             ,'cash_back','cash_flag','type','user_name','bear','company_fine','escort_name'];
         $select1=['self_id','name'];
@@ -1157,6 +1182,7 @@ class UserRewardController extends CommonController{
             if ($v->user){
                 $v->escort = $v->user->name;
             }
+            $v->reward_id_show = substr($v->receiver_id,7);
         }
 
         $msg['code']=200;
