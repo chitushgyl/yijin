@@ -6,6 +6,7 @@ use App\Models\Tms\AppSettingParam;
 use App\Models\Tms\OrderLog;
 use App\Models\Tms\TmsCar;
 use App\Models\Tms\TmsGroup;
+use App\Models\Tms\TmsMoneyCount;
 use App\Models\Tms\TmsMoney;
 use App\Models\Tms\TmsReceipt;
 use App\Models\Tms\TmsWages;
@@ -639,6 +640,7 @@ class OrderController extends CommonController{
         if($validator->passes()){
 
            $total_money = TmsOrder::whereIn('self_id',$order_id)->sum('total_money');
+           //保存运费结算表
            //修改订单结算记录
            $data['settle_flag'] = 'Y';
            $data['update_time'] = $now_time;

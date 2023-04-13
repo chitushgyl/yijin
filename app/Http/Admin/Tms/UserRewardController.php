@@ -382,6 +382,8 @@ class UserRewardController extends CommonController{
                 if ($user){
                     $update['user_id']            = $user_id;
                     $update['user_name']          = $user_name;
+                    $update['car_id']             = $car_id;
+                    $update['car_number']         = $car_number;
                     $update['money_award']        = $company_fine;
                     $update['cash_back']          = $cash_back;
                     $update['update_time']=$now_time;
@@ -390,6 +392,8 @@ class UserRewardController extends CommonController{
                 if ($escort_user){
                     $update['user_id']            = $escort;
                     $update['user_name']          = $escort_name;
+                    $update['car_id']             = $car_id;
+                    $update['car_number']         = $car_number;
                     $update['cash_back']          = $cash_back;
                     $update['money_award']        = $company_fine;
                     $update['update_time']=$now_time;
@@ -425,6 +429,8 @@ class UserRewardController extends CommonController{
                         $award['reward_id']          = $data['self_id'];
                         $award['user_id']            = $user_id;
                         $award['user_name']          = $user_name;
+                        $award['car_id']             = $car_id;
+                        $award['car_number']         = $car_number;
                         $award['money_award']        = $company_fine;
                         $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
                         $award['cash_back']          = $time;
@@ -440,6 +446,8 @@ class UserRewardController extends CommonController{
                         $award['reward_id']          = $data['self_id'];
                         $award['user_id']            = $escort;
                         $award['user_name']          = $escort_name;
+                        $award['car_id']             = $car_id;
+                        $award['car_number']         = $car_number;
                         $award['money_award']        = $company_fine;
                         $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
                         $award['cash_back']          = $time;
