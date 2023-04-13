@@ -86,6 +86,7 @@ class UserRewardController extends CommonController{
         $type           =$request->input('type');
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
+        $self_id        =$request->input('self_id');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
         if ($start_time) {
