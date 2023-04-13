@@ -121,6 +121,7 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'company_id','value'=>$company_id],
             ['type'=>'=','name'=>'carriage_id','value'=>$carriage_id],
+            ['type'=>'=','name'=>'carriage_name','value'=>$carriage_name],
             ['type'=>'=','name'=>'create_time','value'=>$start_time],
             ['type'=>'=','name'=>'create_time','value'=>$end_time],
             ['type'=>'=','name'=>'enter_time','value'=>$enter_time],
