@@ -135,7 +135,7 @@ class OrderController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code','id',
+        $select=['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code','id','settle_flag',
             'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
             'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
@@ -639,6 +639,10 @@ class OrderController extends CommonController{
         if($validator->passes()){
 
            $total_money = TmsOrder::whereIn('self_id',$order_id)->sum('total_money');
+           //修改订单结算记录
+           $data['settle_flag'] = 'Y';
+           $data['update_time'] = $now_time;
+           TmsOrder::whereIn('self_id',$order_id)->update($data);
         }else{
             //前端用户验证没有通过
             $erro=$validator->errors()->all();
@@ -648,7 +652,7 @@ class OrderController extends CommonController{
                 $kk=$k+1;
                 $msg['msg'].=$kk.'：'.$v.'</br>';
             }
-    }
+        }
 
     }
 
