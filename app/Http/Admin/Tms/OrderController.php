@@ -647,7 +647,8 @@ class OrderController extends CommonController{
             foreach ($erro as $k => $v){
                 $kk=$k+1;
                 $msg['msg'].=$kk.'：'.$v.'</br>';
-        }
+            }
+    }
 
     }
 
