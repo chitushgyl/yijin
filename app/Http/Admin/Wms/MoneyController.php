@@ -778,7 +778,7 @@ class MoneyController extends CommonController{
                 $data['items']=TmsMoneyCount::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
-                $data['total_money']=TmsMoneyCount::where($where)->sum('total_money')
+                $data['total_money']=TmsMoneyCount::where($where)->sum('total_money');
                 $data['receive_money']=TmsMoneyCount::where($where)->sum('receive_money');
                 $data['settle_money']=TmsMoneyCount::where($where)->sum('settle_money');
                 $data['group_show']='Y';
@@ -790,7 +790,7 @@ class MoneyController extends CommonController{
                 $data['items']=TmsMoneyCount::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
-                $data['total_money']=TmsMoneyCount::where($where)->sum('total_money')
+                $data['total_money']=TmsMoneyCount::where($where)->sum('total_money');
                 $data['receive_money']=TmsMoneyCount::where($where)->sum('receive_money');
                 $data['settle_money']=TmsMoneyCount::where($where)->sum('settle_money');
                 $data['group_show']='N';
@@ -801,7 +801,7 @@ class MoneyController extends CommonController{
                 $data['items']=TmsMoneyCount::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
-                $data['total_money']=TmsMoneyCount::where($where)->sum('total_money')
+                $data['total_money']=TmsMoneyCount::where($where)->sum('total_money');
                 $data['receive_money']=TmsMoneyCount::where($where)->sum('receive_money');
                 $data['settle_money']=TmsMoneyCount::where($where)->sum('settle_money');
                 $data['group_show']='Y';
