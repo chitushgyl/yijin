@@ -325,6 +325,8 @@ class CarServiceController extends CommonController{
                 $money['pay_state']          = 'Y';
                 $money['car_id']             = $v->car_id;
                 $money['car_number']         = $v->car_number;
+                $money['user_id']            = $v->driver_id;
+                $money['user_name']          = $v->driver_name;
                 $money['process_state']      = 'Y';
                 $money['type_state']         = 'out';
                 $money['self_id']            = generate_id('money_');
