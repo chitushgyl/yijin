@@ -96,6 +96,7 @@ class OrderController extends CommonController{
         $group_code     =$request->input('group_code');
         $company_id     =$request->input('company_id');
         $carriage_id    =$request->input('carriage_id');
+        $carriage_name  =$request->input('carriage_name');
         $order_type     =$request->input('order_type');
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
