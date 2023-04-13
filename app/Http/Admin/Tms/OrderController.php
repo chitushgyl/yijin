@@ -140,11 +140,14 @@ class OrderController extends CommonController{
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
             'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
             ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name','order_mark','sale_price'];
+            $select1 = ['self_id','use_flag','delete_flag','cost_type','group_code','group_name','company_name'];
 
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsOrder::where($where)->count(); //总的数据量
-                $data['items']=TmsOrder::where($where);
+                $data['items']=TmsOrder::with(['tmsGroup' => function($query) use($select1){
+                    $query->select($select1);
+                }])->where($where);
                 $data['items'] = $data['items']
                     ->offset($firstrow)->limit($listrows)->orderBy('send_time', 'desc')->orderBy('order_mark','asc')
                     ->select($select)->get();
@@ -154,7 +157,9 @@ class OrderController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=TmsOrder::where($where)->count(); //总的数据量
-                $data['items']=TmsOrder::where($where);
+                $data['items']=TmsOrder::with(['tmsGroup' => function($query) use($select1){
+                    $query->select($select1);
+                }])->where($where);
                 $data['items'] = $data['items']
                     ->offset($firstrow)->limit($listrows)->orderBy('send_time', 'desc')->orderBy('order_mark','asc')
                     ->select($select)->get();
@@ -163,7 +168,9 @@ class OrderController extends CommonController{
 
             case 'more':
                 $data['total']=TmsOrder::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=TmsOrder::where($where);
+                $data['items']=TmsOrder::with(['tmsGroup' => function($query) use($select1){
+                    $query->select($select1);
+                }])->where($where);
 
                 $data['items'] = $data['items']
                     ->whereIn('group_code',$group_info['group_code'])
@@ -560,6 +567,8 @@ class OrderController extends CommonController{
             $money['pay_type']               = 'freight';
             $money['money']                  = $total_money;
             $money['before_money']           = $total_money;
+            $money['car_id']                 = $old_info->car_id;
+            $money['car_number']             = $old_info->car_number;
             $money['pay_state']              = 'N';
             $money['order_id']               = $self_id;
             $money['process_state']          = 'N';
@@ -599,6 +608,45 @@ class OrderController extends CommonController{
                 $msg['msg'].=$kk.'：'.$v.'</br>';
             }
             return $msg;
+        }
+
+    }
+
+    //结算订单
+    public function settleOrder(Request $request){
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       = date('Y-m-d H:i:s',time());
+        $table_name     = 'tms_order';
+
+        $operationing->access_cause     ='调度订单';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='update';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='update';
+        $user_info = $request->get('user_info');//接收中间件产生的参数
+        $input                          =$request->all();
+
+        //接收数据
+        $order_id                 = $request->input('order_id');//订单ID
+
+        $rules=[
+            'order_id' => 'required',
+        ];
+        $message=[
+           'order_id.required'=>'请选择结算的订单',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()){
+
+           $total_money = TmsOrder::whereIn('self_id',$order_id)->sum('total_money');
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
         }
 
     }

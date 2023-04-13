@@ -266,6 +266,7 @@ Route::group([
     Route::any('/carService/details','CarServiceController@details');
     Route::any('/carService/import','CarServiceController@import');
     Route::any('/carService/excel','CarServiceController@excel');
+    Route::any('/carService/serviceSettle','CarServiceController@serviceSettle');
 
     /**车辆加油记录***/
     Route::any('/carOil/carList','CarOilController@carList');

@@ -57,6 +57,7 @@ class CarServiceController extends CommonController{
         $end_time       =$request->input('end_time');
         $type           =$request->input('type');
         $service_partne =$request->input('service_partne');
+        $settle_flag    =$request->input('settle_flag');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -77,11 +78,12 @@ class CarServiceController extends CommonController{
             ['type'=>'<','name'=>'service_time','value'=>$end_time],
             ['type'=>'=','name'=>'type','value'=>$type],
             ['type'=>'like','name'=>'service_partne','value'=>$service_partne],
+            ['type'=>'=','name'=>'settle_flag','value'=>$settle_flag],
         ];
 
         $where=get_list_where($search);
 
-        $select=['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator',
+        $select=['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator','settle_flag',
             'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view','type','driver_id','service_item','servicer','next_kilo'];
         switch ($group_info['group_id']){
             case 'all':
@@ -224,19 +226,19 @@ class CarServiceController extends CommonController{
             $data['remark']            =$remark;
 
             /**保存费用**/
-            if ($service_price){
-                if ($type == 'service'){
-                    $money['pay_type']           = 'repair';
-                }else{
-                    $money['pay_type']           = 'preserve';
-                }
-                $money['money']              = $service_price;
-                $money['pay_state']          = 'Y';
-                $money['car_id']             = $car_id;
-                $money['car_number']         = $car_number;
-                $money['process_state']      = 'Y';
-                $money['type_state']         = 'out';
-            }
+            // if ($service_price){
+            //     if ($type == 'service'){
+            //         $money['pay_type']           = 'repair';
+            //     }else{
+            //         $money['pay_type']           = 'preserve';
+            //     }
+            //     $money['money']              = $service_price;
+            //     $money['pay_state']          = 'Y';
+            //     $money['car_id']             = $car_id;
+            //     $money['car_number']         = $car_number;
+            //     $money['process_state']      = 'Y';
+            //     $money['type_state']         = 'out';
+            // }
 
             $wheres['self_id'] = $self_id;
             $old_info=CarService::where($wheres)->first();
@@ -257,15 +259,15 @@ class CarServiceController extends CommonController{
                 $data['create_time']        =$data['update_time']=$now_time;
 
                 $id=CarService::insert($data);
-                if($service_price){
-                    $money['self_id']            = generate_id('money_');
-                    $money['group_code']         = $group_code;
-                    $money['group_name']         = $group_name;
-                    $money['create_user_id']     = $user_info->admin_id;
-                    $money['create_user_name']   = $user_info->name;
-                    $money['create_time']        =$money['update_time']=$service_time;
-                    TmsMoney::insert($money);
-                }
+                // if($service_price){
+                //     $money['self_id']            = generate_id('money_');
+                //     $money['group_code']         = $group_code;
+                //     $money['group_name']         = $group_name;
+                //     $money['create_user_id']     = $user_info->admin_id;
+                //     $money['create_user_name']   = $user_info->name;
+                //     $money['create_time']        =$money['update_time']=$service_time;
+                //     TmsMoney::insert($money);
+                // }
                 $operationing->access_cause='新建车辆维修';
                 $operationing->operation_type='create';
 
@@ -299,6 +301,68 @@ class CarServiceController extends CommonController{
 
     }
 
+    //维修保养审核
+    public function serviceSettle(Request $request){
+        $now_time=date('Y-m-d H:i:s',time());
+        $operationing = $request->get('operationing');//接收中间件产生的参数
+        $table_name='car_service';
+        $medol_name='CarService';
+        $self_id=$request->input('self_id');
+        $flag='delFlag';
+//        $self_id='car_202012242220439016797353';
+        $old_info = CarService::whereIn('self_id',explode(',',$self_id))->get();
+        //保存费用
+        $moneyList=[];
+        foreach($old_info as $k => $v){
+
+                if ($v->type == 'service'){
+                    $money['pay_type']           = 'repair';
+                }else{
+                    $money['pay_type']           = 'preserve';
+                }
+                $money['order_id']           = $v->self_id;
+                $money['money']              = $v->service_price;
+                $money['pay_state']          = 'Y';
+                $money['car_id']             = $v->car_id;
+                $money['car_number']         = $v->car_number;
+                $money['process_state']      = 'Y';
+                $money['type_state']         = 'out';
+                $money['self_id']            = generate_id('money_');
+                $money['group_code']         = $v->group_code;
+                $money['group_name']         = $v->group_name;
+                $money['create_user_id']     = $v->admin_id;
+                $money['create_user_name']   = $v->name;
+                $money['create_time']        =$money['update_time']=$v->service_time;
+                $moneyList[] = $money;
+                
+        }
+        $data['settle_flag']='Y';
+        $data['update_time']=$now_time;
+//        dd($old_info);
+        $id=CarService::whereIn('self_id',explode(',',$self_id))->update($data);
+        TmsMoney::insert($moneyList);
+        if ($id){
+            $msg['code']=200;
+            $msg['msg']="数据拉取成功";
+        }else{
+            $msg['code']=301;
+            $msg['msg']="删除失败";
+
+        }
+        $operationing->access_cause='删除';
+        $operationing->table=$table_name;
+        $operationing->table_id=$self_id;
+        $operationing->now_time=$now_time;
+        $operationing->old_info=$old_info;
+        $operationing->new_info=(object)$data;
+        $operationing->operation_type=$flag;
+
+        $msg['code']=$msg['code'];
+        $msg['msg']=$msg['msg'];
+        $msg['data']=(object)$data;
+
+        return $msg;
+    }
 
 
     /***    车辆维修禁用/启用      /tms/carService/serviceUseFlag
