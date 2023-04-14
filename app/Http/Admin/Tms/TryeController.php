@@ -795,6 +795,7 @@ class TryeController extends CommonController{
 
                 $order_do = [];
                 foreach ($order as $k => $v) {
+                    dd($v);
                     if ($v['trye_out_list']) {
                         foreach ($v['trye_out_list'] as $kk => $vv) {
                             $vv->inout_time = $v->in_time;
