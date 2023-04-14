@@ -1698,8 +1698,8 @@ class TryeController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'=','name'=>'use_flag','value'=>'Y'],
             ['type'=>'>=','name'=>'now_num','value'=>0],
-            ['type'=>'>','name'=>'inout_time','value'=>$start_time],
-            ['type'=>'<=','name'=>'inout_time','value'=>$end_time],
+            ['type'=>'>','name'=>'inout_time','value'=>$start_time.' 00:00:00'],
+            ['type'=>'<=','name'=>'inout_time','value'=>$end_time.' 23:59:59'],
         ];
 
         $where=get_list_where($search);
@@ -1711,7 +1711,7 @@ class TryeController extends CommonController{
             case 'all':
                 $data['total']=TmsTryeList::where($where)->count(); //总的数据量
                 $data['items']=TmsTryeList::with(['TmsTryeCount' => function($query)use($Signselect,$where1) {
-                    $query->where($where1);
+                   
                     $query->select($Signselect);
                 }])
                     ->with(['tryeOutList' => function($query)use($where) {
@@ -1734,7 +1734,7 @@ class TryeController extends CommonController{
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=TmsTryeList::where($where)->count(); //总的数据量
                 $data['items']=TmsTryeList::with(['TmsTryeCount' => function($query)use($Signselect,$where1) {
-                    $query->where($where1);
+                   
                     $query->select($Signselect);
                 }])
                     ->with(['tryeOutList' => function($query)use($where) {
@@ -1756,7 +1756,7 @@ class TryeController extends CommonController{
             case 'more':
                 $data['total']=TmsTryeList::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=TmsTryeList::with(['TmsTryeCount' => function($query)use($Signselect,$where1) {
-                    $query->where($where1);
+                
                     $query->select($Signselect);
                 }])
                     ->with(['tryeOutList' => function($query)use($where) {
