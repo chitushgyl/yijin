@@ -1071,7 +1071,7 @@ class UserRewardController extends CommonController{
        
         $select = ['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag','use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party','cash_back','cash_flag','type','user_name','bear','company_fine','escort_name','user_id'];
         $data['info']=UserReward::where('self_id',$reward_id)->select($select)->first();
-        $data['info']->reward_id_show = substr($data['info']->reward_id,7);
+        $data['info']->reward_id_show = substr($data['info']->self_id,7);
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
