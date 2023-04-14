@@ -681,7 +681,7 @@ class OrderController extends CommonController{
            //修改订单结算记录
            $data['settle_flag'] = 'Y';
            $data['update_time'] = $now_time;
-           TmsOrder::whereIn('self_id',$order_id)->update($data);
+           TmsOrder::whereIn('self_id',explode(',',$order_id))->update($data);
         }else{
             //前端用户验证没有通过
             $erro=$validator->errors()->all();
