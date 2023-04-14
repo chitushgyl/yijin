@@ -115,9 +115,32 @@ class CarServiceController extends CommonController{
                 break;
         }
 
+        $button_info1=[];
+        $button_info2=[];
+        $button_info3=[];
+        $button_info4=[];
+        foreach ($button_info as $k => $v){
+            if($v->id == 76){
+                $button_info1[] = $v;
+            }
+            if($v->id == 77){
+                $button_info2[] = $v;
+
+            }
+            if($v->id == 78){
+                $button_info2[] = $v;
+            }
+
+        }
+
         foreach ($data['items'] as $k=>$v) {
             $v->button_info=$button_info;
             $v->type = $service_type[$v->type]??null;
+            if ($v->selttle_flag == 'Y') {
+                $v->button_info = $button_info2;
+            }else{
+                $v->button_info = $button_info;
+            }
         }
 
         $msg['code']=200;
