@@ -297,10 +297,84 @@ class TryeController extends CommonController{
 
 
     }
+
+    //轮胎出库变更表
+    public function tryeChange($datalist,$type){
+        $data=[];
+        $payment = [];
+        foreach ($datalist as $k => $v){
+
+            $list=[];
+            $money=[];
+            $list["self_id"]            =generate_id('change_');
+            $list["model"]              =$v['model'];
+            $list['create_time']        =$v['create_time'];
+            $list["update_time"]        =$v['update_time'];
+            $list["group_code"]         =$v['group_code'];
+            $list["group_name"]         =$v['group_name'];
+            $list["order_id"]           =$v['order_id'];
+
+            $list['type']               =$type;
+            $list['library_sige_id']    =$v['self_id'];
+            $list['price']              =$v['price'];
+
+            switch ($type){
+                case 'preentry':
+                    $list['initial_num']        ='0';
+                    $list['now_num']            =$v['now_num'];
+                    $list['change_num']         =$list['now_num']-$list['initial_num'];
+                    $list['use_flag']           ='N';
+                    $list['inout_time']         =$v['date_time'];
+                    break;
+
+                case 'change':
+                    $list['initial_num']        =$v['now_num'];
+                    if($v['now_num'] - $v['now_num_new'] >=0){
+                        $list['now_num']            =$v['now_num_new'];
+                    }else{
+                        $list['now_num']            =0;
+                    }
+                    $list['change_num']         =$list['initial_num']-$list['now_num'];
+                    break;
+
+                case 'movein':
+                    $list['initial_num']        ='0';
+                    $list['now_num']            =$v['now_num'];
+                    $list['change_num']         =$list['now_num']-$list['initial_num'];
+                    break;
+
+                case 'moveout':
+                    $list['initial_num']        =$v['now_num'];
+                    if($v['now_num'] - $v['now_num_new'] >0){
+                        $list['now_num']            =$v['now_num_new'];
+                    }else{
+                        $list['now_num']            =0;
+                    }
+                    $list['change_num']         =$list['initial_num']-$list['now_num'];
+                    break;
+
+
+                case 'out':
+                    $list['initial_num']        =$v['initial_num'];             //66
+                    $list['change_num']         =$v['shiji_num'];
+                    $list['now_num']            =$v['initial_num']-$v['shiji_num'];
+                    $list['inout_time']         =$v['out_time'];
+                    break;
+
+            }
+//            $money['total_price'] = $list['change_num']*$v['price'];
+//            $payment[] = $money;
+            $data[]=$list;
+        }
+        /***出入库时要保存费用**/
+        TmsTryeChange::insert($data);
+
+
+    }
     /**
      * 入库操作
      * */
-    public function inTrye(Request $request,Change $change){
+    public function inTrye(Request $request){
         $user_info = $request->get('user_info');//接收中间件产生的参数
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
@@ -394,7 +468,7 @@ class TryeController extends CommonController{
                 $count['group_name']         = $user_info->group_name;
                 $id=TmsTrye::insert($data);
                 TmsTryeCount::insert($count);
-                $change->tryChange($count,'preentry');
+                $this->tryChange($count,'preentry');
                 if (!$trye_model){
                     $model_list['self_id'] = generate_id('model_');
                     $model_list['model']   = $model;
