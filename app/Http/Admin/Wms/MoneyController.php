@@ -62,6 +62,7 @@ class MoneyController extends CommonController{
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'pay_type','value'=>$type],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
+            ['type'=>'like','name'=>'trailer_num','value'=>$trailer_num],
             ['type'=>'like','name'=>'user_name','value'=>$user_name],
             ['type'=>'>=','name'=>'create_time','value'=>$start_time],
             ['type'=>'<','name'=>'create_time','value'=>$end_time],
@@ -71,7 +72,7 @@ class MoneyController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name',
+        $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name','trailer_num',
             'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money','bill_flag','receipt'];
 
         switch ($group_info['group_id']){
@@ -180,7 +181,7 @@ class MoneyController extends CommonController{
         $self_id=$request->input('self_id');
         //$self_id='money_202012231738203885359374';
         $table_name='tms_money';
-        $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name','approver','submit_connect',
+        $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name','approver','submit_connect','trailer_num',
             'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money','bill_flag','receipt'];
 
         $where=[
@@ -281,7 +282,7 @@ class MoneyController extends CommonController{
         $self_id=$request->input('self_id');
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
-        $table_name     ='wms_money';
+        $table_name     ='tms_money';
 
         $operationing->access_cause     ='收款方确认';
         $operationing->table            =$table_name;
