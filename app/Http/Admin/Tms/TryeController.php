@@ -631,6 +631,7 @@ class TryeController extends CommonController{
         $self_id            =$request->input('self_id');
         $car_id             =$request->input('car_id');//车牌号
         $car_number         =$request->input('car_number');//车牌号
+        $trailer_num        =$request->input('trailer_num');//挂车号
         $model              =$request->input('model');//型号
         $num                =$request->input('num');//数量
         $trye_num           =$request->input('trye_num');//编号
@@ -666,6 +667,7 @@ class TryeController extends CommonController{
             $data['type']              =$type;
             $data['car_id']            =$car_id;
             $data['car_number']        =$car_number;
+            $data['trailer_num']       =$trailer_num;
             $data['num']               =$num;
             $data['change']            =$change;
             $data['user_id']           =$user_id;
