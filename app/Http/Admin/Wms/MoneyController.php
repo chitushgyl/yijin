@@ -905,7 +905,7 @@ class MoneyController extends CommonController{
     }
 
     //修改已收金额
-    public function updateSettle(Request $request){
+    public function updateReceive(Request $request){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ='tms_money';
