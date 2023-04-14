@@ -129,6 +129,7 @@ class CarServiceController extends CommonController{
             }
             if($v->id == 78){
                 $button_info2[] = $v;
+                $button_info3[] = $v;
             }
 
         }
@@ -138,8 +139,11 @@ class CarServiceController extends CommonController{
             $v->type = $service_type[$v->type]??null;
             if ($v->settle_flag == 'Y') {
                 $v->button_info = $button_info2;
+                if($v->use_flag == 'N'){
+                    $v->button_info = $button_info3;
+                }
             }else{
-                $v->button_info = $button_info;
+                $v->button_info = $button_info1;
             }
         }
 
@@ -404,10 +408,11 @@ class CarServiceController extends CommonController{
         
 
        $old_info = CarService::where('self_id',$self_id)->select('use_flag','self_id','delete_flag','group_code')->get();
-        $data['delete_flag']='N';
+        $data['use_flag']='N';
         $data['update_time']=$now_time;
 //        dd($old_info);
         $id=CarService::where('self_id',$self_id)->update($data);
+        TmsMoney::where('order_id',$self_id)->update($data);
         if ($id){
             $msg['code']=200;
             $msg['msg']="数据拉取成功";
