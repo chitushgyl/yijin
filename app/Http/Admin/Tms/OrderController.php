@@ -663,8 +663,8 @@ class OrderController extends CommonController{
         ];
         $validator=Validator::make($input,$rules,$message);
         if($validator->passes()){
-           TmsOrder::whereIn('self_id',$order_id)->select('self_id,car_id','car_number','total_money','')->get();
-           $total_money = TmsOrder::whereIn('self_id',explode(','$order_id))->sum('total_money');
+           TmsOrder::whereIn('self_id',explode(',',$order_id))->select('self_id,car_id','car_number','total_money')->get();
+           $total_money = TmsOrder::whereIn('self_id',explode(',',$order_id))->sum('total_money');
            //保存运费结算表
            $settle['self_id']   = generate_id('settle_');
            $settle['money']     = $total_money;
@@ -1852,6 +1852,7 @@ class OrderController extends CommonController{
         $input      =$request->all();
         /** 接收数据*/
         $group_code     =$request->input('group_code');
+        $type           =$request->input('type');
 //        $group_code  =$input['group_code']   ='group_202012251449437824125582';
         //dd($group_code);
         $rules=[
@@ -1881,7 +1882,8 @@ class OrderController extends CommonController{
 //dd($info);
             if($info){
                 //设置表头
-                $row = [[
+                if ($type == 2) {
+                    $row = [[
                     "id"=>'ID',
                     "order_mark"=>'标识',
                     "company_name" =>'所属组织',
@@ -1905,6 +1907,38 @@ class OrderController extends CommonController{
                     "road_card"=>'路卡',
                     "carriage_group"=>'承运商组别',
                 ]];
+                }else{
+                    $row = [[
+                    "id"=>'ID',
+                    "order_mark"=>'标识',
+                    "company_name" =>'所属组织',
+                    "carriage_name" =>'委托单位',
+                    "good_name"=>'货物品名',
+                    "group_name"=>'承运人',
+                    "car_number"=>'车牌号',
+                    "trailer_num"=>'挂车号',
+                    "user_name"=>'驾驶员',
+                    "car_tel"=>'电话',
+                    "escort_name"=>'副驾驶员',
+                    "odd_number"=>'运单号',
+                    "send_time"=>'发货日期',
+                    "gather_time"=>'交货日期',
+                    "send_name"=>'装车点',
+                    "gather_name"=>'卸车点',
+                    "pick_time"=>'提货时间段',
+                    "area"=>'区域',
+                    "transport_type"=>'运输方式',
+                    "order_number"=>'订单编号',
+                    "road_card"=>'路卡',
+                    "carriage_group"=>'承运商组别',
+                    "carriage_group"=>'承运商组别',
+                    "carriage_group"=>'承运商组别',
+                    "carriage_group"=>'承运商组别',
+                    "carriage_group"=>'承运商组别',
+                    "carriage_group"=>'承运商组别',
+                ]];
+                }
+                
 
                 /** 现在根据查询到的数据去做一个导出的数据**/
                 $data_execl=[];
