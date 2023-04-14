@@ -1541,7 +1541,7 @@ class TryeController extends CommonController{
         $msg['data']=$data;
         return $msg;
     }
-
+    //库存统计列表
     public function tryeCountPage(Request $request){
         /** 接收中间件参数**/
         $group_info     = $request->get('group_info');//接收中间件产生的参数
@@ -1666,6 +1666,148 @@ class TryeController extends CommonController{
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
         //dd($msg);
+        return $msg;
+    }
+    //轮胎库存列表
+    public function tryeCount(Request $request){
+        /** 接收中间件参数**/
+        $group_info     = $request->get('group_info');//接收中间件产生的参数
+        $button_info    = $request->get('anniu');//接收中间件产生的参数
+
+        /**接收数据*/
+        $num            =$request->input('num')??10;
+        $page           =$request->input('page')??1;
+        $use_flag       =$request->input('use_flag');
+        $group_code     =$request->input('group_code');
+
+        $warehouse_name      =$request->input('warehouse_name');
+        $good_name           =$request->input('good_name');
+        $start_time          =$request->input('start_time');
+        $end_time            =$request->input('end_time');
+        $listrows            =$num;
+        $firstrow            =($page-1)*$listrows;
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'use_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+
+        ];
+
+        $search1=[
+            ['type'=>'like','name'=>'warehouse_name','value'=>$warehouse_name],
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'use_flag','value'=>'Y'],
+            ['type'=>'>=','name'=>'now_num','value'=>0],
+            ['type'=>'>','name'=>'date_time','value'=>$start_time],
+            ['type'=>'<=','name'=>'date_time','value'=>$end_time],
+        ];
+
+        $where=get_list_where($search);
+        $where1 = get_list_where($search1);
+        $select=['self_id','model','group_name','use_flag'];
+        $Signselect=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time'];
+//        dd($select);
+        switch ($group_info['group_id']){
+            case 'all':
+                $data['total']=TmsTryeList::where($where)->count(); //总的数据量
+                $data['items']=TmsTryeList::with(['TmsTryeCount' => function($query)use($Signselect,$where1) {
+                    $query->where($where1);
+                    $query->select($Signselect);
+                }])
+                    ->with(['tryeOutList' => function($query)use($where) {
+                        $query->where('use_flag','Y');
+                        $query->where('delete_flag','Y');
+                }])
+                    ->with(['tmsTrye' => function($query)use($where) {
+                        $query->where('state','Y');
+                    }])
+                    ->with(['tmsTryeChange' => function($query)use($where) {
+                          
+                    }])
+                    ->where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='Y';
+                break;
+
+            case 'one':
+                $where[]=['group_code','=',$group_info['group_code']];
+                $data['total']=TmsTryeList::where($where)->count(); //总的数据量
+                $data['items']=TmsTryeList::with(['TmsTryeCount' => function($query)use($Signselect,$where1) {
+                    $query->where($where1);
+                    $query->select($Signselect);
+                }])
+                    ->with(['tryeOutList' => function($query)use($where) {
+                        $query->where('use_flag','Y');
+                        $query->where('delete_flag','Y');
+                    }])
+                    ->with(['tmsTrye' => function($query)use($where) {
+                        $query->where('state','Y');
+                    }])
+                    ->with(['tmsTryeChange' => function($query)use($where) {
+                          
+                    }])
+                    ->where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='N';
+                break;
+
+            case 'more':
+                $data['total']=TmsTryeList::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=TmsTryeList::with(['TmsTryeCount' => function($query)use($Signselect,$where1) {
+                    $query->where($where1);
+                    $query->select($Signselect);
+                }])
+                    ->with(['tryeOutList' => function($query)use($where) {
+                        $query->where('use_flag','Y');
+                        $query->where('delete_flag','Y');
+                    }])
+                    ->with(['tmsTrye' => function($query)use($where) {
+                          $query->where('state','Y');
+                    }])
+                    ->with(['tmsTryeChange' => function($query)use($where) {
+                          
+                    }])
+                    ->where($where)->whereIn('group_code',$group_info['group_code'])
+                    ->select($select)
+                    ->get();
+                $data['group_show']='Y';
+                break;
+        }
+
+
+//        dd($data['items']->toArray());
+
+        foreach ($data['items'] as $k=>$v) {
+            $v->count=0;
+            $v->in_count=0;
+            $v->out_count=0;
+            $v->initial_count=0;
+            $v->jie_count=0;
+            foreach ($v->tmsTryeChange as $kk=>$vv) {
+                if ($vv->type == 'preentry'){
+                    $v->in_count += $vv->now_num;
+                }else{
+                    $v->out_count += $vv->change_num;
+                }
+//                $v->initial_count += $vv->initial_num;
+
+               
+                $v->count +=$vv->now_num;
+            }
+//            $v->jie_count = $v->in_count - $v->out_count;
+            $v->in_initial_count = TmsTryeChange::where('inout_time','<',$start_time)->where('type','preentry')->where('sku_id',$v->self_id)->sum('change_num');
+            $v->out_initial_count = TmsTryeChange::where('inout_time','<',$start_time)->where('type','out')->where('sku_id',$v->self_id)->sum('change_num');
+            $v->initial_count = $v->in_initial_count - $v->out_initial_count;
+            $v->jie_count = $v->in_count + $v->initial_count - $v->out_count;
+
+            $v->button_info=$button_info;
+        }
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+//        dd($msg);
         return $msg;
     }
 

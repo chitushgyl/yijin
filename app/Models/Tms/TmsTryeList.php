@@ -71,7 +71,7 @@ class TmsTryeList extends Model{
     public function tmsTryeChange(){
         //参数：关联模型名称，外键，主键
         //如果主键是id可以省略
-        return $this->hasMany('App\Models\Tms\TmsTryeChange','order_id','self_id');
+        return $this->hasMany('App\Models\Tms\TmsTryeChange','model','model');
     }
 
 
