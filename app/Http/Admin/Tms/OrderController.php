@@ -677,6 +677,7 @@ class OrderController extends CommonController{
            $settle['create_user_id'] = $user_info->create_user_id;
            $settle['create_user_name'] = $user_info->create_user_name;
            $settle['create_time']  = $settle['update_time'] = $now_time;
+           TmsMoneyCount::insert($settle);
            //修改订单结算记录
            $data['settle_flag'] = 'Y';
            $data['update_time'] = $now_time;
