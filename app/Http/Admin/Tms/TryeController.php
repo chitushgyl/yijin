@@ -316,7 +316,7 @@ class TryeController extends CommonController{
 
             $list['type']               =$type;
             $list['library_sige_id']    =$v['self_id'];
-            $list['price']              =$v['price'];
+            $list['price']              =$v['sale_price'];
 
             switch ($type){
                 case 'preentry':
@@ -440,6 +440,7 @@ class TryeController extends CommonController{
             $count['change_num'] = $num;
             $count['now_num'] = $num;
             $count['date_time'] = $in_time;
+            $count['sale_price'] = $price;
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsTrye::where($wheres)->first();
