@@ -555,7 +555,7 @@ class OrderController extends CommonController{
             $data['sale_price']              = $sale_price;
 
 
-            $old_info = TmsOrder::where('self_id',$self_id)->select('self_id','car_id','car_number','carriage_id','carriage_name','group_code','group_name','use_flag')->first();
+            $old_info = TmsOrder::where('self_id',$self_id)->select('self_id','car_id','car_number','carriage_id','carriage_name','group_code','group_name','use_flag','driver_id','user_name')->first();
 
             $data['update_time']=$now_time;
             DB::beginTransaction();
@@ -576,8 +576,8 @@ class OrderController extends CommonController{
                 $money['before_money']           = $total_money;
                 $money['car_id']                 = $old_info->car_id;
                 $money['car_number']             = $old_info->car_number;
-                $money['user_id']                = $user_id;
-                $money['user_name']              = $picker;
+                $money['user_id']                = $old_info->driver_id;
+                $money['user_name']              = $old_info->user_name;
                 $money['pay_state']              = 'N';
                 $money['order_id']               = $self_id;
                 $money['process_state']          = 'N';
@@ -604,7 +604,7 @@ class OrderController extends CommonController{
             }
 
             }catch(\Exception $e){
-                dd($e);
+                // dd($e);
                    DB::rollBack();
                    $msg['code'] = 302;
                    $msg['msg'] = "操作失败";
