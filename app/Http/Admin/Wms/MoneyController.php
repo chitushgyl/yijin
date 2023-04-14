@@ -739,8 +739,6 @@ class MoneyController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-        $car_number     =$request->input('car_number');
-        $user_name      =$request->input('user_name');
         $type           =$request->input('pay_type');
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
@@ -759,8 +757,6 @@ class MoneyController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'pay_type','value'=>$type],
-            ['type'=>'like','name'=>'car_number','value'=>$car_number],
-            ['type'=>'like','name'=>'user_name','value'=>$user_name],
             ['type'=>'>=','name'=>'create_time','value'=>$start_time],
             ['type'=>'<','name'=>'create_time','value'=>$end_time],
             ['type'=>'=','name'=>'type_state','value'=>$type_state],
@@ -813,11 +809,11 @@ class MoneyController extends CommonController{
         $button_info3=[];
         $button_info4=[];
         foreach ($button_info as $k => $v){
-            if($v->id == 99){
+            if($v->id == 202){
                 $button_info1[] = $v;
                 $button_info3[] = $v;
             }
-            if($v->id == 174){
+            if($v->id == 203){
                 $button_info2[] = $v;
                 $button_info3[] = $v;
             }
@@ -826,13 +822,11 @@ class MoneyController extends CommonController{
         foreach ($data['items'] as $k=>$v) {
             $v->pay_type=$money_type_show[$v->pay_type]??null;
             $v->button_info=$button_info;
-            if ($v->pay_state == 'N'){
+            if ($v->bill_flag == 'N'){
                 $v->button_info=$button_info3;
+            }else{
+                $v->button_info=$button_info2;
             }
-            if ($v->pay_state == 'Y'){
-                $v->button_info=$button_info4;
-            }
-
         }
         
         $msg['code']=200;
