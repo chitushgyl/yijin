@@ -1722,7 +1722,7 @@ class TryeController extends CommonController{
                     ->with(['tmsTrye' => function($query)use($where) {
                         $query->where('state','Y');
                     }])
-                    ->with(['tmsTryeChange' => function($query)use($where) {
+                    ->with(['tmsTryeChange' => function($query)use($where1) {
                           $query->where($where1);
                     }])
                     ->where($where)
@@ -1745,7 +1745,7 @@ class TryeController extends CommonController{
                     ->with(['tmsTrye' => function($query)use($where) {
                         $query->where('state','Y');
                     }])
-                    ->with(['tmsTryeChange' => function($query)use($where) {
+                    ->with(['tmsTryeChange' => function($query)use($where1) {
                           $query->where($where1);
                     }])
                     ->where($where)
@@ -1767,7 +1767,7 @@ class TryeController extends CommonController{
                     ->with(['tmsTrye' => function($query)use($where) {
                           $query->where('state','Y');
                     }])
-                    ->with(['tmsTryeChange' => function($query)use($where) {
+                    ->with(['tmsTryeChange' => function($query)use($where1) {
                           $query->where($where1);
                     }])
                     ->where($where)->whereIn('group_code',$group_info['group_code'])
