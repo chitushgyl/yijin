@@ -834,6 +834,7 @@ class MoneyController extends CommonController{
             }else{
                 $v->button_info=$button_info2;
             }
+            $v->receipt       =img_for($v->receipt,'more');
         }
         
         $msg['code']=200;
