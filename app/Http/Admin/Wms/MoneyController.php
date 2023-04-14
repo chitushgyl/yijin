@@ -42,6 +42,7 @@ class MoneyController extends CommonController{
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
         $car_number     =$request->input('car_number');
+        $trailer_num    =$request->input('trailer_num');
         $user_name      =$request->input('user_name');
         $type           =$request->input('pay_type');
         $start_time     =$request->input('start_time');
