@@ -994,6 +994,7 @@ class UserRewardController extends CommonController{
                 if ($v->award_flag == 'Y'){
                     $v->button_info=[];
                 }
+                $v->reward_id_show = substr($v->reward_id,7);
 
             }
 
