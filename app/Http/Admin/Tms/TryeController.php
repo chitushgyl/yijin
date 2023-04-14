@@ -299,7 +299,7 @@ class TryeController extends CommonController{
     }
 
     //轮胎出库变更表
-    public function tryeChange($datalist,$type){
+    public static function tryeChange($datalist,$type){
         $data=[];
         $payment = [];
         foreach ($datalist as $k => $v){
