@@ -1069,7 +1069,7 @@ class UserRewardController extends CommonController{
 //        $input['group_code'] =  $group_code = '1234';
        
         $select = ['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
-            'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
+            'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party','reward_id',
             ,'cash_back','cash_flag','type','user_name','bear','company_fine','escort_name','user_id'];
         $data['info']=UserReward::where('self_id',$reward_id)->select($select)->first();
 
