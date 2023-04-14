@@ -14,9 +14,10 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Tools\Import;
+use App\Http\Controllers\WmschangeController as Change;
 use App\Http\Controllers\StatusController as Status;
 use App\Http\Controllers\DetailsController as Details;
-use App\Http\Controllers\WmschangeController as Change;
+use App\Models\Tms\TmsTryeChange;
 use App\Models\Tms\TmsCarType;
 use App\Http\Controllers\FileController as File;
 
