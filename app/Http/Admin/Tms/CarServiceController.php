@@ -136,7 +136,7 @@ class CarServiceController extends CommonController{
         foreach ($data['items'] as $k=>$v) {
             $v->button_info=$button_info;
             $v->type = $service_type[$v->type]??null;
-            if ($v->selttle_flag == 'Y') {
+            if ($v->settle_flag == 'Y') {
                 $v->button_info = $button_info2;
             }else{
                 $v->button_info = $button_info;
