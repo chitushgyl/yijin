@@ -1695,12 +1695,11 @@ class TryeController extends CommonController{
         ];
 
         $search1=[
-            ['type'=>'like','name'=>'warehouse_name','value'=>$warehouse_name],
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'=','name'=>'use_flag','value'=>'Y'],
             ['type'=>'>=','name'=>'now_num','value'=>0],
-            ['type'=>'>','name'=>'date_time','value'=>$start_time],
-            ['type'=>'<=','name'=>'date_time','value'=>$end_time],
+            ['type'=>'>','name'=>'inout_time','value'=>$start_time],
+            ['type'=>'<=','name'=>'inout_time','value'=>$end_time],
         ];
 
         $where=get_list_where($search);
