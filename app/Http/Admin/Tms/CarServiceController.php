@@ -83,7 +83,7 @@ class CarServiceController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator','settle_flag',
+        $select=['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator','settle_flag','trailer_num',
             'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view','type','driver_id','service_item','servicer','next_kilo'];
         switch ($group_info['group_id']){
             case 'all':
@@ -168,7 +168,7 @@ class CarServiceController extends CommonController{
             ['self_id','=',$self_id],
         ];
 
-        $select = ['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator',
+        $select = ['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator','trailer_num',
             'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view','type','driver_id','service_item','servicer','next_kilo'];
         $data['info']=CarService::where($where)->select($select)->first();
 
@@ -714,7 +714,7 @@ class CarServiceController extends CommonController{
     public function  details(Request $request,Details $details){
         $self_id=$request->input('self_id');
         $table_name='car_service';
-        $select=['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator',
+        $select=['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator','trailer_num',
             'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view','type','driver_id','service_item','servicer','next_kilo'];
         // $self_id='car_202012291341297595587871';
         $info=$details->details($self_id,$table_name,$select);
