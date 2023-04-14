@@ -923,7 +923,7 @@ class UserRewardController extends CommonController{
             ];
 
             $where=get_list_where($search);
-            $select=['self_id','user_id','user_name','money_award','award_flag','group_code','group_name','delete_flag','use_flag','cash_flag','cash_back','create_time','update_time','car_id','car_number'];
+            $select=['self_id','user_id','user_name','money_award','award_flag','group_code','group_name','reward_id','delete_flag','use_flag','cash_flag','cash_back','create_time','update_time','car_id','car_number'];
             $select1=['self_id','name'];
             switch ($group_info['group_id']){
                 case 'all':
