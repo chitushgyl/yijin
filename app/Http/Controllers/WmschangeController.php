@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 use App\Models\Wms\WmsLibraryChange;
+use App\Models\Tms\TmsTryeChange;
 class WmschangeController extends Controller{
     /***    WMS仓库数据改变量表
      */
@@ -104,24 +105,7 @@ class WmschangeController extends Controller{
             $list=[];
             $money=[];
             $list["self_id"]            =generate_id('change_');
-            if($type != 'preentry'){
-                $list["warehouse_id"]       =$v['warehouse_id'];
-                $list["warehouse_name"]     =$v['warehouse_name'];
-                $list['warehouse_sign_id']  =$v['warehouse_sign_id'];
-            }
-
-            $list["sku_id"]             =$v['sku_id'];
-            $list["external_sku_id"]    =$v['external_sku_id'];
-            $list["good_name"]          =$v['good_name'];
-            $list["good_english_name"]  =$v['good_english_name'];
-            $list["good_target_unit"]   =$v['good_target_unit'];
-            $list["good_scale"]         =$v['good_scale'];
-            $list["good_unit"]          =$v['good_unit'];
-            $list['spec']               =$v['spec'];
-            $list["good_info"]          =$v['good_info'];
-            $list["produce_time"]       =$v['production_date'];
-            $list["expire_time"]        =$v['expire_time'];
-
+            $list["model"]              =$v['model'];
             $list['create_time']        =$v['create_time'];
             $list["update_time"]        =$v['update_time'];
             $list["group_code"]         =$v['group_code'];
@@ -131,7 +115,6 @@ class WmschangeController extends Controller{
             $list['type']               =$type;
             $list['library_sige_id']    =$v['self_id'];
             $list['price']              =$v['price'];
-            $list['total_price']        =$v['total_price'];
 
             switch ($type){
                 case 'preentry':
@@ -139,7 +122,7 @@ class WmschangeController extends Controller{
                     $list['now_num']            =$v['now_num'];
                     $list['change_num']         =$list['now_num']-$list['initial_num'];
                     $list['use_flag']           ='N';
-                    $list['inout_time']         =$v['entry_time'];
+                    $list['inout_time']         =$v['date_time'];
                     break;
 
                 case 'change':
@@ -182,7 +165,7 @@ class WmschangeController extends Controller{
             $data[]=$list;
         }
         /***出入库时要保存费用**/
-        WmsLibraryChange::insert($data);
+        TmsTryeChange::insert($data);
 
 
     }
