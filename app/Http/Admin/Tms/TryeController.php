@@ -374,7 +374,7 @@ class TryeController extends CommonController{
     /**
      * 入库操作
      * */
-    public function inTrye(Request $request){
+    public function inTrye(Request $request,Change $change){
         $user_info = $request->get('user_info');//接收中间件产生的参数
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
@@ -468,7 +468,8 @@ class TryeController extends CommonController{
                 $count['group_name']         = $user_info->group_name;
                 $id=TmsTrye::insert($data);
                 TmsTryeCount::insert($count);
-                self::tryChange($count,'preentry');
+                // $change->tryChange();
+                self::tryeChange($count,'preentry');
                 if (!$trye_model){
                     $model_list['self_id'] = generate_id('model_');
                     $model_list['model']   = $model;
