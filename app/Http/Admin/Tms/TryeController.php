@@ -797,6 +797,7 @@ class TryeController extends CommonController{
                 foreach ($order as $k => $v) {
                     if ($v['trye_out_list']) {
                         foreach ($v['trye_out_list'] as $kk => $vv) {
+                            $vv->inout_time = $v->in_time;
                             $order_do[] = $vv;
                         }
                     }
@@ -844,7 +845,7 @@ class TryeController extends CommonController{
                                         $library_change['group_name']           =$vv['group_name'];
                                         $library_change['shiji_num']            =$shiji_number;
                                         $library_change['model']                =$vv['model'];
-                                        $library_change['inout_time']           =$vv['date_time'];
+                                        $library_change['inout_time']           =$v['inout_time'];
                                         $library_change['initial_num']          =$vv['now_num'];
                                         $library_change['create_user_id']       =$user_info->admin_id;
                                         $library_change["create_user_name"]     =$user_info->name;
@@ -1722,7 +1723,7 @@ class TryeController extends CommonController{
                         $query->where('state','Y');
                     }])
                     ->with(['tmsTryeChange' => function($query)use($where) {
-                          
+                          $query->where($where1);
                     }])
                     ->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
@@ -1745,7 +1746,7 @@ class TryeController extends CommonController{
                         $query->where('state','Y');
                     }])
                     ->with(['tmsTryeChange' => function($query)use($where) {
-                          
+                          $query->where($where1);
                     }])
                     ->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
@@ -1767,7 +1768,7 @@ class TryeController extends CommonController{
                           $query->where('state','Y');
                     }])
                     ->with(['tmsTryeChange' => function($query)use($where) {
-                          
+                          $query->where($where1);
                     }])
                     ->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->select($select)
