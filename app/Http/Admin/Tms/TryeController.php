@@ -835,9 +835,9 @@ class TryeController extends CommonController{
                                         $library_sige['chuku_number'] = $shiji_number;
                                         $wms_library_sige[] = $library_sige;
 
-
-                                        $library_change['library_sige_id']      =$vv['self_id'];
-                                        $library_change['price']                =$vv['sale_price'];   
+                                        
+                                        $library_change['self_id']      =$vv['self_id'];
+                                        $library_change['sale_price']                =$vv['sale_price'];   
                                         $library_change['group_code']           =$vv['group_code'];
                                         $library_change['group_name']           =$vv['group_name'];
                                         $library_change['shiji_num']            =$shiji_number;
