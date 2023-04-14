@@ -323,7 +323,7 @@ class TryeController extends CommonController{
                     $list['initial_num']        ='0';
                     $list['now_num']            =$v['now_num'];
                     $list['change_num']         =$list['now_num']-$list['initial_num'];
-                    $list['use_flag']           ='N';
+                    // $list['use_flag']           ='N';
                     $list['inout_time']         =$v['date_time'];
                     break;
 
@@ -358,7 +358,7 @@ class TryeController extends CommonController{
                     $list['initial_num']        =$v['initial_num'];             //66
                     $list['change_num']         =$v['shiji_num'];
                     $list['now_num']            =$v['initial_num']-$v['shiji_num'];
-                    $list['inout_time']         =$v['out_time'];
+                    $list['inout_time']         =$v['inout_time'];
                     break;
 
             }
@@ -834,11 +834,29 @@ class TryeController extends CommonController{
                                         $library_sige['yuan_num'] = $vv['now_num'];
                                         $library_sige['chuku_number'] = $shiji_number;
                                         $wms_library_sige[] = $library_sige;
+
+
+                                        $library_change['library_sige_id']      =$v['self_id'];
+                                        $library_change['price']                =$v['sale_price'];   
+                                        $library_change['group_code']           =$vv['group_code'];
+                                        $library_change['group_name']           =$vv['group_name'];
+                                        $library_change['shiji_num']            =$shiji_number;
+                                        $library_change['model']                =$vv['model'];
+                                        $library_change['inout_time']           =$vv['date_time'];
+                                        $library_change['initial_num']          =$vv['now_num'];
+                                        $library_change['create_user_id']       =$user_info->admin_id;
+                                        $library_change["create_user_name"]     =$user_info->name;
+                                        $library_change["create_time"]          =$now_time;
+                                        $library_change["update_time"]          =$now_time;
+                                        $library_change["order_id"]             =$v['order_id'];
+                                        //DD($library_change);
+                                        $wms_library_change[]=$library_change;
+
                                         $number -=  $vv['now_num'];
                                     }
 
                                 }
-
+                                self::tryeChange($wms_library_change,'out');
                                 foreach ($wms_library_sige as $kkk => $vvv){
                                     $where21['self_id']=$vvv['self_id'];
 
