@@ -303,7 +303,7 @@ class TryeController extends CommonController{
         $data=[];
         $payment = [];
         foreach ($datalist as $k => $v){
-            dd($v);
+        
             $list=[];
             $money=[];
             $list["self_id"]            =generate_id('change_');
