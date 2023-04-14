@@ -1139,7 +1139,7 @@ class UserRewardController extends CommonController{
                         $query->select($select1);
                     }])
                     ->where($where)->orWhere($where1)
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('event_time', 'desc')
                     ->select($select)->get();
                 $data['price']=UserReward::where($where)->orWhere($where1)->sum('payment');
                 $data['total_price']=UserReward::where($where)->orWhere($where1)->sum('company_fine');
@@ -1156,7 +1156,7 @@ class UserRewardController extends CommonController{
                         $query->select($select1);
                     }])
                     ->where($where)->orWhere($where1)
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('event_time', 'desc')
                     ->select($select)->get();
                 $data['price']=UserReward::where($where)->orWhere($where1)->sum('payment');
                 $data['total_price']=UserReward::where($where)->orWhere($where1)->sum('company_fine');
@@ -1171,7 +1171,7 @@ class UserRewardController extends CommonController{
                     ->with(['user' => function($query) use($select1){
                         $query->select($select1);
                     }])->where($where)->orWhere($where1)->whereIn('group_code',$group_info['group_code'])
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('event_time', 'desc')
                     ->select($select)->get();
 
                 $data['price']=UserReward::where($where)->orWhere($where1)->whereIn('group_code',$group_info['group_code'])->sum('payment');

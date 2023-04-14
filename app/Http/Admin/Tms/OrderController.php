@@ -152,7 +152,7 @@ class OrderController extends CommonController{
                     $query->select($select1);
                 }])->where($where);
                 $data['items'] = $data['items']
-                    ->offset($firstrow)->limit($listrows)->orderBy('send_time', 'desc')->orderBy('order_mark','asc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('send_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
@@ -164,7 +164,7 @@ class OrderController extends CommonController{
                     $query->select($select1);
                 }])->where($where);
                 $data['items'] = $data['items']
-                    ->offset($firstrow)->limit($listrows)->orderBy('send_time', 'desc')->orderBy('order_mark','asc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('send_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
@@ -177,7 +177,7 @@ class OrderController extends CommonController{
 
                 $data['items'] = $data['items']
                     ->whereIn('group_code',$group_info['group_code'])
-                    ->offset($firstrow)->limit($listrows)->orderBy('send_time', 'desc')->orderBy('order_mark','asc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('send_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
@@ -558,7 +558,7 @@ class OrderController extends CommonController{
             $old_info = TmsOrder::where('self_id',$self_id)->select('self_id','car_id','car_number','carriage_id','carriage_name','group_code','group_name','use_flag')->first();
 
             $data['update_time']=$now_time;
-            DB::beginTransaction;
+            DB::beginTransaction();
             try{
             $id=TmsOrder::where('self_id',$self_id)->update($data);
             
@@ -669,6 +669,8 @@ class OrderController extends CommonController{
            $settle['self_id']   = generate_id('settle_');
            $settle['money']     = $total_money;
            $settle['total_money'] =$total_money;
+           $settle['settle_money']=$total_money;
+           $settle['receive_money'] = 0;
            $settle['carriage_id'] =$carriage_id;
            $settle['carriage_name'] =$carriage_name;
            $settle['order_id']    = $order_id;
