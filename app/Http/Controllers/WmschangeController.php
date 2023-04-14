@@ -95,9 +95,6 @@ class WmschangeController extends Controller{
 
 
     }
-    public function abc(){
-        
-    }
 
     //轮胎出库变更表
     public function tryeChange($datalist,$type){

@@ -394,7 +394,7 @@ class TryeController extends CommonController{
                 $count['group_name']         = $user_info->group_name;
                 $id=TmsTrye::insert($data);
                 TmsTryeCount::insert($count);
-                $change->abc($count,'preentry');
+                $change->tryChange($count,'preentry');
                 if (!$trye_model){
                     $model_list['self_id'] = generate_id('model_');
                     $model_list['model']   = $model;
