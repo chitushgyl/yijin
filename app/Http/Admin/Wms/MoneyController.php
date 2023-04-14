@@ -820,6 +820,10 @@ class MoneyController extends CommonController{
                 $button_info2[] = $v;
                 $button_info3[] = $v;
             }
+            if($v->id == 204){
+                $button_info2[] = $v;
+                $button_info3[] = $v;
+            }
 
         }
         foreach ($data['items'] as $k=>$v) {
