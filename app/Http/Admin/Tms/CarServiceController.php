@@ -52,6 +52,7 @@ class CarServiceController extends CommonController{
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
         $car_number     =$request->input('car_number');
+        $trailer_num    =$request->input('trailer_num');
         $driver_name    =$request->input('driver_name');
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
@@ -73,6 +74,7 @@ class CarServiceController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
+            ['type'=>'like','name'=>'trailer_num','value'=>$trailer_num],
             ['type'=>'like','name'=>'driver_name','value'=>$driver_name],
             ['type'=>'>=','name'=>'service_time','value'=>$start_time],
             ['type'=>'<','name'=>'service_time','value'=>$end_time],

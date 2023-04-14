@@ -76,7 +76,7 @@ class UserController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','safe_reward','salary',
+        $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','safe_reward','salary','social_money',
         'group_insurance','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','birthday','sex','age','contract_date','working_age','id_validity',
             'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address','driver_nvq_num','driver_nvq_validity','driver_nvq_organ','driver_nvq','nation'];
         $select1 = ['self_id','section_name'];
@@ -149,7 +149,7 @@ class UserController extends CommonController{
         ];
         $select=['self_id','type','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
             ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','contract_back','license_back','work_license'
-        ,'birthday','sex','age','contract_date','working_age','id_validity','id_address','salary','department_name','nation',
+        ,'birthday','sex','age','contract_date','working_age','id_validity','id_address','salary','department_name','nation','social_money',
             'drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','driver_nvq_num','driver_nvq_validity','driver_nvq_organ','driver_nvq'];
         $data['info']=SystemUser::where($where)->select($select)->first();
         if($data['info']){
@@ -198,6 +198,7 @@ class UserController extends CommonController{
         $entry_time              =$request->input('entry_time');//入职时间
         $leave_time              =$request->input('leave_time');//离职时间
         $social_flag             =$request->input('social_flag');//是否参加社保
+        $social_money             =$request->input('social_money');//社保费
         $live_cost               =$request->input('live_cost');//住宿费
         $education_background    =$request->input('education_background');//学历
         $now_address             =$request->input('now_address');//现居地
@@ -266,6 +267,7 @@ class UserController extends CommonController{
             $data['entry_time']           =$entry_time;
             $data['leave_time']           =$leave_time;
             $data['social_flag']          =$social_flag;
+            $data['social_money']         =$social_money;
             $data['live_cost']            =$live_cost;
             $data['education_background'] =$education_background;
             $data['now_address']          =$now_address;
@@ -784,7 +786,7 @@ class UserController extends CommonController{
         $select=['self_id','name','tel','department','identity_num','entry_time','leave_time','social_flag','live_cost','education_background','now_address','driver_license','nvq','safe_reward','contract'
             ,'group_insurance','identity_front','identity_back','use_flag','delete_flag','create_time','update_time','group_code','group_name','type','contract_back','license_back','work_license','birthday',
             'sex','age','contract_date','working_age','id_validity','salary','drive_type','nvq_num','nvq_organ','nvq_validity','drive_organ','drive_validity','id_address','driver_nvq_num','driver_nvq_validity',
-            'driver_nvq_organ','driver_nvq','department_name','nation'
+            'driver_nvq_organ','driver_nvq','department_name','nation','social_money'
         ];
         // $self_id='address_202012301359512962811465';
         $select1 = ['self_id','section_name'];
