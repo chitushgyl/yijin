@@ -1125,7 +1125,7 @@ class UserRewardController extends CommonController{
         $where=get_list_where($search);
         $where1=get_list_where($search1);
 
-        $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag','reward_id',
+        $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
             ,'cash_back','cash_flag','type','user_name','bear','company_fine','escort_name'];
         $select1=['self_id','name'];
