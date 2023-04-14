@@ -205,6 +205,7 @@ class CarServiceController extends CommonController{
         $type               =$request->input('type');//类型 service维修  保养preserve
         $car_id             =$request->input('car_id');
         $car_number         =$request->input('car_number');//车牌号
+        $trailer_num        =$request->input('trailer_num');//挂车号
         $brand              =$request->input('brand');//品牌型号
         $driver_id          =$request->input('driver_id');//驾驶员 self_id
         $driver_name        =$request->input('driver_name');//驾驶员
@@ -237,6 +238,7 @@ class CarServiceController extends CommonController{
             }
             $data['car_number']        =$car_number;
             $data['car_id']            =$car_id;
+            $data['trailer_num']       =$trailer_num;
             $data['brand']             =$brand;
             $data['kilo_num']          =$kilo_num;
             $data['next_kilo']         =$next_kilo;
@@ -352,6 +354,7 @@ class CarServiceController extends CommonController{
                 $money['pay_state']          = 'Y';
                 $money['car_id']             = $v->car_id;
                 $money['car_number']         = $v->car_number;
+                $money['trailer_num']        = $v->trailer_num;
                 $money['user_id']            = $v->driver_id;
                 $money['user_name']          = $v->driver_name;
                 $money['process_state']      = 'Y';
