@@ -910,6 +910,7 @@ class TryeController extends CommonController{
                         return $msg;
                     }
                 }catch(\Exception $e){
+                    dd($e);
                     DB::rollBack();
                     $msg['code'] = 302;
                     $msg['msg'] = "操作失败";
