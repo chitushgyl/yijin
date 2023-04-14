@@ -303,7 +303,7 @@ class TryeController extends CommonController{
         $data=[];
         $payment = [];
         foreach ($datalist as $k => $v){
-
+            dd($v);
             $list=[];
             $money=[];
             $list["self_id"]            =generate_id('change_');
@@ -374,7 +374,7 @@ class TryeController extends CommonController{
     /**
      * 入库操作
      * */
-    public function inTrye(Request $request,Change $change){
+    public function inTrye(Request $request){
         $user_info = $request->get('user_info');//接收中间件产生的参数
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
