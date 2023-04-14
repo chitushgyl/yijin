@@ -663,7 +663,7 @@ class OrderController extends CommonController{
         ];
         $validator=Validator::make($input,$rules,$message);
         if($validator->passes()){
-           TmsOrder::whereIn('self_id',explode(',',$order_id))->select('self_id,car_id','car_number','total_money')->get();
+           TmsOrder::whereIn('self_id',explode(',',$order_id))->select('self_id','car_id','car_number','total_money')->get();
            $total_money = TmsOrder::whereIn('self_id',explode(',',$order_id))->sum('total_money');
            //保存运费结算表
            $settle['self_id']   = generate_id('settle_');
@@ -1930,12 +1930,11 @@ class OrderController extends CommonController{
                     "transport_type"=>'运输方式',
                     "order_number"=>'订单编号',
                     "road_card"=>'路卡',
-                    "carriage_group"=>'承运商组别',
-                    "carriage_group"=>'承运商组别',
-                    "carriage_group"=>'承运商组别',
-                    "carriage_group"=>'承运商组别',
-                    "carriage_group"=>'承运商组别',
-                    "carriage_group"=>'承运商组别',
+                    "order_weight"=>'装货吨位',
+                    "upload_weight"=>'卸货吨位',
+                    "leave_time"=>'卸货时间',
+                    "sale_price"=>'单价',
+                    "total_money"=>'总运费',
                 ]];
                 }
                 
