@@ -774,7 +774,7 @@ class WagesController extends CommonController{
         ];
        
         $where=get_list_where($search);
-
+        $select3 =['self_id','name','salary'];
         $select=['self_id','driver_id','user_name','escort','escort_name','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag','leave_time','pay_id'];
         $select1=['self_id','send_id','send_name','gather_id','gather_name','delete_flag','create_time','kilo_num','num','group_code','group_name','use_flag','car_num','line_list','pay_type','once_price','base_pay'];
         $select2=['self_id','pay_id','send_name','gather_name','leave_time'];
@@ -792,7 +792,7 @@ class WagesController extends CommonController{
                 }])
                 // ->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
-                    // ->select($select)
+                    ->select($select3)
                     ->get();
                 $data['group_show']='Y';
                 break;
@@ -811,7 +811,7 @@ class WagesController extends CommonController{
                 }])
                 // ->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
-                    // ->select($select)
+                    ->select($select3)
                     ->get();
                 $data['group_show']='N';
                 break;
@@ -830,7 +830,7 @@ class WagesController extends CommonController{
                 // ->where($where)
                 ->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
-                    // ->select($select)
+                    ->select($select3)
                     ->get();
                 $data['group_show']='Y';
                 break;
