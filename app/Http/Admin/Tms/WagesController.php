@@ -715,7 +715,10 @@ class WagesController extends CommonController{
         //获取驾驶员的基本工资
         $salary = SystemUser::where('name',$user_name)->select('self_id','salary')->first();
         // dump($data['items'],$salary,$day_num);
-        $base_pay = $salary->salary/$day_num;
+        if($salary){
+            $base_pay = $salary->salary/$day_num;
+        }
+        
         // dump($base_pay);
         $pay = 0;
         $reward = 0;
