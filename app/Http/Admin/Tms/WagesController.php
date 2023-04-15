@@ -712,8 +712,8 @@ class WagesController extends CommonController{
         //获取当月天数
         $day_num = date('t',strtotime($start_time));
         //获取驾驶员的基本工资
-        $salary = SystemUser::where('self_id',$driver_id)->select('salary')->first();
-        $base_pay = $salary/$day_num;
+        $salary = SystemUser::where('self_id',$driver_id)->select('self_id','salary')->first();
+        $base_pay = $salary->salary/$day_num;
         dd($base_pay);
         foreach ($data['items'] as $k=>$v) {
             $v->button_info=$button_info;
