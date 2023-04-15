@@ -667,12 +667,12 @@ class WagesController extends CommonController{
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'driver_id','value'=>$driver_id],
             ['type'=>'>=','name'=>'leave_time','value'=>$start_time.' 00:00:00'],
-            ['type'=>'<=','name'=>'leave_time','value'=>$end_time.' 23:59:59'],
+            ['type'=>'<=','name'=>'leave_time','value'=>$start_time.' 23:59:59'],
         ];
        
         $where=get_list_where($search);
 
-        $select=['self_id','driver_id','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag','leave_time'];
+        $select=['self_id','driver_id','driver_name','escort','escort_name','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag','leave_time'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsOrder::where($where)->count(); //总的数据量
@@ -700,6 +700,11 @@ class WagesController extends CommonController{
                 break;
         }
 
+        //获取当月天数
+        $day_num = date('t',strtotime($start_time));
+        //获取驾驶员的基本工资
+        $salary = SystemUser::where('self_id',$driver_id)->select('salary')->first();
+        $base_pay = $salary/$day_num;
         foreach ($data['items'] as $k=>$v) {
             $v->button_info=$button_info;
           

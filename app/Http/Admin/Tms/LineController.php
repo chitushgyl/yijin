@@ -158,6 +158,11 @@ class LineController extends CommonController{
         $gather_name        =$request->input('gather_name');//卸
         $kilo_num           =$request->input('kilo_num');//里程
         $num                =$request->input('num');//编号
+        $car_num            =$request->input('car_num');//车数
+        $pay_type           =$request->input('pay_type');//结算方式
+        $once_price         =$request->input('once_price');//每车奖励
+        $base_pay           =$request->input('base_pay');//基本提成
+
 
         $rules=[
             'send_name'=>'required',
@@ -184,7 +189,11 @@ class LineController extends CommonController{
             $data['gather_name']      =$gather_name;
             $data['kilo_num']         =$kilo_num;
             $data['num']              =$num;
-
+            $data['car_num']          =$car_num;
+            $data['pay_type']         =$pay_type;
+            $data['once_price']       =$once_price;
+            $data['base_pay']         =$base_pay;
+            $data['line_list']        =$send_name.','.$gather_name;
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsLine::where($wheres)->first();
