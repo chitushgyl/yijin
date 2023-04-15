@@ -661,7 +661,9 @@ class OrderController extends CommonController{
                 $money['create_user_name']       = $user_info->name;
                 $money['create_time']            = $money['update_time'] = $now_time;
                 TmsMoney::insert($money);
-                if($id){
+                
+            }
+            if($id){
                    DB::commit();
                    $msg['code'] = 200;
                    $msg['msg'] = "操作成功";
@@ -672,7 +674,6 @@ class OrderController extends CommonController{
                    $msg['msg'] = "操作失败";
                    return $msg;
                 }
-            }
 
             }catch(\Exception $e){
                    DB::rollBack();
