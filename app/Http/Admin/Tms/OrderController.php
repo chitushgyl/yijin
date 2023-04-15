@@ -595,6 +595,9 @@ class OrderController extends CommonController{
                          $pay += $v->tmsLine->base_pay;
                          $reward += $v->tmsLine->once_price;
                       }
+                      if($v->tmsLine->pay_type == 'B'){
+
+                      }
           
                   }
                  $count_pay = ($pay-$base_pay);
@@ -608,6 +611,7 @@ class OrderController extends CommonController{
             if ($ti_order) {
                 if(in_array($self_id,explode(',',$ti_order->order_id))){
                     //参与过计算提成 本次不统计
+                    dd(123);
                 }else{
                  //制作提成表数据
                  $ti_money['update_time']            = $now_time;
