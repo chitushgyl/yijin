@@ -575,26 +575,20 @@ class OrderController extends CommonController{
             $order = TmsOrder::with(['tmsLine' => function($query) use($select1){
                     $query->select($select1);
                 }])->where('driver_id',$old_info->driver_id)->where('leave_time',$leave_time)->get();
-            //判断该订单是否算过提成
-            $ti_order =DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$leave_time)->first();
-            if ($ti_order) {
-                if(in_array($self_id,explode(',',$ti_order->order_id))){
-                    //参与过计算提成 本次不统计
-                }else{
-                    //计算提成
-                    //获取当月天数
-                   $day_num = date('t',strtotime($leave_time));
-                    //获取驾驶员的基本工资
-                   $base_pay=0;
-                   $salary = SystemUser::where('self_id',$old_info->driver_id)->select('self_id','salary')->first();
-                   // dump($data['items'],$salary,$day_num);
-                   if($salary){
-                        $base_pay = $salary->salary/$day_num;
-                   }
+             //获取当月天数
+             $day_num = date('t',strtotime($leave_time));
+             //获取驾驶员的基本工资
+             $base_pay=0;
+             $salary = SystemUser::where('self_id',$old_info->driver_id)->select('self_id','salary')->first();
+             // dump($data['items'],$salary,$day_num);
+             if($salary){
+                  $base_pay = $salary->salary/$day_num;
+             }
         
-                   // dump($base_pay);
-                  $pay = 0;
-                  $reward = 0;
+             // dump($base_pay);
+             $pay = 0;
+             $reward = 0;
+             //计算提成             
                   foreach ($order as $k=>$v) {           
                       if($v->tmsLine->pay_type == 'A'){
                          $pay += $v->tmsLine->base_pay;
@@ -608,7 +602,19 @@ class OrderController extends CommonController{
                  }else{
                      $count_pay = 0;
                  }
+            //判断该订单是否算过提成
+            $ti_order =DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$leave_time)->first();
+            if ($ti_order) {
+                if(in_array($self_id,explode(',',$ti_order->order_id))){
+                    //参与过计算提成 本次不统计
+                }else{
                  //制作提成表数据
+                 $ti_money['update_time']            = $now_time;
+                 $ti_money['money']                  = $count_pay;
+                 $ti_money['order_id']               = $ti_order->order_id.','.$self_id;
+                 DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$leave_time)->update($ti_money);
+                }
+            }else{
                  $ti_money['self_id'] = generate_id('ti');
                  $ti_money['driver_id'] = $old_info->driver_id;
                  $ti_money['driver_name'] = $old_info->driver_name;
@@ -619,9 +625,8 @@ class OrderController extends CommonController{
                  $ti_money['create_user_name']       = $user_info->name;
                  $ti_money['create_time']            = $ti_money['update_time'] = $now_time;
                  $ti_money['money']                  = $count_pay;
-                 $ti_money['order_id']               = $ti_order->order_id.','.$self_id;
-
-                }
+                 $ti_money['order_id']               = $self_id;
+                 DriverCommission::insert($ti_money);
             }
             
             $old_money = TmsMoney::where('order_id',$self_id)->first();
