@@ -727,8 +727,8 @@ class WagesController extends CommonController{
             }
           
         }
-        $count_pay = $pay-$base_pay;
-        dd($pay,$count_pay);
+        $count_pay = ($pay-$base_pay);
+        dd(count($data['items']),$pay,$count_pay);
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
