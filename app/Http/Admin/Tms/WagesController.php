@@ -656,6 +656,7 @@ class WagesController extends CommonController{
         $group_code     =$request->input('group_code');
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
+        $driver_id      =$request->input('driver_id');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -664,6 +665,7 @@ class WagesController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'=','name'=>'driver_id','value'=>$driver_id],
             ['type'=>'>=','name'=>'leave_time','value'=>$start_time.' 00:00:00'],
             ['type'=>'<=','name'=>'leave_time','value'=>$end_time.' 23:59:59'],
         ];
