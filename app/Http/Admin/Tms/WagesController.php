@@ -847,11 +847,12 @@ class WagesController extends CommonController{
         }
         $date = getDateFromRange($start_time,$end_time);
         dump($date,$data['items']->toArray());
-        $pay = 0;
-        $reward = 0;
+        
         foreach($data['items'] as $k => $v){
             if ($v->tmsOrder) {
                 foreach($date as $kkk => $vvv){
+                $pay = 0;
+                $reward = 0;
                 foreach($v->tmsOrder as $kk => $vv){
                 
                     if ($vv->leave_time == $vvv) {
@@ -863,7 +864,6 @@ class WagesController extends CommonController{
                         if($salary){
                            $base_pay = $salary->salary/$day_num;
                         }
-                        
                                 
                         if($vv->tmsLine->pay_type == 'A'){
                            $pay += $vv->tmsLine->base_pay;
