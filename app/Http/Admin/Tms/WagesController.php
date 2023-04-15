@@ -866,8 +866,8 @@ class WagesController extends CommonController{
                         $reward = 0;
                                 
                         if($vv->tmsLine->pay_type == 'A'){
-                           $pay += $v->tmsLine->base_pay;
-                           $reward += $v->tmsLine->once_price;
+                           $pay += $vv->tmsLine->base_pay;
+                           $reward += $vv->tmsLine->once_price;
                         }
                         dd($pay,$reward);
           
