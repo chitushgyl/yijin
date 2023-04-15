@@ -716,12 +716,18 @@ class WagesController extends CommonController{
         $salary = SystemUser::where('name',$user_name)->select('self_id','salary')->first();
         dump($data['items'],$salary,$day_num);
         $base_pay = $salary->salary/$day_num;
-        dd($base_pay);
+        dump($base_pay);
+        $pay = 0;
         foreach ($data['items'] as $k=>$v) {
             $v->button_info=$button_info;
+            if($v->TmsLine == 'A'){
+                $pay += $v->TmsLine->base_pay;
+                
+            }
           
         }
-       
+        $count_pay = ($pay-$base_pay)+ count($data['items']*once_price);
+        dd($count_pay);
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
