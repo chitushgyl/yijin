@@ -858,12 +858,10 @@ class WagesController extends CommonController{
                         //获取驾驶员的基本工资
                         $base_pay=0;
                         $salary = SystemUser::where('self_id',$vv->driver_id)->select('self_id','salary')->first();
-                        dump($data['items'],$salary,$day_num);
+                      
                         if($salary){
                            $base_pay = $salary->salary/$day_num;
                         }
-        
-                        dd($base_pay);
                         $pay = 0;
                         $reward = 0;
                                 
@@ -871,6 +869,7 @@ class WagesController extends CommonController{
                            $pay += $v->tmsLine->base_pay;
                            $reward += $v->tmsLine->once_price;
                         }
+                        dd($pay,$reward);
           
                         
                     }
