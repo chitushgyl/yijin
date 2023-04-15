@@ -569,6 +569,60 @@ class OrderController extends CommonController{
             DB::beginTransaction();
             try{
             $id=TmsOrder::where('self_id',$self_id)->update($data);
+
+            //保存提成表 计算提成
+            $select1=['self_id','send_id','send_name','gather_id','gather_name','delete_flag','create_time','kilo_num','num','group_code','group_name','use_flag','car_num','line_list','pay_type','once_price','base_pay'];
+            $order = TmsOrder::with(['tmsLine' => function($query) use($select1){
+                    $query->select($select1);
+                }])->where('driver_id',$old_info->driver_id)->where('leave_time',$leave_time)->get();
+            //判断该订单是否算过提成
+            $ti_order =DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$leave_time)->first();
+            if ($ti_order) {
+                if(in_array($self_id,explode(',',$ti_order->order_id))){
+                    //参与过计算提成 本次不统计
+                }else{
+                    //计算提成
+                    //获取当月天数
+                   $day_num = date('t',strtotime($leave_time));
+                    //获取驾驶员的基本工资
+                   $base_pay=0;
+                   $salary = SystemUser::where('self_id',$old_info->driver_id)->select('self_id','salary')->first();
+                   // dump($data['items'],$salary,$day_num);
+                   if($salary){
+                        $base_pay = $salary->salary/$day_num;
+                   }
+        
+                   // dump($base_pay);
+                  $pay = 0;
+                  $reward = 0;
+                  foreach ($order as $k=>$v) {           
+                      if($v->tmsLine->pay_type == 'A'){
+                         $pay += $v->tmsLine->base_pay;
+                         $reward += $v->tmsLine->once_price;
+                      }
+          
+                  }
+                 $count_pay = ($pay-$base_pay);
+                 if($count_pay > 0){
+                     $count_pay = $count_pay + $reward;
+                 }else{
+                     $count_pay = 0;
+                 }
+                 //制作提成表数据
+                 $ti_money['self_id'] = generate_id('ti');
+                 $ti_money['driver_id'] = $old_info->driver_id;
+                 $ti_money['driver_name'] = $old_info->driver_name;
+                 $ti_money['leave_time']  = $leave_time;
+                 $ti_money['group_code']             = $old_info->group_code;
+                 $ti_money['group_name']             = $old_info->group_name;
+                 $ti_money['create_user_id']         = $user_info->admin_id;
+                 $ti_money['create_user_name']       = $user_info->name;
+                 $ti_money['create_time']            = $ti_money['update_time'] = $now_time;
+                 $ti_money['money']                  = $count_pay;
+                 $ti_money['order_id']               = $ti_order->order_id.',',$self_id;
+
+                }
+            }
             
             $old_money = TmsMoney::where('order_id',$self_id)->first();
             if ($old_money) {
