@@ -869,7 +869,7 @@ class WagesController extends CommonController{
                            $pay += $vv->tmsLine->base_pay;
                            $reward += $vv->tmsLine->once_price;
                         }
-                        dd($pay,$reward);
+                        
           
                         
                     }
@@ -877,6 +877,7 @@ class WagesController extends CommonController{
                 }
             }
         }
+        dd($pay,$reward);
 
         //获取当月天数
         $day_num = date('t',strtotime($start_time));
