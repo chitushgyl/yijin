@@ -750,6 +750,7 @@ class WagesController extends CommonController{
         /** 接收中间件参数**/
         $group_info     = $request->get('group_info');//接收中间件产生的参数
         $button_info    = $request->get('anniu');//接收中间件产生的参数
+        $user_info  = $request->get('user_info');//接收中间件产生的参数
 //dd($button_info);
         /**接收数据11*/
         $num            =$request->input('num')??10;
