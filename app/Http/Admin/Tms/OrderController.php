@@ -589,15 +589,21 @@ class OrderController extends CommonController{
              // dump($base_pay);
              $pay = 0;
              $reward = 0;
+             $a = 0;
+             $carnum = 0;
+             $once = 0;
              //计算提成             
                   foreach ($order as $k=>$v) {           
                       if($v->tmsLine->pay_type == 'A'){
                          $pay += $v->tmsLine->base_pay;
                          $reward += $v->tmsLine->once_price;
                       }
-                      if($v->tmsLine->pay_type == 'B'){
-
-                      }
+                      // if($v->tmsLine->pay_type == 'B'){
+                      //    $a += 1;
+                      //    if($k>$v->tmsLine->car_num){
+                      //       $
+                      //    }
+                      // }
           
                   }
                  $count_pay = ($pay-$base_pay);
@@ -605,6 +611,9 @@ class OrderController extends CommonController{
                      $count_pay = $count_pay + $reward;
                  }else{
                      $count_pay = 0;
+                 }
+                 if($a>0){
+                    // $count_pay = ($);
                  }
             //判断该订单是否算过提成
             $ti_order =DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$leave_time)->first();
