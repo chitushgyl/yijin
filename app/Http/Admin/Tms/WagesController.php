@@ -846,7 +846,7 @@ class WagesController extends CommonController{
                 break;
         }
         $date = getDateFromRange($start_time,$end_time);
-        dump($date,$data['items']->toArray());
+        // dump($date,$data['items']->toArray());
         
         foreach($data['items'] as $k => $v){
             if ($v->tmsOrder) {
@@ -869,15 +869,19 @@ class WagesController extends CommonController{
                            $pay += $vv->tmsLine->base_pay;
                            $reward += $vv->tmsLine->once_price;
                         }
-                        
-          
-                        
                     }
                 }
+                   $count_pay = ($pay-$base_pay);
+                   if($count_pay > 0){
+                      $v->count_pay = $count_pay + $reward;
+                   }else{
+                      $v->count_pay = 0;
+                   }
+
                 }
             }
         }
-        dd($pay,$reward);
+        dd($data['items']->toArray(),$pay,$reward);
 
         //获取当月天数
         $day_num = date('t',strtotime($start_time));
