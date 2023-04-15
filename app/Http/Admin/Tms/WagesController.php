@@ -757,8 +757,8 @@ class WagesController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-        $start_time     =$request->input('start_time');
-        $end_time       =$request->input('end_time');
+        $start_time     =$request->input('start_time')??'2023-04-01';
+        $end_time       =$request->input('end_time')??'2023-04-15';
         $driver_id      =$request->input('driver_id');
         $user_name      =$request->input('user_name');
         $listrows       =$num;
@@ -770,8 +770,8 @@ class WagesController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'driver_id','value'=>$driver_id],
-            // ['type'=>'>=','name'=>'leave_time','value'=>$start_time.' 00:00:00'],
-            // ['type'=>'<=','name'=>'leave_time','value'=>$start_time.' 23:59:59'],
+            ['type'=>'>=','name'=>'leave_time','value'=>$start_time.' 00:00:00'],
+            ['type'=>'<=','name'=>'leave_time','value'=>$start_time.' 23:59:59'],
         ];
        
         $where=get_list_where($search);
@@ -845,7 +845,8 @@ class WagesController extends CommonController{
                 $data['group_show']='Y';
                 break;
         }
-        dd($data['items']->toArray());
+        $date = getDateFromRange($start_time,$send_time);
+        dd($date,$data['items']->toArray());
 
         //获取当月天数
         $day_num = date('t',strtotime($start_time));
