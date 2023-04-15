@@ -659,6 +659,7 @@ class WagesController extends CommonController{
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
         $driver_id      =$request->input('driver_id');
+        $user_name      =$request->input('user_name');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -712,7 +713,7 @@ class WagesController extends CommonController{
         //获取当月天数
         $day_num = date('t',strtotime($start_time));
         //获取驾驶员的基本工资
-        $salary = SystemUser::where('self_id',$driver_id)->select('self_id','salary')->first();
+        $salary = SystemUser::where('name',$user_name)->select('self_id','salary')->first();
         dump($data['items'],$salary,$day_num);
         $base_pay = $salary->salary/$day_num;
         dd($base_pay);
