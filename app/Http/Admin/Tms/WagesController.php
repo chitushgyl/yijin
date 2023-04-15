@@ -770,8 +770,8 @@ class WagesController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'driver_id','value'=>$driver_id],
-            ['type'=>'>=','name'=>'leave_time','value'=>$start_time.' 00:00:00'],
-            ['type'=>'<=','name'=>'leave_time','value'=>$start_time.' 23:59:59'],
+            // ['type'=>'>=','name'=>'leave_time','value'=>$start_time.' 00:00:00'],
+            // ['type'=>'<=','name'=>'leave_time','value'=>$start_time.' 23:59:59'],
         ];
        
         $where=get_list_where($search);
