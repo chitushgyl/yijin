@@ -774,6 +774,15 @@ class WagesController extends CommonController{
         ];
        
         $where=get_list_where($search);
+
+        $search1=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+            ['type'=>'=','name'=>'group_code','value'=>$user_info->group_code],
+            ['type'=>'=','name'=>'driver_id','value'=>$driver_id],
+        ];
+       
+        $where1=get_list_where($search1);
         $select3 =['self_id','name','salary'];
         $select=['self_id','driver_id','user_name','escort','escort_name','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag','leave_time','pay_id'];
         $select1=['self_id','send_id','send_name','gather_id','gather_name','delete_flag','create_time','kilo_num','num','group_code','group_name','use_flag','car_num','line_list','pay_type','once_price','base_pay'];
@@ -790,7 +799,7 @@ class WagesController extends CommonController{
                 }]);
 
                 }])
-                // ->where($where)
+                ->where($where1)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select3)
                     ->get();
@@ -809,7 +818,7 @@ class WagesController extends CommonController{
                 }]);
 
                 }])
-                // ->where($where)
+                ->where($where1)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select3)
                     ->get();
@@ -827,7 +836,7 @@ class WagesController extends CommonController{
                 }]);
 
                 }])
-                // ->where($where)
+                ->where($where1)
                 ->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select3)
