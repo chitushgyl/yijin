@@ -718,16 +718,23 @@ class WagesController extends CommonController{
         $base_pay = $salary->salary/$day_num;
         // dump($base_pay);
         $pay = 0;
+        $reward = 0;
         foreach ($data['items'] as $k=>$v) {
             
             $v->button_info=$button_info;
-            if($v->TmsLine->pay_type == 'A'){
-                $pay += $v->TmsLine->base_pay;
+            if($v->tmsLine->pay_type == 'A'){
+                $pay += $v->tmsLine->base_pay;
+                $reward += $v->tmsLine->once_price;
                 
             }
           
         }
         $count_pay = ($pay-$base_pay);
+        if($count_pay > $base_pay){
+            $count_pay = $count_pay + $reward;
+        }else{
+            $count_pay = 0;
+        }
         dd(count($data['items']),$pay,$count_pay);
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
