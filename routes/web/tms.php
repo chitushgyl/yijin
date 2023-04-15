@@ -364,6 +364,11 @@ Route::group([
     Route::any('/wages/addWages','WagesController@addWages');//获取线路
     Route::any('/wages/wagesDelFlag','WagesController@wagesDelFlag');//获取线路
     Route::any('/wages/details','WagesController@details');//获取线路
+
+    Route::any('/wages/commissionList','WagesController@commissionList');//获取线路
+    Route::any('/wages/commissionPage','WagesController@commissionPage');//获取线路
+
+
 });
 
 

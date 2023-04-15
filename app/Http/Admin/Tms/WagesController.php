@@ -624,6 +624,91 @@ class WagesController extends CommonController{
 
     }
 
+    //提成
+    public function commissionList(Request $request){
+        $data['page_info']      =config('page.listrows');
+        $data['button_info']    =$request->get('anniu');
+        $abc='跟单';
+        $data['import_info']    =[
+            'import_text'=>'下载'.$abc.'导入示例文件',
+            'import_color'=>'#FC5854',
+            'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/跟单导入文件范本.xlsx',
+        ];
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+
+        //dd($data['button_info']->toArray());
+        return $msg;
+    }
+
+    public function commissionPage(Request $request){
+        $user_type    =array_column(config('tms.user_type'),'name','key');
+        /** 接收中间件参数**/
+        $group_info     = $request->get('group_info');//接收中间件产生的参数
+        $button_info    = $request->get('anniu');//接收中间件产生的参数
+//dd($button_info);
+        /**接收数据11*/
+        $num            =$request->input('num')??10;
+        $page           =$request->input('page')??1;
+        $use_flag       =$request->input('use_flag');
+        $group_code     =$request->input('group_code');
+        $start_time     =$request->input('start_time');
+        $end_time       =$request->input('end_time');
+        $listrows       =$num;
+        $firstrow       =($page-1)*$listrows;
+
+    
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'>=','name'=>'leave_time','value'=>$start_time.' 00:00:00'],
+            ['type'=>'<=','name'=>'leave_time','value'=>$end_time.' 23:59:59'],
+        ];
+       
+        $where=get_list_where($search);
+
+        $select1=['self_id','driver_id','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag','leave_time'];
+        switch ($group_info['group_id']){
+            case 'all':
+                $data['total']=TmsOrder::where($where)->count(); //总的数据量
+                $data['items']=TmsOrder::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='Y';
+                break;
+
+            case 'one':
+                $where[]=['group_code','=',$group_info['group_code']];
+                $data['total']=TmsOrder::where($where)->count(); //总的数据量
+                $data['items']=TmsOrder::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='N';
+                break;
+
+            case 'more':
+                $data['total']=TmsOrder::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=TmsOrder::where($where)->whereIn('group_code',$group_info['group_code'])
+                    ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='Y';
+                break;
+        }
+
+        foreach ($data['items'] as $k=>$v) {
+            $v->button_info=$button_info;
+          
+        }
+       
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        //dd($msg);
+        return $msg;
+    }
+
 
 
 }
