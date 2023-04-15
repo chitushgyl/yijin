@@ -860,11 +860,7 @@ class WagesController extends CommonController{
                         //获取驾驶员的基本工资
                         $base_pay=0;
                         $salary = SystemUser::where('self_id',$vv->driver_id)->select('self_id','salary')->first();
-                      
-                        if($salary){
-                           $base_pay = $salary->salary/$day_num;
-                        }
-                                
+                        $base_pay = $salary->salary/$day_num;         
                         if($vv->tmsLine->pay_type == 'A'){
                            $pay += $vv->tmsLine->base_pay;
                            $reward += $vv->tmsLine->once_price;
