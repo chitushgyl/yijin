@@ -638,7 +638,7 @@ class OrderController extends CommonController{
                 $money['money']                  = $total_money; 
                 $money['before_money']           = $total_money;
                 $money['update_time']            = $now_time;
-                TmsMoney::where('self_id',$self_id)->update($money);
+                TmsMoney::where('self_id',$old_money->self_id)->update($money);
             }else{
                 /**保存费用**/
                 $money['self_id']                = generate_id('money_');
