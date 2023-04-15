@@ -717,7 +717,7 @@ class WagesController extends CommonController{
         // dump($data['items'],$salary,$day_num);
         $base_pay = $salary->salary/$day_num;
         // dump($base_pay);
-        
+        $pay = 0;
         foreach ($data['items'] as $k=>$v) {
             $v->button_info=$button_info;
             if($v->TmsLine == 'A'){
