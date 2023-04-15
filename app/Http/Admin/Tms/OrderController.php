@@ -618,7 +618,7 @@ class OrderController extends CommonController{
             }else{
                  $ti_money['self_id'] = generate_id('ti_');
                  $ti_money['driver_id'] = $old_info->driver_id;
-                 $ti_money['driver_name'] = $old_info->driver_name;
+                 $ti_money['driver_name'] = $old_info->user_name;
                  $ti_money['leave_time']  = $leave_time;
                  $ti_money['group_code']             = $old_info->group_code;
                  $ti_money['group_name']             = $old_info->group_name;
