@@ -713,6 +713,7 @@ class WagesController extends CommonController{
         $day_num = date('t',strtotime($start_time));
         //获取驾驶员的基本工资
         $salary = SystemUser::where('self_id',$driver_id)->select('self_id','salary')->first();
+        dump($data['items'],$salary,$base_pay);
         $base_pay = $salary->salary/$day_num;
         dd($base_pay);
         foreach ($data['items'] as $k=>$v) {
