@@ -606,23 +606,27 @@ function dateTime(){
     return $date;
 }
 
-function getDateFromRange($startdate, $enddate){
-
-    $stimestamp = strtotime($startdate);
-    $etimestamp = strtotime($enddate);
-
-    // 计算日期段内有多少天
-    $days = ($etimestamp-$stimestamp)/86400+1;
-
-    // 保存每天日期
-    $date = array();
-
-    for($i=0;i&lt;$days;$i++){
-        $date[] = date('Y-m-d', $stimestamp+(86400*$i));
+/**
+     * @Description:获取指定日期段内的每一天日期
+     * @param $start_date // 1615963603 || 2021-03-10
+     * @param $end_date   // 1615963603 || 2021-03-10
+     * @return array
+     * @author: Msy
+     * @Created-Time: 2022/7/18 15:40
+     */
+    function getDateFromRange($start_date, $end_date)
+    {
+        $date = [];
+        $stimestamp = is_numeric($start_date) ? $start_date : strtotime($start_date);
+        $etimestamp = is_numeric($end_date) ? $end_date : strtotime($end_date);
+ 
+        // 计算日期段内有多少天
+        $days = ($etimestamp - $stimestamp) / 86400;
+        for ($i = 0; $i < $days; $i++) {
+            $date[] = date('Y-m-d', $stimestamp + (86400 * $i));
+        }
+        return $date;
     }
-
-    return $date;
-}
 
 
 ?>
