@@ -57,6 +57,12 @@ class SystemUser extends Model{
         return $this->hasOne('App\Models\Group\SystemSection','self_id','department');
     }
 
+    public function tmsOrder(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasOne('App\Models\Tms\TmsOrder','driver_id','self_id');
+    }
+
 
 
 
