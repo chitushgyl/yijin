@@ -367,6 +367,8 @@ Route::group([
 
     Route::any('/wages/commissionList','WagesController@commissionList');//获取线路
     Route::any('/wages/commissionPage','WagesController@commissionPage');//获取线路
+    Route::any('/wages/getWages','WagesController@getWages');//获取线路
+    
 
 
 });
