@@ -730,7 +730,7 @@ class WagesController extends CommonController{
           
         }
         $count_pay = ($pay-$base_pay);
-        if($count_pay > $base_pay){
+        if($count_pay > 0){
             $count_pay = $count_pay + $reward;
         }else{
             $count_pay = 0;
