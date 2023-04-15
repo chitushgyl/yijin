@@ -617,7 +617,7 @@ function getDateFromRange($startdate, $enddate){
     // 保存每天日期
     $date = array();
 
-    for($i=0; $i&lt;$days; $i++){
+    for($i=0;i&lt;$days;$i++){
         $date[] = date('Y-m-d', $stimestamp+(86400*$i));
     }
 
