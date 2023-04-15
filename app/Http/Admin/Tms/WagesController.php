@@ -845,7 +845,7 @@ class WagesController extends CommonController{
                 $data['group_show']='Y';
                 break;
         }
-        $date = getDateFromRange($start_time,$send_time);
+        $date = getDateFromRange($start_time,$end_time);
         dd($date,$data['items']->toArray());
 
         //获取当月天数
