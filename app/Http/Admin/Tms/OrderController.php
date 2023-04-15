@@ -616,7 +616,7 @@ class OrderController extends CommonController{
                  DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$leave_time)->update($ti_money);
                 }
             }else{
-                 $ti_money['self_id'] = generate_id('ti');
+                 $ti_money['self_id'] = generate_id('ti_');
                  $ti_money['driver_id'] = $old_info->driver_id;
                  $ti_money['driver_name'] = $old_info->driver_name;
                  $ti_money['leave_time']  = $leave_time;
