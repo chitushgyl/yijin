@@ -850,11 +850,11 @@ class WagesController extends CommonController{
         
         foreach($data['items'] as $k => $v){
             if ($v->tmsOrder) {
-                foreach($date as $kkk => $vvv){
+                
                 $pay = 0;
                 $reward = 0;
                 foreach($v->tmsOrder as $kk => $vv){
-                
+                  foreach($date as $kkk => $vvv){
                     if ($vv->leave_time == $vvv) {
                         $day_num = date('t',strtotime($start_time));
                         //获取驾驶员的基本工资
