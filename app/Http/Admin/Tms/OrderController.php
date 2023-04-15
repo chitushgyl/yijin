@@ -8,6 +8,7 @@ use App\Models\Tms\TmsCar;
 use App\Models\Tms\TmsGroup;
 use App\Models\Tms\TmsMoneyCount;
 use App\Models\Tms\TmsMoney;
+use App\Models\Tms\TmsLine;
 use App\Models\Tms\TmsReceipt;
 use App\Models\Tms\TmsWages;
 use App\Models\Tms\TmsWares;
