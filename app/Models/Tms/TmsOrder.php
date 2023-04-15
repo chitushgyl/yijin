@@ -80,7 +80,11 @@ class TmsOrder extends Model{
         //如果主键是id可以省略
         return $this->hasOne('App\Models\Tms\TmsGroup','self_id','carriage_id');
     }
-
+    public function tmsLine(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasOne('App\Models\Tms\TmsLine','self_id','pay_id');
+    }
 
 
 }

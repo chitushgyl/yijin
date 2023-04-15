@@ -69,7 +69,7 @@ class LineController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','send_id','send_name','gather_id','gather_name','delete_flag','create_time','kilo_num','num','group_code','group_name','use_flag'];
+        $select=['self_id','send_id','send_name','gather_id','gather_name','delete_flag','create_time','kilo_num','num','group_code','group_name','use_flag','car_num','line_list','pay_type','once_price','base_pay'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsLine::where($where)->count(); //总的数据量
