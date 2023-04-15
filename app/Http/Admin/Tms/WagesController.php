@@ -848,6 +848,36 @@ class WagesController extends CommonController{
         $date = getDateFromRange($start_time,$end_time);
         dd($date,$data['items']->toArray());
 
+        foreach($data['items'] as $k => $v){
+            if ($v->tmsOrder as $kk => $vv) {
+                foreach($date as $kkk => $vvv){
+
+                    if ($vv->leave_time == $vvv) {
+                        $day_num = date('t',strtotime($start_time));
+                        //获取驾驶员的基本工资
+                        $base_pay=0;
+                        $salary = SystemUser::where('name',$user_name)->select('self_id','salary')->first();
+                        // dump($data['items'],$salary,$day_num);
+                        if($salary){
+                           $base_pay = $salary->salary/$day_num;
+                        }
+        
+                        // dump($base_pay);
+                        $pay = 0;
+                        $reward = 0;
+                        foreach ($data['items'] as $k=>$v) {           
+                            $v->button_info=$button_info;
+                            if($v->tmsLine->pay_type == 'A'){
+                               $pay += $v->tmsLine->base_pay;
+                               $reward += $v->tmsLine->once_price;
+            }
+          
+        }
+                    }
+                }
+            }
+        }
+
         //获取当月天数
         $day_num = date('t',strtotime($start_time));
         //获取驾驶员的基本工资
