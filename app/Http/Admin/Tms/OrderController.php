@@ -619,7 +619,7 @@ class OrderController extends CommonController{
                  $ti_money['create_user_name']       = $user_info->name;
                  $ti_money['create_time']            = $ti_money['update_time'] = $now_time;
                  $ti_money['money']                  = $count_pay;
-                 $ti_money['order_id']               = $ti_order->order_id.',',$self_id;
+                 $ti_money['order_id']               = $ti_order->order_id.','.$self_id;
 
                 }
             }
