@@ -714,10 +714,10 @@ class WagesController extends CommonController{
         $day_num = date('t',strtotime($start_time));
         //获取驾驶员的基本工资
         $salary = SystemUser::where('name',$user_name)->select('self_id','salary')->first();
-        dump($data['items'],$salary,$day_num);
+        // dump($data['items'],$salary,$day_num);
         $base_pay = $salary->salary/$day_num;
-        dump($base_pay);
-        $pay = 0;
+        // dump($base_pay);
+        
         foreach ($data['items'] as $k=>$v) {
             $v->button_info=$button_info;
             if($v->TmsLine == 'A'){
@@ -726,8 +726,8 @@ class WagesController extends CommonController{
             }
           
         }
-        $count_pay = ($pay-$base_pay)+ count($data['items']*once_price);
-        dd($count_pay);
+        $count_pay = $pay-$base_pay;
+        dd($pay,$count_pay);
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
