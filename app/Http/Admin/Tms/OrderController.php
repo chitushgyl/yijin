@@ -611,7 +611,7 @@ class OrderController extends CommonController{
             if ($ti_order) {
                 if(in_array($self_id,explode(',',$ti_order->order_id))){
                     //参与过计算提成 本次不统计
-                    dd(123);
+                    dump(123);
                 }else{
                  //制作提成表数据
                  $ti_money['update_time']            = $now_time;
@@ -633,7 +633,7 @@ class OrderController extends CommonController{
                  $ti_money['order_id']               = $self_id;
                  DriverCommission::insert($ti_money);
             }
-            
+            dd(435);
             $old_money = TmsMoney::where('order_id',$self_id)->first();
             if ($old_money) {
                 $money['money']                  = $total_money; 
