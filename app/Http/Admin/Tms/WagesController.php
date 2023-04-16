@@ -91,7 +91,7 @@ class WagesController extends CommonController{
             case 'all':
                 $data['total']=SystemUser::where($where)->count(); //总的数据量
                 $data['items']=SystemUser::
-                ->where($where)
+                where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select3)
                     ->get();
