@@ -792,11 +792,11 @@ class WagesController extends CommonController{
             case 'all':
                 $data['total']=SystemUser::where($where)->count(); //总的数据量
                 $data['items']=SystemUser::with(['tmsOrder' => function($query) use($where,$select1,$select){
-                    // $query->where($where);
+                    $query->where($where);
                     $query->select($select);
                     $query->orderBy('leave_time','desc');
-                }])->with(['driverCommission' => function($query) use($select1){
-                
+                }])->with(['driverCommission' => function($query) use($select1,$where){
+                    $query->where($where);
                 }])
                 ->where($where1)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
@@ -809,11 +809,11 @@ class WagesController extends CommonController{
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=SystemUser::where($where)->count(); //总的数据量
                 $data['items']=SystemUser::with(['tmsOrder' => function($query) use($where,$select1,$select){
-                    // $query->where($where);
+                    $query->where($where);
                     $query->select($select);
                     $query->orderBy('leave_time','desc');
-                }])->with(['driverCommission' => function($query) use($select1){
-                
+                }])->with(['driverCommission' => function($query) use($select1,$where){
+                    $query->where($where);
                 }])
                 ->where($where1)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
@@ -825,11 +825,11 @@ class WagesController extends CommonController{
             case 'more':
                 $data['total']=SystemUser::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=SystemUser::with(['tmsOrder' => function($query) use($where,$select1,$select){
-                    // $query->where($where);
+                    $query->where($where);
                     $query->select($select);
                     $query->orderBy('leave_time','desc');
-                }])->with(['driverCommission' => function($query) use($select1){
-                
+                }])->with(['driverCommission' => function($query) use($select1,$where){
+                    $query->where($where);
                 }])
                 ->where($where1)
                 ->whereIn('group_code',$group_info['group_code'])
@@ -840,67 +840,7 @@ class WagesController extends CommonController{
                 break;
         }
         $date = getDateFromRange($start_time,$end_time);
-        dd($date,$data['items']->toArray());
         
-        foreach($data['items'] as $k => $v){
-            if ($v->tmsOrder) {
-                
-                $pay = 0;
-                $reward = 0;
-                foreach($v->tmsOrder as $kk => $vv){
-                  foreach($date as $kkk => $vvv){
-                    if ($vv->leave_time == $vvv) {
-                        $day_num = date('t',strtotime($start_time));
-                        //获取驾驶员的基本工资
-                        $base_pay=0;
-                        $salary = SystemUser::where('self_id',$vv->driver_id)->select('self_id','salary')->first();
-                        $base_pay = $salary->salary/$day_num;         
-                        if($vv->tmsLine->pay_type == 'A'){
-                           $pay += $vv->tmsLine->base_pay;
-                           $reward += $vv->tmsLine->once_price;
-                        }
-                    }
-                }
-                   $count_pay = ($pay-$base_pay);
-                   if($count_pay > 0){
-                      $v->count_pay = $count_pay + $reward;
-                   }else{
-                      $v->count_pay = 0;
-                   }
-
-                }
-            }
-        }
-        dd($data['items']->toArray(),$pay,$reward);
-
-        //获取当月天数
-        $day_num = date('t',strtotime($start_time));
-        //获取驾驶员的基本工资
-        $base_pay=0;
-        $salary = SystemUser::where('name',$user_name)->select('self_id','salary')->first();
-        // dump($data['items'],$salary,$day_num);
-        if($salary){
-            $base_pay = $salary->salary/$day_num;
-        }
-        
-        // dump($base_pay);
-        $pay = 0;
-        $reward = 0;
-        foreach ($data['items'] as $k=>$v) {           
-            $v->button_info=$button_info;
-            if($v->tmsLine->pay_type == 'A'){
-                $pay += $v->tmsLine->base_pay;
-                $reward += $v->tmsLine->once_price;
-            }
-          
-        }
-        $count_pay = ($pay-$base_pay);
-        if($count_pay > 0){
-            $count_pay = $count_pay + $reward;
-        }else{
-            $count_pay = 0;
-        }
-        // dd(count($data['items']),$pay,$count_pay);
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
