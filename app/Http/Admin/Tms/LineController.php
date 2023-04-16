@@ -112,7 +112,7 @@ class LineController extends CommonController{
 
     /***    新建车辆      /tms/line/createLine
      */
-    public function createCar(Request $request){
+    public function createLine(Request $request){
         /** 接收数据*/
         $self_id=$request->input('self_id');
 //        $self_id = 'car_20210313180835367958101';
