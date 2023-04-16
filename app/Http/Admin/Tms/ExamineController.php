@@ -207,7 +207,7 @@ class ExamineController extends CommonController{
 
             //计算工资扣款和奖金扣款
              $salary_fine = round($user->salary/$day_num,2)*$date_num;
-             $safe_reward = round($user->safe_reward/$day_num,2)*$date_num;   
+             $reward_price = round($user->safe_reward/$day_num,2)*$date_num;   
              // if ($month_start != $month_end) {
              //        $end_day = date($start_time,strtotime("$month_start+1 month-1 day"));
              //        $start_day = date('Y-'.$month_end.'-01',strtotime($end_time));
@@ -216,7 +216,7 @@ class ExamineController extends CommonController{
 
              //  }   
              $data['salary_fine'] = $salary_fine;
-             $data['safe_reward'] = $safe_reward;
+             $data['reward_price'] = $reward_price;
 
             $wheres['self_id'] = $self_id;
             $old_info=UserExamine::where($wheres)->first();
