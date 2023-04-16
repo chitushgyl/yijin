@@ -166,12 +166,10 @@ class LineController extends CommonController{
 
         if($pay_type == 'B'){
             $rules=[
-               'send_name'=>'required',
-               'gather_name'=>'required',
+               'car_number'=>'required',
             ];
             $message=[
-               'send_name.required'=>'请填写装车点',
-               'gather_name.required'=>'请填写卸车点',
+               'car_number.required'=>'请填写装车点',
             ];
         }else{
             $rules=[
@@ -202,6 +200,7 @@ class LineController extends CommonController{
             $data['kilo_num']         =$kilo_num;
             $data['num']              =$num;
             $data['car_num']          =$car_num;
+            $data['car_number']       =$car_number;
             $data['pay_type']         =$pay_type;
             $data['once_price']       =$once_price;
             $data['base_pay']         =$base_pay;
