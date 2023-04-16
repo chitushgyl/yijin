@@ -675,74 +675,43 @@ class WagesController extends CommonController{
        
         $where=get_list_where($search);
 
-        $select=['self_id','driver_id','user_name','escort','escort_name','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag','leave_time','pay_id'];
-        $select1=['self_id','send_id','send_name','gather_id','gather_name','delete_flag','create_time','kilo_num','num','group_code','group_name','use_flag','car_num','line_list','pay_type','once_price','base_pay'];
+        $select=['self_id','driver_id','driver_name','leave_time','use_flag','delete_flag','group_code','group_name','money','order_id','create_time','update_time'
+    ];
         switch ($group_info['group_id']){
             case 'all':
-                $data['total']=TmsOrder::where($where)->count(); //总的数据量
-                $data['items']=TmsOrder::with(['tmsLine' => function($query) use($select1){
-                    $query->select($select1);
-                }])->where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
+                $data['total']=DriverCommission::where($where)->count(); //总的数据量
+                $data['items']=DriverCommission::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('leave_time', 'asc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
 
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
-                $data['total']=TmsOrder::where($where)->count(); //总的数据量
-                $data['items']=TmsOrder::with(['tmsLine' => function($query) use($select1){
-                    $query->select($select1);
-                }])->where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
+                $data['total']=DriverCommission::where($where)->count(); //总的数据量
+                $data['items']=DriverCommission::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('leave_time', 'asc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
 
             case 'more':
-                $data['total']=TmsOrder::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=TmsOrder::with(['tmsLine' => function($query) use($select1){
-                    $query->select($select1);
-                }])->where($where)->whereIn('group_code',$group_info['group_code'])
-                    ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
+                $data['total']=DriverCommission::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=DriverCommission::where($where)->whereIn('group_code',$group_info['group_code'])
+                    ->offset($firstrow)->limit($listrows)->orderBy('leave_time', 'asc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
         }
-
-        //获取当月天数
-        $day_num = date('t',strtotime($start_time));
-        //获取驾驶员的基本工资
-        $base_pay=0;
-        $salary = SystemUser::where('name',$user_name)->select('self_id','salary')->first();
-        // dump($data['items'],$salary,$day_num);
-        if($salary){
-            $base_pay = $salary->salary/$day_num;
-        }
-        
-        // dump($base_pay);
-        $pay = 0;
-        $reward = 0;
-        foreach ($data['items'] as $k=>$v) {           
-            $v->button_info=$button_info;
-            if($v->tmsLine->pay_type == 'A'){
-                $pay += $v->tmsLine->base_pay;
-                $reward += $v->tmsLine->once_price;
-            }
-          
-        }
-        $count_pay = ($pay-$base_pay);
-        if($count_pay > 0){
-            $count_pay = $count_pay + $reward;
-        }else{
-            $count_pay = 0;
-        }
-        // dd(count($data['items']),$pay,$count_pay);
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
         //dd($msg);
         return $msg;
+    }
+
+    public function getCommissionOrder(Request $request){
+        
     }
 
     public function getWages(Request $request){
