@@ -618,6 +618,7 @@ class OrderController extends CommonController{
                  }else{
                      $count_pay = 0;
                  }
+                 dd($a,$carnum,$once);
                  if($a>0){
                     if($a>$carnum/$a){
                         $count_pay = ($carnum/$a-($a-1))*$once/$a;
