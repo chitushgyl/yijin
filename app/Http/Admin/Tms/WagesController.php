@@ -77,7 +77,7 @@ class WagesController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'leave_time','value'=>$start_time],
-            ['type'=>'=','name'=>'leave_time','value'=>$start_time],
+            ['type'=>'=','name'=>'leave_time','value'=>$end_time],
 
            
         ];
