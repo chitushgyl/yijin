@@ -162,16 +162,28 @@ class LineController extends CommonController{
         $pay_type           =$request->input('pay_type');//结算方式
         $once_price         =$request->input('once_price');//每车奖励
         $base_pay           =$request->input('base_pay');//基本提成
+        $car_number         =$request->input('car_number');//车牌号
 
-
-        $rules=[
-            'send_name'=>'required',
-            'gather_name'=>'required',
-        ];
-        $message=[
-            'send_name.required'=>'请填写装车点',
-            'gather_name.required'=>'请填写卸车点',
-        ];
+        if($pay_type == 'B'){
+            $rules=[
+               'send_name'=>'required',
+               'gather_name'=>'required',
+            ];
+            $message=[
+               'send_name.required'=>'请填写装车点',
+               'gather_name.required'=>'请填写卸车点',
+            ];
+        }else{
+            $rules=[
+               'send_name'=>'required',
+               'gather_name'=>'required',
+            ];
+            $message=[
+               'send_name.required'=>'请填写装车点',
+               'gather_name.required'=>'请填写卸车点',
+            ];
+        }
+        
 
         $validator=Validator::make($input,$rules,$message);
         if($validator->passes()) {
