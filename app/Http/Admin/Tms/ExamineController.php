@@ -203,7 +203,7 @@ class ExamineController extends CommonController{
              $day_num = date('t',strtotime($start_time));
              //获取开始和结束时间月份
              $month_start = date('m',strtotime($start_time));
-             $month_end = date('m',strtotime($end_time);
+             $month_end = date('m',strtotime($end_time));
 
             //计算工资扣款和奖金扣款
              $salary_fine = round($user->salary/$day_num,2)*$date_num;
