@@ -790,15 +790,13 @@ class WagesController extends CommonController{
         $select2=['self_id','pay_id','send_name','gather_name','leave_time'];
         switch ($group_info['group_id']){
             case 'all':
-                $data['total']=TmsOrder::where($where)->count(); //总的数据量
+                $data['total']=SystemUser::where($where)->count(); //总的数据量
                 $data['items']=SystemUser::with(['tmsOrder' => function($query) use($where,$select1,$select){
                     // $query->where($where);
                     $query->select($select);
                     $query->orderBy('leave_time','desc');
-                    $query->with(['tmsLine' => function($query) use($select1){
-                    $query->select($select1);
-                }]);
-
+                }])->with(['driverCommission' => function($query) use($select1){
+                
                 }])
                 ->where($where1)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
@@ -809,15 +807,13 @@ class WagesController extends CommonController{
 
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
-                $data['total']=TmsOrder::where($where)->count(); //总的数据量
+                $data['total']=SystemUser::where($where)->count(); //总的数据量
                 $data['items']=SystemUser::with(['tmsOrder' => function($query) use($where,$select1,$select){
                     // $query->where($where);
                     $query->select($select);
                     $query->orderBy('leave_time','desc');
-                    $query->with(['tmsLine' => function($query) use($select1){
-                    $query->select($select1);
-                }]);
-
+                }])->with(['driverCommission' => function($query) use($select1){
+                
                 }])
                 ->where($where1)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
@@ -827,15 +823,13 @@ class WagesController extends CommonController{
                 break;
 
             case 'more':
-                $data['total']=TmsOrder::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['total']=SystemUser::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=SystemUser::with(['tmsOrder' => function($query) use($where,$select1,$select){
                     // $query->where($where);
                     $query->select($select);
                     $query->orderBy('leave_time','desc');
-                    $query->with(['tmsLine' => function($query) use($select1){
-                    $query->select($select1);
-                }]);
-
+                }])->with(['driverCommission' => function($query) use($select1){
+                
                 }])
                 ->where($where1)
                 ->whereIn('group_code',$group_info['group_code'])
@@ -846,7 +840,7 @@ class WagesController extends CommonController{
                 break;
         }
         $date = getDateFromRange($start_time,$end_time);
-        // dump($date,$data['items']->toArray());
+        dd($date,$data['items']->toArray());
         
         foreach($data['items'] as $k => $v){
             if ($v->tmsOrder) {
