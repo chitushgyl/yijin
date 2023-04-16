@@ -779,7 +779,7 @@ class WagesController extends CommonController{
         $search1=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
-            ['type'=>'=','name'=>'group_code','value'=>$user_info->group_code],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'driver_id','value'=>$driver_id],
         ];
        
