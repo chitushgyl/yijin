@@ -53,9 +53,9 @@ class WagesController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-        $start_time     =$request->input('start_time')??'2023-04-01';
-        $end_time       =$request->input('end_time')??'2023-04-15';
-        $driver_id      =$request->input('driver_id');
+        $start_time     =$request->input('start_time');
+        $end_time       =$request->input('end_time');
+     
         $user_name      =$request->input('user_name');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
@@ -85,16 +85,16 @@ class WagesController extends CommonController{
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=SystemUser::where($where)->count(); //总的数据量
-                $data['items']=SystemUser::with(['userReward' => function($query) use($where,$select1,$select){
+                $data['items']=SystemUser::with(['userReward' => function($query)use($where,$select1,$select){
                     
                 }])
-                ->with(['userExamine' => function($query) use($where,$select1,$select){
+                ->with(['userExamine' => function($query)use($where,$select1,$select){
                     
                 }])
-                ->with(['awardRemind' => function($query) use($where,$select1,$select){
+                ->with(['awardRemind' => function($query)use($where,$select1,$select){
                     
                 }])
-                ->with(['driverCommission' => function($query) use($select1,$where){
+                ->with(['driverCommission' => function($query)use($select1,$where){
                     $query->where($where);
                 }])
                 ->where($where1)
@@ -107,16 +107,16 @@ class WagesController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=SystemUser::where($where)->count(); //总的数据量
-                $data['items']=SystemUser::with(['userReward' => function($query) use($where,$select1,$select){
+                $data['items']=SystemUser::with(['userReward' => function($query)use($where,$select1,$select){
                     
                 }])
-                ->with(['userExamine' => function($query) use($where,$select1,$select){
+                ->with(['userExamine' => function($query)use($where,$select1,$select){
                     
                 }])
-                ->with(['awardRemind' => function($query) use($where,$select1,$select){
+                ->with(['awardRemind' => function($query)use($where,$select1,$select){
                     
                 }])
-                ->with(['driverCommission' => function($query) use($select1,$where){
+                ->with(['driverCommission' => function($query)use($select1,$where){
                     $query->where($where);
                 }])
                 ->where($where1)
@@ -128,16 +128,16 @@ class WagesController extends CommonController{
 
             case 'more':
                 $data['total']=SystemUser::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=SystemUser::with(['userReward' => function($query) use($where,$select1,$select){
+                $data['items']=SystemUser::with(['userReward' => function($query)use($where,$select1,$select){
                     
                 }])
-                ->with(['userExamine' => function($query) use($where,$select1,$select){
+                ->with(['userExamine' => function($query)use($where,$select1,$select){
                     
                 }])
-                ->with(['awardRemind' => function($query) use($where,$select1,$select){
+                ->with(['awardRemind' => function($query)use($where,$select1,$select){
                     
                 }])
-                ->with(['driverCommission' => function($query) use($select1,$where){
+                ->with(['driverCommission' => function($query)use($select1,$where){
                     $query->where($where);
                 }])
                 ->where($where1)
