@@ -85,7 +85,7 @@ class WagesController extends CommonController{
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=SystemUser::where($where)->count(); //总的数据量
-                $data['items']=SystemUser::ith(['userReward' => function($query) use($where,$select1,$select){
+                $data['items']=SystemUser::with(['userReward' => function($query) use($where,$select1,$select){
                     
                 }])
                 ->with(['userExamine' => function($query) use($where,$select1,$select){
