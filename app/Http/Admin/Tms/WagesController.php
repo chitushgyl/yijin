@@ -90,20 +90,7 @@ class WagesController extends CommonController{
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=SystemUser::where($where)->count(); //总的数据量
-                $data['items']=SystemUser::with(['userReward' => function($query)use($where1,$select1,$select){
-                    $query->sum('company_fine');
-                }])
-                ->with(['userExamine' => function($query)use($where1,$select1,$select){
-                    $query->sum('salary_fine');
-                    $query->sum('reward_price');
-                }])
-                ->with(['awardRemind' => function($query)use($where1,$select1,$select){
-                    $query->sum('money_award');
-                }])
-                ->with(['driverCommission' => function($query)use($select1,$where1){
-                    $query->where($where1);
-                    $query->sum('money');
-                }])
+                $data['items']=SystemUser::
                 ->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select3)
@@ -114,21 +101,8 @@ class WagesController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=SystemUser::where($where)->count(); //总的数据量
-                $data['items']=SystemUser::with(['userReward' => function($query)use($where1,$select1,$select){
-                    $query->sum('company_fine');
-                }])
-                ->with(['userExamine' => function($query)use($where1,$select1,$select){
-                    $query->sum('salary_fine');
-                    $query->sum('reward_price');
-                }])
-                ->with(['awardRemind' => function($query)use($where1,$select1,$select){
-                    $query->sum('money_award');
-                }])
-                ->with(['driverCommission' => function($query)use($select1,$where1){
-                    $query->where($where1);
-                    $query->sum('money');
-                }])
-                ->where($where)
+                $data['items']=SystemUser::
+                where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select3)
                     ->get();
@@ -137,21 +111,7 @@ class WagesController extends CommonController{
 
             case 'more':
                 $data['total']=SystemUser::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=SystemUser::with(['userReward' => function($query)use($where1,$select1,$select){
-                    $query->sum('company_fine');
-                }])
-                ->with(['userExamine' => function($query)use($where1,$select1,$select){
-                    $query->sum('salary_fine');
-                    $query->sum('reward_price');
-                }])
-                ->with(['awardRemind' => function($query)use($where1,$select1,$select){
-                    $query->sum('money_award');
-                }])
-                ->with(['driverCommission' => function($query)use($select1,$where1){
-                    $query->where($where1);
-                    $query->sum('money');
-                }])
-                ->where($where)
+                $data['items']=SystemUser::where($where)
                 ->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select3)
