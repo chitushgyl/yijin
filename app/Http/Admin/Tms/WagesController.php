@@ -664,14 +664,19 @@ class WagesController extends CommonController{
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
-    
+        if ($start_time) {
+            $start_time = $start_time.' 00:00:00';
+        }
+        if ($end_time) {
+            $end_time = $end_time.' 23:59:59';
+        }
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'driver_id','value'=>$driver_id],
-            ['type'=>'>=','name'=>'leave_time','value'=>$start_time.' 00:00:00'],
-            ['type'=>'<=','name'=>'leave_time','value'=>$start_time.' 23:59:59'],
+            ['type'=>'>=','name'=>'leave_time','value'=>$start_time],
+            ['type'=>'<=','name'=>'leave_time','value'=>$start_time],
         ];
        
         $where=get_list_where($search);
