@@ -618,9 +618,9 @@ class OrderController extends CommonController{
                  }else{
                      $count_pay = 0;
                  }
-                 dd($a,$carnum,$once);
+                 
                  if($a>0){
-                    if($a>$carnum/$a){
+                    if($a>=$carnum/$a){
                         $count_pay = ($carnum/$a-($a-1))*$once/$a;
                     }else{
                         $count_pay = 0;
@@ -628,7 +628,7 @@ class OrderController extends CommonController{
                  }else{
                     $count_pay = 0;
                  }
-                 
+                 dd($a,$carnum,$once,$count_pay);
             //判断该订单是否算过提成
             $ti_order =DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$leave_time)->first();
             if ($ti_order) {
