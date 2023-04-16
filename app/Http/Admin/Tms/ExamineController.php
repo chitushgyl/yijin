@@ -4,6 +4,7 @@ use App\Http\Controllers\FileController as File;
 use App\Models\Tms\CarAccident;
 use App\Models\Tms\TmsMoney;
 use App\Models\User\UserExamine;
+use App\Models\Group\SystemUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
@@ -162,13 +163,13 @@ class ExamineController extends CommonController{
         $group_code         =$request->input('group_code');
         $user_name          =$request->input('user_name');//员工名称
         $user_id            =$request->input('user_id');
-        $start_time         =$request->input('start_time');//罚款时间
-        $end_time           =$request->input('end_time');//奖励日期
+        $start_time         =$request->input('start_time');//请假开始时间
+        $end_time           =$request->input('end_time');//请假结束日期
         $absence_duty       =$request->input('absence_duty');// 缺勤日期
         $remark             =$request->input('remark');//备注
-        $date_num           =$request->input('date_num');//备注
-        $approver           =$request->input('approver');//备注
-        $reason             =$request->input('reason');//备注
+        $date_num           =$request->input('date_num');//请假天数
+        $approver           =$request->input('approver');//审批人
+        $reason             =$request->input('reason');//请假事由
         $rules=[
             'user_name'=>'required',
         ];
@@ -185,6 +186,8 @@ class ExamineController extends CommonController{
                 $msg['msg'] = '公司不存在';
                 return $msg;
             }
+            //查询员工基本工资和每月奖金
+            $user = SystemUser::where('self_id',$user_id)->select('self_id','salary','safe_reward')->first();
 
             $data['user_name']           =$user_name;
             $data['user_id']             =$user_id;
@@ -196,7 +199,24 @@ class ExamineController extends CommonController{
             $data['approver']           =$approver;
             $data['reason']             =$reason;
 
+            //获取当月天数
+             $day_num = date('t',strtotime($start_time));
+             //获取开始和结束时间月份
+             $month_start = date('m',strtotime($start_time));
+             $month_end = date('m',strtotime($end_time);
 
+            //计算工资扣款和奖金扣款
+             $salary_fine = round($user->salary/$day_num,2)*$date_num;
+             $safe_reward = round($user->safe_reward/$day_num,2)*$date_num;   
+             // if ($month_start != $month_end) {
+             //        $end_day = date($start_time,strtotime("$month_start+1 month-1 day"));
+             //        $start_day = date('Y-'.$month_end.'-01',strtotime($end_time));
+             //        $start_days = count(getDateFromRange($start_time,$end_day));
+             //        $end_days = count(getDateFromRange($start_day,$end_time));
+
+             //  }   
+             $data['salary_fine'] = $salary_fine;
+             $data['safe_reward'] = $safe_reward;
 
             $wheres['self_id'] = $self_id;
             $old_info=UserExamine::where($wheres)->first();

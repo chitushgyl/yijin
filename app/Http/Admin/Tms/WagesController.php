@@ -46,75 +46,110 @@ class WagesController extends CommonController{
         /** 接收中间件参数**/
         $group_info     = $request->get('group_info');//接收中间件产生的参数
         $button_info    = $request->get('anniu');//接收中间件产生的参数
+        $user_info  = $request->get('user_info');//接收中间件产生的参数
 //dd($button_info);
         /**接收数据11*/
         $num            =$request->input('num')??10;
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-        $start_time     =$request->input('start_time').'-01 00:00:00';
-        $end_time       =$request->input('end_time').'-';
+        $start_time     =$request->input('start_time')??'2023-04-01';
+        $end_time       =$request->input('end_time')??'2023-04-15';
+        $driver_id      =$request->input('driver_id');
+        $user_name      =$request->input('user_name');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
+    
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
+           
         ];
+       
+        $where=get_list_where($search);
+
         $search1=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'>=','name'=>'send_time','value'=>$start_time],
-            ['type'=>'<=','name'=>'send_time','value'=>$end_time],
+           
         ];
-        $where=get_list_where($search);
+       
         $where1=get_list_where($search1);
-
-        $select=['self_id','user_id','user_name','position','date','base_pay','reward','reward_back','ti_money','remark','total_money','group_code','group_name','use_flag','delete_flag','create_time','update_time'];
-        $select1=['self_id','driver_id','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag'];
+        $select3 =['self_id','name','salary','live_cost','social_money'];
+        $select=['self_id','driver_id','user_name','escort','escort_name','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag','leave_time','pay_id'];
+        $select1=['self_id','send_id','send_name','gather_id','gather_name','delete_flag','create_time','kilo_num','num','group_code','group_name','use_flag','car_num','line_list','pay_type','once_price','base_pay'];
+        $select2=['self_id','pay_id','send_name','gather_name','leave_time'];
         switch ($group_info['group_id']){
             case 'all':
-                $data['total']=TmsWages::where($where)->count(); //总的数据量
-                $data['items']=TmsWages::with(['tmsOrder' => function($query) use($select1,$where1){
-                    $query->select($select1);
-                    $query->where($where1);
-                }])->where($where)
+                $data['total']=SystemUser::where($where)->count(); //总的数据量
+                $data['items']=SystemUser::ith(['userReward' => function($query) use($where,$select1,$select){
+                    
+                }])
+                ->with(['userExamine' => function($query) use($where,$select1,$select){
+                    
+                }])
+                ->with(['awardRemind' => function($query) use($where,$select1,$select){
+                    
+                }])
+                ->with(['driverCommission' => function($query) use($select1,$where){
+                    $query->where($where);
+                }])
+                ->where($where1)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
-                    ->select($select)->get();
+                    ->select($select3)
+                    ->get();
                 $data['group_show']='Y';
                 break;
 
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
-                $data['total']=TmsWages::where($where)->count(); //总的数据量
-                $data['items']=TmsWages::with(['tmsOrder' => function($query) use($select1,$where1){
-                    $query->select($select1);
-                    $query->where($where1);
-                }])->where($where)
+                $data['total']=SystemUser::where($where)->count(); //总的数据量
+                $data['items']=SystemUser::with(['userReward' => function($query) use($where,$select1,$select){
+                    
+                }])
+                ->with(['userExamine' => function($query) use($where,$select1,$select){
+                    
+                }])
+                ->with(['awardRemind' => function($query) use($where,$select1,$select){
+                    
+                }])
+                ->with(['driverCommission' => function($query) use($select1,$where){
+                    $query->where($where);
+                }])
+                ->where($where1)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
-                    ->select($select)->get();
+                    ->select($select3)
+                    ->get();
                 $data['group_show']='N';
                 break;
 
             case 'more':
-                $data['total']=TmsWages::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=TmsWages::with(['tmsOrder' => function($query) use($select1,$where1){
-                    $query->select($select1);
-                    $query->where($where1);
-                }])->where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['total']=SystemUser::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=SystemUser::with(['userReward' => function($query) use($where,$select1,$select){
+                    
+                }])
+                ->with(['userExamine' => function($query) use($where,$select1,$select){
+                    
+                }])
+                ->with(['awardRemind' => function($query) use($where,$select1,$select){
+                    
+                }])
+                ->with(['driverCommission' => function($query) use($select1,$where){
+                    $query->where($where);
+                }])
+                ->where($where1)
+                ->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
-                    ->select($select)->get();
+                    ->select($select3)
+                    ->get();
                 $data['group_show']='Y';
                 break;
         }
-
-        foreach ($data['items'] as $k=>$v) {
-            $v->button_info=$button_info;
-            $v->position               =$user_type[$v->position]??null;
-        }
-        //exit;
+        $date = getDateFromRange($start_time,$end_time);
+        
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
