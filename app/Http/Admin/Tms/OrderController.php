@@ -389,7 +389,7 @@ class OrderController extends CommonController{
             $data['pick_time']               = $pick_time;
             $data['pack_type']               = $pack_type;
 
-            $pay_type = TmsLine::where('use_flag','Y')->get();
+            $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->get();
             foreach($pay_type as $k =>$v){
                 if (in_array($send_name,explode(',',$v->line_list)) && in_array($gather_name,explode(',',$v->line_list))) {
                      $data['pay_id'] = $v->self_id; 
@@ -577,6 +577,7 @@ class OrderController extends CommonController{
             //保存提成表 计算提成
             $select1=['self_id','send_id','send_name','gather_id','gather_name','delete_flag','create_time','kilo_num','num','group_code','group_name','use_flag','car_num','line_list','pay_type','once_price','base_pay','car_number'];
             $order = TmsOrder::with(['tmsLine' => function($query) use($select1){
+                    $query->where('delete_flag','Y');
                     $query->select($select1);
                 }])->where('driver_id',$old_info->driver_id)->where('leave_time',$leave_time)->get();
              //获取当月天数
