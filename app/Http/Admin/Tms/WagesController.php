@@ -74,6 +74,9 @@ class WagesController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'=','name'=>'leave_time','value'=>$start_time],
+            ['type'=>'=','name'=>'leave_time','value'=>$start_time],
+
            
         ];
        
@@ -85,18 +88,18 @@ class WagesController extends CommonController{
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=SystemUser::where($where)->count(); //总的数据量
-                $data['items']=SystemUser::with(['userReward' => function($query)use($where,$select1,$select){
+                $data['items']=SystemUser::with(['userReward' => function($query)use($where1,$select1,$select){
                     $query->sum('company_fine');
                 }])
-                ->with(['userExamine' => function($query)use($where,$select1,$select){
+                ->with(['userExamine' => function($query)use($where1,$select1,$select){
                     $query->sum('salary_fine');
                     $query->sum('reward_price');
                 }])
-                ->with(['awardRemind' => function($query)use($where,$select1,$select){
+                ->with(['awardRemind' => function($query)use($where1,$select1,$select){
                     $query->sum('money_award');
                 }])
-                ->with(['driverCommission' => function($query)use($select1,$where){
-                    $query->where($where);
+                ->with(['driverCommission' => function($query)use($select1,$where1){
+                    $query->where($where1);
                     $query->sum('money');
                 }])
                 ->where($where)
@@ -109,18 +112,18 @@ class WagesController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=SystemUser::where($where)->count(); //总的数据量
-                $data['items']=SystemUser::with(['userReward' => function($query)use($where,$select1,$select){
+                $data['items']=SystemUser::with(['userReward' => function($query)use($where1,$select1,$select){
                     $query->sum('company_fine');
                 }])
-                ->with(['userExamine' => function($query)use($where,$select1,$select){
+                ->with(['userExamine' => function($query)use($where1,$select1,$select){
                     $query->sum('salary_fine');
                     $query->sum('reward_price');
                 }])
-                ->with(['awardRemind' => function($query)use($where,$select1,$select){
+                ->with(['awardRemind' => function($query)use($where1,$select1,$select){
                     $query->sum('money_award');
                 }])
-                ->with(['driverCommission' => function($query)use($select1,$where){
-                    $query->where($where);
+                ->with(['driverCommission' => function($query)use($select1,$where1){
+                    $query->where($where1);
                     $query->sum('money');
                 }])
                 ->where($where)
@@ -132,17 +135,17 @@ class WagesController extends CommonController{
 
             case 'more':
                 $data['total']=SystemUser::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=SystemUser::with(['userReward' => function($query)use($where,$select1,$select){
+                $data['items']=SystemUser::with(['userReward' => function($query)use($where1,$select1,$select){
                     $query->sum('company_fine');
                 }])
-                ->with(['userExamine' => function($query)use($where,$select1,$select){
+                ->with(['userExamine' => function($query)use($where1,$select1,$select){
                     $query->sum('salary_fine');
                     $query->sum('reward_price');
                 }])
-                ->with(['awardRemind' => function($query)use($where,$select1,$select){
+                ->with(['awardRemind' => function($query)use($where1,$select1,$select){
                     $query->sum('money_award');
                 }])
-                ->with(['driverCommission' => function($query)use($select1,$where){
+                ->with(['driverCommission' => function($query)use($select1,$where1){
                     $query->where($where);
                     $query->sum('money');
                 }])
