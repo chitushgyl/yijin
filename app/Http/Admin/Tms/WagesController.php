@@ -5,6 +5,9 @@ use App\Models\Tms\TmsWares;
 use App\Models\Tms\TmsOrder;
 use App\Models\Tms\DriverCommission;
 use App\Models\Group\SystemUser;
+use App\Models\User\UserReward;
+use App\Models\User\userExamine;
+use App\Models\Tms\awardRemind;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
@@ -16,7 +19,6 @@ use App\Http\Controllers\FileController as File;
 use App\Http\Controllers\DetailsController as Details;
 use App\Models\Group\SystemGroup;
 use App\Models\Tms\TmsLine;
-
 
 
 class WagesController extends CommonController{
