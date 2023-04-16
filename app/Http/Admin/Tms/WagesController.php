@@ -676,7 +676,7 @@ class WagesController extends CommonController{
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'driver_id','value'=>$driver_id],
             ['type'=>'>=','name'=>'leave_time','value'=>$start_time],
-            ['type'=>'<=','name'=>'leave_time','value'=>$start_time],
+            ['type'=>'<=','name'=>'leave_time','value'=>$end_time],
         ];
        
         $where=get_list_where($search);
