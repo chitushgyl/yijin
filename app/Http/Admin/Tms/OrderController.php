@@ -585,7 +585,6 @@ class OrderController extends CommonController{
              //获取驾驶员的基本工资
              $base_pay=0;
              $salary = SystemUser::where('self_id',$old_info->driver_id)->select('self_id','salary')->first();
-             dump($order->toArray(),$salary,$day_num);
              if($salary){
                   $base_pay = $salary->salary/$day_num;
              }
@@ -621,17 +620,14 @@ class OrderController extends CommonController{
                  
                  if($a>0){
                     if($a>=$carnum/$a){
-                        dump(999);
                         $count_pay = ($a-($carnum/$a-1))*$once/$a;
                     }else{
-                        dump(45);
                         $count_pay = 0;
                     }
                  }else{
-                    dump(213);
                     $count_pay = 0;
                  }
-                 dd($a,$carnum,$once,$count_pay);
+
             //判断该订单是否算过提成
             $ti_order =DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$leave_time)->first();
             if ($ti_order) {
