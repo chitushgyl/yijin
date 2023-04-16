@@ -97,7 +97,7 @@ class WagesController extends CommonController{
                 ->with(['driverCommission' => function($query)use($select1,$where){
                     $query->where($where);
                 }])
-                ->where($where1)
+                ->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select3)
                     ->get();
@@ -119,7 +119,7 @@ class WagesController extends CommonController{
                 ->with(['driverCommission' => function($query)use($select1,$where){
                     $query->where($where);
                 }])
-                ->where($where1)
+                ->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select3)
                     ->get();
@@ -140,7 +140,7 @@ class WagesController extends CommonController{
                 ->with(['driverCommission' => function($query)use($select1,$where){
                     $query->where($where);
                 }])
-                ->where($where1)
+                ->where($where)
                 ->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
                     ->select($select3)
