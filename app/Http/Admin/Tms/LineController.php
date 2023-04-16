@@ -119,7 +119,7 @@ class LineController extends CommonController{
 
         $select = ['self_id','send_id','send_name','gather_id','gather_name','delete_flag','create_time','kilo_num','num','group_code','group_name','use_flag','car_num','line_list','pay_type','once_price','base_pay','car_number'];
 
-        $data['info']= TmsCar::where('self_id',$self_id)->select($select)->first();
+        $data['info']= TmsLine::where('self_id',$self_id)->select($select)->first();
 
         if ($data['info']){
 
