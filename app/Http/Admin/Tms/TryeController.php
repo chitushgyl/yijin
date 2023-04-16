@@ -57,6 +57,8 @@ class TryeController extends CommonController{
         $type           =$request->input('type');
         $model          =$request->input('model');
         $car_number     =$request->input('car_number');
+        $trailer_num     =$request->input('trailer_num');
+        
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
         $listrows       =$num;
@@ -75,6 +77,7 @@ class TryeController extends CommonController{
             ['type'=>'=','name'=>'type','value'=>$type],
             ['type'=>'=','name'=>'model','value'=>$model],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
+            ['type'=>'like','name'=>'trailer_num','value'=>$trailer_num],
             ['type'=>'>','name'=>'in_time','value'=>$start_time],
             ['type'=>'<=','name'=>'in_time','value'=>$end_time],
         ];
@@ -1691,6 +1694,7 @@ class TryeController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'=','name'=>'use_flag','value'=>'Y'],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'=','name'=>'model','value'=>$model],
 
         ];
 

@@ -51,6 +51,8 @@ class DiplasicController extends CommonController{
         $group_code     =$request->input('group_code');
         $car_number     =$request->input('car_number');
         $input_date     =$request->input('input_date');
+        $start_time     =$request->input('start_time');
+        $end_time       =$request->input('end_time');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -60,6 +62,8 @@ class DiplasicController extends CommonController{
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
             ['type'=>'=','name'=>'input_date','value'=>$input_date],
+            ['type'=>'>=','name'=>'input_date','value'=>$start_time],
+            ['type'=>'<','name'=>'input_date','value'=>$end_time],
         ];
 
         $where=get_list_where($search);

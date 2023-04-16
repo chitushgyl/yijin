@@ -210,7 +210,7 @@ class OrderController extends CommonController{
         $warehouse_id       = $request->input('warehouse_id');
         $goods              = json_decode($request->input('goods'),true);
         $car_num            = $request->input('car_num');
-        $user_id            = $request->input('user_id');
+        $user_id            = $request->input('picker_id');
         $picker             = $request->input('picker');
         $operator           = $request->input('operator');
         $purchase           = $request->input('purchase');
@@ -271,6 +271,7 @@ class OrderController extends CommonController{
             $order_2['warehouse_name']      =$warehouse_info->warehouse_name;
             $order_2['car_num']             =$car_num;
             $order_2['picker']              =$picker;
+            $order_2['picker_id']           =$user_id;
             $order_2['operator']            =$operator;
             $order_2['purchase']            =$purchase;
             $order_2['out_time']            =$out_time;

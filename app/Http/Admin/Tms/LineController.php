@@ -69,7 +69,7 @@ class LineController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','send_id','send_name','gather_id','gather_name','delete_flag','create_time','kilo_num','num','group_code','group_name','use_flag','car_num','line_list','pay_type','once_price','base_pay'];
+        $select=['self_id','send_id','send_name','gather_id','gather_name','delete_flag','create_time','kilo_num','num','group_code','group_name','use_flag','car_num','line_list','pay_type','once_price','base_pay','car_number'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsLine::where($where)->count(); //总的数据量
@@ -117,7 +117,7 @@ class LineController extends CommonController{
         $self_id=$request->input('self_id');
 //        $self_id = 'car_20210313180835367958101';
 
-        $select = ['self_id','send_id','send_name','gather_id','gather_name','delete_flag','create_time','kilo_num','num','group_code','group_name','use_flag'];
+        $select = ['self_id','send_id','send_name','gather_id','gather_name','delete_flag','create_time','kilo_num','num','group_code','group_name','use_flag','car_num','line_list','pay_type','once_price','base_pay','car_number'];
 
         $data['info']= TmsCar::where('self_id',$self_id)->select($select)->first();
 
@@ -599,36 +599,15 @@ class LineController extends CommonController{
     public function  details(Request $request,Details $details){
         $self_id=$request->input('self_id');
         $table_name='tms_car';
-        $select=['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
-            'license','medallion','payment_state','insure_price','compulsory_end','commercial_end','carrier_end','compulsory','commercial','carrier','medallion_num','curb_weight','all_weight','medallion_change','license_begin','production_date','scrap_date','business_scope','goods',
-            'design_code','operation_date','tank_num','tank_type','registr_cert','carrier_cert','tank_cert','medallion_change_end','nameplate','pass_cert','car_color','car_brand',
-            'car_made','engine_num','fuel_type','displacement_power','maker','turn_view','tread','trye_num','steel_plate','wheel_base','axles_num','outline','car_model',
-            'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model','license_back','medallion_back','registr_date','medallion_begin',
-            'license_start','compulsory_cert','commercial_cert','registr_cert_date','carrier_insurer','carrier_insurer_num','carrier_baoe','carrier_zrx','carrier_zr','carrier_good',
-            'compulsory_insurer','compulsory_num','compulsory_sc','compulsory_yl','compulsory_property','commercial_insurer','commercial_num','commercial_tz','commercial_zr','commercial_driver',
-            'commercial_user','car_unit','goods_type','sgs_cert','sgs_date'];
-        $select1 = ['self_id','parame_name'];
+        $select=['self_id','send_id','send_name','gather_id','gather_name','delete_flag','create_time','kilo_num','num','group_code','group_name','use_flag','car_num','line_list','pay_type','once_price','base_pay','car_number'];
 
 
-        $info= TmsCar::with(['TmsCarType' => function($query) use($select1){
-            $query->select($select1);
-        }])->where('self_id',$self_id)->select($select)->first();
+        $info= TmsLine::where('self_id',$self_id)->select($select)->first();
 
         if($info){
 
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
-            $info->medallion     =img_for($info->medallion,'no_json');
-            $info->license       =img_for($info->license,'no_json');
-            $info->registr_cert  =img_for($info->registr_cert,'no_json');
-            $info->carrier_cert  =img_for($info->carrier_cert,'no_json');
-            $info->tank_cert     =img_for($info->tank_cert,'no_json');
-            $info->nameplate     =img_for($info->nameplate,'no_json');
-            $info->pass_cert     =img_for($info->pass_cert,'no_json');
-            $info->compulsory_cert     =img_for($info->compulsory_cert,'no_json');
-            $info->commercial_cert     =img_for($info->commercial_cert,'no_json');
-            $info->license_back     =img_for($info->license_back,'no_json');
-            $info->medallion_back     =img_for($info->medallion_back,'no_json');
-            $info->type_show     = $info->TmsCarType->parame_name;
+            
             $data['info']=$info;
             $log_flag='Y';
             $data['log_flag']=$log_flag;
