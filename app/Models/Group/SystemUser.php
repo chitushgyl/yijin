@@ -80,6 +80,11 @@ class SystemUser extends Model{
         //如果主键是id可以省略
         return $this->hasMany('App\Models\Tms\AwardRemind','user_id','self_id');
     }
+    public function userReword(){
+        //参数：关联模型名称，外键，主键
+        //如果主键是id可以省略
+        return $this->hasMany('App\Models\User\UserReword','user_id','self_id');
+    }
 
 
 
