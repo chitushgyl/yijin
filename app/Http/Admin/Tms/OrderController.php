@@ -585,7 +585,7 @@ class OrderController extends CommonController{
              //获取驾驶员的基本工资
              $base_pay=0;
              $salary = SystemUser::where('self_id',$old_info->driver_id)->select('self_id','salary')->first();
-             // dump($data['items'],$salary,$day_num);
+             dump($data['items'],$salary,$day_num);
              if($salary){
                   $base_pay = $salary->salary/$day_num;
              }
