@@ -717,7 +717,22 @@ class WagesController extends CommonController{
     }
 
     public function getCommissionOrder(Request $request){
+       $group_code=$request->input('group_code');
+       $order_id = $request->input('order_id');
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+        ];
 
+        $where=get_list_where($search);
+        $select = ['self_id','driver_id','user_name','escort','escort_name','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag','leave_time','pay_id'];
+        $data['info']=TmsOrder::where($where)->where('self_id',explode(',',$order_id))->select($select)->get();
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
     }
 
     public function getWages(Request $request){
