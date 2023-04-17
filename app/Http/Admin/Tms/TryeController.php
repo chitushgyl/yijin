@@ -1688,6 +1688,7 @@ class TryeController extends CommonController{
         $good_name           =$request->input('good_name');
         $start_time          =$request->input('start_time');
         $end_time            =$request->input('end_time');
+        $model               =$request->input('model');
         $listrows            =$num;
         $firstrow            =($page-1)*$listrows;
         $search=[
