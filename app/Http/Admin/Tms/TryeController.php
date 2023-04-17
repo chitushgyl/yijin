@@ -1951,7 +1951,7 @@ class TryeController extends CommonController{
                 ['self_id','=',$self_id],
             ];
 
-            $select=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time','group_code','group_name','delete_flag','use_flag','order_id'];
+            $select=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time','group_code','group_name','delete_flag','use_flag','sale_price','trye_num','order_id'];
 
             $old_info=TmsTryeCount::where($where_sku)->select($select)->first();
 
