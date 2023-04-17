@@ -746,6 +746,8 @@ class MoneyController extends CommonController{
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
         $type_state     =$request->input('type_state');
+        $carriage_id     =$request->input('carriage_id');
+        $carriage_name     =$request->input('carriage_name');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 

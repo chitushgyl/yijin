@@ -42,6 +42,7 @@ class CountController extends CommonController{
 
         $warehouse_name      =$request->input('warehouse_name');
         $external_sku_id     =$request->input('external_sku_id');
+        $wms_spec     =$request->input('wms_spec');
         $good_name           =$request->input('good_name');
         $start_time          =$request->input('start_time');
         $end_time            =$request->input('end_time');

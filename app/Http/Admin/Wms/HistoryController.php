@@ -56,6 +56,8 @@ class HistoryController  extends CommonController{
             ['type'=>'=','name'=>'use_flag','value'=>'Y'],
             ['type'=>'like','name'=>'warehouse_id','value'=>$warehouse_id],
             ['type'=>'like','name'=>'sku_id','value'=>$sku_id],
+            ['type'=>'like','name'=>'price','value'=>$price],
+            ['type'=>'like','name'=>'spec','value'=>$spec],
 			['type'=>'like','name'=>'external_sku_id','value'=>$external_sku_id],
             ['type'=>'like','name'=>'group_code','value'=>$group_code],
 			['type'=>'like','name'=>'warehouse_name','value'=>$warehouse_name],
