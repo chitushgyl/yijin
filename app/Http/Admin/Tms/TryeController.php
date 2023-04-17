@@ -1853,7 +1853,7 @@ class TryeController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'>','name'=>'now_num','value'=>0],
             ['type'=>'=','name'=>'model','value'=>$model],
-            ['type'=>'=','name'=>'price','value'=>$price],
+            ['type'=>'=','name'=>'sale_price','value'=>$price],
         ];
 
 
