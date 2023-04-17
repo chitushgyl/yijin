@@ -1627,6 +1627,15 @@ class OrderController extends CommonController{
                     $list['create_time']             = $list['update_time']=$now_time;
                     $list['file_id']                 = $file_id;
 
+                    $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->get();
+                    foreach($pay_type as $kk =>$vv){
+                    if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
+                       $list['pay_id'] = $vv->self_id; 
+                    }
+                    if($car_number == $v->car_number){
+                       $list['pay_id'] = $vv->self_id;
+                    }
+
                     $datalist[]=$list;
 
                 }
@@ -1780,7 +1789,7 @@ class OrderController extends CommonController{
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
                 $car = TmsCar::where('car_number',$v['car_number'])->where('group_code',$group_code)->select('self_id','car_number')->first();
-                $trailer = TmsCar::where('car_number',$v['trailer_num'])->where('group_code',$group_code)->select('self_id','car_number')->first();
+                
                 $send = TmsGroup::where('company_name',$v['send_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
@@ -1857,13 +1866,17 @@ class OrderController extends CommonController{
                         $abcd++;
                     }
                 }
-                if (!$trailer){
+                if($v['trailer_num']){
+                    $trailer = TmsCar::where('car_number',$v['trailer_num'])->where('group_code',$group_code)->select('self_id','car_number')->first();
+                    if (!$trailer){
                     if($abcd<$errorNum){
                         $strs .= '数据中的第'.$a."行挂车号不存在".'</br>';
                         $cando='N';
                         $abcd++;
                     }
                 }
+                }
+                
                 if ($v['send_time']){
                     if (is_numeric($v['send_time'])){
                         $v['send_time']              = gmdate('Y-m-d',($v['send_time'] - 25569) * 3600 * 24);
@@ -1890,7 +1903,10 @@ class OrderController extends CommonController{
                     $list['good_name']               = $v['good_name'];
                     $list['car_id']                  = $car->self_id;
                     $list['car_number']              = $car->car_number;
-                    $list['trailer_num']              = $trailer->car_number;;
+                    if($v['trailer_num']){
+                        $list['trailer_num']              = $trailer->car_number;
+                    }
+                    
                     if ($v['user_name']){
                         $list['driver_id']               = $driver->self_id;
                         $list['user_name']               = $driver->name;
@@ -1914,6 +1930,15 @@ class OrderController extends CommonController{
                     $list['create_user_name']        = $user_info->name;
                     $list['create_time']             = $list['update_time']=$now_time;
                     $list['file_id']                 = $file_id;
+
+                    $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->get();
+                    foreach($pay_type as $kk =>$vv){
+                    if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
+                       $list['pay_id'] = $vv->self_id; 
+                    }
+                    if($car_number == $v->car_number){
+                       $list['pay_id'] = $vv->self_id;
+                    }
 
                     $datalist[]=$list;
 
