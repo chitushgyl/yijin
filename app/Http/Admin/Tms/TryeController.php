@@ -1712,7 +1712,7 @@ class TryeController extends CommonController{
         $where=get_list_where($search);
         $where1 = get_list_where($search1);
         $select=['self_id','model','group_name','use_flag'];
-        $Signselect=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time'];
+        $Signselect=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time','different'];
 //        dd($select);
         switch ($group_info['group_id']){
             case 'all':
@@ -1806,8 +1806,10 @@ class TryeController extends CommonController{
 //            $v->jie_count = $v->in_count - $v->out_count;
             $v->in_initial_count = TmsTryeChange::where('inout_time','<',$start_time)->where('model',$v->model)->where('type','preentry')->sum('change_num');
             $v->out_initial_count = TmsTryeChange::where('inout_time','<',$start_time)->where('model',$v->model)->where('type','out')->sum('change_num');
+            $v->different_count = TmsTryeChange::where('inout_time','<',$start_time)->where('model',$v->model)->where('type','different')->sum('different');
             $v->initial_count = $v->in_initial_count - $v->out_initial_count;
             $v->jie_count = $v->in_count + $v->initial_count - $v->out_count;
+            $v->different = $v->different_count;
 
             $v->button_info=$button_info;
         }
