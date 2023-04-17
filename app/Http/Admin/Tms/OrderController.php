@@ -1907,6 +1907,8 @@ class OrderController extends CommonController{
                     $list['car_number']              = $car->car_number;
                     if($v['trailer_num']){
                         $list['trailer_num']              = $trailer->car_number;
+                    }else{
+                        $list['trailer_num']              = null;
                     }
                     
                     if ($v['user_name']){
@@ -1950,7 +1952,7 @@ class OrderController extends CommonController{
 
                 $a++;
             }
-            dd($datalist);
+        
 
 
             $operationing->new_info=$datalist;
