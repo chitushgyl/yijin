@@ -435,7 +435,7 @@ class UserController extends CommonController{
         ];
 
         $where=get_list_where($search);
-        $select=['self_id','name','social_flag','tel'];
+        $select=['self_id','name','social_flag','tel','type'];
         if ($type){
             $data['info']=SystemUser::where($where)->whereIn('type',explode(',',$type))->select($select)->get();
         }else{

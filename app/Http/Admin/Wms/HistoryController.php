@@ -35,6 +35,8 @@ class HistoryController  extends CommonController{
         $warehouse_id     	=$request->input('warehouse_id');
         $sku_id    			=$request->input('sku_id');
 		$external_sku_id    =$request->input('external_sku_id');
+        $price              =$request->input('price');
+        $spec               =$request->input('spec');
         $group_code         =$request->input('group_code');
         $warehouse_name	    =$request->input('warehouse_name');
         $good_name	        =$request->input('good_name');
@@ -42,6 +44,12 @@ class HistoryController  extends CommonController{
         $end_time	        =$request->input('end_time');
         $listrows           =$num;
         $firstrow           =($page-1)*$listrows;
+        if ($start_time) {
+            $start_time = $start_time.' 00:00:00';
+        }
+        if ($end_time) {
+            $end_time = $end_time.' 23:59:59';
+        }
 
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
@@ -52,8 +60,8 @@ class HistoryController  extends CommonController{
             ['type'=>'like','name'=>'group_code','value'=>$group_code],
 			['type'=>'like','name'=>'warehouse_name','value'=>$warehouse_name],
 			['type'=>'like','name'=>'good_name','value'=>$good_name],
-			['type'=>'>=','name'=>'create_time','value'=>$start_time],
-			['type'=>'<','name'=>'create_time','value'=>$end_time],
+			['type'=>'>=','name'=>'inout_time','value'=>$start_time],
+			['type'=>'<','name'=>'inout_time','value'=>$end_time],
         ];
 
         $where=get_list_where($search);

@@ -759,10 +759,10 @@ class MoneyController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'=','name'=>'pay_type','value'=>$type],
+            ['type'=>'=','name'=>'carriage_id','value'=>$carriage_id],
             ['type'=>'>=','name'=>'create_time','value'=>$start_time],
             ['type'=>'<','name'=>'create_time','value'=>$end_time],
-            ['type'=>'=','name'=>'type_state','value'=>$type_state],
+            ['type'=>'like','name'=>'carriage_name','value'=>$carriage_name],
         ];
 
 
@@ -1009,11 +1009,11 @@ class MoneyController extends CommonController{
             $wheres['self_id'] = $self_id;
             $old_info=TmsMoneyCount::where($wheres)->first();
 
-            if ($old_info->bill_flag == 'Y'){
-                $msg['code'] = 303;
-                $msg['msg'] = "已上传发票请勿重复操作！";
-                return $msg;
-            }
+            // if ($old_info->bill_flag == 'Y'){
+            //     $msg['code'] = 303;
+            //     $msg['msg'] = "已上传发票请勿重复操作！";
+            //     return $msg;
+            // }
             $data['bill_flag'] = 'Y';
             $data['receipt'] = img_for($receipt,'in');
             $data['bill_time'] = $bill_time;

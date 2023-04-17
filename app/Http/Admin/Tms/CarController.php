@@ -142,7 +142,7 @@ class CarController extends CommonController{
             'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model','license_back','medallion_back','registr_date','medallion_begin',
             'license_start','compulsory_cert','commercial_cert','registr_cert_date','carrier_insurer','carrier_insurer_num','carrier_baoe','carrier_zrx','carrier_zr','carrier_good',
             'compulsory_insurer','compulsory_num','compulsory_sc','compulsory_yl','compulsory_property','commercial_insurer','commercial_num','commercial_tz','commercial_zr','commercial_driver',
-            'commercial_user','car_unit','type','goods_type','sgs_cert','sgs_date'];
+            'commercial_user','car_unit','type','goods_type','sgs_cert','sgs_date','pass_cert','nameplate'];
         $select1 = ['self_id','parame_name','type'];
         $data['info']= TmsCar::with(['TmsCarType' => function($query) use($select1){
             $query->select($select1);

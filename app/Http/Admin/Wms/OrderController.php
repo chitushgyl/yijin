@@ -312,6 +312,7 @@ class OrderController extends CommonController{
                     }
 
                     $list['sku_id']             = $sku_info->self_id;
+                    $list['external_sku_id']    = $sku_info->external_sku_id;
                     $list['create_user_id']     = $user_info->admin_id;
                     $list['create_user_name']   = $user_info->name;
                     $list['create_time']        = $list['update_time']=$now_time;
@@ -1370,7 +1371,7 @@ class OrderController extends CommonController{
             ['self_id','=',$self_id],
             ['delete_flag','=','Y'],
         ];
-        $order_select = ['self_id','status','create_user_name','create_time','group_name','warehouse_name','total_flag','total_time',
+        $order_select = ['self_id','status','create_user_name','create_time','group_name','warehouse_name','total_flag','total_time','bill_flag',
             'picker','operator','purchase','car_num','delivery_time','out_time','picker_id'];
         $order_list_select= ['self_id','sku_id','external_sku_id','good_name','good_unit','spec','num','order_id','external_sku_id','remarks','price','total_price','out_library_state'];
         $wms_out_sige_select= ['self_id','sku_id','library_sige_id','external_sku_id','order_list_id','good_name','spec','num','good_unit','good_target_unit','good_scale','good_english_name'
