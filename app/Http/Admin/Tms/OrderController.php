@@ -1757,7 +1757,7 @@ class OrderController extends CommonController{
                 '装车点' =>['Y','Y','100','send_name'],
                 '卸车点' =>['Y','Y','100','gather_name'],
                 '车牌号' =>['Y','Y','64','car_number'],
-                '挂车号' =>['Y','Y','64','trailer_num'],
+                '挂车号' =>['N','Y','64','trailer_num'],
                 '驾驶员' =>['Y','Y','64','user_name'],
                 '电话' =>['N','Y','64','car_tel'],
                 '副驾驶员' =>['N','Y','64','escort'],

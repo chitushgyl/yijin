@@ -816,7 +816,7 @@ class CarServiceController extends CommonController{
                         $list['type']          ='保养';
                     }
                     $list['car_number']    =$v->car_number;
-                    $list['trailer_num']    =$v->trailer_num;
+                    $list['trailer_num']   =$v->trailer_num;
                     $list['brand']         =$v->brand;
                     $list['driver_name']   =$v->driver_name;
                     $list['service_time']  =$v->service_time;
