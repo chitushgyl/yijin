@@ -1992,14 +1992,14 @@ class TryeController extends CommonController{
 
                 $abc[0]=$andd;
                 //DUMP($abc);
-                $change->change($abc,'change');
-                // if($yuan_number != 0){
-                //     if ($num>$yuan_number) {
-                //        self::tryeChange($abc,'preentry');
-                //     }else{
-                //         self::tryeChange($abc,'out');
-                //     }
-                // }
+                // $change->change($abc,'change');
+                if($yuan_number != 0){
+                    if ($num>$yuan_number) {
+                       self::tryeChange($abc,'preentry');
+                    }else{
+                        self::tryeChange($abc,'out');
+                    }
+                }
                 
                 
 
