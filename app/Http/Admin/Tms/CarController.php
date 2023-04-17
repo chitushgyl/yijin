@@ -1042,7 +1042,7 @@ class CarController extends CommonController{
                     $list=[];
                     $list['id']=($k+1);
                     $list['car_number']          = $v['car_number'];
-                    if($v['type'] == ''){
+                    if($v['type'] == 'tractor'){
                          $list['type']           = '牵引车';
                     }else{
                          $list['type']           = '挂车';
