@@ -1986,7 +1986,8 @@ class TryeController extends CommonController{
 
                 $abc[0]=$andd;
                 //DUMP($abc);
-                $change->change($abc,'change');
+                // $change->change($abc,'change');
+                self::tryeChange($abc,'change');
 
                 //dd(11111);
                 $msg['code'] = 200;
