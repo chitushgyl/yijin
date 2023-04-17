@@ -1795,7 +1795,7 @@ class TryeController extends CommonController{
             foreach ($v->tmsTryeChange as $kk=>$vv) {
                 if ($vv->type == 'preentry'){
                     $v->in_count += $vv->now_num;
-                }else{
+                }elseif($vv->type == 'out'){
                     $v->out_count += $vv->change_num;
                 }
 //                $v->initial_count += $vv->initial_num;
