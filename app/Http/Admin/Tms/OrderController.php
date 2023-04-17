@@ -1339,6 +1339,7 @@ class OrderController extends CommonController{
                     $list['create_user_name']        = $user_info->name;
                     $list['create_time']             = $list['update_time']=$now_time;
                     $list['file_id']                 = $file_id;
+                    $list['pay_id']                 = null;
 
                     $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->get();
                     foreach($pay_type as $kk =>$vv){
@@ -1626,7 +1627,7 @@ class OrderController extends CommonController{
                     $list['create_user_name']        = $user_info->name;
                     $list['create_time']             = $list['update_time']=$now_time;
                     $list['file_id']                 = $file_id;
-
+                    $list['pay_id']                 = null;
                     $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->get();
                     foreach($pay_type as $kk =>$vv){
                     if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
@@ -1931,6 +1932,7 @@ class OrderController extends CommonController{
                     $list['create_user_name']        = $user_info->name;
                     $list['create_time']             = $list['update_time']=$now_time;
                     $list['file_id']                 = $file_id;
+                    $list['pay_id']                 = null;
 
                     $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->get();
                     foreach($pay_type as $kk =>$vv){
