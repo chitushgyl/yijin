@@ -780,7 +780,7 @@ class CarServiceController extends CommonController{
             ];
             $where=get_list_where($search);
 
-            $select=['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator',
+            $select=['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator','trailer_num',
                 'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view','type','driver_id','service_item','servicer','next_kilo'];
             $info=CarService::where($where)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
@@ -790,6 +790,7 @@ class CarServiceController extends CommonController{
                     "id"=>'ID',
                     "type"=>'类型',
                     "car_number"=>'车牌号',
+                    "trailer_num"=>'挂车号',
                     "brand"=>'品牌型号',
                     "driver_name"=>'维修/保养驾驶员',
                     "service_time"=>'维修/保养日期',
@@ -815,6 +816,7 @@ class CarServiceController extends CommonController{
                         $list['type']          ='保养';
                     }
                     $list['car_number']    =$v->car_number;
+                    $list['trailer_num']    =$v->trailer_num;
                     $list['brand']         =$v->brand;
                     $list['driver_name']   =$v->driver_name;
                     $list['service_time']  =$v->service_time;
