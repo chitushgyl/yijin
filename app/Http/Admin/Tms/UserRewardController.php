@@ -1223,10 +1223,9 @@ class UserRewardController extends CommonController{
             ];
             $where=get_list_where($search);
 
-            $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
-                'use_flag','delete_flag','create_time','update_time','group_code','group_name','user_id'];
+            $select=['self_id','user_id','user_name','money_award','award_flag','group_code','group_name','reward_id','delete_flag','use_flag','cash_flag','cash_back','create_time','update_time','car_id','car_number'];
             $select1=['self_id','name'];
-            $info=UserReward::with(['systemUser' => function($query) use($select1){
+            $info=AwardRemind::with(['systemUser' => function($query) use($select1){
                 $query->select($select1);
             }])->where($where)
                 ->orderBy('create_time', 'desc')
@@ -1236,16 +1235,10 @@ class UserRewardController extends CommonController{
                 //设置表头
                 $row = [[
                     "id"=>'ID',
-                    "user_name"=>'姓名',
-                    "department"=>'部门',
                     "car_number"=>'车牌号',
-                    "score"=>'扣分情况',
-                    "handle_connect"=>'处理情况',
-                    "payment"=>'交款情况',
-                    "late_fee"=>'滞纳金',
-                    "handle_opinion"=>'处理意见',
-                    "safe_flag"=>'是否有安全奖',
-                    "safe_reward"=>'安全奖金',
+                    "user_name"=>'姓名',
+                    "money_award"=>'奖金',
+                    "cash_back"=>'奖金返还',
                 ]];
 
 
@@ -1254,27 +1247,11 @@ class UserRewardController extends CommonController{
                 foreach ($info as $k=>$v){
                     $list=[];
                     $list['id']=($k+1);
-                    $list['user_name']=$v->systemUser->name;
-                    if($v['department'] == 1){
-                        $list['department']='运管';
-                    }elseif($v['department'] == 2){
-                        $list['department']='交警';
-                    }else{
-                        $list['department']='高速交警';
-                    }
                     $list['car_number']=$v->car_number;
-                    $list['score']=$v->score;
-                    $list['handle_connect']=$v->handle_connect;
-                    $list['payment']=$v->payment;
+                    $list['user_name']=$v->user_name;
+                    $list['money_award']=$v->money_award;
                     $list['late_fee']=$v->late_fee;
-                    $list['handle_opinion']=$v->handle_opinion;
-                    if ($v->safe_flag == 'Y'){
-                        $list['safe_flag']='是';
-                    }else{
-                        $list['safe_flag']='无';
-                    }
-                    $list['safe_flag']=$v->safe_flag;
-                    $list['safe_reward']=$v->safe_reward;
+                    $list['cash_back']=$v->cash_back;
 
                     $data_execl[]=$list;
                 }
