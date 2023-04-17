@@ -1793,10 +1793,13 @@ class TryeController extends CommonController{
             $v->initial_count=0;
             $v->jie_count=0;
             foreach ($v->tmsTryeChange as $kk=>$vv) {
+                $v->different_count = TmsTryeChange::where('inout_time','<',$start_time)->where('model',$v->model)->where('type','different')->sum('different');
                 if ($vv->type == 'preentry'){
                     $v->in_count += $vv->now_num;
                 }elseif($vv->type == 'out'){
                     $v->out_count += $vv->change_num;
+                }elseif($vv->type == 'different'){
+                    $v->different += $vv->different;
                 }
 //                $v->initial_count += $vv->initial_num;
 
@@ -1806,10 +1809,10 @@ class TryeController extends CommonController{
 //            $v->jie_count = $v->in_count - $v->out_count;
             $v->in_initial_count = TmsTryeChange::where('inout_time','<',$start_time)->where('model',$v->model)->where('type','preentry')->sum('change_num');
             $v->out_initial_count = TmsTryeChange::where('inout_time','<',$start_time)->where('model',$v->model)->where('type','out')->sum('change_num');
-            $v->different_count = TmsTryeChange::where('inout_time','<',$start_time)->where('model',$v->model)->where('type','different')->sum('different');
+            
             $v->initial_count = $v->in_initial_count - $v->out_initial_count;
             $v->jie_count = $v->in_count + $v->initial_count - $v->out_count;
-            $v->different = $v->different_count;
+            $v->different_counts = $v->different_count;
 
             $v->button_info=$button_info;
         }
