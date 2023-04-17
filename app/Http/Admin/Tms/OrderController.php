@@ -1329,7 +1329,7 @@ class OrderController extends CommonController{
                     $list['gather_name']             = $v['gather_name'];
                     $list['pick_time']               = $v['pick_time'];
                     $list['area']                    = $v['area'];
-                    $list['transport_type']               = $v['transport_type'];
+                    $list['transport_type']          = $v['transport_type'];
                     $list['road_card']               = $v['road_card'];
                     $list['carriage_group']          = $v['carriage_group'];
 
@@ -1339,6 +1339,16 @@ class OrderController extends CommonController{
                     $list['create_user_name']        = $user_info->name;
                     $list['create_time']             = $list['update_time']=$now_time;
                     $list['file_id']                 = $file_id;
+
+                    $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->get();
+                    foreach($pay_type as $kk =>$vv){
+                    if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
+                       $list['pay_id'] = $vv->self_id; 
+                    }
+                    if($car_number == $v->car_number){
+                       $list['pay_id'] = $vv->self_id;
+                    }
+            }
 
                     $datalist[]=$list;
 
