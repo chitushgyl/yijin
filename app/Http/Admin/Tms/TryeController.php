@@ -338,6 +338,7 @@ class TryeController extends CommonController{
                     $list['change_num']         =0;
                     $list['different']          =$v['now_num_new']-$v['yuan_number'];
                     $list['type']               ='different';
+                    $list['inout_time']         =$v['date_time'];
                     break;
 
                 case 'movein':
