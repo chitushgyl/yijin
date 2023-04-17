@@ -1794,11 +1794,10 @@ class TryeController extends CommonController{
             $v->jie_count=0;
             foreach ($v->tmsTryeChange as $kk=>$vv) {
                 if ($vv->type == 'preentry'){
-                    $v->in_count += ($vv->now_num + $vv->different);
+                    $v->in_count += $vv->now_num;
                 }elseif($vv->type == 'out'){
-                    $v->out_count += ($vv->change_num + $vv->different);
+                    $v->out_count += $vv->change_num;
                 }
-                
 //                $v->initial_count += $vv->initial_num;
 
                
@@ -1993,7 +1992,7 @@ class TryeController extends CommonController{
                     if ($num>$yuan_number) {
                        self::tryeChange($abc,'preentry');
                     }else{
-                        self::tryeChange($abc,'preentry');
+                        self::tryeChange($abc,'out');
                     }
                 }
                 
