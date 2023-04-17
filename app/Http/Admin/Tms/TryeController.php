@@ -1955,13 +1955,14 @@ class TryeController extends CommonController{
 
             $old_info=TmsTryeCount::where($where_sku)->select($select)->first();
 
-
+            $yuan_number = 0;
             if($old_info){
                  if($old_info ->now_num ==  $num){
                      $msg['code'] = 303;
                      $msg['msg'] = "原数量和新数量一致，不需要修改差异";
                      return $msg;
                  }
+                 $yuan_number = $old_info->now_num;
             }
 
             //dd($old_info);
@@ -1987,7 +1988,15 @@ class TryeController extends CommonController{
                 $abc[0]=$andd;
                 //DUMP($abc);
                 // $change->change($abc,'change');
-                self::tryeChange($abc,'change');
+                if($yuan_number != 0){
+                    if ($num>$yuan_number) {
+                       self::tryeChange($abc,'preentry');
+                    }else{
+                        self::tryeChange($abc,'out');
+                    }
+                }
+                
+                
 
                 //dd(11111);
                 $msg['code'] = 200;
