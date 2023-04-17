@@ -141,7 +141,7 @@ class CarController extends CommonController{
             'car_made','engine_num','fuel_type','displacement_power','maker','turn_view','tread','trye_num','steel_plate','wheel_base','axles_num','outline',
             'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model','license_back','medallion_back','registr_date','medallion_begin',
             'license_start','compulsory_cert','commercial_cert','registr_cert_date','carrier_insurer','carrier_insurer_num','carrier_baoe','carrier_zrx','carrier_zr','carrier_good',
-            'compulsory_insurer','compulsory_num','compulsory_sc','compulsory_yl','compulsory_property','commercial_insurer','commercial_num','commercial_tz','commercial_zr','commercial_driver',
+            'compulsory_insurer','compulsory_num','compulsory_sc','compulsory_yl','compulsory_property','commercial_insurer','commercial_num','commercial_tz','commercial_zr','commercial_driver','vessel_tax',
             'commercial_user','car_unit','type','goods_type','sgs_cert','sgs_date','pass_cert','nameplate'];
         $select1 = ['self_id','parame_name','type'];
         $data['info']= TmsCar::with(['TmsCarType' => function($query) use($select1){
@@ -272,6 +272,7 @@ class CarController extends CommonController{
         $compulsory_sc      =$request->input('compulsory_sc');//交强险死亡伤残赔偿
         $compulsory_yl      =$request->input('compulsory_yl');//医疗费用赔偿
         $compulsory_property=$request->input('compulsory_property');//交强险财产损失赔偿
+        $vessel_tax         =$request->input('vessel_tax');//车船税
         $commercial_insurer =$request->input('commercial_insurer');//商业险保险单位
         $commercial_num     =$request->input('commercial_num');//商业险保险单号
         $commercial_tz      =$request->input('commercial_tz');//特种车损失险（万元）
@@ -358,6 +359,8 @@ class CarController extends CommonController{
             $data['operation_date']    =$operation_date;
             $data['tank_num']          =$tank_num;
             $data['tank_type']         =$tank_type;
+            $data['vessel_tax']         =$vessel_tax;
+            
             $data['medallion_change_end']         =$medallion_change_end;
             $data['registr_cert']      =img_for($registr_cert,'one_in');
             $data['carrier_cert']      =img_for($carrier_cert,'one_in');
@@ -817,7 +820,7 @@ class CarController extends CommonController{
             'car_made','engine_num','fuel_type','displacement_power','maker','turn_view','tread','trye_num','steel_plate','wheel_base','axles_num','outline','car_model',
             'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model','license_back','medallion_back','registr_date','medallion_begin',
             'license_start','compulsory_cert','commercial_cert','registr_cert_date','carrier_insurer','carrier_insurer_num','carrier_baoe','carrier_zrx','carrier_zr','carrier_good',
-            'compulsory_insurer','compulsory_num','compulsory_sc','compulsory_yl','compulsory_property','commercial_insurer','commercial_num','commercial_tz','commercial_zr','commercial_driver',
+            'compulsory_insurer','compulsory_num','compulsory_sc','compulsory_yl','compulsory_property','commercial_insurer','commercial_num','commercial_tz','commercial_zr','commercial_driver','vessel_tax',
             'commercial_user','car_unit','goods_type','sgs_cert','sgs_date'];
         $select1 = ['self_id','parame_name'];
 
@@ -975,6 +978,116 @@ class CarController extends CommonController{
         }
 
     }
+
+
+    /***    车辆保险导出     /tms/car/insurExecl
+     */
+    public function insurExecl(Request $request,File $file){
+        $user_info  = $request->get('user_info');//接收中间件产生的参数
+        $now_time   =date('Y-m-d H:i:s',time());
+        $input      =$request->all();
+        /** 接收数据*/
+        $group_code     =$request->input('group_code');
+//        $group_code  =$input['group_code']   ='group_202012251449437824125582';
+        //dd($group_code);
+        $rules=[
+            'group_code'=>'required',
+        ];
+        $message=[
+            'group_code.required'=>'必须选择公司',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()){
+            /** 下面开始执行导出逻辑**/
+            $group_name     =SystemGroup::where('group_code','=',$group_code)->value('group_name');
+            //查询条件
+            $search=[
+                ['type'=>'=','name'=>'group_code','value'=>$group_code],
+                ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ];
+            $where=get_list_where($search);
+
+            $select=['self_id','car_number','car_type','type','carrier_insurer','carrier_insurer_num','carrier','carrier_end','compulsory_insurer','compulsory_num','compulsory','compulsory_end','commercial_insurer','commercial_num','commercial','commercial_end','vessel_tax'];
+            $select1 = ['self_id','parame_name'];
+            $info=TmsCar::with(['tmsCarType' => function($query) use($select1){
+                $query->select($select1);
+            }])->where($where)->orderBy('create_time', 'desc')->select($select)->get();
+//dd($info);
+            if($info){
+                //设置表头
+                $row = [[
+                    "id"=>'ID',
+                    "car_number"=>'车牌号',
+                    "type"=>'车型',
+                    "carrier_insurer"=>'承运险保险公司',
+                    "carrier_insurer_num"=>'承运险保险单号',
+                    "carrier"=>'承运险保费',
+                    "carrier_end"=>'承运险到期时间',
+                    "compulsory_insurer"=>'交强险保险公司',
+                    "compulsory_num"=>'交强险保险单号',
+                    "compulsory"=>'交强险保费',
+                    "vessel_tax"=>'交强险车船税',
+                    "compulsory_end"=>'交强险到期时间',
+                    "commercial_insurer"=>'商业险保险公司',
+                    "commercial_num"=>'商业险保险单号',
+                    "commercial"=>'商业险保费',
+                    "commercial_end"=>'商业险到期时间',
+                    "remark"=>'备注'
+                ]];
+
+                /** 现在根据查询到的数据去做一个导出的数据**/
+                $data_execl=[];
+
+                foreach ($info as $k=>$v){
+                    $list=[];
+                    $list['id']=($k+1);
+                    $list['car_number']          = $v['car_number'];
+                    if($v['type'] == ''){
+                         $list['type']           = '牵引车';
+                    }else{
+                         $list['type']           = '挂车';
+                    }                   
+                    $list['carrier_insurer']     = $v['carrier_insurer'];
+                    $list['carrier_insurer_num'] = $v['carrier_insurer_num'];
+                    $list['carrier']             = $v['carrier'];
+                    $list['carrier_end']         = $v['carrier_end'];
+                    $list['compulsory_insurer']  = $v['compulsory_insurer'];
+                    $list['compulsory_num']      = $v['compulsory_num'] ;
+                    $list['compulsory']          = $v['compulsory'];
+                    $list['vessel_tax']          = $v['vessel_tax'];
+                    $list['compulsory_end']      = $v['compulsory_end'];
+                    $list['commercial_insurer']  = $v['commercial_insurer'];
+                    $list['commercial_num']      = $v['commercial_num'];
+                    $list['commercial']          = $v['commercial'];
+                    $list['commercial_end']      = $v['commercial_end'];
+                    $list['remark']              = $v['remark'];
+                    $data_execl[]=$list;
+                }
+                /** 调用EXECL导出公用方法，将数据抛出来***/
+                $browse_type=$request->path();
+                $msg=$file->export($data_execl,$row,$group_code,$group_name,$browse_type,$user_info,$where,$now_time);
+
+                //dd($msg);
+                return $msg;
+
+            }else{
+                $msg['code']=301;
+                $msg['msg']="没有数据可以导出";
+                return $msg;
+            }
+        }else{
+            $erro=$validator->errors()->all();
+            $msg['msg']=null;
+            foreach ($erro as $k=>$v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code']=300;
+            return $msg;
+        }
+
+    }
+
 
     /***    车辆分页      /tms/car/countPage
      */
