@@ -1925,6 +1925,7 @@ class TryeController extends CommonController{
         $input              =$request->all();
         $self_id            =$request->input('self_id');
         $num                =$request->input('num');
+        $time                =$request->input('time');
 
         $table_name         ='wms_library_sige';
         $operationing       = $request->get('operationing');//接收中间件产生的参数
@@ -1989,6 +1990,7 @@ class TryeController extends CommonController{
                 $andd["update_time"]        =$now_time;
                 $andd["now_num_new"]        =$num;
                 $andd["yuan_number"]        =$yuan_number;
+                $andd["date_time"]          =$time;
 
                 $abc[0]=$andd;
                 //DUMP($abc);
