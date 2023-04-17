@@ -1345,7 +1345,7 @@ class OrderController extends CommonController{
                     if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
                        $list['pay_id'] = $vv->self_id; 
                     }
-                    if($car_number == $v->car_number){
+                    if($['car_number'] == $v->car_number){
                        $list['pay_id'] = $vv->self_id;
                     }
             }
@@ -1632,7 +1632,7 @@ class OrderController extends CommonController{
                     if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
                        $list['pay_id'] = $vv->self_id; 
                     }
-                    if($car_number == $v->car_number){
+                    if($v['car_number'] == $v->car_number){
                        $list['pay_id'] = $vv->self_id;
                     }
                     }
@@ -1937,7 +1937,7 @@ class OrderController extends CommonController{
                     if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
                        $list['pay_id'] = $vv->self_id; 
                     }
-                    if($car_number == $v->car_number){
+                    if($v['car_number'] == $v->car_number){
                        $list['pay_id'] = $vv->self_id;
                     }
                 }
