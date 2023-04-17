@@ -1196,6 +1196,113 @@ class UserRewardController extends CommonController{
         return $msg;
     }
 
+    /***    地址导出     /tms/userReward/remindExcel
+     */
+    public function remindExcel(Request $request,File $file){
+        $user_info  = $request->get('user_info');//接收中间件产生的参数
+        $now_time   =date('Y-m-d H:i:s',time());
+        $input      =$request->all();
+        /** 接收数据*/
+        $group_code     =$request->input('group_code');
+        // $group_code  =$input['group_code']   ='1234';
+        //dd($group_code);
+        $rules=[
+            'group_code'=>'required',
+        ];
+        $message=[
+            'group_code.required'=>'必须选择公司',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()){
+            /** 下面开始执行导出逻辑**/
+            $group_name     =SystemGroup::where('group_code','=',$group_code)->value('group_name');
+            //查询条件
+            $search=[
+                ['type'=>'=','name'=>'group_code','value'=>$group_code],
+                ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ];
+            $where=get_list_where($search);
+
+            $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
+                'use_flag','delete_flag','create_time','update_time','group_code','group_name','user_id'];
+            $select1=['self_id','name'];
+            $info=UserReward::with(['systemUser' => function($query) use($select1){
+                $query->select($select1);
+            }])->where($where)
+                ->orderBy('create_time', 'desc')
+                ->select($select)->get();
+//dd($info);
+            if($info){
+                //设置表头
+                $row = [[
+                    "id"=>'ID',
+                    "user_name"=>'姓名',
+                    "department"=>'部门',
+                    "car_number"=>'车牌号',
+                    "score"=>'扣分情况',
+                    "handle_connect"=>'处理情况',
+                    "payment"=>'交款情况',
+                    "late_fee"=>'滞纳金',
+                    "handle_opinion"=>'处理意见',
+                    "safe_flag"=>'是否有安全奖',
+                    "safe_reward"=>'安全奖金',
+                ]];
+
+
+                /** 现在根据查询到的数据去做一个导出的数据**/
+                $data_execl=[];
+                foreach ($info as $k=>$v){
+                    $list=[];
+                    $list['id']=($k+1);
+                    $list['user_name']=$v->systemUser->name;
+                    if($v['department'] == 1){
+                        $list['department']='运管';
+                    }elseif($v['department'] == 2){
+                        $list['department']='交警';
+                    }else{
+                        $list['department']='高速交警';
+                    }
+                    $list['car_number']=$v->car_number;
+                    $list['score']=$v->score;
+                    $list['handle_connect']=$v->handle_connect;
+                    $list['payment']=$v->payment;
+                    $list['late_fee']=$v->late_fee;
+                    $list['handle_opinion']=$v->handle_opinion;
+                    if ($v->safe_flag == 'Y'){
+                        $list['safe_flag']='是';
+                    }else{
+                        $list['safe_flag']='无';
+                    }
+                    $list['safe_flag']=$v->safe_flag;
+                    $list['safe_reward']=$v->safe_reward;
+
+                    $data_execl[]=$list;
+                }
+                /** 调用EXECL导出公用方法，将数据抛出来***/
+                $browse_type=$request->path();
+                $msg=$file->export($data_execl,$row,$group_code,$group_name,$browse_type,$user_info,$where,$now_time);
+
+                //dd($msg);
+                return $msg;
+
+            }else{
+                $msg['code']=301;
+                $msg['msg']="没有数据可以导出";
+                return $msg;
+            }
+        }else{
+            $erro=$validator->errors()->all();
+            $msg['msg']=null;
+            foreach ($erro as $k=>$v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code']=300;
+            return $msg;
+        }
+
+    }
+
 }
 ?>
 

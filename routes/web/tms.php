@@ -259,6 +259,7 @@ Route::group([
     Route::any('/userReward/updateState','UserRewardController@updateState');//奖金返还提醒列表
     Route::any('/userReward/userRewardCount','UserRewardController@userRewardCount');//奖金返还提醒列表
     Route::any('/userReward/getUserReward','UserRewardController@getUserReward');//奖金返还提醒列表
+    Route::any('/userReward/remindExcel','UserRewardController@remindExcel');//奖金返还提醒列表
 
     /**车辆维修记录***/
     Route::any('/carService/serviceList','CarServiceController@serviceList');
