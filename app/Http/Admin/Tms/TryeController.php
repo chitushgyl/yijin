@@ -336,7 +336,7 @@ class TryeController extends CommonController{
                     $list['initial_num']        =0;
                     $list['now_num']            =0;
                     $list['change_num']         =0;
-                    $list['different']          =$v['now_num_new']->$v['yuan_number'];
+                    $list['different']          =$v['now_num_new']-$v['yuan_number'];
                     $list['type']               ='different';
                     break;
 
