@@ -1860,7 +1860,7 @@ class TryeController extends CommonController{
         $where=get_list_where($search);
 
         //DUMP($where);
-        $select=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time','group_code','group_name','delete_flag','use_flag'];
+        $select=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time','group_code','group_name','delete_flag','use_flag','price','trye_num'];
 
         switch ($group_info['group_id']){
             case 'all':

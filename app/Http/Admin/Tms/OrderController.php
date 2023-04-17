@@ -1313,11 +1313,19 @@ class OrderController extends CommonController{
                         $list['driver_id']               = $driver->self_id;
                         $list['user_name']               = $driver->name;
                         $list['car_tel']                 = $driver->tel;
+                    }else{
+                        $list['driver_id']               = null;
+                        $list['user_name']               = null;
+                        $list['car_tel']                 = null;
                     }
                     if($v['escort']){
                         $list['escort']                  = $cargo->self_id;
                         $list['escort_name']             = $cargo->name;
                         $list['escort_tel']              = $cargo->tel;
+                    }else{
+                        $list['escort']                  = null;
+                        $list['escort_name']             = null;
+                        $list['escort_tel']              = null;
                     }
                     $list['odd_number']              = $v['odd_number'];
                     $list['order_number']            = $v['order_number'];
@@ -1608,11 +1616,19 @@ class OrderController extends CommonController{
                         $list['driver_id']               = $driver->self_id;
                         $list['user_name']               = $driver->name;
                         $list['car_tel']                 = $driver->tel;
+                    }else{
+                        $list['driver_id']               = null;
+                        $list['user_name']               = null;
+                        $list['car_tel']                 = null;
                     }
                     if($v['escort']){
                         $list['escort']                  = $cargo->self_id;
                         $list['escort_name']             = $cargo->name;
                         $list['escort_tel']              = $cargo->tel;
+                    }else{
+                        $list['escort']                  = null;
+                        $list['escort_name']             = null;
+                        $list['escort_tel']              = null;
                     }
 
                     $list['send_time']               = $v['send_time'];
@@ -1915,11 +1931,19 @@ class OrderController extends CommonController{
                         $list['driver_id']               = $driver->self_id;
                         $list['user_name']               = $driver->name;
                         $list['car_tel']                 = $driver->tel;
+                    }else{
+                        $list['driver_id']               = null;
+                        $list['user_name']               = null;
+                        $list['car_tel']                 = null;
                     }
                     if($v['escort']){
                         $list['escort']                  = $cargo->self_id;
                         $list['escort_name']             = $cargo->name;
                         $list['escort_tel']              = $cargo->tel;
+                    }else{
+                        $list['escort']                   = null;
+                        $list['escort_name']               = null;
+                        $list['escort_tel']                 = null;
                     }
                     $list['send_time']               = $v['send_time'];
                     $list['send_id']                 = $v['send_id'];
