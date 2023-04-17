@@ -1811,7 +1811,7 @@ class TryeController extends CommonController{
             $v->out_initial_count = TmsTryeChange::where('inout_time','<',$start_time)->where('model',$v->model)->where('type','out')->sum('change_num');
             
             $v->initial_count = $v->in_initial_count - $v->out_initial_count;
-            $v->jie_count = $v->in_count + $v->initial_count - $v->out_count - $v->different;
+            $v->jie_count = $v->in_count + $v->initial_count - $v->out_count + $v->different;
             $v->different_counts = $v->different_count;
 
             $v->button_info=$button_info;
