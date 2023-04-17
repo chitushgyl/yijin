@@ -1635,6 +1635,7 @@ class OrderController extends CommonController{
                     if($car_number == $v->car_number){
                        $list['pay_id'] = $vv->self_id;
                     }
+                    }
 
                     $datalist[]=$list;
 
