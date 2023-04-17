@@ -1299,7 +1299,7 @@ class OrderController extends CommonController{
 
                 if($cando =='Y'){
                     $list['self_id']                 = generate_id('order_');
-                    $list['order_mark']              = $v['order_mark'];
+                    // $list['order_mark']              = $v['order_mark'];
                     $list['order_type']              = 1;
                     $list['company_id']              = $company->self_id;
                     $list['company_name']            = $company->company_name;
