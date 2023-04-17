@@ -1972,7 +1972,7 @@ class TryeController extends CommonController{
             $operationing->old_info=$old_info;
             $operationing->new_info=$data;
 
-            $id=WmsLibrarySige::where($where_sku)->update($data);
+            $id=TmsTryeCount::where($where_sku)->update($data);
 
 
 

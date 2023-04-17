@@ -792,7 +792,7 @@ class CarServiceController extends CommonController{
                     "car_number"=>'车牌号',
                     "trailer_num"=>'挂车号',
                     "brand"=>'品牌型号',
-                    "driver_name"=>'维修/保养驾驶员',
+                    "driver_name"=>'送修/保养驾驶员',
                     "service_time"=>'维修/保养日期',
                     "service_item"=>'维修/保养项目',
                     "service_view"=>'维修/保养明细',
