@@ -333,13 +333,11 @@ class TryeController extends CommonController{
                     break;
 
                 case 'change':
-                    $list['initial_num']        =$v['now_num'];
-                    if($v['now_num'] - $v['now_num_new'] >=0){
-                        $list['now_num']            =$v['now_num_new'];
-                    }else{
-                        $list['now_num']            =0;
-                    }
-                    $list['change_num']         =$list['initial_num']-$list['now_num'];
+                    $list['initial_num']        =0;
+                    $list['now_num']            =0;
+                    $list['change_num']         =0;
+                    $list['different']          =$v['now_num_new']->$v['yuan_number'];
+                    $list['type']               ='different';
                     break;
 
                 case 'movein':
@@ -1989,17 +1987,14 @@ class TryeController extends CommonController{
                 $andd['create_time']        =$now_time;
                 $andd["update_time"]        =$now_time;
                 $andd["now_num_new"]        =$num;
+                $andd["yuan_number"]        =$yuan_number;
 
                 $abc[0]=$andd;
                 //DUMP($abc);
                 // $change->change($abc,'change');
-                if($yuan_number != 0){
-                    if ($num>$yuan_number) {
-                       self::tryeChange($abc,'preentry');
-                    }else{
-                        self::tryeChange($abc,'out');
-                    }
-                }
+                
+                self::tryeChange($abc,'change');
+                   
                 
                 
 
