@@ -341,6 +341,10 @@ Route::group([
     Route::any('/trye/getStateTrye','TryeController@getStateTrye');
     Route::any('/trye/tryeCount','TryeController@tryeCount');
 
+    Route::any('/trye/searchList','TryeController@searchList');
+    Route::any('/trye/searchPage','TryeController@searchPage');
+    Route::any('/trye/mistakeRevise','TryeController@mistakeRevise');
+
     /**二级维护***/
     Route::any('/diplasic/diplasicList','DiplasicController@diplasicList');
     Route::any('/diplasic/diplasicPage','DiplasicController@diplasicPage');

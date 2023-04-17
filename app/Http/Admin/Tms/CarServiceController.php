@@ -547,11 +547,13 @@ class CarServiceController extends CommonController{
              */
 
             $shuzu=[
+                'ID' =>['N','Y','30','id'],
                 '类型' =>['Y','Y','30','type'],
                 '车牌号' =>['Y','Y','30','car_number'],
-                '品牌型号' =>['Y','Y','30','brand'],
+                '挂车号' =>['N','Y','30','trailer_num'],
+                '品牌型号' =>['N','Y','30','brand'],
                 '维修/保养日期' =>['Y','Y','30','service_time'],
-                '送修/保养驾驶员' =>['Y','Y','30','driver_name'],
+                '送修/保养驾驶员' =>['N','Y','30','driver_name'],
                 '维修/保养项目' =>['Y','Y','50','service_item'],
                 '维修/保养明细' =>['N','Y','200','service_view'],
                 '维修/保养单位' =>['N','Y','50','service_partne'],
@@ -630,6 +632,7 @@ class CarServiceController extends CommonController{
                     $list['self_id']            = generate_id('service_');
                     $list['type']               = $type;
                     $list['car_number']         = $v['car_number'];
+                    $list['trailer_num']        = $v['trailer_num'];
                     $list['brand']              = $v['brand'];
                     $list['service_time']       = $v['service_time'];
                     $list['driver_id']          = $driver->self_id;
@@ -785,6 +788,7 @@ class CarServiceController extends CommonController{
                 //设置表头
                 $row = [[
                     "id"=>'ID',
+                    "type"=>'类型',
                     "car_number"=>'车牌号',
                     "brand"=>'品牌型号',
                     "driver_name"=>'维修/保养驾驶员',
@@ -805,6 +809,11 @@ class CarServiceController extends CommonController{
                 foreach ($info as $k=>$v){
                     $list=[];
                     $list['id']            =($k+1);
+                    if ($v->type == 'service') {
+                        $list['type']          ='维修';
+                    }else{
+                        $list['type']          ='保养';
+                    }
                     $list['car_number']    =$v->car_number;
                     $list['brand']         =$v->brand;
                     $list['driver_name']   =$v->driver_name;

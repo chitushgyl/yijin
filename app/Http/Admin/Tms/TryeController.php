@@ -1818,5 +1818,197 @@ class TryeController extends CommonController{
         return $msg;
     }
 
+    /***    库位商品列表      /tms/trye/searchList
+     */
+    public function  searchList(Request $request){
+        $data['page_info']      =config('page.listrows');
+        $data['button_info']    =$request->get('anniu');
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+
+        //dd($msg);
+        return $msg;
+    }
+    /***    库位商品分页      /tms/trye/searchPage
+     */
+    public function searchPage(Request $request){
+        /** 接收中间件参数**/
+        $group_info     = $request->get('group_info');//接收中间件产生的参数
+        $button_info    = $request->get('anniu');//接收中间件产生的参数
+        $in_store_status  =array_column(config('wms.in_store_status'),'name','key');
+        /**接收数据*/
+        $num                =$request->input('num')??10;
+        $page               =$request->input('page')??1;
+        $use_flag           =$request->input('use_flag');
+        $model              =$request->input('model');
+        $price              =$request->input('price');
+
+        $listrows       =$num;
+        $firstrow       =($page-1)*$listrows;
+
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+            ['type'=>'>','name'=>'now_num','value'=>0],
+            ['type'=>'=','name'=>'model','value'=>$model],
+            ['type'=>'=','name'=>'price','value'=>$price],
+        ];
+
+
+        $where=get_list_where($search);
+
+        //DUMP($where);
+        $select=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time','group_code','group_name','delete_flag','use_flag'];
+
+        switch ($group_info['group_id']){
+            case 'all':
+                $data['total']=TmsTryeCount::where($where)->count(); //总的数据量
+                $data['items']=TmsTryeCount::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='Y';
+                break;
+
+            case 'one':
+                $where[]=['group_code','=',$group_info['group_code']];
+                $data['total']=TmsTryeCount::where($where)->count(); //总的数据量
+                $data['items']=TmsTryeCount::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='N';
+                break;
+
+            case 'more':
+                $data['total']=TmsTryeCount::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=TmsTryeCount::where($where)->whereIn('group_code',$group_info['group_code'])
+                    ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='Y';
+                break;
+        }
+
+
+        foreach ($data['items'] as $k=>$v) {
+            if ($v->area && $v->row && $v->column){
+                $v->sign=$v->area.'-'.$v->row.'-'.$v->column.'-'.$v->tier;
+            }else{
+                $v->sign = '';
+            }
+
+            $v->good_describe =unit_do($v->good_unit , $v->good_target_unit, $v->good_scale, $v->now_num);
+            $v->in_library_state_show =$in_store_status[$v->in_library_state]??null;
+            $v->button_info=$button_info;
+
+        }
+
+       // dd($data['items']->toArray());
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        //dd($msg);
+        return $msg;
+
+    }
+
+    /***    修改差异      /tms/trye/mistakeRevise
+     */
+    public function mistakeRevise(Request $request,Change $change){
+        $user_info          = $request->get('user_info');//接收中间件产生的参数
+        $now_time           = date('Y-m-d H:i:s', time());
+        $input              =$request->all();
+        $self_id            =$request->input('self_id');
+        $num                =$request->input('num');
+
+        $table_name         ='wms_library_sige';
+        $operationing       = $request->get('operationing');//接收中间件产生的参数
+        $operationing->access_cause='修改差异';
+        $operationing->operation_type='update';
+        $operationing->table=$table_name;
+        $operationing->now_time=$now_time;
+        $operationing->type='add';
+
+        /****虚拟数据
+        $input['self_id']    =$self_id="LSID_202011281559375553276821";
+        $input['num']        =$num='35';
+         ***/
+        $rules=[
+            'self_id'=>'required',
+            'num'=>'required|integer',
+        ];
+        $message=[
+            'self_id.required'=>'请填写修改的条目',
+            'num.required'=>'请填写数量',
+            'num.integer'=>'请填写正确的数量',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+
+        if($validator->passes()){
+            $where_sku=[
+                ['delete_flag','=','Y'],
+                ['self_id','=',$self_id],
+            ];
+
+            $select=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time','group_code','group_name','delete_flag','use_flag'];
+
+            $old_info=TmsTryeCount::where($where_sku)->select($select)->first();
+
+
+            if($old_info){
+                 if($old_info ->now_num ==  $num){
+                     $msg['code'] = 303;
+                     $msg['msg'] = "原数量和新数量一致，不需要修改差异";
+                     return $msg;
+                 }
+            }
+
+            //dd($old_info);
+            $data['now_num']=$num;
+            $data['update_time']=$now_time;
+
+            $operationing->table_id=$self_id;
+            $operationing->old_info=$old_info;
+            $operationing->new_info=$data;
+
+            $id=WmsLibrarySige::where($where_sku)->update($data);
+
+
+
+            if($id){
+                $andd=$old_info->toArray();
+                $andd['create_user_id']     =$user_info->admin_id;
+                $andd['create_user_name']   =$user_info->name;
+                $andd['create_time']        =$now_time;
+                $andd["update_time"]        =$now_time;
+                $andd["now_num_new"]        =$num;
+
+                $abc[0]=$andd;
+                //DUMP($abc);
+                $change->change($abc,'change');
+
+                //dd(11111);
+                $msg['code'] = 200;
+                $msg['msg'] = "操作成功";
+                return $msg;
+            }else{
+                $msg['code'] = 302;
+                $msg['msg'] = "操作失败";
+                return $msg;
+            }
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
+    }
+
 }
 ?>
