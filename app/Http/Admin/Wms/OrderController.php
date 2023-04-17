@@ -1235,7 +1235,6 @@ class OrderController extends CommonController{
                     $library_change["create_time"]          =$now_time;
                     $library_change["update_time"]          =$now_time;
                     $library_change["good_lot"]             =$vv['good_lot'];
-                    $library_change["order_id"]             =$data['order_id'];
 
                     //DD($library_change);
                     $wms_library_change[]=$library_change;

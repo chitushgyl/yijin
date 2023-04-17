@@ -70,7 +70,7 @@ class HistoryController  extends CommonController{
 
         $select=['self_id','group_code','group_name','warehouse_name','warehouse_id','type','create_user_name','create_user_id',
 				'external_sku_id','sku_id','good_name','spec','good_lot','produce_time','expire_time','library_sige_id','total_price','price',
-				'initial_num','now_num','change_num','describe','good_unit','good_target_unit','good_scale','create_time','update_time','inout_time'];
+				'initial_num','now_num','change_num','describe','good_unit','good_target_unit','good_scale','create_time','update_time','inout_time','order_id'];
 
         switch ($group_info['group_id']){
             case 'all':
