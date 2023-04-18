@@ -132,7 +132,7 @@ class WagesController extends CommonController{
             $v->reward_price = UserExamine::where('create_time','>=',$start_time)->where('create_time','<=',$end_time)->where('user_id',$v->self_id)->sum('reward_price');
             $v->salary_fine = UserExamine::where('create_time','>=',$start_time)->where('create_time','<=',$end_time)->where('user_id',$v->self_id)->sum('salary_fine');
             $v->date = UserExamine::where('create_time','>=',$start_time)->where('create_time','<=',$end_time)->where('user_id',$v->self_id)->sum('date_num');
-            $v->water = 0.00;
+            $v->water_money = 0.00;
             $v->income_tax = 0.00;
             
         }
