@@ -2137,7 +2137,7 @@ class OrderController extends CommonController{
                 foreach ($info as $k=>$v){
                     $list=[];
                     $list['id']=($k+1);
-                    $list['order_number']        = $v['order_mark'];
+                    $list['order_mark']          = $v['order_mark'];
                     $list['company_name']        = $v['company_name'];
                     $list['carriage_name']       = $v['carriage_name'];
                     $list['good_name']           = $v['good_name'];
@@ -3034,7 +3034,7 @@ class OrderController extends CommonController{
     }
 
     //硫磺一队跟单导出   tms/order/orderOneExcel
-    public function orderOneExcel(Request $request){
+    public function orderOneExcel(Request $request,File $file){
 $user_info  = $request->get('user_info');//接收中间件产生的参数
         $now_time   =date('Y-m-d H:i:s',time());
         $input      =$request->all();
@@ -3064,7 +3064,7 @@ $user_info  = $request->get('user_info');//接收中间件产生的参数
                 'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
                 'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
                 'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
-                ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name'];
+                ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name','id'];
             $select1 = ['self_id','parame_name'];
             $info=TmsOrder::where($where)->where('order_type',1)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
@@ -3106,7 +3106,7 @@ $user_info  = $request->get('user_info');//接收中间件产生的参数
                 foreach ($info as $k=>$v){
                     $list=[];
                     $list['id']=($k+1);
-                    $list['order_number']        = $v['order_mark'];
+                    $list['order_mark']          = $v['id'];
                     $list['company_name']        = $v['company_name'];
                     $list['carriage_name']       = $v['carriage_name'];
                     $list['good_name']           = $v['good_name'];
@@ -3463,7 +3463,7 @@ $table_name         ='wms_warehouse_area';
     }
 
     //硫磺二队跟单导出   tms/order/orderTwoExcel
-    public function orderTwoExcel(Request $request){
+    public function orderTwoExcel(Request $request,File,$file){
 $user_info  = $request->get('user_info');//接收中间件产生的参数
         $now_time   =date('Y-m-d H:i:s',time());
         $input      =$request->all();
@@ -3892,7 +3892,7 @@ $user_info  = $request->get('user_info');//接收中间件产生的参数
     }
 
     //危废跟单导出  tms/order/orderWasteExcel
-    public function orderWasteExcel(Request $request){
+    public function orderWasteExcel(Request $request,File,$file){
         $user_info  = $request->get('user_info');//接收中间件产生的参数
         $now_time   =date('Y-m-d H:i:s',time());
         $input      =$request->all();
