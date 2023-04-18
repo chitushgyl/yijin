@@ -284,6 +284,9 @@ Route::group([
 ], function(){
 Route::any('/crondtab/userReword', 'CrondtabController@userReword'); //定时下线订单
 Route::any('/crondtab/updateDiplasic', 'CrondtabController@updateDiplasic'); //定时下线订单
+Route::any('/crondtab/updateUserEntry', 'CrondtabController@updateUserEntry'); //定时下线订单
+Route::any('/crondtab/countSalary', 'CrondtabController@countSalary'); //定时下线订单
+
 
 });
 

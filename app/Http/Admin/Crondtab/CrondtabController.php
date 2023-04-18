@@ -105,16 +105,46 @@ class CrondtabController extends Controller {
 
     //更新员工入职时间
     public function updateUserEntry(Request $request){
+        $now_time = date('Y-m-d H:i:s',time());
         $where = [
             ['delete_flag','=','Y'],
             ['use_flag','=','Y'],
         ];
-        $select = ['self_id','name','entry_time'];
+        $select = ['self_id','name','entry_time','working_age'];
         $user_list = SystemUser::where($where)->select($select)->get();
 
-        foreach($user_list as $k => $value){
-            
+        foreach($user_list as $k => $v){
+            //计算员工入职距当前多少天
+            $work_time = strtotime($v->entry_time);
+            $work_time1 = date('Y',$work_time);
+            $work_time2 = date('m',$work_time);
+            $work = $now_year-$work_time1;
+
+            if ($work==0){ 
+                $work_age = (date('m',time())-$work_time2).'个月';
+            }elseif($work == 1){
+                if(12-$work_time2+date('m',time()) == 12){
+                    $work_age = '1年';
+                }else{
+                    $work_age = (12-$work_time2+date('m',time())).'个月';
+                }
+            }else{
+                if ($work_time2>date('m',time())){
+                    $work_age = ($work-1).'年'.(12-$work_time2+date('m',time())).'个月';
+                }else{
+                    $work_age = $work.'年'.(date('m',time())-$work_time2).'个月';
+                }
+
+            }
+            $update['working_age']             = $work_age;
+            $update['update_time']             = $now_time;
+            SystemUser::where('slef_id',$v->self_id)->update($update);
         }
+    }
+
+    //计算员工上月工资
+    public function countSalary(Request $request){
+        $now_time = date('Y-m-d H:i:s',time());
     }
 
 
