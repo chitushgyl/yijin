@@ -61,6 +61,7 @@ class OrderController extends CommonController{
         $good_name          = $request->input('good_name');
         $spec               = $request->input('spec');
         $number             = $request->input('number');
+        $order_id             = $request->input('order_id');
         $listrows           = $num;
         $firstrow           = ($page - 1) * $listrows;
 
@@ -80,6 +81,7 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'car_num','value'=>$car_number],
             ['type'=>'>=','name'=>'out_time','value'=>$start_time],
             ['type'=>'<','name'=>'out_time','value'=>$end_time],
+            ['type'=>'<','name'=>'self_id','value'=>$order_id],
         ];
 
         $where = get_list_where($search);

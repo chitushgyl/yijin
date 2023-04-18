@@ -101,6 +101,7 @@ class LibraryController extends CommonController{
         $start_time         =$request->input('start_time');
         $end_time           =$request->input('end_time');
         $good_name          =$request->input('good_name');
+        $order_id           =$request->input('order_id');
         $listrows           =$num;
         $firstrow           =($page-1)*$listrows;
 
@@ -120,6 +121,7 @@ class LibraryController extends CommonController{
 			['type'=>'like','name'=>'purchase','value'=>$purchase],
 			['type'=>'>=','name'=>'enter_time','value'=>$start_time],
 			['type'=>'<','name'=>'enter_time','value'=>$end_time],
+            ['type'=>'<','name'=>'self_id','value'=>$order_id],
 
         ];
 
