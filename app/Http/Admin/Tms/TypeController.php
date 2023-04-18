@@ -266,6 +266,7 @@ class TypeController extends CommonController{
      */
     public function  getType(Request $request){
         $type=$request->input('type');
+        $group_code = $request->input('group_code');
         $where=[
             ['delete_flag','=','Y'],
             ['use_flag','=','Y'],
