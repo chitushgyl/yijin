@@ -41,7 +41,7 @@ class OrderController extends CommonController{
         $type                   =$request->input('type'); //1  2
         $data['user_info']      = $user_info;
         $abc='';
-
+         if($type == 1){
             $data['import_info']    =[
                 'import_text'=>'下载'.$abc.'导入示例文件',
                 'import_color'=>'#FC5854',
@@ -59,6 +59,27 @@ class OrderController extends CommonController{
                 'import_color'=>'#FC5854',
                 'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/危废队.xlsx',
             ];
+        }else{
+            $data['import_info']    =[
+                'import_text'=>'下载'.$abc.'导入示例文件',
+                'import_color'=>'#FC5854',
+                'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/硫磺一队跟单.xlsx',
+            ];
+
+            $data['import_info1']    =[
+                'import_text'=>'下载'.$abc.'导入示例文件',
+                'import_color'=>'#FC5854',
+                'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/硫磺二队跟单.xlsx',
+            ];
+
+            $data['import_info2']    =[
+                'import_text'=>'下载'.$abc.'导入示例文件',
+                'import_color'=>'#FC5854',
+                'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/危废跟单.xlsx',
+            ];
+        }
+
+            
         if ($type == 1){
             $button_info1=[];
             $button_info2=[];
