@@ -103,6 +103,20 @@ class CrondtabController extends Controller {
 
     }
 
+    //更新员工入职时间
+    public function updateUserEntry(Request $request){
+        $where = [
+            ['delete_flag','=','Y'],
+            ['use_flag','=','Y'],
+        ];
+        $select = ['self_id','name','entry_time'];
+        $user_list = SystemUser::where($where)->select($select)->get();
+
+        foreach($user_list as $k => $value){
+            
+        }
+    }
+
 
 
 

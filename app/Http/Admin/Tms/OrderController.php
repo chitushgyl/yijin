@@ -2104,7 +2104,6 @@ class OrderController extends CommonController{
 //dd($info);
             if($info){
                 //设置表头
-                if ($type == 2) {
                     $row = [[
                     "id"=>'ID',
                     "order_mark"=>'标识',
@@ -2129,36 +2128,7 @@ class OrderController extends CommonController{
                     "road_card"=>'路卡',
                     "carriage_group"=>'承运商组别',
                 ]];
-                }else{
-                    $row = [[
-                    "id"=>'ID',
-                    "order_mark"=>'标识',
-                    "company_name" =>'所属组织',
-                    "carriage_name" =>'委托单位',
-                    "good_name"=>'货物品名',
-                    "group_name"=>'承运人',
-                    "car_number"=>'车牌号',
-                    "trailer_num"=>'挂车号',
-                    "user_name"=>'驾驶员',
-                    "car_tel"=>'电话',
-                    "escort_name"=>'副驾驶员',
-                    "odd_number"=>'运单号',
-                    "send_time"=>'发货日期',
-                    "gather_time"=>'交货日期',
-                    "send_name"=>'装车点',
-                    "gather_name"=>'卸车点',
-                    "pick_time"=>'提货时间段',
-                    "area"=>'区域',
-                    "transport_type"=>'运输方式',
-                    "order_number"=>'订单编号',
-                    "road_card"=>'路卡',
-                    "order_weight"=>'装货吨位',
-                    "upload_weight"=>'卸货吨位',
-                    "leave_time"=>'卸货时间',
-                    "sale_price"=>'单价',
-                    "total_money"=>'总运费',
-                ]];
-                }
+            
                 
 
                 /** 现在根据查询到的数据去做一个导出的数据**/
@@ -2704,6 +2674,1329 @@ class OrderController extends CommonController{
         $msg['data']=$data;
         return $msg;
     }
+    
+    //硫磺一队跟单导入  tms/order/orderOneImport
+    public function orderOneImport(Request $request){
+        $table_name         ='wms_warehouse_area';
+        $now_time           = date('Y-m-d H:i:s', time());
+
+        $operationing       = $request->get('operationing');//接收中间件产生的参数
+        $operationing->access_cause     ='导入创建车辆';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='import';
+
+        $user_info          = $request->get('user_info');//接收中间件产生的参数
+
+
+        /** 接收数据*/
+        $input              =$request->all();
+        $importurl          =$request->input('importurl');
+        $group_code          =$request->input('group_code');
+        $file_id            =$request->input('file_id');
+        //dd($input);
+        /****虚拟数据
+        $input['importurl']     =$importurl="uploads/2020-10-13/车辆导入文件范本.xlsx";
+         ***/
+        $rules = [
+            'importurl' => 'required',
+        ];
+        $message = [
+            'importurl.required' => '请上传文件',
+        ];
+        $validator = Validator::make($input, $rules, $message);
+        if ($validator->passes()) {
+            $where_check=[
+                ['delete_flag','=','Y'],
+                ['self_id','=',$group_code],
+            ];
+
+            $info= SystemGroup::where($where_check)->select('self_id','group_code','group_name')->first();
+            if(empty($info)){
+                $msg['code'] = 305;
+                $msg['msg'] = '所属公司不存在';
+                return $msg;
+            }
+
+            /**发起二次效验，1效验文件是不是存在， 2效验文件中是不是有数据 3,本身数据是不是重复！！！* */
+            if (!file_exists($importurl)) {
+                $msg['code'] = 301;
+                $msg['msg'] = '文件不存在';
+                return $msg;
+            }
+
+            $res = Excel::toArray((new Import),$importurl);
+            //dump($res);
+            $info_check=[];
+            if(array_key_exists('0', $res)){
+                $info_check=$res[0];
+            }
+
+
+            /**  定义一个数组，需要的数据和必须填写的项目
+            键 是EXECL顶部文字，
+             * 第一个位置是不是必填项目    Y为必填，N为不必须，
+             * 第二个位置是不是允许重复，  Y为允许重复，N为不允许重复
+             * 第三个位置为长度判断
+             * 第四个位置为数据库的对应字段
+             */
+            $shuzu=[
+                // '标识' =>['Y','N','100','order_mark'],
+                '所属组织' =>['Y','Y','100','company_name'],
+                '委托单位' =>['Y','Y','100','carriage_name'],
+                '货物品名' =>['Y','Y','64','good_name'],
+                '承运人' =>['Y','Y','64','group_name'],
+                '车牌号' =>['Y','Y','64','car_number'],
+                '挂车号' =>['Y','Y','64','trailer_num'],
+                '驾驶员' =>['Y','Y','64','user_name'],
+                '电话' =>['N','Y','64','car_tel'],
+                '副驾驶员' =>['N','Y','64','escort'],
+                '运单号' =>['N','Y','64','odd_number'],
+                '发货日期' =>['Y','Y','64','send_time'],
+                '交货日期' =>['N','Y','64','gather_time'],
+                '装车点' =>['Y','Y','100','send_name'],
+                '卸车点' =>['Y','Y','100','gather_name'],
+                '提货时间段' =>['N','Y','100','pick_time'],
+                '区域' =>['N','Y','100','area'],
+                '运输方式' =>['N','Y','100','transport_type'],
+                '订单编码' =>['N','Y','100','order_number'],
+                '路卡' =>['N','Y','100','road_card'],
+                '承运商组别' =>['N','Y','100','carriage_group'],
+                '装货吨位' =>['N','Y','100','order_weight '],
+                '卸货吨位' =>['N','Y','100','upload_weight'],
+                '卸货时间' =>['N','Y','100','leave_time'],
+                '单价' =>['N','Y','100','sale_price'],
+                '运费总额' =>['N','Y','100','total_money'],
+
+            ];
+
+            $ret=arr_check($shuzu,$info_check);
+
+            //dump($ret);
+            if($ret['cando'] == 'N'){
+                $msg['code'] = 304;
+                $msg['msg'] = $ret['msg'];
+                return $msg;
+            }
+
+            $info_wait=$ret['new_array'];
+
+            /** 二次效验结束**/
+
+            $datalist=[];       //初始化数组为空
+            $cando='Y';         //错误数据的标记
+            $strs='';           //错误提示的信息拼接  当有错误信息的时候，将$cando设定为N，就是不允许执行数据库操作
+            $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
+            $errorNum=50;       //控制错误数据的条数
+            $a=2;
+            $order_log_list = [];
+            $money_list = [];
+            //dump($info_wait);
+            /** 现在开始处理$car***/
+            foreach($info_wait as $k => $v){
+                $company = TmsGroup::where('company_name',$v['company_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $car = TmsCar::where('car_number',$v['car_number'])->where('group_code',$group_code)->select('self_id','car_number')->first();
+                $trailer = TmsCar::where('car_number',$v['trailer_num'])->where('group_code',$group_code)->select('self_id','car_number')->first();
+                $send = TmsGroup::where('company_name',$v['send_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                if ($v['send_name']){
+                    if (!empty((array)$send)){
+                        $v['send_id']                 = $send->self_id;
+                        $v['send_name']               = $send->company_name;
+                    }else{
+                        $v['send_id']                 = null;
+                        $v['send_name']               = $v['send_name'];
+                    }
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行装车点不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                if ($v['gather_name']){
+                    if (!empty((array)$gather)){
+                        $v['gather_id']                 = $gather->self_id;
+                        $v['gather_name']               = $gather->company_name;
+                    }else{
+                        $v['gather_id']                 = null;
+                        $v['gather_name']               = $v['gather_name'];
+                    }
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行卸车点不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                if ($v['user_name']){
+                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    if (!$driver){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+                }
+                if($v['escort']){
+                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    if (!$cargo){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+                }
+
+                if (!$company){
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行所属组织不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                if ($v['carriage_name']){
+                    if (!empty((array)$carriage)){
+                        $v['carriage_id']                 = $carriage->self_id;
+                        $v['carriage_name']               = $carriage->company_name;
+                    }else{
+                        $v['carriage_id']                 = null;
+                        $v['carriage_name']               = $v['carriage_name'];
+                    }
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行委托单位不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                if (!$car){
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行车牌号不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                if (!$trailer){
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行挂车号不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+
+                if ($v['send_time']){
+                    if (is_numeric($v['send_time'])){
+                        $v['send_time']              = gmdate('Y-m-d',($v['send_time'] - 25569) * 3600 * 24);
+                    }else{
+                        if(date('Y-m-d',strtotime($v['send_time'])) == $v['send_time']){
+
+                        }else{
+                            if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行发货日期格式错误".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
+                        }
+                    }
+                }
+                if ($v['gather_time']){
+                    if (is_numeric($v['gather_time'])){
+                        $v['gather_time']              = gmdate('Y-m-d',($v['gather_time'] - 25569) * 3600 * 24);
+                    }else{
+                        if(date('Y-m-d',strtotime($v['gather_time'])) == $v['gather_time']){
+
+                        }else{
+                            if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行交货日期格式错误".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
+                        }
+                    }
+                }
+                $list=[];
+
+                if($cando =='Y'){
+                    $list['self_id']                 = generate_id('order_');
+                    // $list['order_mark']              = $v['order_mark'];
+                    $list['order_type']              = 1;
+                    $list['company_id']              = $company->self_id;
+                    $list['company_name']            = $company->company_name;
+                    $list['carriage_id']             = $v['carriage_id'];
+                    $list['carriage_name']           = $v['carriage_name'];
+                    $list['good_name']               = $v['good_name'];
+                    $list['car_id']                  = $car->self_id;
+                    $list['car_number']              = $car->car_number;
+                    $list['trailer_num']             = $trailer->car_number;
+                    if ($v['user_name']){
+                        $list['driver_id']               = $driver->self_id;
+                        $list['user_name']               = $driver->name;
+                        $list['car_tel']                 = $driver->tel;
+                    }else{
+                        $list['driver_id']               = null;
+                        $list['user_name']               = null;
+                        $list['car_tel']                 = null;
+                    }
+                    if($v['escort']){
+                        $list['escort']                  = $cargo->self_id;
+                        $list['escort_name']             = $cargo->name;
+                        $list['escort_tel']              = $cargo->tel;
+                    }else{
+                        $list['escort']                  = null;
+                        $list['escort_name']             = null;
+                        $list['escort_tel']              = null;
+                    }
+                    $list['odd_number']              = $v['odd_number'];
+                    $list['order_number']            = $v['order_number'];
+                    $list['send_time']               = $v['send_time'];
+                    $list['gather_time']             = $v['gather_time'];
+                    $list['send_id']                 = $v['send_id'];
+                    $list['send_name']               = $v['send_name'];
+                    $list['gather_id']               = $v['gather_id'];
+                    $list['gather_name']             = $v['gather_name'];
+                    $list['pick_time']               = $v['pick_time'];
+                    $list['area']                    = $v['area'];
+                    $list['transport_type']          = $v['transport_type'];
+                    $list['road_card']               = $v['road_card'];
+                    $list['carriage_group']          = $v['carriage_group'];
+
+                    $list['group_code']              = $info->group_code;
+                    $list['group_name']              = $info->group_name;
+                    $list['create_user_id']          = $user_info->admin_id;
+                    $list['create_user_name']        = $user_info->name;
+                    $list['create_time']             = $list['update_time']=$now_time;
+                    $list['file_id']                 = $file_id;
+                    $list['pay_id']                  = null;
+
+                    // $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->where('group_code',$info->group_code)->get();
+                    // foreach($pay_type as $kk =>$vv){
+                    // if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
+                    //    $list['pay_id'] = $vv->self_id; 
+                    // }
+                    // if($list['car_number'] == $vv->car_number){
+                    //    $list['pay_id'] = $vv->self_id;
+                    // }
+                    // }
+                    $list['order_weight ']             = $v['order_weight '];
+                    $list['upload_weight']             = $v['upload_weight'];
+                    $list['leave_time']                = $v['leave_time'];
+                    $list['sale_price']                = $v['sale_price'];
+                    $list['total_money']               = $v['total_money'];
+
+                    $datalist[]=$list;
+
+                }
+
+                $a++;
+            }
+
+
+            $operationing->new_info=$datalist;
+
+            //dump($operationing);
+
+            // dd($datalist);
+
+            if($cando == 'N'){
+                $msg['code'] = 306;
+                $msg['msg'] = $strs;
+                return $msg;
+            }
+            $count=count($datalist);
+            $id= TmsOrder::insert($datalist);
+
+            if($id){
+                $msg['code']=200;
+                /** 告诉用户，你一共导入了多少条数据，其中比如插入了多少条，修改了多少条！！！*/
+                $msg['msg']='操作成功，您一共导入'.$count.'条数据';
+
+                return $msg;
+            }else{
+                $msg['code']=307;
+                $msg['msg']='操作失败';
+                return $msg;
+            }
+        }else{
+            $erro = $validator->errors()->all();
+            $msg['msg'] = null;
+            foreach ($erro as $k => $v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code'] = 300;
+            return $msg;
+        }
+    }
+
+    //硫磺一队跟单导出   tms/order/orderOneExcel
+    public function orderOneExcel(Request $request){
+$user_info  = $request->get('user_info');//接收中间件产生的参数
+        $now_time   =date('Y-m-d H:i:s',time());
+        $input      =$request->all();
+        /** 接收数据*/
+        $group_code     =$request->input('group_code');
+        $type           =$request->input('type');
+//        $group_code  =$input['group_code']   ='group_202012251449437824125582';
+        //dd($group_code);
+        $rules=[
+            'group_code'=>'required',
+        ];
+        $message=[
+            'group_code.required'=>'必须选择公司',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()){
+            /** 下面开始执行导出逻辑**/
+            $group_name     =SystemGroup::where('group_code','=',$group_code)->value('group_name');
+            //查询条件
+            $search=[
+                ['type'=>'=','name'=>'group_code','value'=>$group_code],
+                ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ];
+            $where=get_list_where($search);
+
+            $select=['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code',
+                'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
+                'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
+                'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
+                ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name'];
+            $select1 = ['self_id','parame_name'];
+            $info=TmsOrder::where($where)->where('order_type',1)->orderBy('create_time', 'desc')->select($select)->get();
+//dd($info);
+            if($info){
+                //设置表头
+                    $row = [[
+                    "id"=>'ID',
+                    "order_mark"=>'标识',
+                    "company_name" =>'所属组织',
+                    "carriage_name" =>'委托单位',
+                    "good_name"=>'货物品名',
+                    "group_name"=>'承运人',
+                    "car_number"=>'车牌号',
+                    "trailer_num"=>'挂车号',
+                    "user_name"=>'驾驶员',
+                    "car_tel"=>'电话',
+                    "escort_name"=>'副驾驶员',
+                    "odd_number"=>'运单号',
+                    "send_time"=>'发货日期',
+                    "gather_time"=>'交货日期',
+                    "send_name"=>'装车点',
+                    "gather_name"=>'卸车点',
+                    "pick_time"=>'提货时间段',
+                    "area"=>'区域',
+                    "transport_type"=>'运输方式',
+                    "order_number"=>'订单编号',
+                    "road_card"=>'路卡',
+                    "carriage_group"=>'承运商组别',
+                    "order_weight"=>'装货吨位',
+                    "upload_weight"=>'卸货吨位',
+                    "leave_time"=>'卸货时间',
+                    "sale_price"=>'单价',
+                    "total_money"=>'总运费',
+                ]];
+                
+                /** 现在根据查询到的数据去做一个导出的数据**/
+                $data_execl=[];
+
+                foreach ($info as $k=>$v){
+                    $list=[];
+                    $list['id']=($k+1);
+                    $list['order_number']        = $v['order_mark'];
+                    $list['company_name']        = $v['company_name'];
+                    $list['carriage_name']       = $v['carriage_name'];
+                    $list['good_name']           = $v['good_name'];
+                    $list['group_name']          = $v['group_name'] ;
+                    $list['car_number']          = $v['car_number'];
+                    $list['trailer_num']         = $v['trailer_num'];
+                    $list['user_name']           = $v['user_name'];
+                    $list['car_tel']             = $v['car_tel'];
+                    $list['escort_name']         = $v['escort_name'];
+                    $list['odd_number']          = $v['odd_number'];
+                    $list['send_time']           = $v['send_time'];
+                    $list['gather_time']         = $v['gather_time'];
+                    $list['send_name']           = $v['send_name'];
+                    $list['gather_name']         = $v['gather_name'];
+                    $list['pick_time']           = $v['pick_time'];
+                    $list['area']                = $v['area'];
+                    $list['transport_type']      = $v['transport_type'];
+                    $list['order_number']        = $v['order_number'];
+                    $list['road_card']           = $v['road_card'];
+                    $list['carriage_group']      = $v['carriage_group'];
+                    $list['order_weight']         = $v['order_weight'];
+                    $list['upload_weight']        = $v['upload_weight'];
+                    $list['leave_time']           = $v['leave_time'];
+                    $list['sale_price']           = $v['sale_price'];
+                    $list['total_money']          = $v['total_money'];
+                    $data_execl[]=$list;
+                }
+                /** 调用EXECL导出公用方法，将数据抛出来***/
+                $browse_type=$request->path();
+                $msg=$file->export($data_execl,$row,$group_code,$group_name,$browse_type,$user_info,$where,$now_time);
+
+                //dd($msg);
+                return $msg;
+
+            }else{
+                $msg['code']=301;
+                $msg['msg']="没有数据可以导出";
+                return $msg;
+            }
+        }else{
+            $erro=$validator->errors()->all();
+            $msg['msg']=null;
+            foreach ($erro as $k=>$v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code']=300;
+            return $msg;
+        }
+    }
+
+    //硫磺二队跟单导入  tms/order/orderTwoImport
+    public function orderTwoImport(Request $request){
+$table_name         ='wms_warehouse_area';
+        $now_time           = date('Y-m-d H:i:s', time());
+
+        $operationing       = $request->get('operationing');//接收中间件产生的参数
+        $operationing->access_cause     ='导入创建车辆';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='import';
+
+        $user_info          = $request->get('user_info');//接收中间件产生的参数
+
+
+        /** 接收数据*/
+        $input              =$request->all();
+        $importurl          =$request->input('importurl');
+        $group_code          =$request->input('group_code');
+        $file_id            =$request->input('file_id');
+        //dd($input);
+        /****虚拟数据
+        $input['importurl']     =$importurl="uploads/2020-10-13/车辆导入文件范本.xlsx";
+         ***/
+        $rules = [
+            'importurl' => 'required',
+        ];
+        $message = [
+            'importurl.required' => '请上传文件',
+        ];
+        $validator = Validator::make($input, $rules, $message);
+        if ($validator->passes()) {
+            $where_check=[
+                ['delete_flag','=','Y'],
+                ['self_id','=',$group_code],
+            ];
+
+            $info= SystemGroup::where($where_check)->select('self_id','group_code','group_name')->first();
+            if(empty($info)){
+                $msg['code'] = 305;
+                $msg['msg'] = '所属公司不存在';
+                return $msg;
+            }
+
+            /**发起二次效验，1效验文件是不是存在， 2效验文件中是不是有数据 3,本身数据是不是重复！！！* */
+            if (!file_exists($importurl)) {
+                $msg['code'] = 301;
+                $msg['msg'] = '文件不存在';
+                return $msg;
+            }
+
+            $res = Excel::toArray((new Import),$importurl);
+            //dump($res);
+            $info_check=[];
+            if(array_key_exists('0', $res)){
+                $info_check=$res[0];
+            }
+
+
+            /**  定义一个数组，需要的数据和必须填写的项目
+            键 是EXECL顶部文字，
+             * 第一个位置是不是必填项目    Y为必填，N为不必须，
+             * 第二个位置是不是允许重复，  Y为允许重复，N为不允许重复
+             * 第三个位置为长度判断
+             * 第四个位置为数据库的对应字段
+             */
+            $shuzu=[
+                '发货日期' =>['Y','Y','64','send_time'],
+                '货物品名' =>['Y','Y','64','good_name'],
+                '委托单位' =>['Y','Y','100','carriage_name'],
+                '装车点' =>['Y','Y','100','send_name'],
+                '卸车点' =>['Y','Y','100','gather_name'],
+                '车牌号' =>['Y','Y','64','car_number'],
+                '驾驶员' =>['Y','Y','64','user_name'],
+                '电话' =>['N','Y','64','car_tel'],
+                '副驾驶员' =>['N','Y','64','escort'],
+                '装货吨位' =>['N','Y','100','order_weight '],
+                '卸货吨位' =>['N','Y','100','upload_weight'],
+                '卸货时间' =>['N','Y','100','leave_time'],
+                '单价' =>['N','Y','100','sale_price'],
+                '运费总额' =>['N','Y','100','total_money'],
+            ];
+
+            $ret=arr_check($shuzu,$info_check);
+
+            //dump($ret);
+            if($ret['cando'] == 'N'){
+                $msg['code'] = 304;
+                $msg['msg'] = $ret['msg'];
+                return $msg;
+            }
+
+            $info_wait=$ret['new_array'];
+
+            /** 二次效验结束**/
+
+            $datalist=[];       //初始化数组为空
+            $cando='Y';         //错误数据的标记
+            $strs='';           //错误提示的信息拼接  当有错误信息的时候，将$cando设定为N，就是不允许执行数据库操作
+            $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
+            $errorNum=50;       //控制错误数据的条数
+            $a=2;
+            $order_log_list = [];
+            $money_list = [];
+            //dump($info_wait);
+            /** 现在开始处理$car***/
+            foreach($info_wait as $k => $v){
+                $car = TmsCar::where('car_number',$v['car_number'])->where('group_code',$group_code)->select('self_id','car_number')->first();
+                $send = TmsGroup::where('company_name',$v['send_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                if ($v['send_name']){
+                    if (empty($send)){
+                        $v['send_id']                 = $send->self_id;
+                        $v['send_name']               = $send->company_name;
+                    }else{
+                        $v['send_id']                 = null;
+                        $v['send_name']               = $v['send_name'];
+                    }
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行装车点不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                if ($v['gather_name']){
+                    if (empty($gather)){
+                        $v['gather_id']                 = $gather->self_id;
+                        $v['gather_name']               = $gather->company_name;
+                    }else{
+                        $v['gather_id']                 = null;
+                        $v['gather_name']               = $v['gather_name'];
+                    }
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行卸车点不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                if ($v['carriage_name']){
+                    if (empty($carriage)){
+                        $v['carriage_id']                 = $carriage->self_id;
+                        $v['carriage_name']               = $carriage->company_name;
+                    }else{
+                        $v['carriage_id']                 = null;
+                        $v['carriage_name']               = $v['carriage_name'];
+                    }
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行委托单位不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                if ($v['user_name']){
+                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    if (!$driver){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+                }
+                if($v['escort']){
+                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    if (!$cargo){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+                }
+
+                if (!$car){
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行车牌号不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+
+                if ($v['send_time']){
+                    if (is_numeric($v['send_time'])){
+                        $v['send_time']              = gmdate('Y-m-d',($v['send_time'] - 25569) * 3600 * 24);
+                    }else{
+                        if(date('Y-m-d',strtotime($v['send_time'])) == $v['send_time']){
+
+                        }else{
+                            if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行发货日期格式错误".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
+                        }
+                    }
+                }
+
+                $list=[];
+
+                if($cando =='Y'){
+                    $list['self_id']                 = generate_id('order_');
+                    $list['order_type']              = 2;
+                    $list['carriage_id']             = $v['carriage_id'];
+                    $list['carriage_name']           = $v['carriage_name'];
+                    $list['good_name']               = $v['good_name'];
+                    $list['car_id']                  = $car->self_id;
+                    $list['car_number']              = $car->car_number;
+                    if ($v['user_name']){
+                        $list['driver_id']               = $driver->self_id;
+                        $list['user_name']               = $driver->name;
+                        $list['car_tel']                 = $driver->tel;
+                    }else{
+                        $list['driver_id']               = null;
+                        $list['user_name']               = null;
+                        $list['car_tel']                 = null;
+                    }
+                    if($v['escort']){
+                        $list['escort']                  = $cargo->self_id;
+                        $list['escort_name']             = $cargo->name;
+                        $list['escort_tel']              = $cargo->tel;
+                    }else{
+                        $list['escort']                  = null;
+                        $list['escort_name']             = null;
+                        $list['escort_tel']              = null;
+                    }
+
+                    $list['send_time']               = $v['send_time'];
+                    $list['send_id']                 = $v['send_id'];
+                    $list['send_name']               = $v['send_name'];
+                    $list['gather_id']               = $v['gather_id'];
+                    $list['gather_name']             = $v['gather_name'];
+
+                    $list['group_code']              = $info->group_code;
+                    $list['group_name']              = $info->group_name;
+                    $list['create_user_id']          = $user_info->admin_id;
+                    $list['create_user_name']        = $user_info->name;
+                    $list['create_time']             = $list['update_time']=$now_time;
+                    $list['file_id']                 = $file_id;
+                    $list['pay_id']                 = null;
+                    // $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->where('group_code',$info->group_code)->get();
+                    // foreach($pay_type as $kk =>$vv){
+                    // if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
+                    //    $list['pay_id'] = $vv->self_id; 
+                    // }
+                    // if($list['car_number'] == $vv->car_number){
+                    //    $list['pay_id'] = $vv->self_id;
+                    // }
+                    // }
+
+                    $list['order_weight ']             = $v['order_weight '];
+                    $list['upload_weight']             = $v['upload_weight'];
+                    $list['leave_time']                = $v['leave_time'];
+                    $list['sale_price']                = $v['sale_price'];
+                    $list['total_money']               = $v['total_money'];
+
+                    $datalist[]=$list;
+
+                }
+
+                $a++;
+            }
+
+
+            $operationing->new_info=$datalist;
+
+            //dump($operationing);
+
+            // dd($datalist);
+
+            if($cando == 'N'){
+                $msg['code'] = 306;
+                $msg['msg'] = $strs;
+                return $msg;
+            }
+            $count=count($datalist);
+            $id= TmsOrder::insert($datalist);
+
+            if($id){
+                $msg['code']=200;
+                /** 告诉用户，你一共导入了多少条数据，其中比如插入了多少条，修改了多少条！！！*/
+                $msg['msg']='操作成功，您一共导入'.$count.'条数据';
+
+                return $msg;
+            }else{
+                $msg['code']=307;
+                $msg['msg']='操作失败';
+                return $msg;
+            }
+        }else{
+            $erro = $validator->errors()->all();
+            $msg['msg'] = null;
+            foreach ($erro as $k => $v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code'] = 300;
+            return $msg;
+        }
+    }
+
+    //硫磺二队跟单导出   tms/order/orderTwoExcel
+    public function orderTwoExcel(Request $request){
+$user_info  = $request->get('user_info');//接收中间件产生的参数
+        $now_time   =date('Y-m-d H:i:s',time());
+        $input      =$request->all();
+        /** 接收数据*/
+        $group_code     =$request->input('group_code');
+//        $group_code  =$input['group_code']   ='group_202012251449437824125582';
+        //dd($group_code);
+        $rules=[
+            'group_code'=>'required',
+        ];
+        $message=[
+            'group_code.required'=>'必须选择公司',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()){
+            /** 下面开始执行导出逻辑**/
+            $group_name     =SystemGroup::where('group_code','=',$group_code)->value('group_name');
+            //查询条件
+            $search=[
+                ['type'=>'=','name'=>'group_code','value'=>$group_code],
+                ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ];
+            $where=get_list_where($search);
+
+            $select=['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code',
+                'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
+                'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
+                'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
+                ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name'];
+            $select1 = ['self_id','parame_name'];
+            $info=TmsOrder::where($where)->where('order_type',2)->orderBy('create_time', 'desc')->select($select)->get();
+//dd($info);
+            if($info){
+                //设置表头
+                $row = [[
+                    "id"=>'ID',
+                    "send_time"=>'发货日期',
+                    "good_name"=>'货物品名',
+                    "carriage_name" =>'委托单位',
+                    "send_name"=>'装车点',
+                    "gather_name"=>'卸车点',
+                    "car_number"=>'车牌号',
+                    "user_name"=>'驾驶员',
+                    "car_tel"=>'电话',
+                    "escort_name"=>'副驾驶员',
+                    "escort_tel"=>'副驾驶员电话',
+                     "order_weight"=>'装货吨位',
+                    "upload_weight"=>'卸货吨位',
+                    "leave_time"=>'卸货时间',
+                    "sale_price"=>'单价',
+                    "total_money"=>'总运费',
+                ]];
+                /** 现在根据查询到的数据去做一个导出的数据**/
+                $data_execl=[];
+
+                foreach ($info as $k=>$v){
+                    $list=[];
+                    $list['id']=($k+1);
+                    $list['send_time']           = $v['send_time'];
+                    $list['good_name']           = $v['good_name'];
+                    $list['company_name']        = $v['company_name'];
+                    $list['carriage_name']       = $v['carriage_name'];
+                    $list['send_name']           = $v['send_name'];
+                    $list['gather_name']         = $v['gather_name'];
+                    $list['car_number']          = $v['car_number'];
+                    $list['user_name']           = $v['user_name'];
+                    $list['car_tel']             = $v['car_tel'];
+                    $list['escort_name']         = $v['escort_name'];
+                    $list['escort_tel']          = $v['escort_tel'];
+                    $list['order_weight']         = $v['order_weight'];
+                    $list['upload_weight']        = $v['upload_weight'];
+                    $list['leave_time']           = $v['leave_time'];
+                    $list['sale_price']           = $v['sale_price'];
+                    $list['total_money']          = $v['total_money'];
+
+                    $data_execl[]=$list;
+                }
+                /** 调用EXECL导出公用方法，将数据抛出来***/
+                $browse_type=$request->path();
+                $msg=$file->export($data_execl,$row,$group_code,$group_name,$browse_type,$user_info,$where,$now_time);
+
+                //dd($msg);
+                return $msg;
+
+            }else{
+                $msg['code']=301;
+                $msg['msg']="没有数据可以导出";
+                return $msg;
+            }
+        }else{
+            $erro=$validator->errors()->all();
+            $msg['msg']=null;
+            foreach ($erro as $k=>$v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code']=300;
+            return $msg;
+        }
+    }
+
+    //危废跟单导入   tms/order/orderWasteImport
+    public function orderWasteImport(Request $request){
+        $table_name         ='wms_warehouse_area';
+        $now_time           = date('Y-m-d H:i:s', time());
+
+        $operationing       = $request->get('operationing');//接收中间件产生的参数
+        $operationing->access_cause     ='导入创建车辆';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='import';
+
+        $user_info          = $request->get('user_info');//接收中间件产生的参数
+
+
+        /** 接收数据*/
+        $input              =$request->all();
+        $importurl          =$request->input('importurl');
+        $group_code          =$request->input('group_code');
+        $file_id            =$request->input('file_id');
+        //dd($input);
+        /****虚拟数据
+        $input['importurl']     =$importurl="uploads/2020-10-13/车辆导入文件范本.xlsx";
+         ***/
+        $rules = [
+            'importurl' => 'required',
+        ];
+        $message = [
+            'importurl.required' => '请上传文件',
+        ];
+        $validator = Validator::make($input, $rules, $message);
+        if ($validator->passes()) {
+            $where_check=[
+                ['delete_flag','=','Y'],
+                ['self_id','=',$group_code],
+            ];
+
+            $info= SystemGroup::where($where_check)->select('self_id','group_code','group_name')->first();
+            if(empty($info)){
+                $msg['code'] = 305;
+                $msg['msg'] = '所属公司不存在';
+                return $msg;
+            }
+
+            /**发起二次效验，1效验文件是不是存在， 2效验文件中是不是有数据 3,本身数据是不是重复！！！* */
+            if (!file_exists($importurl)) {
+                $msg['code'] = 301;
+                $msg['msg'] = '文件不存在';
+                return $msg;
+            }
+
+            $res = Excel::toArray((new Import),$importurl);
+            //dump($res);
+            $info_check=[];
+            if(array_key_exists('0', $res)){
+                $info_check=$res[0];
+            }
+
+
+            /**  定义一个数组，需要的数据和必须填写的项目
+            键 是EXECL顶部文字，
+             * 第一个位置是不是必填项目    Y为必填，N为不必须，
+             * 第二个位置是不是允许重复，  Y为允许重复，N为不允许重复
+             * 第三个位置为长度判断
+             * 第四个位置为数据库的对应字段
+             */
+            $shuzu=[
+                '发货日期' =>['Y','Y','64','send_time'],
+                '货物品名' =>['Y','Y','64','good_name'],
+                '委托单位' =>['Y','Y','100','carriage_name'],
+                '装车点' =>['Y','Y','100','send_name'],
+                '卸车点' =>['Y','Y','100','gather_name'],
+                '车牌号' =>['Y','Y','64','car_number'],
+                '挂车号' =>['N','Y','64','trailer_num'],
+                '驾驶员' =>['Y','Y','64','user_name'],
+                '电话' =>['N','Y','64','car_tel'],
+                '副驾驶员' =>['N','Y','64','escort'],
+                '副驾驶员电话' =>['N','Y','64','escort_tel'],
+                '包装方式' =>['N','Y','64','pack_type'],
+                '装货吨位' =>['N','Y','100','order_weight '],
+                '卸货吨位' =>['N','Y','100','upload_weight'],
+                '卸货时间' =>['N','Y','100','leave_time'],
+                '单价' =>['N','Y','100','sale_price'],
+                '运费总额' =>['N','Y','100','total_money'],
+            ];
+
+            $ret=arr_check($shuzu,$info_check);
+
+            //dump($ret);
+            if($ret['cando'] == 'N'){
+                $msg['code'] = 304;
+                $msg['msg'] = $ret['msg'];
+                return $msg;
+            }
+
+            $info_wait=$ret['new_array'];
+
+            /** 二次效验结束**/
+
+            $datalist=[];       //初始化数组为空
+            $cando='Y';         //错误数据的标记
+            $strs='';           //错误提示的信息拼接  当有错误信息的时候，将$cando设定为N，就是不允许执行数据库操作
+            $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
+            $errorNum=50;       //控制错误数据的条数
+            $a=2;
+            $order_log_list = [];
+            $money_list = [];
+            //dump($info_wait);
+            /** 现在开始处理$car***/
+            foreach($info_wait as $k => $v){
+                $car = TmsCar::where('car_number',$v['car_number'])->where('group_code',$group_code)->select('self_id','car_number')->first();
+                
+                $send = TmsGroup::where('company_name',$v['send_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                if ($v['send_name']){
+                    if (!empty((array)$send)){
+                        $v['send_id']                 = $send->self_id;
+                        $v['send_name']               = $send->company_name;
+                    }else{
+                        $v['send_id']                 = null;
+                        $v['send_name']               = $v['send_name'];
+                    }
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行装车点不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                if ($v['gather_name']){
+                    if (!empty((array)$gather)){
+                        $v['gather_id']                 = $gather->self_id;
+                        $v['gather_name']               = $gather->company_name;
+                    }else{
+                        $v['gather_id']                 = null;
+                        $v['gather_name']               = $v['gather_name'];
+                    }
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行卸车点不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                if ($v['carriage_name']){
+                    if ($carriage){
+                        $v['carriage_id']                 = $carriage->self_id;
+                        $v['carriage_name']               = $carriage->company_name;
+                    }else{
+                        $v['carriage_id']                 = null;
+                        $v['carriage_name']               = $v['carriage_name'];
+                    }
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行委托单位不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                if ($v['user_name']){
+                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    if (!$driver){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+                }
+                if($v['escort']){
+                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    if (!$cargo){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+                }
+
+                if (!$car){
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行车牌号不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                if($v['trailer_num']){
+                    $trailer = TmsCar::where('car_number',$v['trailer_num'])->where('group_code',$group_code)->select('self_id','car_number')->first();
+                    if (!$trailer){
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行挂车号不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                }
+                
+                if ($v['send_time']){
+                    if (is_numeric($v['send_time'])){
+                        $v['send_time']              = gmdate('Y-m-d',($v['send_time'] - 25569) * 3600 * 24);
+                    }else{
+                        if(date('Y-m-d',strtotime($v['send_time'])) == $v['send_time']){
+
+                        }else{
+                            if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行发货日期格式错误".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
+                        }
+                    }
+                }
+
+                $list=[];
+
+                if($cando =='Y'){
+                    $list['self_id']                 = generate_id('order_');
+                    $list['order_type']              = 3;
+                    $list['carriage_id']             = $v['carriage_id'];
+                    $list['carriage_name']           = $v['carriage_name'];
+                    $list['good_name']               = $v['good_name'];
+                    $list['car_id']                  = $car->self_id;
+                    $list['car_number']              = $car->car_number;
+                    if($v['trailer_num']){
+                        $list['trailer_num']              = $trailer->car_number;
+                    }else{
+                        $list['trailer_num']              = null;
+                    }
+                    
+                    if ($v['user_name']){
+                        $list['driver_id']               = $driver->self_id;
+                        $list['user_name']               = $driver->name;
+                        $list['car_tel']                 = $driver->tel;
+                    }else{
+                        $list['driver_id']               = null;
+                        $list['user_name']               = null;
+                        $list['car_tel']                 = null;
+                    }
+                    if($v['escort']){
+                        $list['escort']                  = $cargo->self_id;
+                        $list['escort_name']             = $cargo->name;
+                        $list['escort_tel']              = $cargo->tel;
+                    }else{
+                        $list['escort']                   = null;
+                        $list['escort_name']               = null;
+                        $list['escort_tel']                 = null;
+                    }
+                    $list['send_time']               = $v['send_time'];
+                    $list['send_id']                 = $v['send_id'];
+                    $list['send_name']               = $v['send_name'];
+                    $list['gather_id']               = $v['gather_id'];
+                    $list['gather_name']             = $v['gather_name'];
+                    $list['pack_type']               = $v['pack_type'];
+
+                    $list['group_code']              = $info->group_code;
+                    $list['group_name']              = $info->group_name;
+                    $list['create_user_id']          = $user_info->admin_id;
+                    $list['create_user_name']        = $user_info->name;
+                    $list['create_time']             = $list['update_time']=$now_time;
+                    $list['file_id']                 = $file_id;
+                    $list['pay_id']                  = null;
+
+                    // $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->where('group_code',$info->group_code)->get();
+                    // foreach($pay_type as $kk =>$vv){
+                    // if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
+                    //    $list['pay_id'] = $vv->self_id; 
+                    // }
+                    // if($list['car_number'] == $vv->car_number){
+                    //    $list['pay_id'] = $vv->self_id;
+                    // }
+                    // }
+                    $list['order_weight ']             = $v['order_weight '];
+                    $list['upload_weight']             = $v['upload_weight'];
+                    $list['leave_time']                = $v['leave_time'];
+                    $list['sale_price']                = $v['sale_price'];
+                    $list['total_money']               = $v['total_money'];
+
+
+                    $datalist[]=$list;
+
+                }
+
+                $a++;
+            }
+        
+
+
+            $operationing->new_info=$datalist;
+
+            //dump($operationing);
+
+            // dd($datalist);
+
+            if($cando == 'N'){
+                $msg['code'] = 306;
+                $msg['msg'] = $strs;
+                return $msg;
+            }
+            $count=count($datalist);
+            $id= TmsOrder::insert($datalist);
+
+            if($id){
+                $msg['code']=200;
+                /** 告诉用户，你一共导入了多少条数据，其中比如插入了多少条，修改了多少条！！！*/
+                $msg['msg']='操作成功，您一共导入'.$count.'条数据';
+
+                return $msg;
+            }else{
+                $msg['code']=307;
+                $msg['msg']='操作失败';
+                return $msg;
+            }
+        }else{
+            $erro = $validator->errors()->all();
+            $msg['msg'] = null;
+            foreach ($erro as $k => $v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code'] = 300;
+            return $msg;
+        }
+    }
+
+    //危废跟单导出  tms/order/orderWasteExcel
+    public function orderWasteExcel(Request $request){
+        $user_info  = $request->get('user_info');//接收中间件产生的参数
+        $now_time   =date('Y-m-d H:i:s',time());
+        $input      =$request->all();
+        /** 接收数据*/
+        $group_code     =$request->input('group_code');
+//        $group_code  =$input['group_code']   ='group_202012251449437824125582';
+        //dd($group_code);
+        $rules=[
+            'group_code'=>'required',
+        ];
+        $message=[
+            'group_code.required'=>'必须选择公司',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()){
+            /** 下面开始执行导出逻辑**/
+            $group_name     =SystemGroup::where('group_code','=',$group_code)->value('group_name');
+            //查询条件
+            $search=[
+                ['type'=>'=','name'=>'group_code','value'=>$group_code],
+                ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ];
+            $where=get_list_where($search);
+
+            $select=['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code',
+                'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
+                'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
+                'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
+                ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name'];
+            $select1 = ['self_id','parame_name'];
+            $info=TmsOrder::where($where)->where('order_type',3)->orderBy('create_time', 'desc')->select($select)->get();
+//dd($info);
+            if($info){
+                //设置表头
+                $row = [[
+                    "id"=>'ID',
+                    "send_time"=>'发货日期',
+                    "good_name"=>'货物品名',
+                    "carriage_name" =>'委托单位',
+                    "send_name"=>'装车点',
+                    "gather_name"=>'卸车点',
+                    "car_number"=>'车牌号',
+                    "user_name"=>'驾驶员',
+                    "car_tel"=>'电话',
+                    "pack_type"=>'包装方式',
+                     "order_weight"=>'装货吨位',
+                    "upload_weight"=>'卸货吨位',
+                    "leave_time"=>'卸货时间',
+                    "sale_price"=>'单价',
+                    "total_money"=>'总运费',
+
+                ]];
+                /** 现在根据查询到的数据去做一个导出的数据**/
+                $data_execl=[];
+
+                foreach ($info as $k=>$v){
+                    $list=[];
+                    $list['id']=($k+1);
+                    $list['send_time']           = $v['send_time'];
+                    $list['good_name']           = $v['good_name'];
+                    $list['company_name']        = $v['company_name'];
+                    $list['carriage_name']       = $v['carriage_name'];
+                    $list['send_name']           = $v['send_name'];
+                    $list['gather_name']         = $v['gather_name'];
+                    $list['car_number']          = $v['car_number'];
+                    $list['user_name']           = $v['user_name'];
+                    $list['car_tel']             = $v['car_tel'];
+                    $list['pack_type']         = $v['pack_type'];
+
+                    $list['order_weight']         = $v['order_weight'];
+                    $list['upload_weight']        = $v['upload_weight'];
+                    $list['leave_time']           = $v['leave_time'];
+                    $list['sale_price']           = $v['sale_price'];
+                    $list['total_money']          = $v['total_money'];
+
+
+                    $data_execl[]=$list;
+                }
+                /** 调用EXECL导出公用方法，将数据抛出来***/
+                $browse_type=$request->path();
+                $msg=$file->export($data_execl,$row,$group_code,$group_name,$browse_type,$user_info,$where,$now_time);
+
+                //dd($msg);
+                return $msg;
+
+            }else{
+                $msg['code']=301;
+                $msg['msg']="没有数据可以导出";
+                return $msg;
+            }
+        }else{
+            $erro=$validator->errors()->all();
+            $msg['msg']=null;
+            foreach ($erro as $k=>$v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code']=300;
+            return $msg;
+        }
+    }
+
+
+
 
 
 }

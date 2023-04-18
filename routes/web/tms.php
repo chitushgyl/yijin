@@ -145,6 +145,13 @@ Route::group([
 	Route::any('/order/getUserOrder','OrderController@getUserOrder');
     Route::any('/order/settleOrder','OrderController@settleOrder');//跟单结算
 
+    Route::any('/order/orderOneImport','OrderController@orderOneImport');//跟单结算
+    Route::any('/order/orderOneExcel','OrderController@orderOneExcel');//跟单结算
+    Route::any('/order/orderTwoImport','OrderController@orderTwoImport');//跟单结算
+    Route::any('/order/orderTwoExcel','OrderController@orderTwoExcel');//跟单结算
+    Route::any('/order/orderWasteImport','OrderController@orderWasteImport');//跟单结算
+    Route::any('/order/orderWasteExcel','OrderController@orderWasteExcel');//跟单结算
+
     Route::group([
         "middleware"=>['daily'],
     ], function(){
