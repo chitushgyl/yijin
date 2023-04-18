@@ -438,9 +438,7 @@ class UserRewardController extends CommonController{
 
                 $id=UserReward::insert($data);
                 if ($type != 'reward'){
-                    if($fine_user == 'driver'){
-
-                    }
+                    
                     if ($user_id && ($company_fine || $company_fine>0)){
                         $award['self_id']            = generate_id('award_');
                         $award['reward_id']          = $data['self_id'];
@@ -589,14 +587,14 @@ class UserRewardController extends CommonController{
         return $msg;
     }
 
-    /***    地址导入     /tms/address/import
+    /***    违规导入     /tms/userReward/violationImport
      */
-    public function import(Request $request){
+    public function violationImport(Request $request){
         $table_name         ='user_reward';
         $now_time           = date('Y-m-d H:i:s', time());
 
         $operationing       = $request->get('operationing');//接收中间件产生的参数
-        $operationing->access_cause     ='导入奖惩记录';
+        $operationing->access_cause     ='违规导入';
         $operationing->table            =$table_name;
         $operationing->operation_type   ='create';
         $operationing->now_time         =$now_time;
@@ -622,6 +620,17 @@ class UserRewardController extends CommonController{
         ];
         $validator = Validator::make($input, $rules, $message);
         if ($validator->passes()) {
+            $where_check=[
+                ['delete_flag','=','Y'],
+                ['self_id','=',$group_code],
+            ];
+
+            $info= SystemGroup::where($where_check)->select('self_id','group_code','group_name')->first();
+            if(empty($info)){
+                $msg['code'] = 305;
+                $msg['msg'] = '所属公司不存在';
+                return $msg;
+            }
 
             /**发起二次效验，1效验文件是不是存在， 2效验文件中是不是有数据 3,本身数据是不是重复！！！* */
             if (!file_exists($importurl)) {
@@ -647,12 +656,15 @@ class UserRewardController extends CommonController{
              * 第四个位置为数据库的对应字段
              */
             $shuzu=[
-                '省份' =>['Y','Y','64','sheng_name'],
-                '城市' =>['Y','Y','64','shi_name'],
-                '区县' =>['Y','Y','64','qu_name'],
-                '详细地址' =>['Y','Y','64','address'],
-                '联系人' =>['Y','Y','64','contacts'],
-                '联系电话' =>['Y','Y','64','tel'],
+                '日期' =>['Y','Y','64','event_time'],
+                '车牌号' =>['Y','Y','64','car_number'],
+                '驾驶员' =>['N','Y','64','user_name'],
+                '押运员' =>['N','Y','64','escort_name'],
+                '罚款' =>['Y','Y','64','company_fine'],
+                '违规详情' =>['N','Y','64','violation_connect'],
+                '奖金返还日期' =>['Y','Y','64','cash_back'],
+                '经办人' =>['N','Y','64','handled_by'],
+                '备注' =>['N','Y','64','remark'],
             ];
             $ret=arr_check($shuzu,$info_check);
 
@@ -674,30 +686,149 @@ class UserRewardController extends CommonController{
             $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
             $errorNum=50;       //控制错误数据的条数
             $a=2;
-
+            $user_award_list[]=[];
+            $award_list[]=[];
             // dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
+                if ($v['event_time']){
+                    if (is_numeric($v['event_time'])){
+                        $v['event_time']              = gmdate('Y-m-d',($v['event_time'] - 25569) * 3600 * 24);
+                    }else{
+                        if(date('Y-m-d',strtotime($v['event_time'])) == $v['event_time']){
+
+                        }else{
+                            if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行发货日期格式错误".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
+                        }
+                    }
+                }
+                $car = TmsCar::where('car_number',$v['car_number'])->where('group_code',$group_code)->select('self_id','car_number')->first();
+                if (!$car){
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行车牌号不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                 if ($v['user_name']){
+                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    if (!$driver){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+                }
+                if($v['escort_name']){
+                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('name',$v['escort_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    if (!$cargo){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+                }
+
+                if ($v['cash_back']){
+                    if (is_numeric($v['cash_back'])){
+                        $v['cash_back']              = gmdate('Y-m',($v['cash_back'] - 25569) * 3600 * 24);
+                    }else{
+                        if(date('Y-m-d',strtotime($v['cash_back'])) == $v['cash_back'] || date('Y-m',strtotime($v['cash_back'])) == $v['cash_back']){
+
+                        }else{
+                            if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行奖金返还日期格式错误".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
+                        }
+                    }
+                }
                 // dump($cando);
                 $list=[];
                 if($cando =='Y'){
-                    $list['self_id']            =generate_id('addresss_');
-                    $list['sheng_name']         = $v['sheng_name'];
-                    $list['qu_name']            = $v['qu_name'];
-                    $list['shi_name']           = $v['shi_name'];
-                    $list['address']            = $v['address'];
+                    $list['self_id']            =generate_id('reward_');
+                    $list['type']               = 'violation';
+                    $list['event_time']         = $v['event_time'];
+                    $list['car_id']             = $car->car_id;
+                    $list['car_number']         = $car->car_number;
+                    if ($v['user_name']){
+                        $list['user_id']               = $driver->self_id;
+                        $list['user_name']               = $driver->name;
+                    }else{
+                        $list['user_id']               = null;
+                        $list['user_name']               = null;
+               
+                    }
+                    if($v['escort']){
+                        $list['escort']                  = $cargo->self_id;
+                        $list['escort_name']             = $cargo->name;
+                        
+                    }else{
+                        $list['escort']                  = null;
+                        $list['escort_name']             = null;
+                        
+                    }
+                    $list['company_fine']           = $v['company_fine'];
+                    $list['violation_connect']      = $v['violation_connect'];
+                    $list['cash_back']              = $v['cash_back'];
+                    $list['handled_by']             = $v['handled_by'];
+                    $list['remark']                 = $v['remark'];
 
-//                    $list['group_code']         = $info->group_code;
-//                    $list['group_name']         = $info->group_name;
+                    $list['group_code']          = $info->group_code;
+                    $list['group_name']          = $info->group_name;
                     $list['create_user_id']     = $user_info->admin_id;
                     $list['create_user_name']   = $user_info->name;
                     $list['create_time']        =$list['update_time']=$now_time;
-//                    $list['company_id']         = $info->self_id;
-//                    $list['company_name']       = $info->company_name;
-                    $list['contacts']       = $v['contacts'];
-                    $list['tel']       = $v['tel'];
                     $list['file_id']            =$file_id;
                     $datalist[]=$list;
+                    
+                    if ($list['user_id'] && ($company_fine || $company_fine>0)){
+                        $user_award['self_id']            = generate_id('award_');
+                        $user_award['reward_id']          = $list['self_id'];
+                        $user_award['user_id']            = $list['user_id'];
+                        $user_award['user_name']          = $list['user_name'];
+                        $user_award['car_id']             = $list['car_id'];
+                        $user_award['car_number']         = $list['car_number'];
+                        $user_award['money_award']        = $company_fine;
+                        $user_award = date('Y-m', strtotime('+6 month', strtotime($event_time)));
+                        $user_award['cash_back']          = $time;
+                        $user_award['group_code']         = $info->group_code;
+                        $user_award['group_name']         = $info->group_name;
+                        $user_award['create_user_id']     = $user_info->admin_id;
+                        $user_award['create_user_name']   = $user_info->name;
+                        $user_award['create_time']        = $user_award['update_time']=$now_time;
+
+                        $user_award_list[]=$user_award;
+                        
+                    }
+                    if ($list['escort'] && ($company_fine || $company_fine>0)){
+                        $award['self_id']            = generate_id('award_');
+                        $award['reward_id']          = $list['self_id'];
+                        $award['user_id']            = $list['escort'];
+                        $award['user_name']          = $list['escort_name'];
+                        $award['car_id']             = $list['car_id'];
+                        $award['car_number']         = $list['car_number'];
+                        $award['money_award']        = $company_fine;
+                        $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
+                        $award['cash_back']          = $time;
+                        $award['group_code']         = $info->group_code;
+                        $award['group_name']         = $info->group_name;
+                        $award['create_user_id']     = $user_info->admin_id;
+                        $award['create_user_name']   = $user_info->name;
+                        $award['create_time']        = $award['update_time']=$now_time;
+
+                        $award_list[]=$award;
+                        
+                    }
+
+                
                 }
                 $a++;
 
@@ -715,7 +846,15 @@ class UserRewardController extends CommonController{
             }
             $count=count($datalist);
             $id= TmsAddressContact::insert($datalist);
+            if(count($user_award_list)>0){
+                AwardRemind::insert($user_award_list);
+            }
+            if(count($award_list)>0){
+                AwardRemind::insert($award_list);
 
+            }
+            
+            
             if($id){
                 $msg['code']=200;
                 /** 告诉用户，你一共导入了多少条数据，其中比如插入了多少条，修改了多少条！！！*/
@@ -740,6 +879,841 @@ class UserRewardController extends CommonController{
 
 
     }
+
+    //违章导入  tms/userReward/ruleImport
+    public function ruleImport(Request $request){
+        $table_name         ='user_reward';
+        $now_time           = date('Y-m-d H:i:s', time());
+
+        $operationing       = $request->get('operationing');//接收中间件产生的参数
+        $operationing->access_cause     ='违章导入';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='import';
+
+        $user_info          = $request->get('user_info');//接收中间件产生的参数
+
+
+        /** 接收数据*/
+        $input              =$request->all();
+        $importurl          =$request->input('importurl');
+        $group_code          =$request->input('group_code');
+        $file_id            =$request->input('file_id');
+        //
+        /****虚拟数据
+        $input['importurl']     =$importurl="uploads/import/TMS地址导入文件范本.xlsx";
+         ***/
+        $rules = [
+            'importurl' => 'required',
+        ];
+        $message = [
+            'importurl.required' => '请上传文件',
+        ];
+        $validator = Validator::make($input, $rules, $message);
+        if ($validator->passes()) {
+            $where_check=[
+                ['delete_flag','=','Y'],
+                ['self_id','=',$group_code],
+            ];
+
+            $info= SystemGroup::where($where_check)->select('self_id','group_code','group_name')->first();
+            if(empty($info)){
+                $msg['code'] = 305;
+                $msg['msg'] = '所属公司不存在';
+                return $msg;
+            }
+
+            /**发起二次效验，1效验文件是不是存在， 2效验文件中是不是有数据 3,本身数据是不是重复！！！* */
+            if (!file_exists($importurl)) {
+                $msg['code'] = 301;
+                $msg['msg'] = '文件不存在';
+                return $msg;
+            }
+
+            $res = Excel::toArray((new Import),$importurl);
+            //dump($res);
+            $info_check=[];
+            if(array_key_exists('0', $res)){
+                $info_check=$res[0];
+            }
+
+            //dump($info_check);
+
+            /**  定义一个数组，需要的数据和必须填写的项目
+            键 是EXECL顶部文字，
+             * 第一个位置是不是必填项目    Y为必填，N为不必须，
+             * 第二个位置是不是允许重复，  Y为允许重复，N为不允许重复
+             * 第三个位置为长度判断
+             * 第四个位置为数据库的对应字段
+             */
+            $shuzu=[
+                '日期' =>['Y','Y','64','event_time'],
+                '车牌号' =>['Y','Y','64','car_number'],
+                '驾驶员' =>['N','Y','64','user_name'],
+                '押运员' =>['N','Y','64','escort_name'],
+                '违章详情' =>['N','Y','64','violation_connect'],
+                '处理情况' =>['N','Y','64','handle_connect'],
+                '扣分' =>['N','Y','64','score'],
+                '罚款' =>['N','Y','64','payment'],
+                '公司罚款金额' =>['Y','Y','64','company_fine'],
+                '奖金返还日期' =>['Y','Y','64','cash_back'],
+                '经办人' =>['N','Y','64','handled_by'],
+                '备注' =>['N','Y','64','remark'],
+            ];
+            $ret=arr_check($shuzu,$info_check);
+
+
+            // dump($ret);
+            if($ret['cando'] == 'N'){
+                $msg['code'] = 304;
+                $msg['msg'] = $ret['msg'];
+                return $msg;
+            }
+
+            $info_wait=$ret['new_array'];
+
+            /** 二次效验结束**/
+
+            $datalist=[];       //初始化数组为空
+            $cando='Y';         //错误数据的标记
+            $strs='';           //错误提示的信息拼接  当有错误信息的时候，将$cando设定为N，就是不允许执行数据库操作
+            $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
+            $errorNum=50;       //控制错误数据的条数
+            $a=2;
+            $user_award_list[]=[];
+            $award_list[]=[];
+            // dump($info_wait);
+            /** 现在开始处理$car***/
+            foreach($info_wait as $k => $v){
+                if ($v['event_time']){
+                    if (is_numeric($v['event_time'])){
+                        $v['event_time']              = gmdate('Y-m-d',($v['event_time'] - 25569) * 3600 * 24);
+                    }else{
+                        if(date('Y-m-d',strtotime($v['event_time'])) == $v['event_time']){
+
+                        }else{
+                            if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行发货日期格式错误".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
+                        }
+                    }
+                }
+                $car = TmsCar::where('car_number',$v['car_number'])->where('group_code',$group_code)->select('self_id','car_number')->first();
+                if (!$car){
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行车牌号不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                 if ($v['user_name']){
+                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    if (!$driver){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+                }
+                if($v['escort_name']){
+                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('name',$v['escort_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    if (!$cargo){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+                }
+
+                if ($v['cash_back']){
+                    if (is_numeric($v['cash_back'])){
+                        $v['cash_back']              = gmdate('Y-m',($v['cash_back'] - 25569) * 3600 * 24);
+                    }else{
+                        if(date('Y-m-d',strtotime($v['cash_back'])) == $v['cash_back'] || date('Y-m',strtotime($v['cash_back'])) == $v['cash_back']){
+
+                        }else{
+                            if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行奖金返还日期格式错误".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
+                        }
+                    }
+                }
+                // dump($cando);
+                $list=[];
+                if($cando =='Y'){
+                    $list['self_id']            =generate_id('reward_');
+                    $list['type']               = 'rule';
+                    $list['event_time']         = $v['event_time'];
+                    $list['car_id']             = $car->car_id;
+                    $list['car_number']         = $car->car_number;
+                    if ($v['user_name']){
+                        $list['user_id']               = $driver->self_id;
+                        $list['user_name']               = $driver->name;
+                    }else{
+                        $list['user_id']                 = null;
+                        $list['user_name']               = null;
+               
+                    }
+                    if($v['escort']){
+                        $list['escort']                  = $cargo->self_id;
+                        $list['escort_name']             = $cargo->name;
+                        
+                    }else{
+                        $list['escort']                  = null;
+                        $list['escort_name']             = null;
+                        
+                    }
+                    $list['violation_connect']        = $v['violation_connect'];
+                    $list['handle_connect']           = $v['handle_connect'];
+                    $list['score']                    = $v['score'];
+                    $list['payment']                  = $v['payment'];
+                    $list['company_fine']             = $v['company_fine'];
+                    $list['cash_back']                = $v['cash_back'];
+                    $list['handled_by']               = $v['handled_by'];
+                    $list['remark']                   = $v['remark'];
+                    $list['group_code']               = $info->group_code;
+                    $list['group_name']               = $info->group_name;
+                    $list['create_user_id']           = $user_info->admin_id;
+                    $list['create_user_name']         = $user_info->name;
+                    $list['create_time']              = $list['update_time']=$now_time;
+                    $list['file_id']                  = $file_id;
+                    $datalist[]=$list;
+                    
+                    if ($list['user_id'] && ($company_fine || $company_fine>0)){
+                        $user_award['self_id']            = generate_id('award_');
+                        $user_award['reward_id']          = $list['self_id'];
+                        $user_award['user_id']            = $list['user_id'];
+                        $user_award['user_name']          = $list['user_name'];
+                        $user_award['car_id']             = $list['car_id'];
+                        $user_award['car_number']         = $list['car_number'];
+                        $user_award['money_award']        = $company_fine;
+                        $user_award = date('Y-m', strtotime('+6 month', strtotime($event_time)));
+                        $user_award['cash_back']          = $time;
+                        $user_award['group_code']         = $info->group_code;
+                        $user_award['group_name']         = $info->group_name;
+                        $user_award['create_user_id']     = $user_info->admin_id;
+                        $user_award['create_user_name']   = $user_info->name;
+                        $user_award['create_time']        = $user_award['update_time']=$now_time;
+
+                        $user_award_list[]=$user_award;
+                        
+                    }
+                    if ($list['escort'] && ($company_fine || $company_fine>0)){
+                        $award['self_id']            = generate_id('award_');
+                        $award['reward_id']          = $list['self_id'];
+                        $award['user_id']            = $list['escort'];
+                        $award['user_name']          = $list['escort_name'];
+                        $award['car_id']             = $list['car_id'];
+                        $award['car_number']         = $list['car_number'];
+                        $award['money_award']        = $company_fine;
+                        $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
+                        $award['cash_back']          = $time;
+                        $award['group_code']         = $info->group_code;
+                        $award['group_name']         = $info->group_name;
+                        $award['create_user_id']     = $user_info->admin_id;
+                        $award['create_user_name']   = $user_info->name;
+                        $award['create_time']        = $award['update_time']=$now_time;
+
+                        $award_list[]=$award;
+                        
+                    }
+
+                
+                }
+                $a++;
+
+            }
+
+            $operationing->new_info=$datalist;
+
+            //dump($operationing);
+            // dd($datalist);
+
+            if($cando == 'N'){
+                $msg['code'] = 306;
+                $msg['msg'] = $strs;
+                return $msg;
+            }
+            $count=count($datalist);
+            $id= TmsAddressContact::insert($datalist);
+            if(count($user_award_list)>0){
+                AwardRemind::insert($user_award_list);
+            }
+            if(count($award_list)>0){
+                AwardRemind::insert($award_list);
+
+            }
+            
+            
+            if($id){
+                $msg['code']=200;
+                /** 告诉用户，你一共导入了多少条数据，其中比如插入了多少条，修改了多少条！！！*/
+                $msg['msg']='操作成功，您一共导入'.$count.'条数据';
+
+                return $msg;
+            }else{
+                $msg['code']=307;
+                $msg['msg']='操作失败';
+                return $msg;
+            }
+        }else{
+            $erro = $validator->errors()->all();
+            $msg['msg'] = null;
+            foreach ($erro as $k => $v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code'] = 300;
+            return $msg;
+        }
+
+
+    }
+
+    //事故导入  tms/userReward/accidentImport
+    public function accidentImport(Request $request){
+        $table_name         ='user_reward';
+        $now_time           = date('Y-m-d H:i:s', time());
+
+        $operationing       = $request->get('operationing');//接收中间件产生的参数
+        $operationing->access_cause     ='事故导入';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='import';
+
+        $user_info          = $request->get('user_info');//接收中间件产生的参数
+
+
+        /** 接收数据*/
+        $input              =$request->all();
+        $importurl          =$request->input('importurl');
+        $group_code          =$request->input('group_code');
+        $file_id            =$request->input('file_id');
+        //
+        /****虚拟数据
+        $input['importurl']     =$importurl="uploads/import/TMS地址导入文件范本.xlsx";
+         ***/
+        $rules = [
+            'importurl' => 'required',
+        ];
+        $message = [
+            'importurl.required' => '请上传文件',
+        ];
+        $validator = Validator::make($input, $rules, $message);
+        if ($validator->passes()) {
+            $where_check=[
+                ['delete_flag','=','Y'],
+                ['self_id','=',$group_code],
+            ];
+
+            $info= SystemGroup::where($where_check)->select('self_id','group_code','group_name')->first();
+            if(empty($info)){
+                $msg['code'] = 305;
+                $msg['msg'] = '所属公司不存在';
+                return $msg;
+            }
+
+            /**发起二次效验，1效验文件是不是存在， 2效验文件中是不是有数据 3,本身数据是不是重复！！！* */
+            if (!file_exists($importurl)) {
+                $msg['code'] = 301;
+                $msg['msg'] = '文件不存在';
+                return $msg;
+            }
+
+            $res = Excel::toArray((new Import),$importurl);
+            //dump($res);
+            $info_check=[];
+            if(array_key_exists('0', $res)){
+                $info_check=$res[0];
+            }
+
+            //dump($info_check);
+
+            /**  定义一个数组，需要的数据和必须填写的项目
+            键 是EXECL顶部文字，
+             * 第一个位置是不是必填项目    Y为必填，N为不必须，
+             * 第二个位置是不是允许重复，  Y为允许重复，N为不允许重复
+             * 第三个位置为长度判断
+             * 第四个位置为数据库的对应字段
+             */
+            $shuzu=[
+                '日期' =>['Y','Y','64','event_time'],
+                '车牌号' =>['Y','Y','64','car_number'],
+                '驾驶员' =>['N','Y','64','user_name'],
+                '押运员' =>['N','Y','64','escort_name'],
+                '事故详情' =>['N','Y','64','violation_connect'],
+                '事故地点' =>['N','Y','64','fault_address'],
+                '责任方' =>['N','Y','64','fault_party'],
+                '承担责任' =>['N','Y','64','bear'],
+                '扣分' =>['N','Y','64','score'],
+                '罚款' =>['N','Y','64','payment'],
+                '公司罚款金额' =>['Y','Y','64','company_fine'],
+                '损失金额' =>['N','Y','64','fault_price'],
+                '奖金返还日期' =>['Y','Y','64','cash_back'],
+                '经办人' =>['N','Y','64','handled_by'],
+                '备注' =>['N','Y','64','remark'],
+            ];
+            $ret=arr_check($shuzu,$info_check);
+
+
+            // dump($ret);
+            if($ret['cando'] == 'N'){
+                $msg['code'] = 304;
+                $msg['msg'] = $ret['msg'];
+                return $msg;
+            }
+
+            $info_wait=$ret['new_array'];
+
+            /** 二次效验结束**/
+
+            $datalist=[];       //初始化数组为空
+            $cando='Y';         //错误数据的标记
+            $strs='';           //错误提示的信息拼接  当有错误信息的时候，将$cando设定为N，就是不允许执行数据库操作
+            $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
+            $errorNum=50;       //控制错误数据的条数
+            $a=2;
+            $user_award_list[]=[];
+            $award_list[]=[];
+            // dump($info_wait);
+            /** 现在开始处理$car***/
+            foreach($info_wait as $k => $v){
+                if ($v['event_time']){
+                    if (is_numeric($v['event_time'])){
+                        $v['event_time']              = gmdate('Y-m-d',($v['event_time'] - 25569) * 3600 * 24);
+                    }else{
+                        if(date('Y-m-d',strtotime($v['event_time'])) == $v['event_time']){
+
+                        }else{
+                            if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行发货日期格式错误".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
+                        }
+                    }
+                }
+                $car = TmsCar::where('car_number',$v['car_number'])->where('group_code',$group_code)->select('self_id','car_number')->first();
+                if (!$car){
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行车牌号不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                 if ($v['user_name']){
+                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    if (!$driver){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+                }
+                if($v['escort_name']){
+                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('name',$v['escort_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    if (!$cargo){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+                }
+
+                if ($v['cash_back']){
+                    if (is_numeric($v['cash_back'])){
+                        $v['cash_back']              = gmdate('Y-m',($v['cash_back'] - 25569) * 3600 * 24);
+                    }else{
+                        if(date('Y-m-d',strtotime($v['cash_back'])) == $v['cash_back'] || date('Y-m',strtotime($v['cash_back'])) == $v['cash_back']){
+
+                        }else{
+                            if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行奖金返还日期格式错误".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
+                        }
+                    }
+                }
+                // dump($cando);
+                $list=[];
+                if($cando =='Y'){
+                    $list['self_id']            =generate_id('reward_');
+                    $list['type']               = 'accident';
+                    $list['event_time']         = $v['event_time'];
+                    $list['car_id']             = $car->car_id;
+                    $list['car_number']         = $car->car_number;
+                    if ($v['user_name']){
+                        $list['user_id']               = $driver->self_id;
+                        $list['user_name']               = $driver->name;
+                    }else{
+                        $list['user_id']                 = null;
+                        $list['user_name']               = null;
+               
+                    }
+                    if($v['escort']){
+                        $list['escort']                  = $cargo->self_id;
+                        $list['escort_name']             = $cargo->name;
+                        
+                    }else{
+                        $list['escort']                  = null;
+                        $list['escort_name']             = null;
+                        
+                    }
+                    $list['violation_connect']        = $v['violation_connect'];
+                    $list['fault_address']            = $v['fault_address'];
+                    $list['fault_party']              = $v['fault_party'];   
+                    $list['bear']                     = $v['bear'];
+                    $list['score']                    = $v['score'];
+                    $list['payment']                  = $v['payment'];
+                    $list['company_fine']             = $v['company_fine'];
+                    $list['fault_price']              = $v['fault_price'];
+                    $list['cash_back']                = $v['cash_back'];
+                    $list['handled_by']               = $v['handled_by'];
+                    $list['remark']                   = $v['remark'];
+                    $list['group_code']               = $info->group_code;
+                    $list['group_name']               = $info->group_name;
+                    $list['create_user_id']           = $user_info->admin_id;
+                    $list['create_user_name']         = $user_info->name;
+                    $list['create_time']              = $list['update_time']=$now_time;
+                    $list['file_id']                  = $file_id;
+                    $datalist[]=$list;
+                    
+                    if ($list['user_id'] && ($company_fine || $company_fine>0)){
+                        $user_award['self_id']            = generate_id('award_');
+                        $user_award['reward_id']          = $list['self_id'];
+                        $user_award['user_id']            = $list['user_id'];
+                        $user_award['user_name']          = $list['user_name'];
+                        $user_award['car_id']             = $list['car_id'];
+                        $user_award['car_number']         = $list['car_number'];
+                        $user_award['money_award']        = $company_fine;
+                        $user_award = date('Y-m', strtotime('+6 month', strtotime($event_time)));
+                        $user_award['cash_back']          = $time;
+                        $user_award['group_code']         = $info->group_code;
+                        $user_award['group_name']         = $info->group_name;
+                        $user_award['create_user_id']     = $user_info->admin_id;
+                        $user_award['create_user_name']   = $user_info->name;
+                        $user_award['create_time']        = $user_award['update_time']=$now_time;
+
+                        $user_award_list[]=$user_award;
+                        
+                    }
+                    if ($list['escort'] && ($company_fine || $company_fine>0)){
+                        $award['self_id']            = generate_id('award_');
+                        $award['reward_id']          = $list['self_id'];
+                        $award['user_id']            = $list['escort'];
+                        $award['user_name']          = $list['escort_name'];
+                        $award['car_id']             = $list['car_id'];
+                        $award['car_number']         = $list['car_number'];
+                        $award['money_award']        = $company_fine;
+                        $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
+                        $award['cash_back']          = $time;
+                        $award['group_code']         = $info->group_code;
+                        $award['group_name']         = $info->group_name;
+                        $award['create_user_id']     = $user_info->admin_id;
+                        $award['create_user_name']   = $user_info->name;
+                        $award['create_time']        = $award['update_time']=$now_time;
+
+                        $award_list[]=$award;
+                        
+                    }
+
+                
+                }
+                $a++;
+
+            }
+
+            $operationing->new_info=$datalist;
+
+            //dump($operationing);
+            // dd($datalist);
+
+            if($cando == 'N'){
+                $msg['code'] = 306;
+                $msg['msg'] = $strs;
+                return $msg;
+            }
+            $count=count($datalist);
+            $id= TmsAddressContact::insert($datalist);
+            if(count($user_award_list)>0){
+                AwardRemind::insert($user_award_list);
+            }
+            if(count($award_list)>0){
+                AwardRemind::insert($award_list);
+
+            }
+            
+            
+            if($id){
+                $msg['code']=200;
+                /** 告诉用户，你一共导入了多少条数据，其中比如插入了多少条，修改了多少条！！！*/
+                $msg['msg']='操作成功，您一共导入'.$count.'条数据';
+
+                return $msg;
+            }else{
+                $msg['code']=307;
+                $msg['msg']='操作失败';
+                return $msg;
+            }
+        }else{
+            $erro = $validator->errors()->all();
+            $msg['msg'] = null;
+            foreach ($erro as $k => $v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code'] = 300;
+            return $msg;
+        }
+
+
+    }
+
+
+    //奖励导入  tms/userReward/rewardImport
+    public function rewardImport(Request $request){
+        $table_name         ='user_reward';
+        $now_time           = date('Y-m-d H:i:s', time());
+
+        $operationing       = $request->get('operationing');//接收中间件产生的参数
+        $operationing->access_cause     ='事故导入';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='import';
+
+        $user_info          = $request->get('user_info');//接收中间件产生的参数
+
+
+        /** 接收数据*/
+        $input              =$request->all();
+        $importurl          =$request->input('importurl');
+        $group_code          =$request->input('group_code');
+        $file_id            =$request->input('file_id');
+        //
+        /****虚拟数据
+        $input['importurl']     =$importurl="uploads/import/TMS地址导入文件范本.xlsx";
+         ***/
+        $rules = [
+            'importurl' => 'required',
+        ];
+        $message = [
+            'importurl.required' => '请上传文件',
+        ];
+        $validator = Validator::make($input, $rules, $message);
+        if ($validator->passes()) {
+            $where_check=[
+                ['delete_flag','=','Y'],
+                ['self_id','=',$group_code],
+            ];
+
+            $info= SystemGroup::where($where_check)->select('self_id','group_code','group_name')->first();
+            if(empty($info)){
+                $msg['code'] = 305;
+                $msg['msg'] = '所属公司不存在';
+                return $msg;
+            }
+
+            /**发起二次效验，1效验文件是不是存在， 2效验文件中是不是有数据 3,本身数据是不是重复！！！* */
+            if (!file_exists($importurl)) {
+                $msg['code'] = 301;
+                $msg['msg'] = '文件不存在';
+                return $msg;
+            }
+
+            $res = Excel::toArray((new Import),$importurl);
+            //dump($res);
+            $info_check=[];
+            if(array_key_exists('0', $res)){
+                $info_check=$res[0];
+            }
+
+            //dump($info_check);
+
+            /**  定义一个数组，需要的数据和必须填写的项目
+            键 是EXECL顶部文字，
+             * 第一个位置是不是必填项目    Y为必填，N为不必须，
+             * 第二个位置是不是允许重复，  Y为允许重复，N为不允许重复
+             * 第三个位置为长度判断
+             * 第四个位置为数据库的对应字段
+             */
+            $shuzu=[
+                '日期' =>['Y','Y','64','event_time'],
+                '车牌号' =>['Y','Y','64','car_number'],
+                '驾驶员' =>['N','Y','64','user_name'],
+                '押运员' =>['N','Y','64','escort_name'],
+                '奖励详情' =>['N','Y','64','reward_view'],
+                '奖金' =>['N','Y','64','safe_reward'],
+                '经办人' =>['N','Y','64','handled_by'],
+                '备注' =>['N','Y','64','remark'],
+            ];
+            $ret=arr_check($shuzu,$info_check);
+
+
+            // dump($ret);
+            if($ret['cando'] == 'N'){
+                $msg['code'] = 304;
+                $msg['msg'] = $ret['msg'];
+                return $msg;
+            }
+
+            $info_wait=$ret['new_array'];
+
+            /** 二次效验结束**/
+
+            $datalist=[];       //初始化数组为空
+            $cando='Y';         //错误数据的标记
+            $strs='';           //错误提示的信息拼接  当有错误信息的时候，将$cando设定为N，就是不允许执行数据库操作
+            $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
+            $errorNum=50;       //控制错误数据的条数
+            $a=2;
+            $user_award_list[]=[];
+            $award_list[]=[];
+            // dump($info_wait);
+            /** 现在开始处理$car***/
+            foreach($info_wait as $k => $v){
+                if ($v['event_time']){
+                    if (is_numeric($v['event_time'])){
+                        $v['event_time']              = gmdate('Y-m-d',($v['event_time'] - 25569) * 3600 * 24);
+                    }else{
+                        if(date('Y-m-d',strtotime($v['event_time'])) == $v['event_time']){
+
+                        }else{
+                            if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行发货日期格式错误".'</br>';
+                                $cando='N';
+                                $abcd++;
+                            }
+                        }
+                    }
+                }
+                $car = TmsCar::where('car_number',$v['car_number'])->where('group_code',$group_code)->select('self_id','car_number')->first();
+                if (!$car){
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行车牌号不存在".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
+                 if ($v['user_name']){
+                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    if (!$driver){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+                }
+                if($v['escort_name']){
+                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('name',$v['escort_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    if (!$cargo){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
+                    }
+                }
+
+            
+                // dump($cando);
+                $list=[];
+                if($cando =='Y'){
+                    $list['self_id']            =generate_id('reward_');
+                    $list['type']               = 'reward';
+                    $list['event_time']         = $v['event_time'];
+                    $list['car_id']             = $car->car_id;
+                    $list['car_number']         = $car->car_number;
+                    if ($v['user_name']){
+                        $list['user_id']               = $driver->self_id;
+                        $list['user_name']               = $driver->name;
+                    }else{
+                        $list['user_id']                 = null;
+                        $list['user_name']               = null;
+               
+                    }
+                    if($v['escort']){
+                        $list['escort']                  = $cargo->self_id;
+                        $list['escort_name']             = $cargo->name;
+                        
+                    }else{
+                        $list['escort']                  = null;
+                        $list['escort_name']             = null;
+                        
+                    }
+                 
+                    $list['reward_view']              = $v['reward_view'];
+                    $list['safe_reward']              = $v['safe_reward'];
+                    $list['handled_by']               = $v['handled_by'];
+                    $list['remark']                   = $v['remark'];
+                    $list['group_code']               = $info->group_code;
+                    $list['group_name']               = $info->group_name;
+                    $list['create_user_id']           = $user_info->admin_id;
+                    $list['create_user_name']         = $user_info->name;
+                    $list['create_time']              = $list['update_time']=$now_time;
+                    $list['file_id']                  = $file_id;
+                    $datalist[]=$list;
+                        
+                    }
+
+                
+                }
+                $a++;
+
+            }
+
+            $operationing->new_info=$datalist;
+
+            //dump($operationing);
+            // dd($datalist);
+
+            if($cando == 'N'){
+                $msg['code'] = 306;
+                $msg['msg'] = $strs;
+                return $msg;
+            }
+            $count=count($datalist);
+            $id= TmsAddressContact::insert($datalist);
+        
+            
+            
+            if($id){
+                $msg['code']=200;
+                /** 告诉用户，你一共导入了多少条数据，其中比如插入了多少条，修改了多少条！！！*/
+                $msg['msg']='操作成功，您一共导入'.$count.'条数据';
+
+                return $msg;
+            }else{
+                $msg['code']=307;
+                $msg['msg']='操作失败';
+                return $msg;
+            }
+        }else{
+            $erro = $validator->errors()->all();
+            $msg['msg'] = null;
+            foreach ($erro as $k => $v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code'] = 300;
+            return $msg;
+        }
+
+
+    }
+
 
     /***    员工奖惩记录详情     /tms/userReward/details
      */
