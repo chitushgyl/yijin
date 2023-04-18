@@ -91,6 +91,12 @@ class OrderController extends CommonController{
                 if($v->id == 200){
                    $button_info1[] = $v;
                 }
+                if($v->id == 118){
+                   $button_info1[] = $v;
+                }
+                if($v->id == 119){
+                   $button_info1[] = $v;
+                }
 
             }  
             $data['button_info'] = $button_info1;
