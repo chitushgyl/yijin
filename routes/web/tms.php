@@ -273,10 +273,10 @@ Route::group([
     Route::any('/userReward/violationImport','UserRewardController@violationImport');//违规导入
     Route::any('/userReward/accidentImport','UserRewardController@accidentImport');//事故导入
 
-    Route::any('/userReward/remindExcel','UserRewardController@remindExcel');//奖金返还提醒列表
-    Route::any('/userReward/remindExcel','UserRewardController@remindExcel');//奖金返还提醒列表
-    Route::any('/userReward/remindExcel','UserRewardController@remindExcel');//奖金返还提醒列表
-    Route::any('/userReward/remindExcel','UserRewardController@remindExcel');//奖金返还提醒列表
+    Route::any('/userReward/rewardExcel','UserRewardController@rewardExcel');//奖金返还提醒列表
+    Route::any('/userReward/ruleExcel','UserRewardController@ruleExcel');//奖金返还提醒列表
+    Route::any('/userReward/violationExcel','UserRewardController@violationExcel');//奖金返还提醒列表
+    Route::any('/userReward/ccidentExcel','UserRewardController@ccidentExcel');//奖金返还提醒列表
 
     /**车辆维修记录***/
     Route::any('/carService/serviceList','CarServiceController@serviceList');

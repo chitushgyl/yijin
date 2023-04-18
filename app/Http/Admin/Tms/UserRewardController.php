@@ -1756,9 +1756,9 @@ class UserRewardController extends CommonController{
 
     }
 
-    /***    地址导出     /tms/userReward/excel
+    /***    奖励导出     /tms/userReward/rewardExcel
      */
-    public function excel(Request $request,File $file){
+    public function rewardExcel(Request $request,File $file){
         $user_info  = $request->get('user_info');//接收中间件产生的参数
         $now_time   =date('Y-m-d H:i:s',time());
         $input      =$request->all();
@@ -1784,8 +1784,8 @@ class UserRewardController extends CommonController{
             $where=get_list_where($search);
 
             $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
-                'use_flag','delete_flag','create_time','update_time','group_code','group_name','user_id'];
-            $select1=['self_id','name'];
+            'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
+            ,'cash_back','cash_flag','type','user_name','bear','company_fine','escort_name','user_id'];
             $info=UserReward::with(['systemUser' => function($query) use($select1){
                 $query->select($select1);
             }])->where($where)
@@ -1796,45 +1796,30 @@ class UserRewardController extends CommonController{
                 //设置表头
                 $row = [[
                     "id"=>'ID',
-                    "user_name"=>'人员',
-                    "department"=>'部门',
+                    "event_time"=>'日期'
                     "car_number"=>'车牌号',
-                    "score"=>'扣分情况',
-                    "handle_connect"=>'处理情况',
-                    "payment"=>'交款情况',
-                    "late_fee"=>'滞纳金',
-                    "handle_opinion"=>'处理意见',
-                    "safe_flag"=>'是否有安全奖',
-                    "safe_reward"=>'安全奖金',
+                    "user_name"=>'驾驶员',
+                    "escort_name"=>'押运员',
+                    "reward_view"=>'奖励详情',
+                    "safe_reward"=>'奖金',
+                    "handled_by"=>'经办人',
+                    "remark"=>'备注',
                 ]];
-
+ 
 
                 /** 现在根据查询到的数据去做一个导出的数据**/
                 $data_execl=[];
                 foreach ($info as $k=>$v){
                     $list=[];
                     $list['id']=($k+1);
-                    $list['user_name']=$v->systemUser->name;
-                    if($v['department'] == 1){
-                        $list['department']='运管';
-                    }elseif($v['department'] == 2){
-                        $list['department']='交警';
-                    }else{
-                        $list['department']='高速交警';
-                    }
-                    $list['car_number']=$v->car_number;
-                    $list['score']=$v->score;
-                    $list['handle_connect']=$v->handle_connect;
-                    $list['payment']=$v->payment;
-                    $list['late_fee']=$v->late_fee;
-                    $list['handle_opinion']=$v->handle_opinion;
-                    if ($v->safe_flag == 'Y'){
-                        $list['safe_flag']='是';
-                    }else{
-                        $list['safe_flag']='无';
-                    }
-                    $list['safe_flag']=$v->safe_flag;
-                    $list['safe_reward']=$v->safe_reward;
+                    $list['event_time']                = $v['event_time'];
+                    $list['car_number']                = $v['car_number'];
+                    $list['user_name']                = $v['user_name'];
+                    $list['escort_name']                = $v['escort_name'];
+                    $list['reward_view']              = $v['reward_view'];
+                    $list['safe_reward']              = $v['safe_reward'];
+                    $list['handled_by']               = $v['handled_by'];
+                    $list['remark']                   = $v['remark'];
 
                     $data_execl[]=$list;
                 }
@@ -1862,6 +1847,307 @@ class UserRewardController extends CommonController{
         }
 
     }
+
+    /***    违规导出     /tms/userReward/violationExcel
+     */
+    public function violationExcel(Request $request,File $file){
+        $user_info  = $request->get('user_info');//接收中间件产生的参数
+        $now_time   =date('Y-m-d H:i:s',time());
+        $input      =$request->all();
+        /** 接收数据*/
+        $group_code     =$request->input('group_code');
+        // $group_code  =$input['group_code']   ='1234';
+        //dd($group_code);
+        $rules=[
+            'group_code'=>'required',
+        ];
+        $message=[
+            'group_code.required'=>'必须选择公司',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()){
+            /** 下面开始执行导出逻辑**/
+            $group_name     =SystemGroup::where('group_code','=',$group_code)->value('group_name');
+            //查询条件
+            $search=[
+                ['type'=>'=','name'=>'group_code','value'=>$group_code],
+                ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ];
+            $where=get_list_where($search);
+
+            $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
+            'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
+            ,'cash_back','cash_flag','type','user_name','bear','company_fine','escort_name','user_id'];
+            $info=UserReward::with(['systemUser' => function($query) use($select1){
+                $query->select($select1);
+            }])->where($where)
+                ->orderBy('create_time', 'desc')
+                ->select($select)->get();
+//dd($info);
+            if($info){
+                //设置表头
+                $row = [[
+                    "id"=>'ID',
+                    "event_time"=>'日期'
+                    "car_number"=>'车牌号',
+                    "user_name"=>'驾驶员',
+                    "escort_name"=>'押运员',
+                    "company_fine"=>'罚款',
+                    "violation_connect"=>'违规详情',
+                    "cash_back"=>'奖金返还',
+                    "handled_by"=>'经办人',
+                    "remark"=>'备注',
+                ]];
+ 
+
+                /** 现在根据查询到的数据去做一个导出的数据**/
+                $data_execl=[];
+                foreach ($info as $k=>$v){
+                    $list=[];
+                    $list['id']=($k+1);
+                    $list['event_time']                = $v['event_time'];
+                    $list['car_number']                = $v['car_number'];
+                    $list['user_name']                = $v['user_name'];
+                    $list['escort_name']                = $v['escort_name'];
+                    $list['company_fine']           = $v['company_fine'];
+                    $list['violation_connect']      = $v['violation_connect'];
+                    $list['cash_back']              = $v['cash_back'];
+                    $list['handled_by']             = $v['handled_by'];
+                    $list['remark']                 = $v['remark'];
+
+                    $data_execl[]=$list;
+                }
+                /** 调用EXECL导出公用方法，将数据抛出来***/
+                $browse_type=$request->path();
+                $msg=$file->export($data_execl,$row,$group_code,$group_name,$browse_type,$user_info,$where,$now_time);
+
+                //dd($msg);
+                return $msg;
+
+            }else{
+                $msg['code']=301;
+                $msg['msg']="没有数据可以导出";
+                return $msg;
+            }
+        }else{
+            $erro=$validator->errors()->all();
+            $msg['msg']=null;
+            foreach ($erro as $k=>$v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code']=300;
+            return $msg;
+        }
+
+    }
+
+    /***    违章导出     /tms/userReward/ruleExcel
+     */
+    public function ruleExcel(Request $request,File $file){
+        $user_info  = $request->get('user_info');//接收中间件产生的参数
+        $now_time   =date('Y-m-d H:i:s',time());
+        $input      =$request->all();
+        /** 接收数据*/
+        $group_code     =$request->input('group_code');
+        // $group_code  =$input['group_code']   ='1234';
+        //dd($group_code);
+        $rules=[
+            'group_code'=>'required',
+        ];
+        $message=[
+            'group_code.required'=>'必须选择公司',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()){
+            /** 下面开始执行导出逻辑**/
+            $group_name     =SystemGroup::where('group_code','=',$group_code)->value('group_name');
+            //查询条件
+            $search=[
+                ['type'=>'=','name'=>'group_code','value'=>$group_code],
+                ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ];
+            $where=get_list_where($search);
+
+            $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
+            'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
+            ,'cash_back','cash_flag','type','user_name','bear','company_fine','escort_name','user_id'];
+            $info=UserReward::with(['systemUser' => function($query) use($select1){
+                $query->select($select1);
+            }])->where($where)
+                ->orderBy('create_time', 'desc')
+                ->select($select)->get();
+//dd($info);
+            if($info){
+                //设置表头
+                $row = [[
+                    "id"=>'ID',
+                    "event_time"=>'日期'
+                    "car_number"=>'车牌号',
+                    "user_name"=>'驾驶员',
+                    "escort_name"=>'押运员',
+                    "violation_connect"=>'违章详情',
+                    "handle_connect"=>'处理情况',
+                    "score"=>'扣分',
+                    "payment"=>'罚款',
+                    "company_fine"=>'公司罚款金额',
+                    "cash_back"=>'奖金返还',
+                    "handled_by"=>'经办人',
+                    "remark"=>'备注',
+                ]];
+ 
+
+                /** 现在根据查询到的数据去做一个导出的数据**/
+                $data_execl=[];
+                foreach ($info as $k=>$v){
+                    $list=[];
+                    $list['id']=($k+1);
+                    $list['event_time']                = $v['event_time'];
+                    $list['car_number']                = $v['car_number'];
+                    $list['user_name']                = $v['user_name'];
+                    $list['escort_name']                = $v['escort_name'];
+                    
+                    $list['violation_connect']        = $v['violation_connect'];
+                    $list['handle_connect']           = $v['handle_connect'];
+                    $list['score']                    = $v['score'];
+                    $list['payment']                  = $v['payment'];
+                    $list['company_fine']             = $v['company_fine'];
+                    $list['cash_back']                = $v['cash_back'];
+                    $list['handled_by']               = $v['handled_by'];
+                    $list['remark']                   = $v['remark'];
+
+                    $data_execl[]=$list;
+                }
+                /** 调用EXECL导出公用方法，将数据抛出来***/
+                $browse_type=$request->path();
+                $msg=$file->export($data_execl,$row,$group_code,$group_name,$browse_type,$user_info,$where,$now_time);
+
+                //dd($msg);
+                return $msg;
+
+            }else{
+                $msg['code']=301;
+                $msg['msg']="没有数据可以导出";
+                return $msg;
+            }
+        }else{
+            $erro=$validator->errors()->all();
+            $msg['msg']=null;
+            foreach ($erro as $k=>$v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code']=300;
+            return $msg;
+        }
+
+    }
+
+    /***    事故导出     /tms/userReward/accidentExcel
+     */
+    public function accidentExcel(Request $request,File $file){
+        $user_info  = $request->get('user_info');//接收中间件产生的参数
+        $now_time   =date('Y-m-d H:i:s',time());
+        $input      =$request->all();
+        /** 接收数据*/
+        $group_code     =$request->input('group_code');
+        // $group_code  =$input['group_code']   ='1234';
+        //dd($group_code);
+        $rules=[
+            'group_code'=>'required',
+        ];
+        $message=[
+            'group_code.required'=>'必须选择公司',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()){
+            /** 下面开始执行导出逻辑**/
+            $group_name     =SystemGroup::where('group_code','=',$group_code)->value('group_name');
+            //查询条件
+            $search=[
+                ['type'=>'=','name'=>'group_code','value'=>$group_code],
+                ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ];
+            $where=get_list_where($search);
+
+            $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
+            'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
+            ,'cash_back','cash_flag','type','user_name','bear','company_fine','escort_name','user_id'];
+            $info=UserReward::with(['systemUser' => function($query) use($select1){
+                $query->select($select1);
+            }])->where($where)
+                ->orderBy('create_time', 'desc')
+                ->select($select)->get();
+//dd($info);
+            if($info){
+                //设置表头
+                $row = [[
+                    "id"=>'ID',
+                    "event_time"=>'日期'
+                    "car_number"=>'车牌号',
+                    "user_name"=>'驾驶员',
+                    "escort_name"=>'押运员',
+                    "violation_connect"=>'事故详情',
+                    "fault_address"=>'事故地点',
+                    "fault_party"=>'责任方',
+                    "bear"=>'承担责任',
+                    "score"=>'扣分',
+                    "payment"=>'罚款',
+                    "company_fine"=>'公司罚款金额',
+                    "fault_price"=>'损失金额',
+                    "cash_back"=>'奖金返还',
+                    "handled_by"=>'经办人',
+                    "remark"=>'备注',
+                ]];
+ 
+
+                /** 现在根据查询到的数据去做一个导出的数据**/
+                $data_execl=[];
+                foreach ($info as $k=>$v){
+                    $list=[];
+                    $list['id']=($k+1);
+                    $list['event_time']                = $v['event_time'];
+                    $list['car_number']                = $v['car_number'];
+                    $list['user_name']                = $v['user_name'];
+                    $list['escort_name']                = $v['escort_name'];
+                    $list['violation_connect']        = $v['violation_connect'];
+                    $list['fault_address']            = $v['fault_address'];
+                    $list['fault_party']              = $v['fault_party'];   
+                    $list['bear']                     = $v['bear'];
+                    $list['score']                    = $v['score'];
+                    $list['payment']                  = $v['payment'];
+                    $list['company_fine']             = $v['company_fine'];
+                    $list['fault_price']              = $v['fault_price'];
+                    $list['cash_back']                = $v['cash_back'];
+                    $list['handled_by']               = $v['handled_by'];
+                    $list['remark']                   = $v['remark'];
+                    $data_execl[]=$list;
+                }
+                /** 调用EXECL导出公用方法，将数据抛出来***/
+                $browse_type=$request->path();
+                $msg=$file->export($data_execl,$row,$group_code,$group_name,$browse_type,$user_info,$where,$now_time);
+
+                //dd($msg);
+                return $msg;
+
+            }else{
+                $msg['code']=301;
+                $msg['msg']="没有数据可以导出";
+                return $msg;
+            }
+        }else{
+            $erro=$validator->errors()->all();
+            $msg['msg']=null;
+            foreach ($erro as $k=>$v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code']=300;
+            return $msg;
+        }
+
+    }
+
     /**
      * tms/userReward/remindList
      * */
