@@ -112,9 +112,10 @@ class CrondtabController extends Controller {
         ];
         $select = ['self_id','name','entry_time','working_age'];
         $user_list = SystemUser::where($where)->select($select)->get();
-
+        
         foreach($user_list as $k => $v){
             //计算员工入职距当前多少天
+            $now_year = date('Y',time());
             $work_time = strtotime($v->entry_time);
             $work_time1 = date('Y',$work_time);
             $work_time2 = date('m',$work_time);
