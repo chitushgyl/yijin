@@ -117,22 +117,17 @@ class MoneyController extends CommonController{
         foreach ($button_info as $k => $v){
             if($v->id == 99){
                 $button_info1[] = $v;
-                $button_info3[] = $v;
-            }
-            if($v->id == 174){
-                $button_info2[] = $v;
-                $button_info3[] = $v;
+               
             }
 
         }
         foreach ($data['items'] as $k=>$v) {
             $v->pay_type=$money_type_show[$v->pay_type]??null;
             $v->button_info=$button_info;
-            if ($v->pay_state == 'N'){
-                $v->button_info=$button_info3;
-            }
-            if ($v->pay_state == 'Y'){
-                $v->button_info=$button_info4;
+            if ($v->use_flag == 'N'){
+                $v->button_info=$button_info2;
+            }else{
+                $v->button_info=$button_info1;
             }
 
         }
