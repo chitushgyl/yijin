@@ -62,7 +62,12 @@ class WagesController extends CommonController{
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
-    
+        if ($start_time) {
+            $start_time = $start_time.' 00:00:00';
+        }
+        if ($end_time) {
+            $end_time = $end_time.' 23:59:59';
+        }
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
