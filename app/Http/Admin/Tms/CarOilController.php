@@ -83,7 +83,7 @@ class CarOilController extends CommonController{
             case 'all':
                 $data['total']=CarOil::where($where)->count(); //总的数据量
                 $data['items']=CarOil::where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['price']=CarOil::where($where)->sum('total_money');
                 $data['number']=CarOil::where($where)->sum('number');
@@ -94,7 +94,7 @@ class CarOilController extends CommonController{
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=CarOil::where($where)->count(); //总的数据量
                 $data['items']=CarOil::where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['price']=CarOil::where($where)->sum('total_money');
                 $data['number']=CarOil::where($where)->sum('number');
@@ -104,7 +104,7 @@ class CarOilController extends CommonController{
             case 'more':
                 $data['total']=CarOil::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=CarOil::where($where)->whereIn('group_code',$group_info['group_code'])
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['price']=CarOil::where($where)->whereIn('group_code',$group_info['group_code'])->sum('total_money');
                 $data['number']=CarOil::where($where)->whereIn('group_code',$group_info['group_code'])->sum('number');
