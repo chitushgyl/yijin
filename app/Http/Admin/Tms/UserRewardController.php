@@ -49,6 +49,18 @@ class UserRewardController extends CommonController{
             if($v->id == 161){
                 $button_info4[]=$v;
             }
+            if($v->id == 211){
+                $button_info1[]=$v;
+                $button_info2[]=$v;
+                $button_info3[]=$v;
+                $button_info4[]=$v;
+            }
+            if($v->id == 212){
+                $button_info1[]=$v;
+                $button_info2[]=$v;
+                $button_info3[]=$v;
+                $button_info4[]=$v;
+            }
 
         }
 
