@@ -3463,7 +3463,7 @@ $table_name         ='wms_warehouse_area';
     }
 
     //硫磺二队跟单导出   tms/order/orderTwoExcel
-    public function orderTwoExcel(Request $request,File,$file){
+    public function orderTwoExcel(Request $request,File $file){
 $user_info  = $request->get('user_info');//接收中间件产生的参数
         $now_time   =date('Y-m-d H:i:s',time());
         $input      =$request->all();
@@ -3892,7 +3892,7 @@ $user_info  = $request->get('user_info');//接收中间件产生的参数
     }
 
     //危废跟单导出  tms/order/orderWasteExcel
-    public function orderWasteExcel(Request $request,File,$file){
+    public function orderWasteExcel(Request $request,File $file){
         $user_info  = $request->get('user_info');//接收中间件产生的参数
         $now_time   =date('Y-m-d H:i:s',time());
         $input      =$request->all();
