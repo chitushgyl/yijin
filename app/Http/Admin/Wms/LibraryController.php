@@ -121,7 +121,7 @@ class LibraryController extends CommonController{
 			['type'=>'like','name'=>'purchase','value'=>$purchase],
 			['type'=>'>=','name'=>'enter_time','value'=>$start_time],
 			['type'=>'<','name'=>'enter_time','value'=>$end_time],
-            ['type'=>'<','name'=>'self_id','value'=>$order_id],
+            ['type'=>'=','name'=>'self_id','value'=>$order_id],
 
         ];
 

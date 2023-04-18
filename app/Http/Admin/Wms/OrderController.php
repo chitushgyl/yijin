@@ -81,7 +81,7 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'car_num','value'=>$car_number],
             ['type'=>'>=','name'=>'out_time','value'=>$start_time],
             ['type'=>'<','name'=>'out_time','value'=>$end_time],
-            ['type'=>'<','name'=>'self_id','value'=>$order_id],
+            ['type'=>'=','name'=>'self_id','value'=>$order_id],
         ];
 
         $where = get_list_where($search);
