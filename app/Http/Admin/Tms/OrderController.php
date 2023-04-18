@@ -88,13 +88,13 @@ class OrderController extends CommonController{
         }else{
             $button_info1=[];
             foreach ($data['button_info']as $k => $v){
-                if($v->id == 200){
-                   $button_info1[] = $v;
-                }
                 if($v->id == 118){
                    $button_info1[] = $v;
                 }
                 if($v->id == 119){
+                   $button_info1[] = $v;
+                }
+                if($v->id == 200){
                    $button_info1[] = $v;
                 }
 
