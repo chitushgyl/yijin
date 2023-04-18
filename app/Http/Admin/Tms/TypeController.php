@@ -270,12 +270,13 @@ class TypeController extends CommonController{
         $where=[
             ['delete_flag','=','Y'],
             ['use_flag','=','Y'],
+
         ];
         $select=['self_id','parame_name','img','type','group_code','group_name'];
         if ($type){
-            $data['info']=TmsCarType::where($where)->where('type',$type)->select($select)->get();
+            $data['info']=TmsCarType::where($where)->where('group_code',$group_code)->where('type',$type)->select($select)->get();
         }else{
-            $data['info']=TmsCarType::where($where)->select($select)->get();
+            $data['info']=TmsCarType::where($where)->where('group_code',$group_code)->select($select)->get();
         }
 
 
