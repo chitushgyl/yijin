@@ -205,7 +205,7 @@ class OrderController extends CommonController{
                     $query->select($select1);
                 }])->where($where);
                 $data['items'] = $data['items']
-                    ->offset($firstrow)->limit($listrows)->orderBy('send_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('send_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
@@ -217,7 +217,7 @@ class OrderController extends CommonController{
                     $query->select($select1);
                 }])->where($where);
                 $data['items'] = $data['items']
-                    ->offset($firstrow)->limit($listrows)->orderBy('send_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('send_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
@@ -230,7 +230,7 @@ class OrderController extends CommonController{
 
                 $data['items'] = $data['items']
                     ->whereIn('group_code',$group_info['group_code'])
-                    ->offset($firstrow)->limit($listrows)->orderBy('send_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('send_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;

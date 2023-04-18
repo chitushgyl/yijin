@@ -104,7 +104,7 @@ class MoneyController extends CommonController{
                     }])
                     ->with(['tmsCompanyGroup' => function($query)use($select4){
                         $query->select($select4);
-                    }])->where($where)->orWhere($where1)->offset($firstrow)->limit($listrows)->select($select)->orderBy('update_time','DESC')->get();
+                    }])->where($where)->orWhere($where1)->offset($firstrow)->limit($listrows)->select($select)->orderBy('update_time','DESC')->orderBy('self_id','desc')->get();
                 $data['group_show']='Y';
                 break;
 
@@ -134,7 +134,7 @@ class MoneyController extends CommonController{
                     ->with(['tmsCompanyGroup' => function($query)use($select4){
                         $query->select($select4);
                     }])
-                    ->offset($firstrow)->limit($listrows)->where($where)->orWhere($where1)->select($select)->orderBy('update_time','DESC')->get();
+                    ->offset($firstrow)->limit($listrows)->where($where)->orWhere($where1)->select($select)->orderBy('update_time','DESC')->orderBy('self_id','desc')->get();
                 $data['group_show']='N';
                 break;
 
@@ -162,7 +162,7 @@ class MoneyController extends CommonController{
                     }])
                     ->with(['tmsCompanyGroup' => function($query)use($select4){
                         $query->select($select4);
-                    }])->where($where)->orWhere($where1)->offset($firstrow)->limit($listrows)->select($select)->orderBy('update_time','DESC')->get();
+                    }])->where($where)->orWhere($where1)->offset($firstrow)->limit($listrows)->select($select)->orderBy('update_time','DESC')->orderBy('self_id','desc')->get();
                 $data['group_show']='Y';
                 break;
         }

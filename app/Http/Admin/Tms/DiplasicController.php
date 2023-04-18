@@ -73,7 +73,7 @@ class DiplasicController extends CommonController{
             case 'all':
                 $data['total']=TmsDiplasic::where($where)->count(); //总的数据量
                 $data['items']=TmsDiplasic::where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
@@ -82,7 +82,7 @@ class DiplasicController extends CommonController{
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=TmsDiplasic::where($where)->count(); //总的数据量
                 $data['items']=TmsDiplasic::where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
@@ -90,7 +90,7 @@ class DiplasicController extends CommonController{
             case 'more':
                 $data['total']=TmsDiplasic::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=TmsDiplasic::where($where)->whereIn('group_code',$group_info['group_code'])
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;

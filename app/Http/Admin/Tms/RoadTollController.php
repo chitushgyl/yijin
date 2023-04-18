@@ -79,7 +79,7 @@ class RoadTollController extends CommonController{
             case 'all':
                 $data['total']=RoadToll::where($where)->count(); //总的数据量
                 $data['items']=RoadToll::where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['price']=RoadToll::where($where)->sum('road_price');
                 $data['group_show']='Y';
@@ -89,7 +89,7 @@ class RoadTollController extends CommonController{
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=RoadToll::where($where)->count(); //总的数据量
                 $data['items']=RoadToll::where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['price']=RoadToll::where($where)->sum('road_price');
                 $data['group_show']='N';
@@ -98,7 +98,7 @@ class RoadTollController extends CommonController{
             case 'more':
                 $data['total']=RoadToll::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=RoadToll::where($where)->whereIn('group_code',$group_info['group_code'])
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
                 $data['price']=RoadToll::where($where)->whereIn('group_code',$group_info['group_code'])->sum('road_price');
                 $data['group_show']='Y';
