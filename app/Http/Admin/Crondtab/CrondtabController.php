@@ -141,7 +141,7 @@ class CrondtabController extends Controller {
             $update['working_age']             = $work_age;
             $update['update_time']             = $now_time;
             
-            SystemUser::where('slef_id',$v->self_id)->update($update);
+            SystemUser::where('self_id',$v->self_id)->update($update);
             }
             
         }
