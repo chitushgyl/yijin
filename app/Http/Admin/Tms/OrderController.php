@@ -60,6 +60,30 @@ class OrderController extends CommonController{
                 'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/危废队.xlsx',
             ];
         if ($type == 1){
+            $button_info1=[];
+            $button_info2=[];
+            $button_info3=[];
+            $button_info4=[];
+            $button_info5=[];
+            foreach($data['button_info'] as $k => $v){
+                if($v->id == 82){
+                   $button_info1[] = $v;
+                }
+                if($v->id == 118){
+                   $button_info1[] = $v;
+                }
+                if($v->id == 119){
+                   $button_info1[] = $v;
+                }
+                if($v->id == 190){
+                   $button_info1[] = $v;
+                }
+                if($v->id == 82){
+
+                }
+
+            }
+            $data['button_info'] = $button_info1;
 
         }else{
             $button_info1=[];
