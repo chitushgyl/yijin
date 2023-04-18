@@ -624,8 +624,6 @@ class OrderController extends CommonController{
                     }else{
                         $count_pay = 0;
                     }
-                 }else{
-                    $count_pay = 0;
                  }
 
             //判断该订单是否算过提成
@@ -1349,7 +1347,7 @@ class OrderController extends CommonController{
                     $list['file_id']                 = $file_id;
                     $list['pay_id']                 = null;
 
-                    $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->get();
+                    $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->where('group_code',$info->group_code)->get();
                     foreach($pay_type as $kk =>$vv){
                     if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
                        $list['pay_id'] = $vv->self_id; 
@@ -1644,7 +1642,7 @@ class OrderController extends CommonController{
                     $list['create_time']             = $list['update_time']=$now_time;
                     $list['file_id']                 = $file_id;
                     $list['pay_id']                 = null;
-                    $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->get();
+                    $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->where('group_code',$info->group_code)->get();
                     foreach($pay_type as $kk =>$vv){
                     if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
                        $list['pay_id'] = $vv->self_id; 
@@ -1960,7 +1958,7 @@ class OrderController extends CommonController{
                     $list['file_id']                 = $file_id;
                     $list['pay_id']                  = null;
 
-                    $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->get();
+                    $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->where('group_code',$info->group_code)->get();
                     foreach($pay_type as $kk =>$vv){
                     if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
                        $list['pay_id'] = $vv->self_id; 

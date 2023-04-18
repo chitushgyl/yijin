@@ -460,12 +460,10 @@ class MoneyController extends CommonController{
 
         $rules=[
             'self_id'=>'required',
-            'process_state'=>'required',
-
+            
         ];
         $message=[
             'self_id.required'=>'请选择费用条目！',
-            'process_state.required'=>'请选择审核结果',
         ];
         $validator=Validator::make($input,$rules,$message);
 
@@ -473,13 +471,18 @@ class MoneyController extends CommonController{
         if($validator->passes()){
             $wheres['self_id'] = $self_id;
             $old_info=TmsMoney::where($wheres)->first();
+            if($old_info->use_flag == 'N'){
+                $msg['code'] = 303;
+                $msg['msg'] = "费用已作废，不可修改！";
+                return $msg;
+            
+            }
 
-            $data['process_state'] = $process_state;
-            $data['pay_state'] = $process_state;
+            $data['use_flag'] = 'N';
             $data['update_time']   = $now_time;
             $id = TmsMoney::where('self_id',$self_id)->update($data);
 
-            $operationing->access_cause='费用审核';
+            $operationing->access_cause='费用作废';
             $operationing->operation_type='create';
             $operationing->table_id=$old_info?$self_id:$data['self_id'];
             $operationing->old_info=$old_info;
