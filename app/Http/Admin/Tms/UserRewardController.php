@@ -1062,7 +1062,7 @@ class UserRewardController extends CommonController{
                         $list['user_name']               = null;
                
                     }
-                    if($v['escort']){
+                    if($v['escort_name']){
                         $list['escort']                  = $cargo->self_id;
                         $list['escort_name']             = $cargo->name;
                         
@@ -1362,7 +1362,7 @@ class UserRewardController extends CommonController{
                         $list['user_name']               = null;
                
                     }
-                    if($v['escort']){
+                    if($v['escort_name']){
                         $list['escort']                  = $cargo->self_id;
                         $list['escort_name']             = $cargo->name;
                         
@@ -1643,7 +1643,7 @@ class UserRewardController extends CommonController{
                         $list['user_name']               = null;
                
                     }
-                    if($v['escort']){
+                    if($v['escort_name']){
                         $list['escort']                  = $cargo->self_id;
                         $list['escort_name']             = $cargo->name;
                         
@@ -1776,6 +1776,8 @@ class UserRewardController extends CommonController{
             $search=[
                 ['type'=>'=','name'=>'group_code','value'=>$group_code],
                 ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+                ['type'=>'=','name'=>'type','value'=>'reward'],
+
             ];
             $where=get_list_where($search);
 
@@ -1868,6 +1870,7 @@ class UserRewardController extends CommonController{
             $search=[
                 ['type'=>'=','name'=>'group_code','value'=>$group_code],
                 ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+                ['type'=>'=','name'=>'type','value'=>'violation'],
             ];
             $where=get_list_where($search);
 
@@ -1963,6 +1966,7 @@ class UserRewardController extends CommonController{
             $search=[
                 ['type'=>'=','name'=>'group_code','value'=>$group_code],
                 ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+                ['type'=>'=','name'=>'type','value'=>'rule'],
             ];
             $where=get_list_where($search);
 
@@ -2064,6 +2068,7 @@ class UserRewardController extends CommonController{
             $search=[
                 ['type'=>'=','name'=>'group_code','value'=>$group_code],
                 ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+                ['type'=>'=','name'=>'type','value'=>'accident'],
             ];
             $where=get_list_where($search);
 

@@ -131,7 +131,7 @@ class WagesController extends CommonController{
             $v->money = DriverCommission::where('leave_time','>=',$start_time)->where('leave_time','<=',$end_time)->where('driver_id',$v->self_id)->sum('money');
             $v->reward_price = UserExamine::where('create_time','>=',$start_time)->where('create_time','<=',$end_time)->where('user_id',$v->self_id)->sum('reward_price');
             $v->salary_fine = UserExamine::where('create_time','>=',$start_time)->where('create_time','<=',$end_time)->where('user_id',$v->self_id)->sum('salary_fine');
-            $v->date = UserExamine::where('startk_time','>=',$start_time)->where('end_time','<=',$end_time)->where('user_id',$v->self_id)->sum('date_num');
+            $v->date = UserExamine::where('start_time','>=',$start_time)->where('end_time','<=',$end_time)->where('user_id',$v->self_id)->sum('date_num');
             $v->water_money = 0.00;
             $v->income_tax = 0.00;
             
