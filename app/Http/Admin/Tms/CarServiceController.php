@@ -77,7 +77,7 @@ class CarServiceController extends CommonController{
             ['type'=>'like','name'=>'trailer_num','value'=>$trailer_num],
             ['type'=>'like','name'=>'driver_name','value'=>$driver_name],
             ['type'=>'>=','name'=>'service_time','value'=>$start_time],
-            ['type'=>'<','name'=>'service_time','value'=>$end_time],
+            ['type'=>'<=','name'=>'service_time','value'=>$end_time],
             ['type'=>'=','name'=>'type','value'=>$type],
             ['type'=>'like','name'=>'service_partne','value'=>$service_partne],
             ['type'=>'=','name'=>'settle_flag','value'=>$settle_flag],

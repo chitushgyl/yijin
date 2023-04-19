@@ -80,7 +80,7 @@ class TryeController extends CommonController{
             
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
             ['type'=>'like','name'=>'trailer_num','value'=>$trailer_num],
-            ['type'=>'>','name'=>'in_time','value'=>$start_time],
+            ['type'=>'>=','name'=>'in_time','value'=>$start_time],
             ['type'=>'<=','name'=>'in_time','value'=>$end_time],
         ];
 
@@ -1711,7 +1711,7 @@ class TryeController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'=','name'=>'use_flag','value'=>'Y'],
             ['type'=>'>=','name'=>'now_num','value'=>0],
-            ['type'=>'>','name'=>'inout_time','value'=>$start_time],
+            ['type'=>'>=','name'=>'inout_time','value'=>$start_time],
             ['type'=>'<=','name'=>'inout_time','value'=>$end_time],
         ];
 

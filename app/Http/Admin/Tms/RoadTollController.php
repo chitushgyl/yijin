@@ -67,7 +67,7 @@ class RoadTollController extends CommonController{
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
             ['type'=>'>=','name'=>'road_time','value'=>$start_time],
-            ['type'=>'<','name'=>'road_time','value'=>$end_time],
+            ['type'=>'<=','name'=>'road_time','value'=>$end_time],
             ['type'=>'like','name'=>'etc_number','value'=>$etc_number],
         ];
 

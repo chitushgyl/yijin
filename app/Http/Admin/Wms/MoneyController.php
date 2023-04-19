@@ -66,7 +66,7 @@ class MoneyController extends CommonController{
             ['type'=>'like','name'=>'trailer_num','value'=>$trailer_num],
             ['type'=>'like','name'=>'user_name','value'=>$user_name],
             ['type'=>'>=','name'=>'create_time','value'=>$start_time],
-            ['type'=>'<','name'=>'create_time','value'=>$end_time],
+            ['type'=>'<=','name'=>'create_time','value'=>$end_time],
             ['type'=>'=','name'=>'type_state','value'=>$type_state],
         ];
 

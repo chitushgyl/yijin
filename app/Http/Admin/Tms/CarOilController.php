@@ -751,7 +751,7 @@ class CarOilController extends CommonController{
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'suppliere','value'=>$suppliere],
             ['type'=>'>=','name'=>'create_time','value'=>$start_time],
-            ['type'=>'<','name'=>'create_time','value'=>$end_time],
+            ['type'=>'<=','name'=>'create_time','value'=>$end_time],
         ];
 
         $where=get_list_where($search);

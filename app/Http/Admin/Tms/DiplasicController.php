@@ -63,7 +63,7 @@ class DiplasicController extends CommonController{
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
             ['type'=>'=','name'=>'input_date','value'=>$input_date],
             ['type'=>'>=','name'=>'input_date','value'=>$start_time],
-            ['type'=>'<','name'=>'input_date','value'=>$end_time],
+            ['type'=>'<=','name'=>'input_date','value'=>$end_time],
         ];
 
         $where=get_list_where($search);
