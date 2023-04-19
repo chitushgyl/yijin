@@ -1193,7 +1193,6 @@ class TryeController extends CommonController{
             }
         }
 //        dd($old_info);
-        $id=CarOil::whereIn('self_id',explode(',',$self_id))->update($data);
         if ($id){
             $msg['code']=200;
             $msg['msg']="数据拉取成功";
