@@ -1791,7 +1791,7 @@ class UserRewardController extends CommonController{
                 //设置表头
                 $row = [[
                     "id"=>'ID',
-                    "event_time"=>'日期'
+                    "event_time"=>'日期',
                     "car_number"=>'车牌号',
                     "user_name"=>'驾驶员',
                     "escort_name"=>'押运员',
@@ -1883,7 +1883,7 @@ class UserRewardController extends CommonController{
                 //设置表头
                 $row = [[
                     "id"=>'ID',
-                    "event_time"=>'日期'
+                    "event_time"=>'日期',
                     "car_number"=>'车牌号',
                     "user_name"=>'驾驶员',
                     "escort_name"=>'押运员',
@@ -1977,7 +1977,7 @@ class UserRewardController extends CommonController{
                 //设置表头
                 $row = [[
                     "id"=>'ID',
-                    "event_time"=>'日期'
+                    "event_time"=>'日期',
                     "car_number"=>'车牌号',
                     "user_name"=>'驾驶员',
                     "escort_name"=>'押运员',
@@ -2078,7 +2078,7 @@ class UserRewardController extends CommonController{
                 //设置表头
                 $row = [[
                     "id"=>'ID',
-                    "event_time"=>'日期'
+                    "event_time"=>'日期',
                     "car_number"=>'车牌号',
                     "user_name"=>'驾驶员',
                     "escort_name"=>'押运员',
