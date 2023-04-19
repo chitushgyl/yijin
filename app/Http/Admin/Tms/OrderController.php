@@ -630,7 +630,7 @@ class OrderController extends CommonController{
             $order = TmsOrder::with(['tmsLine' => function($query) use($select1){
                     $query->where('delete_flag','Y');
                     $query->select($select1);
-                }])->where('driver_id',$old_info->driver_id)->where('leave_time',$leave_time)->get();
+                }])->where('driver_id',$old_info->driver_id)->where('leave_time',$leave_time)->where('delete_flag','Y')->get();
              //获取当月天数
              $day_num = date('t',strtotime($leave_time));
              //获取驾驶员的基本工资
