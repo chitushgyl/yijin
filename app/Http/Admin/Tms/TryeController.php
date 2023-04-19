@@ -522,6 +522,151 @@ class TryeController extends CommonController{
         }
     }
 
+    //新改轮胎入库 入库完成后需审核完成入库
+    public function tryeIn(Request $request){
+        $user_info = $request->get('user_info');//接收中间件产生的参数
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='tms_trye';
+
+        $operationing->access_cause     ='创建/修改车辆类型';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='add';
+
+        $input              =$request->all();
+        //dd($input);
+        /** 接收数据*/
+        $self_id            =$request->input('self_id');
+        $car_id             =$request->input('car_id');//车牌号
+        $car_number         =$request->input('car_number');//车牌号
+        $model              =$request->input('model');//型号
+        $num                =$request->input('num');//数量
+        $trye_num           =$request->input('trye_num');//编号
+        $operator           =$request->input('operator');//经办人
+        $type               =$request->input('type');//类型：in入库  out出库
+        $in_time            =$request->input('in_time');//时间
+        $driver_name        =$request->input('driver_name');//驾驶员
+        $change             =$request->input('change');//更换位置
+        $trye_list          =$request->input('trye_list');//更换位置
+        $price              =$request->input('price');//更换位置
+        $supplier           =$request->input('supplier');//供应商
+
+        /**
+        $trye_list = [[
+        trye_num=>'',//轮胎编号
+        model=>'',//型号
+        num=>2,//数量
+        kilo_num=>'25062',//里程数
+        change=>'',//更换位置
+        trye_img=>'',//图片
+        ]]
+         * */
+        $rules=[
+            'num'=>'required',
+        ];
+        $message=[
+            'num.required'=>'数量必须填写',
+        ];
+
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()) {
+
+            $data['type']              =$type;
+            $data['model']             =$model;
+            $data['num']               =$num;
+            $data['trye_num']          =$trye_num;
+            $data['in_time']           =$in_time;
+            $data['operator']          =$operator;
+            $data['price']             =$price;
+            $data['supplier']          =$supplier;
+            $trye_model = TmsTryeList::where('model',$model)->first();
+
+
+            $count['model'] = $model;
+            $count['initial_num'] = $num;
+            $count['change_num'] = $num;
+            $count['now_num'] = $num;
+            $count['date_time'] = $in_time;
+            $count['sale_price'] = $price;
+
+            $wheres['self_id'] = $self_id;
+            $old_info=TmsTrye::where($wheres)->first();
+
+            if($old_info){
+                $data['update_time']=$now_time;
+                $id=TmsTrye::where($wheres)->update($data);
+                TmsTryeCount::where('order_id',$self_id)->update($count);
+                $update['now_num'] = $num;
+                $update['change_num'] = $num;
+                TmsTryeChange::where('order_id',$self_id)->update($update);
+                $operationing->access_cause='修改入库';
+                $operationing->operation_type='update';
+
+            }else{
+                $data['self_id']            =generate_id('trye_');
+                $data['create_user_id']     =$user_info->admin_id;
+                $data['create_user_name']   =$user_info->name;
+                $data['create_time']        =$data['update_time']=$now_time;
+                $data['group_code']         = $user_info->group_code;
+                $data['group_name']         = $user_info->group_name;
+
+                $count['self_id'] = generate_id('count_');
+                $count['order_id'] = $data['self_id'];
+                $count['create_user_id']     =$user_info->admin_id;
+                $count['create_user_name']   =$user_info->name;
+                $count['create_time']        =$count['update_time']=$now_time;
+                $count['group_code']         = $user_info->group_code;
+                $count['group_name']         = $user_info->group_name;
+                $change[] = $count;
+                $id=TmsTrye::insert($data);
+                TmsTryeCount::insert($count);
+                // $change->tryChange();
+                self::tryeChange($change,'preentry');
+                if (!$trye_model){
+                    $model_list['self_id'] = generate_id('model_');
+                    $model_list['model']   = $model;
+                    $model_list['price']   = $price;
+                    $model_list['create_user_id']     =$user_info->admin_id;
+                    $model_list['create_user_name']   =$user_info->name;
+                    $model_list['create_time']        =$model_list['update_time']=$now_time;
+                    $model_list['group_code']         = $user_info->group_code;
+                    $model_list['group_name']         = $user_info->group_name;
+                   TmsTryeList::insert($model_list);
+                }
+
+                $operationing->access_cause='新建入库';
+                $operationing->operation_type='create';
+            }
+
+            $operationing->table_id=$old_info?$self_id:$data['self_id'];
+            $operationing->old_info=$old_info;
+            $operationing->new_info=$data;
+
+            if($id){
+                $msg['code'] = 200;
+                $msg['msg'] = "操作成功";
+                return $msg;
+            }else{
+                $msg['code'] = 302;
+                $msg['msg'] = "操作失败";
+                return $msg;
+            }
+
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
+    }
+
     /**
      * 获取轮胎  根据规格获取当前已入库的轮胎参数
      * */

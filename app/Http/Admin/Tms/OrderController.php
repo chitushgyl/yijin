@@ -637,7 +637,7 @@ class OrderController extends CommonController{
              $base_pay=0;
              $salary = SystemUser::where('self_id',$old_info->driver_id)->select('self_id','salary')->first();
              if($salary){
-                  $base_pay = $salary->salary/$day_num;
+                  $base_pay = $salary->salary/30;
              }
         
              // dump($base_pay);
