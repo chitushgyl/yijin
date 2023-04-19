@@ -150,6 +150,8 @@ class CrondtabController extends Controller {
     //计算员工上月工资
     public function countSalary(Request $request){
         $now_time = date('Y-m-d H:i:s',time());
+        $select =['self_id','name','salary','live_cost','social_money','safe_reward','group_code','group_name','use_flag','delete_flag'];
+        $user_list=SystemUser::where($where)->orderBy('self_id','desc')->select($select)->get();
     }
 
 

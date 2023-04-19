@@ -4,6 +4,7 @@ namespace App\Http\Admin\Tms;
 use App\Models\Group\SystemGroup;
 use App\Models\Group\SystemUser;
 use App\Models\Tms\AwardRemind;
+use App\Models\Tms\TmsCar;
 use App\Models\Tms\TmsMoney;
 use App\Models\User\UserReward;
 use Illuminate\Http\Request;
