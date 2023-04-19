@@ -162,8 +162,9 @@ class CrondtabController extends Controller {
         //获取上月日期
         $start_month = date('Y-m-d', strtotime(date('Y-m-01') . ' -1 month'));
         $end_month = date('Y-m-d', strtotime(date('Y-m-01') . ' -1 day'));
+        $salary_time = date('Y-m', strtotime(date('Y-m-01') . ' -1 month'));
 
-        dd($start_month,$end_month);
+        dd($start_month,$end_month,$salary_time);
         //获取员工工资
         foreach($user_list as $k => $v){
             $v->company_fine = UserReward::where('event_time','>=',$start_month)->where('event_time','<=',$end_month)->where('user_id',$v->self_id)->sum('company_fine');
@@ -174,6 +175,29 @@ class CrondtabController extends Controller {
             $v->date = UserExamine::where('start_time','>=',$start_month)->where('end_time','<=',$end_month)->where('user_id',$v->self_id)->sum('date_num');
             $v->water_money = 0.00;
             $v->income_tax = 0.00;
+
+            $data['salary']  = $v->salary;//基本工资
+            $data['live_cost']  = $v->live_cost;//住宿费
+            $data['social_money']  = $v->social_money;//社保费用
+            $data['safe_reward']  = $v->safe_reward;//奖金
+            $data['company_fine']  = $v->company_fine;//公司罚款
+            $data['money']  = $v->money;//提成
+            $data['salary_fine']  = $v->salary_fine;//请假基本工资扣款
+            $data['reward_price']  = $v->reward_price;//请假奖金扣款
+            $data['income_tax']  = 0;//个税
+            $data['water_money']  = 0;//水电费
+            $data['money_award']  = $v->money_award;//奖励
+            $data['group_code']  = $v->group_code;
+            $data['group_name']  = $v->group_name;
+            $data['salary_time']  = $salary_time;
+            
+            $data['create_user_id']  = null;
+            $data['create_user_name']  = null;
+            $data['create_time']  = $now_time;
+            $data['update_time']  = $now_time;
+
+            TmsWages::insert($data);
+          
             
         }
     }
