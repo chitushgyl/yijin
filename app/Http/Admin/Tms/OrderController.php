@@ -647,7 +647,8 @@ class OrderController extends CommonController{
              $carnum = 0;
              $once = 0;
              $line_list= [];
-             //计算提成             
+             //计算提成  
+             //查找当前司机 本次卸货时间 总共有几个订单   分别找出结算方式为A和B的订单        
                   foreach ($order as $k=>$v) {
                     if($v->tmsLine){
                       if($v->tmsLine->pay_type == 'A'){
@@ -662,6 +663,12 @@ class OrderController extends CommonController{
                     }                             
           
                   }
+                  //计算结算结算方式为A时候的提成
+
+                  //计算结算方式为B时候的提成
+
+                  //A+B 得出总提成
+
                  $count_pay = ($pay-$base_pay);
                  if($count_pay > 0){
                      $count_pay = $count_pay + $reward;

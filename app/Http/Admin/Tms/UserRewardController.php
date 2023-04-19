@@ -846,7 +846,7 @@ class UserRewardController extends CommonController{
                 return $msg;
             }
             $count=count($datalist);
-            $id= TmsAddressContact::insert($datalist);
+            $id= UserReward::insert($datalist);
             if(count($user_award_list)>0){
                 AwardRemind::insert($user_award_list);
             }
@@ -1143,7 +1143,7 @@ class UserRewardController extends CommonController{
                 return $msg;
             }
             $count=count($datalist);
-            $id= TmsAddressContact::insert($datalist);
+            $id= UserReward::insert($datalist);
             if(count($user_award_list)>0){
                 AwardRemind::insert($user_award_list);
             }
@@ -1444,7 +1444,7 @@ class UserRewardController extends CommonController{
                 return $msg;
             }
             $count=count($datalist);
-            $id= TmsAddressContact::insert($datalist);
+            $id= UserReward::insert($datalist);
             if(count($user_award_list)>0){
                 AwardRemind::insert($user_award_list);
             }
@@ -1681,7 +1681,7 @@ class UserRewardController extends CommonController{
                 return $msg;
             }
             $count=count($datalist);
-            $id= TmsAddressContact::insert($datalist);
+            $id= UserReward::insert($datalist);
         
             
             
