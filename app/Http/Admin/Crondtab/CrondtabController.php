@@ -5,14 +5,12 @@ use App\Models\Tms\TmsOrder;
 use App\Models\Tms\DriverCommission;
 use App\Models\User\UserReward;
 use App\Models\User\UserExamine;
-use App\Models\Tms\AwardRemind;
 use App\Http\Controllers\Controller;
 use App\Models\Group\SystemUser;
 use App\Models\Tms\AwardRemind;
 use App\Models\Tms\TmsDiplasic;
 use App\Models\Tms\TmsPayment;
 use App\Models\User\UserCapital;
-use App\Models\User\UserReward;
 use Illuminate\Http\Request;
 use EasyWeChat\Foundation\Application;
 
