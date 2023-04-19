@@ -1,7 +1,11 @@
 <?php
 namespace App\Http\Admin\Crondtab;
 
-
+use App\Models\Tms\TmsOrder;
+use App\Models\Tms\DriverCommission;
+use App\Models\User\UserReward;
+use App\Models\User\UserExamine;
+use App\Models\Tms\AwardRemind;
 use App\Http\Controllers\Controller;
 use App\Models\Group\SystemUser;
 use App\Models\Tms\AwardRemind;
@@ -151,7 +155,29 @@ class CrondtabController extends Controller {
     public function countSalary(Request $request){
         $now_time = date('Y-m-d H:i:s',time());
         $select =['self_id','name','salary','live_cost','social_money','safe_reward','group_code','group_name','use_flag','delete_flag'];
+        $where = [
+            ['delete_flag','=','Y'],
+            ['use_flag','=','Y'],
+        ];
         $user_list=SystemUser::where($where)->orderBy('self_id','desc')->select($select)->get();
+
+        //获取上月日期
+        $start_month = date('Y-m-d', strtotime(date('Y-m-01') . ' -1 month'));
+        $end_month = date('Y-m-d', strtotime(date('Y-m-01') . ' -1 day'));
+
+        dd($start_month,$end_month);
+        //获取员工工资
+        foreach($user_list as $k => $v){
+            $v->company_fine = UserReward::where('event_time','>=',$start_month)->where('event_time','<=',$end_month)->where('user_id',$v->self_id)->sum('company_fine');
+            $v->money_award = AwardRemind::where('cash_back','>=',$start_month)->where('cash_back','<=',$end_month)->where('user_id',$v->self_id)->sum('money_award');
+            $v->money = DriverCommission::where('leave_time','>=',$start_month)->where('leave_time','<=',$end_month)->where('driver_id',$v->self_id)->sum('money');
+            $v->reward_price = UserExamine::where('create_time','>=',$start_month)->where('create_time','<=',$end_month)->where('user_id',$v->self_id)->sum('reward_price');
+            $v->salary_fine = UserExamine::where('create_time','>=',$start_month)->where('create_time','<=',$end_month)->where('user_id',$v->self_id)->sum('salary_fine');
+            $v->date = UserExamine::where('start_time','>=',$start_month)->where('end_time','<=',$end_month)->where('user_id',$v->self_id)->sum('date_num');
+            $v->water_money = 0.00;
+            $v->income_tax = 0.00;
+            
+        }
     }
 
 
