@@ -453,6 +453,9 @@ class TryeController extends CommonController{
                 $data['update_time']=$now_time;
                 $id=TmsTrye::where($wheres)->update($data);
                 TmsTryeCount::where('order_id',$self_id)->update($count);
+                $update['now_num'] = $num;
+                $update['change_num'] = $num;
+                TmsTryeChange::where('order_id',$self_id)->update($update);
                 $operationing->access_cause='修改入库';
                 $operationing->operation_type='update';
 
