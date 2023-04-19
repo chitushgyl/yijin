@@ -164,7 +164,7 @@ class CrondtabController extends Controller {
         $end_month = date('Y-m-d', strtotime(date('Y-m-01') . ' -1 day'));
         $salary_time = date('Y-m', strtotime(date('Y-m-01') . ' -1 month'));
 
-        dd($start_month,$end_month,$salary_time);
+        // dd($start_month,$end_month,$salary_time);
         //获取员工工资
         foreach($user_list as $k => $v){
             $v->company_fine = UserReward::where('event_time','>=',$start_month)->where('event_time','<=',$end_month)->where('user_id',$v->self_id)->sum('company_fine');
