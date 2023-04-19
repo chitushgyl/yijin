@@ -59,6 +59,7 @@ class WagesController extends CommonController{
         $end_time       =$request->input('end_time');
      
         $user_name      =$request->input('user_name');
+        $user_id      =$request->input('user_id');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -72,6 +73,8 @@ class WagesController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'like','name'=>'user_name','value'=>$user_name],
+            ['type'=>'=','name'=>'user_id','value'=>$user_id],
            
         ];
        
