@@ -187,14 +187,19 @@ class WagesController extends CommonController{
         $self_id             =$request->input('self_id');
         $user_id             =$request->input('user_id');//员工ID
         $user_name           =$request->input('user_name');//员工名称
-        $position            =$request->input('position');// 职位
-        $date                =$request->input('date');// 月份
-        $base_pay            =$request->input('base_pay');//基本工资
-        $reward              =$request->input('reward');//奖励
-        $reward_back         =$request->input('reward_back');// 奖金返还
-        $ti_money            =$request->input('ti_money');//提成
-        $remark              =$request->input('remark');//备注
+        $salary              =$request->input('salary');// 职位
+        $live_cost           =$request->input('live_cost');// 月份
+        $social_money        =$request->input('social_money');//基本工资
+        $safe_reward         =$request->input('safe_reward');//奖励
+        $company_fine        =$request->input('company_fine');// 奖金返还
+        $money               =$request->input('money');//提成
+        $salary_fine         =$request->input('salary_fine');//备注
+        $reward_price        =$request->input('reward_price');//备注
+        $income_tax          =$request->input('income_tax');//备注
+        $water_money         =$request->input('water_money');//备注
         $total_money         =$request->input('total_money');//合计
+        $remark              =$request->input('remark');//备注
+
 
         $rules=[
 
@@ -215,14 +220,32 @@ class WagesController extends CommonController{
 
             $data['user_id']          = $user_id;
             $data['user_name']        = $user_name;
-            $data['position']         = $position;
-            $data['date']             = $date;
-            $data['base_pay']         = $base_pay;
-            $data['reward']           = $reward;
-            $data['reward_back']      = $reward_back;
-            $data['ti_money']         = $ti_money;
+            $data['salary']           = $salary;//基本工资
+            $data['live_cost']        = $live_cost;//住宿费
+            $data['social_money']     = $social_money;//社保费用
+            $data['safe_reward']      = $safe_reward;//奖金
+            $data['company_fine']     = $company_fine;//公司罚款
+            $data['money']            = $money;//提成
+            $data['salary_fine']      = $salary_fine;//请假基本工资扣款
+            $data['reward_price']     = $reward_price;//请假奖金扣款
+            $data['income_tax']       = $income_tax;//个税
+            $data['water_money']      = $water_money;//水电费
+            $data['money_award']      = $money_award;//奖励
+            $data['date_num']         = $date_num;//请假天数
             $data['remark']           = $remark;
-            $data['total_money']      = $base_pay + $reward + $reward_back + $ti_money;
+            $data['total_money']      = $salary + $safe_reward  + $money_award + $money - $live_cost - $company_fine
+                                        - $salary_fine - $reward_price - $income_tax - $water_money- $social_money;
+
+             /**保存费用**/
+            $money['pay_type']           = 'salary';
+            $money['money']              = $data['total_money'];
+            $money['pay_state']          = 'Y';
+            $money['process_state']      = 'Y';
+            $money['type_state']         = 'out';
+            $money['user_id']            = $user_id;
+            $money['user_name']          = $user_name;
+
+
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsWages::where($wheres)->first();
@@ -231,7 +254,13 @@ class WagesController extends CommonController{
                 //dd(1111);
                 $data['update_time']=$now_time;
                 $id=TmsWages::where($wheres)->update($data);
-
+                $money['self_id']            = generate_id('money_');
+                $money['group_code']         = $group_code;
+                $money['group_name']         = $group_name;
+                $money['create_user_id']     = $user_info->admin_id;
+                $money['create_user_name']   = $user_info->name;
+                $money['create_time']        = $money['update_time']=$add_time;
+                TmsMoney::insert($money);
                 $operationing->access_cause='修改货物';
                 $operationing->operation_type='update';
 
@@ -915,7 +944,6 @@ class WagesController extends CommonController{
        
         $where=get_list_where($search);
        
-        $where1=get_list_where($search1);
         $select =['self_id','user_id','user_name','salary_time','company_fine','money','water_money','income_tax','salary','live_cost','social_money','safe_reward','reward_price','salary_fine','money_award','group_code','group_name','use_flag','delete_flag','total_money'];
         
         switch ($group_info['group_id']){

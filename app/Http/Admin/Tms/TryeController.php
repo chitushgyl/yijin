@@ -552,6 +552,7 @@ class TryeController extends CommonController{
         $trye_list          =$request->input('trye_list');//更换位置
         $price              =$request->input('price');//更换位置
         $supplier           =$request->input('supplier');//供应商
+        $remark             =$request->input('remark');
 
         /**
         $trye_list = [[
@@ -581,15 +582,9 @@ class TryeController extends CommonController{
             $data['operator']          =$operator;
             $data['price']             =$price;
             $data['supplier']          =$supplier;
+            $data['state']             ='N';
+            $data['remark']            =$remark;
             $trye_model = TmsTryeList::where('model',$model)->first();
-
-
-            $count['model'] = $model;
-            $count['initial_num'] = $num;
-            $count['change_num'] = $num;
-            $count['now_num'] = $num;
-            $count['date_time'] = $in_time;
-            $count['sale_price'] = $price;
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsTrye::where($wheres)->first();
@@ -597,10 +592,7 @@ class TryeController extends CommonController{
             if($old_info){
                 $data['update_time']=$now_time;
                 $id=TmsTrye::where($wheres)->update($data);
-                TmsTryeCount::where('order_id',$self_id)->update($count);
-                $update['now_num'] = $num;
-                $update['change_num'] = $num;
-                TmsTryeChange::where('order_id',$self_id)->update($update);
+                
                 $operationing->access_cause='修改入库';
                 $operationing->operation_type='update';
 
@@ -612,18 +604,8 @@ class TryeController extends CommonController{
                 $data['group_code']         = $user_info->group_code;
                 $data['group_name']         = $user_info->group_name;
 
-                $count['self_id'] = generate_id('count_');
-                $count['order_id'] = $data['self_id'];
-                $count['create_user_id']     =$user_info->admin_id;
-                $count['create_user_name']   =$user_info->name;
-                $count['create_time']        =$count['update_time']=$now_time;
-                $count['group_code']         = $user_info->group_code;
-                $count['group_name']         = $user_info->group_name;
-                $change[] = $count;
                 $id=TmsTrye::insert($data);
-                TmsTryeCount::insert($count);
-                // $change->tryChange();
-                self::tryeChange($change,'preentry');
+                
                 if (!$trye_model){
                     $model_list['self_id'] = generate_id('model_');
                     $model_list['model']   = $model;
@@ -639,6 +621,93 @@ class TryeController extends CommonController{
                 $operationing->access_cause='新建入库';
                 $operationing->operation_type='create';
             }
+
+            $operationing->table_id=$old_info?$self_id:$data['self_id'];
+            $operationing->old_info=$old_info;
+            $operationing->new_info=$data;
+
+            if($id){
+                $msg['code'] = 200;
+                $msg['msg'] = "操作成功";
+                return $msg;
+            }else{
+                $msg['code'] = 302;
+                $msg['msg'] = "操作失败";
+                return $msg;
+            }
+
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
+    }
+
+    //入库审核
+    public function updateInState(Request $request){
+        $user_info = $request->get('user_info');//接收中间件产生的参数
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='tms_trye';
+
+        $operationing->access_cause     ='轮胎入库审核';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='add';
+
+        $input              =$request->all();
+        //dd($input);
+        /** 接收数据*/
+        $self_id            =$request->input('self_id');
+        
+        $rules=[
+            'self_id'=>'required',
+        ];
+        $message=[
+            'self_id.required'=>'请选择审核条目！',
+        ];
+
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()) {
+            $count_list = [];
+            $change = [];
+            foreach(explode(',',$self_id) as $k => $v){
+                $wheres['self_id'] = $self_id;
+                $old_info=TmsTrye::where($wheres)->first();
+
+                $count['model'] = $old_info->model;
+                $count['initial_num'] = $old_info->num;
+                $count['change_num'] = $old_info->num;
+                $count['now_num'] = $old_info->num;
+                $count['date_time'] = $old_info->in_time;
+                $count['sale_price'] = $old_info->price;
+
+                $count['self_id'] = generate_id('count_');
+                $count['order_id'] = $data['self_id'];
+                $count['create_user_id']     =$user_info->admin_id;
+                $count['create_user_name']   =$user_info->name;
+                $count['create_time']        =$count['update_time']=$now_time;
+                $count['group_code']         = $user_info->group_code;
+                $count['group_name']         = $user_info->group_name;
+                $change[] = $count;
+            }
+                $update['state'] = 'Y';
+                $update['update_time'] = $now_time;
+                $id = TmsTrye::whereIn('self_id',explode(',',$self_id))->update($update);
+                TmsTryeCount::insert($change);
+                // $change->tryChange();
+                self::tryeChange($change,'preentry');
+
+                $operationing->access_cause='轮胎入库审核';
+                $operationing->operation_type='create';
+            
 
             $operationing->table_id=$old_info?$self_id:$data['self_id'];
             $operationing->old_info=$old_info;
@@ -794,6 +863,7 @@ class TryeController extends CommonController{
         $driver_name        =$request->input('driver_name');//驾驶员
         $change             =$request->input('change');//更换位置
         $trye_list          =$request->input('trye_list');//更换位置
+        $remark             =$request->input('remark');//备注
 
         /**
         $trye_list = [[
@@ -828,6 +898,7 @@ class TryeController extends CommonController{
             $data['trye_num']          =$trye_num;
             $data['in_time']           =$in_time;
             $data['operator']          =$operator;
+            $data['remark']            =$remark;
 
 
             $wheres['self_id'] = $self_id;

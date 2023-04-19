@@ -190,6 +190,7 @@ class CrondtabController extends Controller {
             $data['income_tax']   = 0;//个税
             $data['water_money']  = 0;//水电费
             $data['money_award']  = $v->money_award;//奖励
+            $data['date_num']     = $v->date_num;//请假天数
             
             $data['update_time']  = $now_time;
 
