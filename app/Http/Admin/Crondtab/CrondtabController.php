@@ -176,28 +176,35 @@ class CrondtabController extends Controller {
             $v->water_money = 0.00;
             $v->income_tax = 0.00;
 
-            $data['salary']  = $v->salary;//基本工资
-            $data['live_cost']  = $v->live_cost;//住宿费
-            $data['social_money']  = $v->social_money;//社保费用
+            $data['user_id']      = $v->self_id;
+            $data['user_name']    = $v->name;
+            $data['salary']       = $v->salary;//基本工资
+            $data['live_cost']    = $v->live_cost;//住宿费
+            $data['social_money'] = $v->social_money;//社保费用
             $data['safe_reward']  = $v->safe_reward;//奖金
-            $data['company_fine']  = $v->company_fine;//公司罚款
-            $data['money']  = $v->money;//提成
+            $data['company_fine'] = $v->company_fine;//公司罚款
+            $data['money']        = $v->money;//提成
             $data['salary_fine']  = $v->salary_fine;//请假基本工资扣款
-            $data['reward_price']  = $v->reward_price;//请假奖金扣款
-            $data['income_tax']  = 0;//个税
+            $data['reward_price'] = $v->reward_price;//请假奖金扣款
+            $data['income_tax']   = 0;//个税
             $data['water_money']  = 0;//水电费
             $data['money_award']  = $v->money_award;//奖励
-            $data['group_code']  = $v->group_code;
-            $data['group_name']  = $v->group_name;
-            $data['salary_time']  = $salary_time;
             
-            $data['create_user_id']  = null;
-            $data['create_user_name']  = null;
-            $data['create_time']  = $now_time;
             $data['update_time']  = $now_time;
 
-            TmsWages::insert($data);
-          
+            $old_info = TmsWages::where('user_id',$v->self_id)->where('salary_time',$salary_time)->first();
+            if ($old_info) {
+                TmsWages::where('user_id',$v->self_id)->where('salary_time',$salary_time)->update($data);
+            }else{
+                $data['self_id']           = generate_id('wages_');
+                $data['group_code']        = $v->group_code;
+                $data['group_name']        = $v->group_name;
+                $data['salary_time']       = $salary_time;
+                $data['create_time']       = $now_time;
+                $data['create_user_id']    = null;
+                $data['create_user_name']  = null;
+                TmsWages::insert($data);
+            } 
             
         }
     }
