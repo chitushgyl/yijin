@@ -1427,9 +1427,7 @@ class UserRewardController extends CommonController{
                         $award_list[]=$award;
                         
                     }
-
-                
-                }
+                 }   
                 $a++;
 
             }
@@ -1666,9 +1664,6 @@ class UserRewardController extends CommonController{
                     $list['file_id']                  = $file_id;
                     $datalist[]=$list;
                         
-                    }
-
-                
                 }
                 $a++;
 
