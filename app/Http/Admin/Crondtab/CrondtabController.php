@@ -2,6 +2,7 @@
 namespace App\Http\Admin\Crondtab;
 
 use App\Models\Tms\TmsOrder;
+use App\Models\Tms\TmsWages;
 use App\Models\Tms\DriverCommission;
 use App\Models\User\UserReward;
 use App\Models\User\UserExamine;
