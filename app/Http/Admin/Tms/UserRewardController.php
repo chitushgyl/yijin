@@ -67,12 +67,32 @@ class UserRewardController extends CommonController{
 
             if ($type == 'violation'){
                 $data['button_info']=$button_info1;
+                $data['import_info']    =[
+                'import_text'=>'下载'.$abc.'导入示例文件',
+                'import_color'=>'#FC5854',
+                'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/违规导入.xlsx',
+            ];
             }elseif($type == 'rule'){
                 $data['button_info']=$button_info2;
+                $data['import_info']    =[
+                'import_text'=>'下载'.$abc.'导入示例文件',
+                'import_color'=>'#FC5854',
+                'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/违章导入.xlsx',
+            ];
             }elseif($type == 'accident'){
                 $data['button_info']=$button_info3;
+                $data['import_info']    =[
+                'import_text'=>'下载'.$abc.'导入示例文件',
+                'import_color'=>'#FC5854',
+                'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/事故导入.xlsx',
+            ];
             }elseif($type == 'reward'){
                 $data['button_info']=$button_info4;
+                $data['import_info']    =[
+                'import_text'=>'下载'.$abc.'导入示例文件',
+                'import_color'=>'#FC5854',
+                'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/奖励导入.xlsx',
+            ];
             }
 
 
@@ -1784,6 +1804,7 @@ class UserRewardController extends CommonController{
             $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
             ,'cash_back','cash_flag','type','user_name','bear','company_fine','escort_name','user_id'];
+            $select1 = ['self_id','name'];
             $info=UserReward::with(['systemUser' => function($query) use($select1){
                 $query->select($select1);
             }])->where($where)
@@ -1973,6 +1994,7 @@ class UserRewardController extends CommonController{
             $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
             ,'cash_back','cash_flag','type','user_name','bear','company_fine','escort_name','user_id'];
+            $select1 = ['self_id','name'];
             $info=UserReward::with(['systemUser' => function($query) use($select1){
                 $query->select($select1);
             }])->where($where)
@@ -2075,6 +2097,7 @@ class UserRewardController extends CommonController{
             $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
             ,'cash_back','cash_flag','type','user_name','bear','company_fine','escort_name','user_id'];
+            $select1 = ['self_id','name'];
             $info=UserReward::with(['systemUser' => function($query) use($select1){
                 $query->select($select1);
             }])->where($where)
