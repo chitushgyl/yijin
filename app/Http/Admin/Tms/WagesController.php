@@ -864,6 +864,107 @@ class WagesController extends CommonController{
         return $msg;
     }
 
+    public function  salaryList(Request $request){
+
+        $data['page_info']      =config('page.listrows');
+        $data['button_info']    =$request->get('anniu');
+        $abc='商品';
+        $data['import_info']    =[
+            'import_text'=>'下载'.$abc.'导入示例文件',
+            'import_color'=>'#FC5854',
+            'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/商品导入文件范本.xlsx',
+        ];
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+
+        //dd($data['button_info']->toArray());
+        return $msg;
+    }
+    /***    商品分页     /tms/wages/wagesPage
+     */
+    public function salaryPage(Request $request){
+        $user_type    =array_column(config('tms.user_type'),'name','key');
+        /** 接收中间件参数**/
+        $group_info     = $request->get('group_info');//接收中间件产生的参数
+        $button_info    = $request->get('anniu');//接收中间件产生的参数
+        $user_info  = $request->get('user_info');//接收中间件产生的参数
+//dd($button_info);
+        /**接收数据11*/
+        $num            =$request->input('num')??10;
+        $page           =$request->input('page')??1;
+        $use_flag       =$request->input('use_flag');
+        $group_code     =$request->input('group_code');
+        $salary_time     =$request->input('salary_time');
+        
+     
+        $user_name      =$request->input('user_name');
+        $user_id      =$request->input('user_id');
+        $listrows       =$num;
+        $firstrow       =($page-1)*$listrows;
+
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'like','name'=>'name','value'=>$user_name],
+            ['type'=>'=','name'=>'self_id','value'=>$user_id],
+            ['type'=>'=','name'=>'salary_time','value'=>$salary_time],
+           
+        ];
+       
+        $where=get_list_where($search);
+       
+        $where1=get_list_where($search1);
+        $select =['self_id','user_id','user_name','salary_time','company_fine','money','water_money','income_tax','salary','live_cost','social_money','safe_reward','reward_price','salary_fine','money_award','group_code','group_name','use_flag','delete_flag','total_money'];
+        
+        switch ($group_info['group_id']){
+            case 'all':
+                $data['total']=TmsWages::where($where)->count(); //总的数据量
+                $data['items']=TmsWages::
+                where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
+                    ->select($select)
+                    ->get();
+                $data['group_show']='Y';
+                break;
+
+            case 'one':
+                $where[]=['group_code','=',$group_info['group_code']];
+                $data['total']=TmsWages::where($where)->count(); //总的数据量
+                $data['items']=TmsWages::
+                where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
+                    ->select($select)
+                    ->get();
+                $data['group_show']='N';
+                break;
+
+            case 'more':
+                $data['total']=TmsWages::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=TmsWages::where($where)
+                ->whereIn('group_code',$group_info['group_code'])
+                    ->offset($firstrow)->limit($listrows)->orderBy('self_id','desc')->orderBy('update_time', 'desc')
+                    ->select($select)
+                    ->get();
+                $data['group_show']='Y';
+                break;
+        }
+        
+        foreach($data['items'] as $k => $v){
+            
+            
+        }
+        
+        
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        //dd($msg);
+        return $msg;
+
+    }
+
 
 
 }
