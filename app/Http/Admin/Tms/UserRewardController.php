@@ -767,7 +767,7 @@ class UserRewardController extends CommonController{
                         $list['user_name']               = null;
                
                     }
-                    if($v['escort']){
+                    if($v['escort_name']){
                         $list['escort']                  = $cargo->self_id;
                         $list['escort_name']             = $cargo->name;
                         
@@ -1874,6 +1874,7 @@ class UserRewardController extends CommonController{
             $select=['self_id','car_id','car_number','violation_address','violation_connect','department','handle_connect','score','payment','late_fee','handle_opinion','safe_reward','safe_flag',
             'use_flag','delete_flag','create_time','update_time','group_code','group_name','escort','reward_view','handled_by','remark','event_time','fault_address','fault_price','fault_party'
             ,'cash_back','cash_flag','type','user_name','bear','company_fine','escort_name','user_id'];
+            $select1 = ['self_id','name'];
             $info=UserReward::with(['systemUser' => function($query) use($select1){
                 $query->select($select1);
             }])->where($where)
