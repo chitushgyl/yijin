@@ -1149,7 +1149,7 @@ class TryeController extends CommonController{
                                 $number=$v['num'];
                                 foreach ($resssss as $kk =>$vv){
                                   
-                                    if($number > 0 && in_array($v->trye_num,explode(',',$vv['trye_num']))) {
+                                    if($number > 0 && in_array($v['trye_num'],explode(',',$vv['trye_num']))) {
                                         if ($number - $vv['now_num'] > 0) {
                                             $shiji_number = $vv['now_num'];
 
