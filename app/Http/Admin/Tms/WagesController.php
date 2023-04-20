@@ -1025,7 +1025,7 @@ class WagesController extends CommonController{
             $select=['self_id','driver_id','driver_name','leave_time','use_flag','delete_flag','group_code','group_name','money','order_id','create_time','update_time'];
            
             $info=DriverCommission::where($where)->whereIn('self_id',explode(',',$order_id))
-                    ->select($select)->get();
+                    ->select($select)->orderBy('leave_time','asc')->get();
 //dd($info);
             if($info){
                 //设置表头
