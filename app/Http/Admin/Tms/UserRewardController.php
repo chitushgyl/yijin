@@ -2321,21 +2321,21 @@ class UserRewardController extends CommonController{
         $data['update_time']=$now_time;
         $id=AwardRemind::where('self_id',$self_id)->update($data);
         /**保存费用**/
-        $money['pay_type']           = 'reward';
-        $money['money']              = $old_info->money_award;
-        $money['pay_state']          = 'Y';
-        $money['user_id']            = $old_info->user_id;
-        $money['user_name']          = $old_info->user_name;
-        $money['process_state']      = 'Y';
-        $money['type_state']         = 'out';
-        $money['self_id']            = generate_id('money_');
-        $money['group_code']         = $user_info->group_code;
-        $money['group_name']         = $user_info->group_name;
-        $money['create_user_id']     = $user_info->admin_id;
-        $money['create_user_name']   = $user_info->name;
-        $money['create_time']        = $money['update_time']=$now_time;
+        // $money['pay_type']           = 'reward';
+        // $money['money']              = $old_info->money_award;
+        // $money['pay_state']          = 'Y';
+        // $money['user_id']            = $old_info->user_id;
+        // $money['user_name']          = $old_info->user_name;
+        // $money['process_state']      = 'Y';
+        // $money['type_state']         = 'out';
+        // $money['self_id']            = generate_id('money_');
+        // $money['group_code']         = $user_info->group_code;
+        // $money['group_name']         = $user_info->group_name;
+        // $money['create_user_id']     = $user_info->admin_id;
+        // $money['create_user_name']   = $user_info->name;
+        // $money['create_time']        = $money['update_time']=$now_time;
 
-        TmsMoney::insert($money);
+        // TmsMoney::insert($money);
         if ($id){
             $msg['code']=200;
             $msg['msg']="修改成功！";
