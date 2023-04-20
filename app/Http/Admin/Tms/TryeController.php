@@ -745,7 +745,7 @@ class TryeController extends CommonController{
                 $operationing->operation_type='create';
             
 
-            $operationing->table_id=$old_info?$self_id:$data['self_id'];
+            $operationing->table_id=$old_info?$self_id:$old_info->self_id;
             $operationing->old_info=$old_info;
             $operationing->new_info=$data;
 
