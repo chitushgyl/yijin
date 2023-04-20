@@ -119,7 +119,7 @@ class TryeController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','car_number','price','model','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag','state','user_id','trailer_num'];
+        $select=['self_id','car_number','price','model','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag','state','user_id','trailer_num','remark'];
         $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag'];
         switch ($group_info['group_id']){
             case 'all':
@@ -180,7 +180,7 @@ class TryeController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $select=['self_id','car_number','price','car_number','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag','state','user_id','trailer_num'];
+        $select=['self_id','car_number','price','car_number','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag','state','user_id','trailer_num','remark'];
         $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag'];
         $data['info']=TmsTrye::with(['TryeOutList'=>function($query)use($select1){
             $query->where('delete_flag','Y');
@@ -711,7 +711,7 @@ class TryeController extends CommonController{
             $count_list = [];
             $change = [];
             foreach(explode(',',$self_id) as $k => $v){
-                $wheres['self_id'] = $self_id;
+                $wheres['self_id'] = $v;
                 $old_info=TmsTrye::where($wheres)->first();
 
                 $count['model'] = $old_info->model;
