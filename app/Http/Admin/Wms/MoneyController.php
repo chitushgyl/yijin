@@ -875,8 +875,15 @@ class MoneyController extends CommonController{
         if($validator->passes()){
             $wheres['self_id'] = $self_id;
             $old_info=TmsMoneyCount::where($wheres)->first();
+
+            if($money < $old_info->receive_money){
+                $msg['code'] = 302;
+                $msg['msg'] = "应收费用不能小于已收费用";
+                return $msg;
+            }
             
-            $data['total_money'] = $money;
+            $data['total_money']   = $money;
+            $data['settle_money']  = $money - $receive_money;
             $data['update_time']   = $now_time;
             $id = TmsMoneyCount::where('self_id',$self_id)->update($data);
 
