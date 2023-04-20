@@ -976,7 +976,7 @@ class WagesController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'like','name'=>'name','value'=>$user_name],
+            ['type'=>'like','name'=>'user_name','value'=>$user_name],
             ['type'=>'=','name'=>'self_id','value'=>$user_id],
             ['type'=>'=','name'=>'salary_time','value'=>$salary_time],
            
@@ -1021,7 +1021,7 @@ class WagesController extends CommonController{
         
         foreach($data['items'] as $k => $v){
             
-            
+            $v->button_info = $button_info;
         }
         
         
