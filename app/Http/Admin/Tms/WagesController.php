@@ -809,14 +809,14 @@ class WagesController extends CommonController{
         ];
 
         $where=get_list_where($search);
-        $select = ['self_id','driver_id','user_name','escort','escort_name','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag','leave_time','pay_id'];
+        $select = ['self_id','driver_id','driver_name','leave_time','use_flag','delete_flag','group_code','group_name','money','order_id','create_time','update_time'];
         $select1 = ['self_id','driver_id','user_name','escort','escort_name','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag','leave_time','pay_id'];
 
         $data['items']=DriverCommission::where($where)
                     ->whereIn('self_id',explode(',',$order_id))->orderBy('leave_time', 'asc')
                     ->select($select)->get();
         foreach($data['items'] as $k => $v){
-            $tms_order = TmsOrder::whereIn('self_id',explode(',',$v->order_id))->select()->get();
+            $tms_order = TmsOrder::whereIn('self_id',explode(',',$v->order_id))->select($select1)->get();
             $v->tms_order = $tms_order;
         }
         
