@@ -747,7 +747,7 @@ class TryeController extends CommonController{
 
             $operationing->table_id=$old_info?$self_id:$old_info->self_id;
             $operationing->old_info=$old_info;
-            $operationing->new_info=$data;
+            $operationing->new_info=(object)$count;
 
             if($id){
                 $msg['code'] = 200;
