@@ -1213,7 +1213,7 @@ class LibraryController extends CommonController{
                     $list["grounding_status"]   ='Y';
                     $list["good_remark"]        =$v['good_remark'];
                     $list["use_flag"]           ='N';
-                    $list["entry_time"]         =$purchase_date;
+                    $list["purchase_date"]         =$purchase_date;
                     $datalist[]=$list;
 
                     /**保存费用**/
@@ -1260,7 +1260,7 @@ class LibraryController extends CommonController{
                     return $msg;
                 }
             }catch (\Exception $exception){
-                dd($exception);
+                // dd($exception);
                 DB::rollBack();
                 $msg['code']=300;
                 $msg['msg']='操作失败!';
