@@ -52,7 +52,7 @@ class CrondtabController extends Controller {
             $order_list = UserReward::where($where1)->orWhere($where2)->select($select)->get();
 
             if(count($order_list)>0){
-                $time = date('Y-m', strtotime('+6 month', strtotime($month_start)));
+                $time = date('Y-m-d', strtotime('+6 month', strtotime($month_start)));
                 $update['cash_back']          = $time;
                 $update['update_time']        = date('Y-m-d H:i:s',time());
                 AwardRemind::where('user_id',$v->user_id)->where('cash_flag','N')->update($update);

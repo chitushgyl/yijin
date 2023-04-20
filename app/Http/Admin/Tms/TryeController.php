@@ -29,6 +29,7 @@ class TryeController extends CommonController{
     public function  tryeList(Request $request){
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
+        $type                   = $request->input('type');
 
         $abc='车辆类型';
         $data['import_info']    =[
@@ -36,6 +37,34 @@ class TryeController extends CommonController{
             'import_color'=>'#FC5854',
             'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/轮胎出入库导入.xlsx',
         ];
+        $button_info1=[];
+        $button_info2=[];
+        $button_info3=[];
+        $button_info4=[];
+        foreach ($data['button_info'] as $k => $v){
+            if($v->id == 142){
+                $button_info1[]=$v;
+            }
+            if($v->id == 143){
+                $button_info2[]=$v;
+            }
+            if($v->id == 169){
+                $button_info3[]=$v;
+            }
+            if($v->id == 199){
+                $button_info4[]=$v;
+            }
+            if($v->id == 215){
+                $button_info5[]=$v;
+            }
+
+        }
+        if($type == 'in'){
+
+        }else{
+            
+        }
+
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;

@@ -132,8 +132,8 @@ class WagesController extends CommonController{
             $v->company_fine = UserReward::where('event_time','>=',$start_time)->where('event_time','<=',$end_time)->where('user_id',$v->self_id)->sum('company_fine');
             $v->money_award = AwardRemind::where('cash_back','>=',$start_time)->where('cash_back','<=',$end_time)->where('user_id',$v->self_id)->sum('money_award');
             $v->money = DriverCommission::where('leave_time','>=',$start_time)->where('leave_time','<=',$end_time)->where('driver_id',$v->self_id)->sum('money');
-            $v->reward_price = UserExamine::where('create_time','>=',$start_time)->where('create_time','<=',$end_time)->where('user_id',$v->self_id)->sum('reward_price');
-            $v->salary_fine = UserExamine::where('create_time','>=',$start_time)->where('create_time','<=',$end_time)->where('user_id',$v->self_id)->sum('salary_fine');
+            $v->reward_price = UserExamine::where('start_time','>=',$start_time)->where('end_time','<=',$end_time)->where('user_id',$v->self_id)->sum('reward_price');
+            $v->salary_fine = UserExamine::where('start_time','>=',$start_time)->where('end_time','<=',$end_time)->where('user_id',$v->self_id)->sum('salary_fine');
             $v->date = UserExamine::where('start_time','>=',$start_time)->where('end_time','<=',$end_time)->where('user_id',$v->self_id)->sum('date_num');
             $v->water_money = 0.00;
             $v->income_tax = 0.00;
