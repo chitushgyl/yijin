@@ -989,7 +989,7 @@ class TryeController extends CommonController{
             foreach(json_decode($trye_list,true) as $k => $v){
                    
                     $trye_num_list['trye_num']           = $v['trye_num'];
-                    $trye_out_lists[] = $list;
+                    $trye_out_lists[] = $trye_num_list;
 
             }
             $data['trye_num']          =implode(',',$trye_out_lists);
