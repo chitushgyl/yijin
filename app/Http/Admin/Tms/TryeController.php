@@ -468,7 +468,7 @@ class TryeController extends CommonController{
             $data['operator']          =$operator;
             $data['price']             =$price;
             $data['supplier']          =$supplier;
-            $trye_model = TmsTryeList::where('model',$model)->first();
+            // $trye_model = TmsTryeList::where('model',$model)->first();
 
 
             $count['model'] = $model;
@@ -616,7 +616,7 @@ class TryeController extends CommonController{
             $data['supplier']          =$supplier;
             $data['state']             ='N';
             $data['remark']            =$remark;
-            $trye_model = TmsTryeList::where('model',$model)->first();
+            // $trye_model = TmsTryeList::where('model',$model)->first();
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsTrye::where($wheres)->first();
@@ -638,17 +638,17 @@ class TryeController extends CommonController{
 
                 $id=TmsTrye::insert($data);
                 
-                if (!$trye_model){
-                    $model_list['self_id'] = generate_id('model_');
-                    $model_list['model']   = $model;
-                    $model_list['price']   = $price;
-                    $model_list['create_user_id']     =$user_info->admin_id;
-                    $model_list['create_user_name']   =$user_info->name;
-                    $model_list['create_time']        =$model_list['update_time']=$now_time;
-                    $model_list['group_code']         = $user_info->group_code;
-                    $model_list['group_name']         = $user_info->group_name;
-                   TmsTryeList::insert($model_list);
-                }
+                // if (!$trye_model){
+                //     $model_list['self_id'] = generate_id('model_');
+                //     $model_list['model']   = $model;
+                //     $model_list['price']   = $price;
+                //     $model_list['create_user_id']     =$user_info->admin_id;
+                //     $model_list['create_user_name']   =$user_info->name;
+                //     $model_list['create_time']        =$model_list['update_time']=$now_time;
+                //     $model_list['group_code']         = $user_info->group_code;
+                //     $model_list['group_name']         = $user_info->group_name;
+                //    TmsTryeList::insert($model_list);
+                // }
 
                 $operationing->access_cause='新建入库';
                 $operationing->operation_type='create';
