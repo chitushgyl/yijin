@@ -1191,7 +1191,7 @@ class TryeController extends CommonController{
                                 foreach ($wms_library_sige as $kkk => $vvv){
                                     $where21['self_id']=$vvv['self_id'];
                                     $unset = TmsTryeCount::where($where21)->first();
-                                    $new_str = str_replace($v['trye_num'].',',$unset->trye_num);
+                                    $new_str = str_replace($v['trye_num'].',','',$unset->trye_num);
                                     $librarySignUpdate['trye_num'] = $new_str;
 
                                     $librarySignUpdate['now_num']           =$vvv['yuan_num']-$vvv['chuku_number'];
