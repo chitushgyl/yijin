@@ -710,7 +710,7 @@ class UserRewardController extends CommonController{
             $a=2;
             $user_award_list=[];
             $award_list=[];
-            // dump($info_wait);
+            dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
                 if ($v['event_time']){
