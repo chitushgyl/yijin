@@ -813,7 +813,7 @@ class WagesController extends CommonController{
         $select1 = ['self_id','driver_id','user_name','escort','escort_name','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag','leave_time','pay_id'];
 
         $data['items']=DriverCommission::where($where)
-                    ->whereIn('self_id',explode('self_id',explode(',',$order_id)))->orderBy('leave_time', 'asc')
+                    ->whereIn('self_id',$order_id)->orderBy('leave_time', 'asc')
                     ->select($select)->get();
         foreach($data['items'] as $k => $v){
             $tms_order = TmsOrder::whereIn('self_id',explode(',',$v->order_id))->select()->get();
