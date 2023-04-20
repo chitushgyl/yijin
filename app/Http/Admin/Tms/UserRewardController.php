@@ -469,7 +469,7 @@ class UserRewardController extends CommonController{
                         $award['car_number']         = $car_number;
                         $award['money_award']        = $company_fine;
                         $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
-                        $award['cash_back']          = $time;
+                        $award['cash_back']          = $cash_back;
                         $award['group_code']         = $group_code;
                         $award['group_name']         = $group_name;
                         $award['create_user_id']     = $user_info->admin_id;
@@ -486,7 +486,7 @@ class UserRewardController extends CommonController{
                         $award['car_number']         = $car_number;
                         $award['money_award']        = $company_fine;
                         $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
-                        $award['cash_back']          = $time;
+                        $award['cash_back']          = $cash_back;
                         $award['group_code']         = $group_code;
                         $award['group_name']         = $group_name;
                         $award['create_user_id']     = $user_info->admin_id;
@@ -819,7 +819,7 @@ class UserRewardController extends CommonController{
                         $user_award['car_number']         = $list['car_number'];
                         $user_award['money_award']        = $company_fine;
                         $user_award = date('Y-m', strtotime('+6 month', strtotime($event_time)));
-                        $user_award['cash_back']          = $time;
+                        $user_award['cash_back']          = $cash_back;
                         $user_award['group_code']         = $info->group_code;
                         $user_award['group_name']         = $info->group_name;
                         $user_award['create_user_id']     = $user_info->admin_id;
@@ -838,7 +838,7 @@ class UserRewardController extends CommonController{
                         $award['car_number']         = $list['car_number'];
                         $award['money_award']        = $company_fine;
                         $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
-                        $award['cash_back']          = $time;
+                        $award['cash_back']          = $cash_back;
                         $award['group_code']         = $info->group_code;
                         $award['group_name']         = $info->group_name;
                         $award['create_user_id']     = $user_info->admin_id;
@@ -1116,7 +1116,7 @@ class UserRewardController extends CommonController{
                         $user_award['car_number']         = $list['car_number'];
                         $user_award['money_award']        = $company_fine;
                         $user_award = date('Y-m', strtotime('+6 month', strtotime($event_time)));
-                        $user_award['cash_back']          = $time;
+                        $user_award['cash_back']          = $cash_back;
                         $user_award['group_code']         = $info->group_code;
                         $user_award['group_name']         = $info->group_name;
                         $user_award['create_user_id']     = $user_info->admin_id;
@@ -1135,7 +1135,7 @@ class UserRewardController extends CommonController{
                         $award['car_number']         = $list['car_number'];
                         $award['money_award']        = $company_fine;
                         $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
-                        $award['cash_back']          = $time;
+                        $award['cash_back']          = $cash_back;
                         $award['group_code']         = $info->group_code;
                         $award['group_name']         = $info->group_name;
                         $award['create_user_id']     = $user_info->admin_id;
@@ -1419,7 +1419,7 @@ class UserRewardController extends CommonController{
                         $user_award['car_number']         = $list['car_number'];
                         $user_award['money_award']        = $company_fine;
                         $user_award = date('Y-m', strtotime('+6 month', strtotime($event_time)));
-                        $user_award['cash_back']          = $time;
+                        $user_award['cash_back']          = $cash_back;
                         $user_award['group_code']         = $info->group_code;
                         $user_award['group_name']         = $info->group_name;
                         $user_award['create_user_id']     = $user_info->admin_id;
@@ -1438,7 +1438,7 @@ class UserRewardController extends CommonController{
                         $award['car_number']         = $list['car_number'];
                         $award['money_award']        = $company_fine;
                         $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
-                        $award['cash_back']          = $time;
+                        $award['cash_back']          = $cash_back;
                         $award['group_code']         = $info->group_code;
                         $award['group_name']         = $info->group_name;
                         $award['create_user_id']     = $user_info->admin_id;
