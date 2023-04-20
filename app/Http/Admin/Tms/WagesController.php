@@ -950,7 +950,7 @@ class WagesController extends CommonController{
         //dd($data['button_info']->toArray());
         return $msg;
     }
-    /***    商品分页     /tms/wages/wagesPage
+    /***    商品分页     /tms/wages/salaryPage
      */
     public function salaryPage(Request $request){
         $user_type    =array_column(config('tms.user_type'),'name','key');
