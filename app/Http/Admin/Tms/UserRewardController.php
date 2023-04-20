@@ -777,7 +777,7 @@ class UserRewardController extends CommonController{
                     $list['self_id']            =generate_id('reward_');
                     $list['type']               = 'violation';
                     $list['event_time']         = $v['event_time'];
-                    $list['car_id']             = $car->car_id;
+                    $list['car_id']             = $car->self_id;
                     $list['car_number']         = $car->car_number;
                     if ($v['user_name']){
                         $list['user_id']               = $driver->self_id;
@@ -854,7 +854,7 @@ class UserRewardController extends CommonController{
                 $a++;
 
             }
-            dd($datalist);
+            dd($award_list,$datalist);
             $operationing->new_info=$datalist;
 
             //dump($operationing);
