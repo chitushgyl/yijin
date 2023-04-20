@@ -199,6 +199,7 @@ class WagesController extends CommonController{
         $water_money         =$request->input('water_money');//备注
         $total_money         =$request->input('total_money');//合计
         $money_award         =$request->input('money_award');//合计
+        $date_num            =$request->input('date_num');//合计
         $remark              =$request->input('remark');//备注
 
 
@@ -945,7 +946,7 @@ class WagesController extends CommonController{
        
         $where=get_list_where($search);
        
-        $select =['self_id','user_id','user_name','salary_time','company_fine','money','water_money','income_tax','salary','live_cost','social_money','safe_reward','reward_price','salary_fine','money_award','group_code','group_name','use_flag','delete_flag','total_money'];
+        $select =['self_id','user_id','user_name','salary_time','company_fine','money','water_money','income_tax','salary','live_cost','social_money','safe_reward','reward_price','salary_fine','money_award','group_code','group_name','use_flag','delete_flag','total_money','date_num'];
         
         switch ($group_info['group_id']){
             case 'all':
