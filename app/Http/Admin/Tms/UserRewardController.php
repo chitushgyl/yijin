@@ -818,7 +818,7 @@ class UserRewardController extends CommonController{
                         $user_award['car_id']             = $list['car_id'];
                         $user_award['car_number']         = $list['car_number'];
                         $user_award['money_award']        = $v['company_fine'];
-                        $user_award = date('Y-m', strtotime('+6 month', strtotime($event_time)));
+                        // $user_award = date('Y-m', strtotime('+6 month', strtotime($v['event_time'])));
                         $user_award['cash_back']          = $v['cash_back'];
                         $user_award['group_code']         = $info->group_code;
                         $user_award['group_name']         = $info->group_name;
@@ -837,7 +837,7 @@ class UserRewardController extends CommonController{
                         $award['car_id']             = $list['car_id'];
                         $award['car_number']         = $list['car_number'];
                         $award['money_award']        = $v['company_fine'];
-                        $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
+                        // $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
                         $award['cash_back']          = $v['cash_back'];
                         $award['group_code']         = $info->group_code;
                         $award['group_name']         = $info->group_name;
@@ -1115,7 +1115,7 @@ class UserRewardController extends CommonController{
                         $user_award['car_id']             = $list['car_id'];
                         $user_award['car_number']         = $list['car_number'];
                         $user_award['money_award']        = $v['company_fine'];
-                        $user_award = date('Y-m', strtotime('+6 month', strtotime($event_time)));
+                        // $user_award = date('Y-m', strtotime('+6 month', strtotime($event_time)));
                         $user_award['cash_back']          = $cash_back;
                         $user_award['group_code']         = $info->group_code;
                         $user_award['group_name']         = $info->group_name;
@@ -1134,7 +1134,7 @@ class UserRewardController extends CommonController{
                         $award['car_id']             = $list['car_id'];
                         $award['car_number']         = $list['car_number'];
                         $award['money_award']        = $v['company_fine'];
-                        $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
+                        // $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
                         $award['cash_back']          = $v['cash_back'];
                         $award['group_code']         = $info->group_code;
                         $award['group_name']         = $info->group_name;
@@ -1418,7 +1418,7 @@ class UserRewardController extends CommonController{
                         $user_award['car_id']             = $list['car_id'];
                         $user_award['car_number']         = $list['car_number'];
                         $user_award['money_award']        = $v['company_fine'];
-                        $user_award = date('Y-m', strtotime('+6 month', strtotime($event_time)));
+                        // $user_award = date('Y-m', strtotime('+6 month', strtotime($event_time)));
                         $user_award['cash_back']          = $v['cash_back'];
                         $user_award['group_code']         = $info->group_code;
                         $user_award['group_name']         = $info->group_name;
@@ -1437,7 +1437,7 @@ class UserRewardController extends CommonController{
                         $award['car_id']             = $list['car_id'];
                         $award['car_number']         = $list['car_number'];
                         $award['money_award']        = $v['company_fine'];
-                        $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
+                        // $time = date('Y-m', strtotime('+6 month', strtotime($event_time)));
                         $award['cash_back']          = $v['cash_back'];
                         $award['group_code']         = $info->group_code;
                         $award['group_name']         = $info->group_name;
