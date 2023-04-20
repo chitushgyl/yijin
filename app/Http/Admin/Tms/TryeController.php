@@ -710,9 +710,23 @@ class TryeController extends CommonController{
         if($validator->passes()) {
             $count_list = [];
             $change = [];
+            $model_lists = [];
             foreach(explode(',',$self_id) as $k => $v){
                 $wheres['self_id'] = $v;
                 $old_info=TmsTrye::where($wheres)->first();
+                $trye_model = TmsTryeList::where('model',$old_info->model)->first();
+
+                if (!$trye_model){
+                    $model_list['self_id'] = generate_id('model_');
+                    $model_list['model']   = $old_info->model;
+                    $model_list['price']   = $old_info->price;
+                    $model_list['create_user_id']     =$user_info->admin_id;
+                    $model_list['create_user_name']   =$user_info->name;
+                    $model_list['create_time']        =$model_list['update_time']=$now_time;
+                    $model_list['group_code']         = $user_info->group_code;
+                    $model_list['group_name']         = $user_info->group_name;
+                    $model_lists[] = $model_list;
+                }
 
                 $count['model'] = $old_info->model;
                 $count['initial_num'] = $old_info->num;
@@ -735,6 +749,7 @@ class TryeController extends CommonController{
                 DB::beginTransaction();
                 try{
                    $id = TmsTrye::whereIn('self_id',explode(',',$self_id))->update($update);
+                   TmsTryeList::insert($model_lists);
                    TmsTryeCount::insert($change);
                 // $change->tryChange();
                    self::tryeChange($change,'preentry');
