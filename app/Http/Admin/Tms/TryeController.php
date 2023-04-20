@@ -1146,7 +1146,7 @@ class TryeController extends CommonController{
                                 $wms_library_sige = [];
                                 $number=$v['num'];
                                 foreach ($resssss as $kk =>$vv){
-                                    if($number > 0) {
+                                    if($number > 0 && in_array($v->trye_num,explode(',',$vv->trye_num))) {
                                         if ($number - $vv['now_num'] > 0) {
                                             $shiji_number = $vv['now_num'];
 
@@ -1156,6 +1156,7 @@ class TryeController extends CommonController{
                                         $library_sige['self_id'] = $vv['self_id'];
                                         $library_sige['yuan_num'] = $vv['now_num'];
                                         $library_sige['chuku_number'] = $shiji_number;
+                                        $library_sige['trye_num'] = $v['trye_num'];
                                         $wms_library_sige[] = $library_sige;
 
                                         
@@ -1182,6 +1183,9 @@ class TryeController extends CommonController{
                                 self::tryeChange($wms_library_change,'out');
                                 foreach ($wms_library_sige as $kkk => $vvv){
                                     $where21['self_id']=$vvv['self_id'];
+                                    $unset = TmsTryeCount::where($where21)->first();
+                                    $new_str = str_replace($vvv->trye_num.',',$unset->trye_num);
+                                    $librarySignUpdate['trye_num'] = $new_str;
 
                                     $librarySignUpdate['now_num']           =$vvv['yuan_num']-$vvv['chuku_number'];
                                     $librarySignUpdate['update_time']       =$now_time;
