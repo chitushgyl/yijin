@@ -399,6 +399,8 @@ Route::group([
     Route::any('/wages/salaryList','WagesController@salaryList');//获取线路
     Route::any('/wages/wagesExcel','WagesController@wagesExcel');//获取线路
     Route::any('/wages/printWages','WagesController@printWages');//
+    Route::any('/wages/printSalary','WagesController@printSalary');//
+    
     
     
 

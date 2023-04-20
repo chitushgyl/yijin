@@ -1033,6 +1033,34 @@ class WagesController extends CommonController{
 
     }
 
+    //打印选中工资数据
+    public function printSalary(Request $request){
+        $group_code=$request->input('group_code');
+        $order_id = $request->input('order_id');
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+        ];
+
+        $where=get_list_where($search);
+        $select = ['self_id','user_id','user_name','salary_time','company_fine','money','water_money','income_tax','salary','live_cost','social_money','safe_reward','reward_price','salary_fine','money_award','group_code','group_name','use_flag','delete_flag','total_money','date_num','remark'];
+    
+        $data['items']=TmsWages::where($where)
+                    ->whereIn('self_id',explode(',',$order_id))
+                    ->select($select)->get();
+        
+        $data['total_money'] = TmsWages::where($where)
+                    ->whereIn('self_id',explode(',',$order_id))
+                    ->sum('total_money');
+        
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
+
 
     //提成导出
     public function wagesExcel(Request $request,File $file){
