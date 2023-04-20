@@ -788,6 +788,8 @@ class UserRewardController extends CommonController{
                 }
                 // dump($cando);
                 $list=[];
+                $user_award=[];
+                $award=[];
                 if($cando =='Y'){
                     $list['self_id']            =generate_id('reward_');
                     $list['type']               = 'violation';
