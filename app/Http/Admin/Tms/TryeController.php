@@ -985,11 +985,12 @@ class TryeController extends CommonController{
             $data['user_id']           =$user_id;
             $data['driver_name']       =$driver_name;
             $data['trye_list']         =$trye_list;
-            $trye_num_lists = [];
+            $trye_out_lists = [];
             foreach(json_decode($trye_list,true) as $k => $v){
                    
                     $trye_num_list['trye_num']           = $v['trye_num'];
-                    $trye_out_lists[] = $trye_num_list;
+                    
+                    array_push($trye_out_lists,$v['trye_num']);
 
             }
             dd($trye_out_lists);
