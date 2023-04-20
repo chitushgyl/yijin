@@ -819,6 +819,9 @@ class WagesController extends CommonController{
             $tms_order = TmsOrder::whereIn('self_id',explode(',',$v->order_id))->select($select1)->get();
             $v->tms_order = $tms_order;
         }
+        $data['total_money'] = DriverCommission::where($where)
+                    ->whereIn('self_id',explode(',',$order_id))->orderBy('leave_time', 'asc')
+                    ->sum('money');
         
 
         $msg['code']=200;
