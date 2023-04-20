@@ -239,15 +239,21 @@ class WagesController extends CommonController{
                                         - $salary_fine - $reward_price - $income_tax - $water_money- $social_money;
 
              /**保存费用**/
-            $money['pay_type']           = 'salary';
-            $money['money']              = $data['total_money'];
-            $money['pay_state']          = 'Y';
-            $money['process_state']      = 'Y';
-            $money['type_state']         = 'out';
-            $money['user_id']            = $user_id;
-            $money['user_name']          = $user_name;
+            // $money['pay_type']           = 'salary';
+            // $money['money']              = $data['total_money'];
+            // $money['pay_state']          = 'Y';
+            // $money['process_state']      = 'Y';
+            // $money['type_state']         = 'out';
+            // $money['user_id']            = $user_id;
+            // $money['user_name']          = $user_name;
 
-
+            // $money['self_id']            = generate_id('money_');
+            // $money['group_code']         = $group_code;
+            // $money['group_name']         = $group_name;
+            // $money['create_user_id']     = $user_info->admin_id;
+            // $money['create_user_name']   = $user_info->name;
+            // $money['create_time']        = $money['update_time']=$add_time;
+            // TmsMoney::insert($money);
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsWages::where($wheres)->first();
@@ -256,14 +262,8 @@ class WagesController extends CommonController{
                 //dd(1111);
                 $data['update_time']=$now_time;
                 $id=TmsWages::where($wheres)->update($data);
-                $money['self_id']            = generate_id('money_');
-                $money['group_code']         = $group_code;
-                $money['group_name']         = $group_name;
-                $money['create_user_id']     = $user_info->admin_id;
-                $money['create_user_name']   = $user_info->name;
-                $money['create_time']        = $money['update_time']=$add_time;
-                TmsMoney::insert($money);
-                $operationing->access_cause='修改货物';
+                
+                $operationing->access_cause='修改工资';
                 $operationing->operation_type='update';
 
             }else{
@@ -275,7 +275,7 @@ class WagesController extends CommonController{
                 $data['create_user_name']=$user_info->name;
                 $data['create_time']=$data['update_time']=$now_time;
                 $id=TmsWages::insert($data);
-                $operationing->access_cause='新建货物';
+                $operationing->access_cause='新建工资';
                 $operationing->operation_type='create';
 
             }
