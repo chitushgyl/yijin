@@ -103,17 +103,13 @@ class HistoryController  extends CommonController{
         foreach ($data['items'] as $k=>$v) {
 			$abc=unit_do($v->good_unit , $v->good_target_unit, $v->good_scale, $v->change_num);
 			$v->type_show=$wms_order_type_show[$v->type]??null;
-            if($v->area && $v->row && $v->column){
-                $v->sign=$v->area.'-'.$v->row.'-'.$v->column.'-'.$v->tier;
-            }else{
-                $v->sign = '';
-            }
+            
             if($v->initial_num >$v->now_num){
-                $v->change_num='减少'.$v->change_num;
-				$v->good_describe ='减少'.$abc;
+                $v->change_num='-'.$v->change_num;
+				$v->good_describe ='-'.$abc;
             }else{
-                $v->change_num='增加'.$v->change_num;
-				$v->good_describe ='增加'.$abc;
+                $v->change_num='+'.$v->change_num;
+				$v->good_describe ='+'.$abc;
             }
             $v->create_time = date('Y-m-d',strtotime($v->create_time));
 
