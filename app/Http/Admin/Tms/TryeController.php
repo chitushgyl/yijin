@@ -49,20 +49,21 @@ class TryeController extends CommonController{
                 $button_info2[]=$v;
             }
             if($v->id == 169){
-                $button_info3[]=$v;
+                $button_info2[]=$v;
             }
             if($v->id == 199){
-                $button_info4[]=$v;
+                $button_info2[]=$v;
+
             }
             if($v->id == 215){
-                $button_info5[]=$v;
+                $button_info1[]=$v;
             }
 
         }
         if($type == 'in'){
-
+            $data['button_info'] = $button_info1;
         }else{
-
+            $data['button_info'] = $button_info2;
         }
 
         $msg['code']=200;

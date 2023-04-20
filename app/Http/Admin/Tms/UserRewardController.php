@@ -682,6 +682,7 @@ class UserRewardController extends CommonController{
                 '驾驶员' =>['N','Y','64','user_name'],
                 '押运员' =>['N','Y','64','escort_name'],
                 '罚款' =>['Y','Y','64','company_fine'],
+                '罚款对象'=>['Y','Y','64','fine_user'],
                 '违规详情' =>['N','Y','64','violation_connect'],
                 '奖金返还日期' =>['Y','Y','64','cash_back'],
                 '经办人' =>['N','Y','64','handled_by'],
@@ -771,6 +772,20 @@ class UserRewardController extends CommonController{
                         }
                     }
                 }
+
+                if($v['fine_user'] == '驾驶员'){
+                    $fine_user = 'driver';
+                }elseif($v['fine_user'] == '押运员'){
+                    $fine_user = 'carge';
+                }elseif($v['fine_user'] == '全部'){
+                    $fine_user = 'all';
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行罚款对象填写错误".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
                 // dump($cando);
                 $list=[];
                 if($cando =='Y'){
@@ -810,7 +825,7 @@ class UserRewardController extends CommonController{
                     $list['file_id']            =$file_id;
                     $datalist[]=$list;
                     
-                    if ($list['user_id'] && ($v['company_fine'] || $v['company_fine']>0)){
+                    if ($fine_user == 'driver' || $fine_user == 'all' && ($v['company_fine'] || $v['company_fine']>0)){
                         $user_award['self_id']            = generate_id('award_');
                         $user_award['reward_id']          = $list['self_id'];
                         $user_award['user_id']            = $list['user_id'];
@@ -829,7 +844,7 @@ class UserRewardController extends CommonController{
                         $user_award_list[]=$user_award;
                         
                     }
-                    if ($list['escort'] && ($v['company_fine'] || $v['company_fine']>0)){
+                    if ($fine_user == 'cargo' || $fine_user == 'all' && ($v['company_fine'] || $v['company_fine']>0)){
                         $award['self_id']            = generate_id('award_');
                         $award['reward_id']          = $list['self_id'];
                         $award['user_id']            = $list['escort'];
@@ -977,6 +992,7 @@ class UserRewardController extends CommonController{
                 '处理情况' =>['N','Y','64','handle_connect'],
                 '扣分' =>['N','Y','64','score'],
                 '罚款' =>['N','Y','64','payment'],
+                '罚款对象'=>['Y','Y','64','fine_user'],
                 '公司罚款金额' =>['Y','Y','64','company_fine'],
                 '奖金返还日期' =>['Y','Y','64','cash_back'],
                 '经办人' =>['N','Y','64','handled_by'],
@@ -1066,13 +1082,27 @@ class UserRewardController extends CommonController{
                         }
                     }
                 }
+
+                if($v['fine_user'] == '驾驶员'){
+                    $fine_user = 'driver';
+                }elseif($v['fine_user'] == '押运员'){
+                    $fine_user = 'carge';
+                }elseif($v['fine_user'] == '全部'){
+                    $fine_user = 'all';
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行罚款对象填写错误".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
                 // dump($cando);
                 $list=[];
                 if($cando =='Y'){
                     $list['self_id']            =generate_id('reward_');
                     $list['type']               = 'rule';
                     $list['event_time']         = $v['event_time'];
-                    $list['car_id']             = $car->car_id;
+                    $list['car_id']             = $car->self_id;
                     $list['car_number']         = $car->car_number;
                     if ($v['user_name']){
                         $list['user_id']               = $driver->self_id;
@@ -1107,7 +1137,7 @@ class UserRewardController extends CommonController{
                     $list['file_id']                  = $file_id;
                     $datalist[]=$list;
                     
-                    if ($list['user_id'] && ($v['company_fine'] || $v['company_fine']>0)){
+                    if ($fine_user == 'driver' || $fine_user == 'all' && ($v['company_fine'] || $v['company_fine']>0)){
                         $user_award['self_id']            = generate_id('award_');
                         $user_award['reward_id']          = $list['self_id'];
                         $user_award['user_id']            = $list['user_id'];
@@ -1126,7 +1156,7 @@ class UserRewardController extends CommonController{
                         $user_award_list[]=$user_award;
                         
                     }
-                    if ($list['escort'] && ($v['company_fine'] || $v['company_fine']>0)){
+                    if ($fine_user == 'cargo' || $fine_user == 'all' && ($v['company_fine'] || $v['company_fine']>0)){
                         $award['self_id']            = generate_id('award_');
                         $award['reward_id']          = $list['self_id'];
                         $award['user_id']            = $list['escort'];
@@ -1276,6 +1306,7 @@ class UserRewardController extends CommonController{
                 '承担责任' =>['N','Y','64','bear'],
                 '扣分' =>['N','Y','64','score'],
                 '罚款' =>['N','Y','64','payment'],
+                '罚款对象'=>['Y','Y','64','fine_user'],
                 '公司罚款金额' =>['Y','Y','64','company_fine'],
                 '损失金额' =>['N','Y','64','fault_price'],
                 '奖金返还日期' =>['Y','Y','64','cash_back'],
@@ -1366,13 +1397,26 @@ class UserRewardController extends CommonController{
                         }
                     }
                 }
+                if($v['fine_user'] == '驾驶员'){
+                    $fine_user = 'driver';
+                }elseif($v['fine_user'] == '押运员'){
+                    $fine_user = 'carge';
+                }elseif($v['fine_user'] == '全部'){
+                    $fine_user = 'all';
+                }else{
+                    if($abcd<$errorNum){
+                        $strs .= '数据中的第'.$a."行罚款对象填写错误".'</br>';
+                        $cando='N';
+                        $abcd++;
+                    }
+                }
                 // dump($cando);
                 $list=[];
                 if($cando =='Y'){
                     $list['self_id']            =generate_id('reward_');
                     $list['type']               = 'accident';
                     $list['event_time']         = $v['event_time'];
-                    $list['car_id']             = $car->car_id;
+                    $list['car_id']             = $car->self_id;
                     $list['car_number']         = $car->car_number;
                     if ($v['user_name']){
                         $list['user_id']               = $driver->self_id;
@@ -1410,7 +1454,7 @@ class UserRewardController extends CommonController{
                     $list['file_id']                  = $file_id;
                     $datalist[]=$list;
                     
-                    if ($list['user_id'] && ($v['company_fine'] || $v['company_fine']>0)){
+                    if ($fine_user == 'driver' || $fine_user == 'all' && ($v['company_fine'] || $v['company_fine']>0)){
                         $user_award['self_id']            = generate_id('award_');
                         $user_award['reward_id']          = $list['self_id'];
                         $user_award['user_id']            = $list['user_id'];
@@ -1429,7 +1473,7 @@ class UserRewardController extends CommonController{
                         $user_award_list[]=$user_award;
                         
                     }
-                    if ($list['escort'] && ($v['company_fine'] || $v['company_fine']>0)){
+                    if ($fine_user == 'cargo' || $fine_user == 'all' && ($v['company_fine'] || $v['company_fine']>0)){
                         $award['self_id']            = generate_id('award_');
                         $award['reward_id']          = $list['self_id'];
                         $award['user_id']            = $list['escort'];
@@ -1653,7 +1697,7 @@ class UserRewardController extends CommonController{
                     $list['self_id']            =generate_id('reward_');
                     $list['type']               = 'reward';
                     $list['event_time']         = $v['event_time'];
-                    $list['car_id']             = $car->car_id;
+                    $list['car_id']             = $car->self_id;
                     $list['car_number']         = $car->car_number;
                     if ($v['user_name']){
                         $list['user_id']               = $driver->self_id;

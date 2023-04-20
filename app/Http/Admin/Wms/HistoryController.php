@@ -42,6 +42,7 @@ class HistoryController  extends CommonController{
         $good_name	        =$request->input('good_name');
         $start_time			=$request->input('start_time');
         $end_time	        =$request->input('end_time');
+        $type               =$request->input('type');
         $listrows           =$num;
         $firstrow           =($page-1)*$listrows;
         if ($start_time) {
@@ -64,6 +65,7 @@ class HistoryController  extends CommonController{
 			['type'=>'like','name'=>'good_name','value'=>$good_name],
 			['type'=>'>=','name'=>'inout_time','value'=>$start_time],
 			['type'=>'<','name'=>'inout_time','value'=>$end_time],
+            ['type'=>'=','name'=>'type','value'=>$type],
         ];
 
         $where=get_list_where($search);
