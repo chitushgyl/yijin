@@ -1260,7 +1260,7 @@ class LibraryController extends CommonController{
                     return $msg;
                 }
             }catch (\Exception $exception){
-                // dd($exception);
+                dd($exception);
                 DB::rollBack();
                 $msg['code']=300;
                 $msg['msg']='操作失败!';
