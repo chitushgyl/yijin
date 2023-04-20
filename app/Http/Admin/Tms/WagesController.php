@@ -766,6 +766,11 @@ class WagesController extends CommonController{
                 $data['group_show']='Y';
                 break;
         }
+        $select = ['self_id','driver_id','user_name','escort','escort_name','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag','leave_time','pay_id'];
+        foreach($data['items'] as $k => $v){
+            $tms_order = TmsOrder::whereIn('self_id',explode(',',$v->order_id))->select()->get();
+            $v->tms_order = $tms_order;
+        }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
