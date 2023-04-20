@@ -848,7 +848,7 @@ class UserRewardController extends CommonController{
                         $user_award_list[]=$user_award;
                         }
                         
-                        
+                        dd($user_award_list);
                     }
                     if ($fine_user == 'cargo' || $fine_user == 'all'){
                         if($v['company_fine'] || $v['company_fine']>0){
