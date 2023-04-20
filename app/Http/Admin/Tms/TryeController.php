@@ -182,15 +182,15 @@ class TryeController extends CommonController{
             $v->button_info=$button_info;
             if($v->type == 'in'){
                 if ($v->state == 'N') {
-                    $v->button_info=$button_info1;
-                }else{
                     $v->button_info=$button_info3;
+                }else{
+                    $v->button_info=$button_info1;
                 }
             }else{
                 if ($v->state == 'N') {
-                    $v->button_info=$button_info2;
-                }else{
                     $v->button_info=$button_info4;
+                }else{
+                    $v->button_info=$button_info2;
                 }
             }
 
