@@ -883,7 +883,7 @@ class MoneyController extends CommonController{
             }
             
             $data['total_money']   = $money;
-            $data['settle_money']  = $money - $receive_money;
+            $data['settle_money']  = $money - $old_info->receive_money;
             $data['update_time']   = $now_time;
             $id = TmsMoneyCount::where('self_id',$self_id)->update($data);
 
