@@ -198,6 +198,7 @@ class WagesController extends CommonController{
         $income_tax          =$request->input('income_tax');//备注
         $water_money         =$request->input('water_money');//备注
         $total_money         =$request->input('total_money');//合计
+        $money_award         =$request->input('money_award');//合计
         $remark              =$request->input('remark');//备注
 
 
@@ -990,6 +991,90 @@ class WagesController extends CommonController{
         $msg['data']=$data;
         //dd($msg);
         return $msg;
+
+    }
+
+
+    //提成导出
+    public function wagesExcel(Request $request){
+        $user_info  = $request->get('user_info');//接收中间件产生的参数
+        $now_time   =date('Y-m-d H:i:s',time());
+        $input      =$request->all();
+        /** 接收数据*/
+        $group_code     =$request->input('group_code');
+        // $group_code  =$input['group_code']   ='1234';
+        //dd($group_code);
+        $rules=[
+            'group_code'=>'required',
+        ];
+        $message=[
+            'group_code.required'=>'必须选择公司',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()){
+            /** 下面开始执行导出逻辑**/
+            $group_name     =SystemGroup::where('group_code','=',$group_code)->value('group_name');
+            //查询条件
+            $search=[
+                ['type'=>'=','name'=>'group_code','value'=>$group_code],
+                ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ];
+            $where=get_list_where($search);
+
+            $select=['self_id','user_id','user_name','salary_time','company_fine','money','water_money','income_tax','salary','live_cost','social_money','safe_reward','reward_price','salary_fine','money_award','group_code','group_name','use_flag','delete_flag','total_money'];
+           
+            $info=AwardRemind::with(['systemUser' => function($query) use($select1){
+                $query->select($select1);
+            }])->where($where)
+                ->orderBy('create_time', 'desc')
+                ->select($select)->get();
+//dd($info);
+            if($info){
+                //设置表头
+                $row = [[
+                    "id"=>'ID',
+                    "car_number"=>'车牌号',
+                    "user_name"=>'姓名',
+                    "money_award"=>'奖金',
+                    "cash_back"=>'奖金返还',
+                ]];
+
+
+                /** 现在根据查询到的数据去做一个导出的数据**/
+                $data_execl=[];
+                foreach ($info as $k=>$v){
+                    $list=[];
+                    $list['id']=($k+1);
+                    $list['car_number']=$v->car_number;
+                    $list['user_name']=$v->user_name;
+                    $list['money_award']=$v->money_award;
+                    $list['late_fee']=$v->late_fee;
+                    $list['cash_back']=$v->cash_back;
+
+                    $data_execl[]=$list;
+                }
+                /** 调用EXECL导出公用方法，将数据抛出来***/
+                $browse_type=$request->path();
+                $msg=$file->export($data_execl,$row,$group_code,$group_name,$browse_type,$user_info,$where,$now_time);
+
+                //dd($msg);
+                return $msg;
+
+            }else{
+                $msg['code']=301;
+                $msg['msg']="没有数据可以导出";
+                return $msg;
+            }
+        }else{
+            $erro=$validator->errors()->all();
+            $msg['msg']=null;
+            foreach ($erro as $k=>$v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code']=300;
+            return $msg;
+        }
 
     }
 
