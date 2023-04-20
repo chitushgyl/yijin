@@ -62,7 +62,7 @@ class TryeController extends CommonController{
         if($type == 'in'){
 
         }else{
-            
+
         }
 
         $msg['code']=200;
@@ -719,7 +719,7 @@ class TryeController extends CommonController{
                 $count['sale_price'] = $old_info->price;
 
                 $count['self_id'] = generate_id('count_');
-                $count['order_id'] = $data['self_id'];
+                $count['order_id'] = $old_info->self_id;
                 $count['create_user_id']     =$user_info->admin_id;
                 $count['create_user_name']   =$user_info->name;
                 $count['create_time']        =$count['update_time']=$now_time;
@@ -729,11 +729,18 @@ class TryeController extends CommonController{
             }
                 $update['state'] = 'Y';
                 $update['update_time'] = $now_time;
-                $id = TmsTrye::whereIn('self_id',explode(',',$self_id))->update($update);
-                TmsTryeCount::insert($change);
+                DB::beginTransaction();
+                try{
+                   $id = TmsTrye::whereIn('self_id',explode(',',$self_id))->update($update);
+                   TmsTryeCount::insert($change);
                 // $change->tryChange();
-                self::tryeChange($change,'preentry');
-
+                   self::tryeChange($change,'preentry');
+                   DB::commit();
+                }catch(\Exception $e){
+                    dd($e);
+                    DB::rollBack();
+                }
+                
                 $operationing->access_cause='轮胎入库审核';
                 $operationing->operation_type='create';
             
