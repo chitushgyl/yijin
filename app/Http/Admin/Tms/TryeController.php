@@ -769,6 +769,7 @@ class TryeController extends CommonController{
                 $count['now_num'] = $old_info->num;
                 $count['date_time'] = $old_info->in_time;
                 $count['sale_price'] = $old_info->price;
+                $count['trye_num'] = $old_info->trye_num;
 
                 $count['self_id'] = generate_id('count_');
                 $count['order_id'] = $old_info->self_id;
@@ -984,7 +985,14 @@ class TryeController extends CommonController{
             $data['user_id']           =$user_id;
             $data['driver_name']       =$driver_name;
             $data['trye_list']         =$trye_list;
-            $data['trye_num']          =$trye_num;
+            $trye_num_lists = [];
+            foreach(json_decode($trye_list,true) as $k => $v){
+                   
+                    $trye_num_list['trye_num']           = $v['trye_num'];
+                    $trye_out_lists[] = $list;
+
+            }
+            $data['trye_num']          =implode(',',$trye_out_lists);
             $data['in_time']           =$in_time;
             $data['operator']          =$operator;
             $data['remark']            =$remark;
