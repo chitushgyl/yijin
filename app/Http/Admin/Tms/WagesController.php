@@ -946,7 +946,7 @@ class WagesController extends CommonController{
        
         $where=get_list_where($search);
        
-        $select =['self_id','user_id','user_name','salary_time','company_fine','money','water_money','income_tax','salary','live_cost','social_money','safe_reward','reward_price','salary_fine','money_award','group_code','group_name','use_flag','delete_flag','total_money','date_num'];
+        $select =['self_id','user_id','user_name','salary_time','company_fine','money','water_money','income_tax','salary','live_cost','social_money','safe_reward','reward_price','salary_fine','money_award','group_code','group_name','use_flag','delete_flag','total_money','date_num','remark'];
         
         switch ($group_info['group_id']){
             case 'all':
