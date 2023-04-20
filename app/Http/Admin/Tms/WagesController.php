@@ -1002,6 +1002,7 @@ class WagesController extends CommonController{
         $input      =$request->all();
         /** 接收数据*/
         $group_code     =$request->input('group_code');
+        $order_id       =$request->input('order_id');
         // $group_code  =$input['group_code']   ='1234';
         //dd($group_code);
         $rules=[
@@ -1021,22 +1022,18 @@ class WagesController extends CommonController{
             ];
             $where=get_list_where($search);
 
-            $select=['self_id','user_id','user_name','salary_time','company_fine','money','water_money','income_tax','salary','live_cost','social_money','safe_reward','reward_price','salary_fine','money_award','group_code','group_name','use_flag','delete_flag','total_money'];
+            $select=['self_id','driver_id','driver_name','leave_time','use_flag','delete_flag','group_code','group_name','money','order_id','create_time','update_time'];
            
-            $info=AwardRemind::with(['systemUser' => function($query) use($select1){
-                $query->select($select1);
-            }])->where($where)
-                ->orderBy('create_time', 'desc')
-                ->select($select)->get();
+            $info=DriverCommission::where($where)->whereIn('self_id',explode(',',$order_id))
+                    ->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头
                 $row = [[
                     "id"=>'ID',
-                    "car_number"=>'车牌号',
-                    "user_name"=>'姓名',
-                    "money_award"=>'奖金',
-                    "cash_back"=>'奖金返还',
+                    "driver_name"=>'姓名',
+                    "leave_time"=>'时间',
+                    "money"=>'提成',
                 ]];
 
 
@@ -1045,12 +1042,9 @@ class WagesController extends CommonController{
                 foreach ($info as $k=>$v){
                     $list=[];
                     $list['id']=($k+1);
-                    $list['car_number']=$v->car_number;
-                    $list['user_name']=$v->user_name;
-                    $list['money_award']=$v->money_award;
-                    $list['late_fee']=$v->late_fee;
-                    $list['cash_back']=$v->cash_back;
-
+                    $list['driver_name']=$v->driver_name;
+                    $list['leave_time']=$v->leave_time;
+                    $list['money']=$v->money;
                     $data_execl[]=$list;
                 }
                 /** 调用EXECL导出公用方法，将数据抛出来***/

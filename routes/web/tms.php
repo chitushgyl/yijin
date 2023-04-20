@@ -395,7 +395,8 @@ Route::group([
     Route::any('/wages/getCommissionOrder','WagesController@getCommissionOrder');//获取线路
     Route::any('/wages/salaryPage','WagesController@salaryPage');//获取线路
     Route::any('/wages/salaryList','WagesController@salaryList');//获取线路
-    
+    Route::any('/wages/wagesExcel','WagesController@wagesExcel');//获取线路
+    wagesExcel
     
     
 
