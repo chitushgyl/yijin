@@ -770,6 +770,7 @@ class WagesController extends CommonController{
         foreach($data['items'] as $k => $v){
             $tms_order = TmsOrder::whereIn('self_id',explode(',',$v->order_id))->select()->get();
             $v->tms_order = $tms_order;
+            $v->button_info = $button_info;
         }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
@@ -790,6 +791,35 @@ class WagesController extends CommonController{
         $where=get_list_where($search);
         $select = ['self_id','driver_id','user_name','escort','escort_name','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag','leave_time','pay_id'];
         $data['info']=TmsOrder::where($where)->whereIn('self_id',explode(',',$order_id))->select($select)->get();
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
+
+    //打印提成表
+    public function printWages(Request $request){
+        $group_code=$request->input('group_code');
+        $order_id = $request->input('order_id');
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+        ];
+
+        $where=get_list_where($search);
+        $select = ['self_id','driver_id','user_name','escort','escort_name','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag','leave_time','pay_id'];
+        $select1 = ['self_id','driver_id','user_name','escort','escort_name','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag','leave_time','pay_id'];
+
+        $data['items']=DriverCommission::where($where)
+                    ->offset($firstrow)->limit($listrows)->whereIn('self_id',explode('self_id',explode(',',$order_id)))->orderBy('leave_time', 'asc')
+                    ->select($select)->get();
+        foreach($data['items'] as $k => $v){
+            $tms_order = TmsOrder::whereIn('self_id',explode(',',$v->order_id))->select()->get();
+            $v->tms_order = $tms_order;
+        }
+        
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
