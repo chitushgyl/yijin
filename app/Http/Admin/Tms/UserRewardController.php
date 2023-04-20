@@ -708,8 +708,8 @@ class UserRewardController extends CommonController{
             $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
             $errorNum=50;       //控制错误数据的条数
             $a=2;
-            $user_award_list[]=[];
-            $award_list[]=[];
+            $user_award_list=[];
+            $award_list=[];
             // dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
@@ -1018,8 +1018,8 @@ class UserRewardController extends CommonController{
             $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
             $errorNum=50;       //控制错误数据的条数
             $a=2;
-            $user_award_list[]=[];
-            $award_list[]=[];
+            $user_award_list=[];
+            $award_list=[];
             // dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
@@ -1333,8 +1333,8 @@ class UserRewardController extends CommonController{
             $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
             $errorNum=50;       //控制错误数据的条数
             $a=2;
-            $user_award_list[]=[];
-            $award_list[]=[];
+            $user_award_list=[];
+            $award_list=[];
             // dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
@@ -1641,8 +1641,8 @@ class UserRewardController extends CommonController{
             $abcd=0;            //初始化为0     当有错误则加1，页面显示的错误条数不能超过$errorNum 防止页面显示不全1
             $errorNum=50;       //控制错误数据的条数
             $a=2;
-            $user_award_list[]=[];
-            $award_list[]=[];
+            $user_award_list=[];
+            $award_list=[];
             // dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
