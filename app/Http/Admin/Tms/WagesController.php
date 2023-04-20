@@ -996,7 +996,7 @@ class WagesController extends CommonController{
 
 
     //提成导出
-    public function wagesExcel(Request $request){
+    public function wagesExcel(Request $request,File $file){
         $user_info  = $request->get('user_info');//接收中间件产生的参数
         $now_time   =date('Y-m-d H:i:s',time());
         $input      =$request->all();
