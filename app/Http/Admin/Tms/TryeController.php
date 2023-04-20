@@ -1135,7 +1135,7 @@ class TryeController extends CommonController{
 //                                ['create_time', '>',$now_time]
 //                                ['create_time', '>', substr($now_time, 0, -9)]
                         ];
-
+                      
                         $resssss = TmsTryeCount::where($where2)->orderBy('create_time', 'asc')->get()->toArray();
                         if ($resssss) {
                             $totalNum = array_sum(array_column($resssss, 'now_num'));
@@ -1148,7 +1148,8 @@ class TryeController extends CommonController{
                                 $wms_library_sige = [];
                                 $number=$v['num'];
                                 foreach ($resssss as $kk =>$vv){
-                                    if($number > 0 && in_array($v->trye_num,explode(',',$vv->trye_num))) {
+                                  
+                                    if($number > 0 && in_array($v->trye_num,explode(',',$vv['trye_num']))) {
                                         if ($number - $vv['now_num'] > 0) {
                                             $shiji_number = $vv['now_num'];
 
