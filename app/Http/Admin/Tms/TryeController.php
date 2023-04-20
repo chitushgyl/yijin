@@ -992,7 +992,7 @@ class TryeController extends CommonController{
                     $trye_out_lists[] = $trye_num_list;
 
             }
-            $data['trye_num']          =implode(',',$trye_out_lists);
+            $data['trye_num']          =implode($trye_out_lists);
             $data['in_time']           =$in_time;
             $data['operator']          =$operator;
             $data['remark']            =$remark;
