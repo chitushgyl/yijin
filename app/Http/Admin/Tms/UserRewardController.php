@@ -869,7 +869,7 @@ class UserRewardController extends CommonController{
                 $a++;
 
             }
-            // dd($award_list,$datalist);
+            dd($award_list,$datalist);
             $operationing->new_info=$datalist;
 
             //dump($operationing);
