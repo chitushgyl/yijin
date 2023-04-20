@@ -810,7 +810,7 @@ class UserRewardController extends CommonController{
                     $list['file_id']            =$file_id;
                     $datalist[]=$list;
                     
-                    if ($list['user_id'] && ($company_fine || $company_fine>0)){
+                    if ($list['user_id'] && ($v['company_fine'] || $v['company_fine']>0)){
                         $user_award['self_id']            = generate_id('award_');
                         $user_award['reward_id']          = $list['self_id'];
                         $user_award['user_id']            = $list['user_id'];
@@ -829,7 +829,7 @@ class UserRewardController extends CommonController{
                         $user_award_list[]=$user_award;
                         
                     }
-                    if ($list['escort'] && ($company_fine || $company_fine>0)){
+                    if ($list['escort'] && ($v['company_fine'] || $v['company_fine']>0)){
                         $award['self_id']            = generate_id('award_');
                         $award['reward_id']          = $list['self_id'];
                         $award['user_id']            = $list['escort'];
@@ -1107,7 +1107,7 @@ class UserRewardController extends CommonController{
                     $list['file_id']                  = $file_id;
                     $datalist[]=$list;
                     
-                    if ($list['user_id'] && ($company_fine || $company_fine>0)){
+                    if ($list['user_id'] && ($v['company_fine'] || $v['company_fine']>0)){
                         $user_award['self_id']            = generate_id('award_');
                         $user_award['reward_id']          = $list['self_id'];
                         $user_award['user_id']            = $list['user_id'];
@@ -1126,7 +1126,7 @@ class UserRewardController extends CommonController{
                         $user_award_list[]=$user_award;
                         
                     }
-                    if ($list['escort'] && ($company_fine || $company_fine>0)){
+                    if ($list['escort'] && ($v['company_fine'] || $v['company_fine']>0)){
                         $award['self_id']            = generate_id('award_');
                         $award['reward_id']          = $list['self_id'];
                         $award['user_id']            = $list['escort'];
@@ -1410,7 +1410,7 @@ class UserRewardController extends CommonController{
                     $list['file_id']                  = $file_id;
                     $datalist[]=$list;
                     
-                    if ($list['user_id'] && ($company_fine || $company_fine>0)){
+                    if ($list['user_id'] && ($v['company_fine'] || $v['company_fine']>0)){
                         $user_award['self_id']            = generate_id('award_');
                         $user_award['reward_id']          = $list['self_id'];
                         $user_award['user_id']            = $list['user_id'];
@@ -1429,7 +1429,7 @@ class UserRewardController extends CommonController{
                         $user_award_list[]=$user_award;
                         
                     }
-                    if ($list['escort'] && ($company_fine || $company_fine>0)){
+                    if ($list['escort'] && ($v['company_fine'] || $v['company_fine']>0)){
                         $award['self_id']            = generate_id('award_');
                         $award['reward_id']          = $list['self_id'];
                         $award['user_id']            = $list['escort'];
