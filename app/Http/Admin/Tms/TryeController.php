@@ -90,6 +90,7 @@ class TryeController extends CommonController{
         $supplier     =$request->input('supplier');
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
+        $state       =$request->input('state');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -106,6 +107,7 @@ class TryeController extends CommonController{
             ['type'=>'=','name'=>'type','value'=>$type],
             ['type'=>'=','name'=>'model','value'=>$model],
             ['type'=>'=','name'=>'supplier','value'=>$supplier],
+            ['type'=>'=','name'=>'state','value'=>$state],
             
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
             ['type'=>'like','name'=>'trailer_num','value'=>$trailer_num],
