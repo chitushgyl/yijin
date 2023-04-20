@@ -829,7 +829,7 @@ class UserRewardController extends CommonController{
                     
                     if ($fine_user == 'driver'|| $fine_user == 'all'){
                         if($v['company_fine'] || $v['company_fine']>0){
-                            dump(123);
+                            
                             $user_award['self_id']            = generate_id('award_');
                         $user_award['reward_id']          = $list['self_id'];
                         $user_award['user_id']            = $list['user_id'];
@@ -848,11 +848,10 @@ class UserRewardController extends CommonController{
                         $user_award_list[]=$user_award;
                         }
                         
-                        dump($user_award_list);
                     }
                     if ($fine_user == 'cargo' || $fine_user == 'all'){
                         if($v['company_fine'] || $v['company_fine']>0){
-                            dump(345);
+                
                            $award['self_id']            = generate_id('award_');
                         $award['reward_id']          = $list['self_id'];
                         $award['user_id']            = $list['escort'];
@@ -879,7 +878,7 @@ class UserRewardController extends CommonController{
                 $a++;
 
             }
-            dd($award_list,$datalist);
+          
             $operationing->new_info=$datalist;
 
             //dump($operationing);
