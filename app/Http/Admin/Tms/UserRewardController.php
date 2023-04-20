@@ -826,7 +826,7 @@ class UserRewardController extends CommonController{
                     $datalist[]=$list;
                     
                     if ($fine_user == 'driver'|| $fine_user == 'all'){
-                        if($v['company_fine'] || $v['company_fine']){
+                        if($v['company_fine'] || $v['company_fine']>0){
                             $user_award['self_id']            = generate_id('award_');
                         $user_award['reward_id']          = $list['self_id'];
                         $user_award['user_id']            = $list['user_id'];
