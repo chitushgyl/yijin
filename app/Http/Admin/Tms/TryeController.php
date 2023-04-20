@@ -157,9 +157,42 @@ class TryeController extends CommonController{
                 break;
         }
 
+        $button_info1=[];
+        $button_info2=[];
+        $button_info3=[];
+        $button_info4=[];
+        foreach ($button_info as $k => $v){
+            if($v->id == 144){
+                $button_info1[]=$v;
+                $button_info3[]=$v;
+            }
+            if($v->id == 145){
+                $button_info1[]=$v;
+            }
+            if($v->id == 146){
+                $button_info2[]=$v;
+                $button_info4[]=$v;
+            }
+            if($v->id == 147){
+                $button_info2[]=$v;
+            }
+        }
         foreach ($data['items'] as $k=>$v) {
-
+            
             $v->button_info=$button_info;
+            if($v->type == 'in'){
+                if ($v->state == 'N') {
+                    $v->button_info=$button_info1;
+                }else{
+                    $v->button_info=$button_info3;
+                }
+            }else{
+                if ($v->state == 'N') {
+                    $v->button_info=$button_info2;
+                }else{
+                    $v->button_info=$button_info4;
+                }
+            }
 
         }
 
