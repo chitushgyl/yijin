@@ -2205,6 +2205,8 @@ class TryeController extends CommonController{
         $use_flag           =$request->input('use_flag');
         $model              =$request->input('model');
         $price              =$request->input('price');
+        $start_time         =$request->input('start_time');
+        $end_time           =$request->input('end_time');
 
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
@@ -2215,6 +2217,8 @@ class TryeController extends CommonController{
             ['type'=>'>','name'=>'now_num','value'=>0],
             ['type'=>'=','name'=>'model','value'=>$model],
             ['type'=>'=','name'=>'sale_price','value'=>$price],
+            ['type'=>'>=','name'=>'date_time','value'=>$start_time],
+            ['type'=>'<=','name'=>'date_time','value'=>$end_time],
         ];
 
 
