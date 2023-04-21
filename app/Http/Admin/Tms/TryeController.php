@@ -1189,12 +1189,12 @@ class TryeController extends CommonController{
                                
                                     
                                 // }
-                                dd($wms_library_change);
-                                // if(count($wms_library_change)=0){
-                                //         $msg['code']=302;
-                                //         $msg['msg']='轮胎编号输入错误，库存中没有该编号'.$v['trye_num'].'或轮胎型号与编号不匹配请仔细核对！';
-                                //         return $msg;
-                                // }
+                                // dd($wms_library_change);
+                                if(count($wms_library_change)=0){
+                                        $msg['code']=302;
+                                        $msg['msg']='轮胎编号输入错误，库存中没有该编号'.$v['trye_num'].'或轮胎型号与编号不匹配请仔细核对！';
+                                        return $msg;
+                                }
                                 self::tryeChange($wms_library_change,'out');
                                 foreach ($wms_library_sige as $kkk => $vvv){
                                     $where21['self_id']=$vvv['self_id'];
