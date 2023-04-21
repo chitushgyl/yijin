@@ -69,6 +69,8 @@ class ExamineController extends CommonController{
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'user_id','value'=>$user_id],
             ['type'=>'like','name'=>'user_name','value'=>$user_name],
+            ['type'=>'>=','name'=>'start_time','value'=>$start_time],
+            ['type'=>'<=','name'=>'end_time','value'=>$end_time],
         ];
 
         $where=get_list_where($search);
