@@ -1182,7 +1182,7 @@ class TryeController extends CommonController{
                                         $number -=  $vv['now_num'];
                                     }else{
                                         $msg['code']=302;
-                                        $msg['msg']='轮胎编号输入错误，库存中没有该编号'.$v['trye_num'].'请仔细核对！';
+                                        $msg['msg']='轮胎编号输入错误，库存中没有该编号'.$v['trye_num'].'或轮胎型号与编号不匹配，请仔细核对！';
                                         return $msg;
                                     }
 
