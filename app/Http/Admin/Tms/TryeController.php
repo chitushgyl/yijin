@@ -1091,7 +1091,7 @@ class TryeController extends CommonController{
         $data['info']=TmsTryeCount::where($where)->where('now_num','>',0)->select($select)->get();
         $arr = [];
         foreach($data['info'] as $k => $v){
-            array_push($arr,explode(',',$v->trye_num));
+            array_push($arr,$v->trye_num);
         }
         
         $msg['code']=200;
