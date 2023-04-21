@@ -59,6 +59,7 @@ class CarServiceController extends CommonController{
         $type           =$request->input('type');
         $service_partne =$request->input('service_partne');
         $settle_flag    =$request->input('settle_flag');
+        $brand    =$request->input('brand');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -81,6 +82,7 @@ class CarServiceController extends CommonController{
             ['type'=>'=','name'=>'type','value'=>$type],
             ['type'=>'like','name'=>'service_partne','value'=>$service_partne],
             ['type'=>'=','name'=>'settle_flag','value'=>$settle_flag],
+            ['type'=>'=','name'=>'brand','value'=>$brand],
         ];
 
         $where=get_list_where($search);
