@@ -2646,7 +2646,7 @@ class OrderController extends CommonController{
 
         switch ($group_info['group_id']){
             case 'all':
-                $data['total']=TmsOrder::where($where)->count(); //总的数据量
+                $data['total']=TmsOrder::where($where)->orWhere($where1)->count(); //总的数据量
                 $data['items']=TmsOrder::where($where)
                     ->orWhere($where1)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
@@ -2656,7 +2656,7 @@ class OrderController extends CommonController{
 
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
-                $data['total']=TmsOrder::where($where)->count(); //总的数据量
+                $data['total']=TmsOrder::where($where)->orWhere($where1)->count(); //总的数据量
                 $data['items']=TmsOrder::where($where)
                     ->orWhere($where1)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
@@ -2665,7 +2665,7 @@ class OrderController extends CommonController{
                 break;
 
             case 'more':
-                $data['total']=TmsOrder::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['total']=TmsOrder::where($where)->orWhere($where1)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=TmsOrder::where($where)
                     ->orWhere($where1)
                     ->whereIn('group_code',$group_info['group_code'])
