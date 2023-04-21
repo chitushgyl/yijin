@@ -2283,6 +2283,8 @@ class UserRewardController extends CommonController{
                 ['type'=>'like','name'=>'user_name','value'=>$user_name],
                 ['type'=>'>=','name'=>'cash_back','value'=>$start_time],
                 ['type'=>'<','name'=>'cash_back','value'=>$end_time],
+                ['type'=>'like','name'=>'reward_id','value'=>$reward_id],
+                
             ];
             $where1 = [
                ['cash_back','=',$now_time],
