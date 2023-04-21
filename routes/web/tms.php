@@ -359,6 +359,8 @@ Route::group([
     Route::any('/trye/tryeCount','TryeController@tryeCount');
     Route::any('/trye/updateInState','TryeController@updateInState');
     Route::any('/trye/tryeIn','TryeController@tryeIn');
+    Route::any('/trye/getTryeNum','TryeController@getTryeNum');
+    
 
     Route::any('/trye/searchList','TryeController@searchList');
     Route::any('/trye/searchPage','TryeController@searchPage');
