@@ -1146,7 +1146,6 @@ class TryeController extends CommonController{
                                 return $msg;
                             } else {
                                 $wms_library_sige = [];
-                                $wms_library_change =[];
                                 $number=$v['num'];
                                 foreach ($resssss as $kk =>$vv){
                                   
