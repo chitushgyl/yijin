@@ -1078,12 +1078,14 @@ class TryeController extends CommonController{
 
     public function getTryeNum(Request $request){
         $group_code=$request->input('group_code');
+        $model=$request->input('model');
 
 //        $input['group_code'] =  $group_code = '1234';
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>'Y'],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'=','name'=>'model','value'=>$model],
         ];
         $where=get_list_where($search);
 
