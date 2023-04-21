@@ -50,10 +50,10 @@ class LineController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-        $car_number     =$request->input('car_number');
-        $carframe_num   =$request->input('carframe_num');
-        $car_type       =$request->input('car_type');
-        $type           =$request->input('type');
+        $send_name     =$request->input('send_name');
+        $gather_name   =$request->input('gather_name');
+        $pay_type       =$request->input('pay_type');
+        
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -61,10 +61,10 @@ class LineController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'like','name'=>'car_number','value'=>$car_number],
-            ['type'=>'like','name'=>'carframe_num','value'=>$carframe_num],
-            ['type'=>'=','name'=>'car_type','value'=>$car_type],
-            ['type'=>'=','name'=>'type','value'=>$type],
+            ['type'=>'like','name'=>'send_name','value'=>$send_name],
+            ['type'=>'like','name'=>'gather_name','value'=>$gather_name],
+            ['type'=>'=','name'=>'pay_type','value'=>$pay_type],
+           
         ];
 
         $where=get_list_where($search);
