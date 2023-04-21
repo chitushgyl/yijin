@@ -800,12 +800,10 @@ class WagesController extends CommonController{
         if($id){
           $msg['code']=200;
           $msg['msg']="数据拉取成功";
-          $msg['data']=$data;
           return $msg;
         }else{
           $msg['code']=300;
           $msg['msg']="编辑失败";
-          $msg['data']=$data;
           return $msg;
         }
         
