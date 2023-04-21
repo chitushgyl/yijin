@@ -1085,6 +1085,7 @@ class TryeController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>'Y'],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
         ];
+        $where=get_list_where($search);
 
         $select = ['self_id','model','order_id','price','initial_num','change_num','now_num','trye_num','use_flag','delete_flag','group_code','group_name','create_time'];
         $data['info']=TmsTryeCount::where($where)->where('now_num','>',0)->select($select)->get();
