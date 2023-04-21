@@ -2613,14 +2613,19 @@ class OrderController extends CommonController{
         $user_name      =$request->input('user_name');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
-
+        if ($start_time) {
+            $start_time = $start_time.' 00:00:00';
+        }
+        if ($end_time) {
+            $end_time = $end_time.' 23:59:59';
+        }
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'user_name','value'=>$user_name],
             ['type'=>'>=','name'=>'send_time','value'=>$start_time],
-            ['type'=>'<','name'=>'send_time','value'=>$end_time.' 23:59:59'],
+            ['type'=>'<','name'=>'send_time','value'=>$end_time],
         ];
         $search1=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
@@ -2628,7 +2633,7 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'escort_name','value'=>$user_name],
             ['type'=>'>=','name'=>'send_time','value'=>$start_time],
-            ['type'=>'<','name'=>'send_time','value'=>$end_time.' 23:59:59'],
+            ['type'=>'<','name'=>'send_time','value'=>$end_time],
         ];
 
         $where=get_list_where($search);

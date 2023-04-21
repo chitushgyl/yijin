@@ -787,6 +787,30 @@ class WagesController extends CommonController{
         return $msg;
     }
 
+    //编辑提成 
+    public function editCommission(Request $request){
+        $now_time   =date('Y-m-d H:i:s',time());
+        $group_code=$request->input('group_code');
+        $order_id = $request->input('self_id');
+        $money     =$request->input('money');
+        
+        $update['money'] = $money;
+        $update['update_time'] = $now_time;
+        $id=DriverCommission::where('self_id',$order_id)->update($update);
+        if($id){
+          $msg['code']=200;
+          $msg['msg']="数据拉取成功";
+          $msg['data']=$data;
+          return $msg;
+        }else{
+          $msg['code']=300;
+          $msg['msg']="编辑失败";
+          $msg['data']=$data;
+          return $msg;
+        }
+        
+    }
+
     public function getCommissionOrder(Request $request){
        $group_code=$request->input('group_code');
        $order_id = $request->input('order_id');

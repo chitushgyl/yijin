@@ -400,6 +400,7 @@ Route::group([
     Route::any('/wages/wagesExcel','WagesController@wagesExcel');//获取线路
     Route::any('/wages/printWages','WagesController@printWages');//
     Route::any('/wages/printSalary','WagesController@printSalary');//
+    Route::any('/wages/editCommission','WagesController@editCommission');//
     
     
     
