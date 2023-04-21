@@ -2271,6 +2271,8 @@ class UserRewardController extends CommonController{
             $end_time       =$request->input('end_time');
             $car_number       =$request->input('car_number');
             
+            $reward_id       =$request->input('reward_id');
+            
             $listrows       =$num;
             $firstrow       =($page-1)*$listrows;
 

@@ -165,6 +165,7 @@ class CountController extends CommonController{
         $good_name           =$request->input('good_name');
         $start_time          =$request->input('start_time');
         $end_time            =$request->input('end_time');
+        $wms_spec            =$request->input('wms_spec');
         $listrows            =$num;
         $firstrow            =($page-1)*$listrows;
         $search=[
@@ -174,6 +175,7 @@ class CountController extends CommonController{
             ['type'=>'like','name'=>'good_name','value'=>$good_name],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'external_sku_id','value'=>$external_sku_id],
+            ['type'=>'like','name'=>'wms_spec','value'=>$wms_spec],
 
 
         ];
