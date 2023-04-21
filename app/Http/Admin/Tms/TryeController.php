@@ -1216,7 +1216,7 @@ class TryeController extends CommonController{
                         $money['user_name']          = $trye->driver_name;
                         $money['process_state']      = 'Y';
                         $money['type_state']         = 'out';
-                        $money['use_flag']           = 'N';
+                        // $money['use_flag']           = 'Y';
                         $money['self_id']            = generate_id('money_');
                         $money['group_code']         = $trye->group_code;
                         $money['group_name']         = $trye->group_name;
