@@ -959,6 +959,7 @@ class MoneyController extends CommonController{
 
             $cost_money['receive_money']  = $receive_money;
             $cost_money['receive_time']   = $receive_time;
+            $cost_money['money_id']   = $self_id;
             $cost_money['self_id']        = generate_id('cost_');
             $cost_money['group_code']     = $old_info->group_code;
             $cost_money['group_name']     = $old_info->group_name;
