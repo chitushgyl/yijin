@@ -168,6 +168,13 @@ class CountController extends CommonController{
         $wms_spec            =$request->input('wms_spec');
         $listrows            =$num;
         $firstrow            =($page-1)*$listrows;
+
+        if ($start_time) {
+            $start_time = $start_time.' 00:00:00';
+        }
+        if ($end_time) {
+            $end_time = $end_time.' 23:59:59';
+        }
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'=','name'=>'use_flag','value'=>'Y'],
@@ -185,8 +192,8 @@ class CountController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'=','name'=>'use_flag','value'=>'Y'],
             ['type'=>'>=','name'=>'now_num','value'=>0],
-            ['type'=>'>=','name'=>'inout_time','value'=>$start_time.' 00:00:00'],
-            ['type'=>'<','name'=>'inout_time','value'=>$end_time.' 23:59:59'],
+            ['type'=>'>=','name'=>'inout_time','value'=>$start_time],
+            ['type'=>'<','name'=>'inout_time','value'=>$end_time],
         ];
 
         $where=get_list_where($search);
