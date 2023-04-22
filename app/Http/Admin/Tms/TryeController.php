@@ -121,7 +121,7 @@ class TryeController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','car_number','price','model','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag','state','user_id','trailer_num','remark','trye_name'];
-        $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag'];
+        $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag','trye_name'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsTrye::where($where)->count(); //总的数据量
@@ -2069,6 +2069,8 @@ class TryeController extends CommonController{
         $good_name           =$request->input('good_name');
         $start_time          =$request->input('start_time');
         $end_time            =$request->input('end_time');
+        $supplier            =$request->input('supplier');
+        
         $model               =$request->input('model');
         $trye_name               =$request->input('trye_name');
         $listrows            =$num;
