@@ -381,6 +381,7 @@ class TryeController extends CommonController{
             $money=[];
             $list["self_id"]            =generate_id('change_');
             $list["model"]              =$v['model'];
+            $list["trye_name"]              =$v['trye_name'];
             $list['create_time']        =$v['create_time'];
             $list["update_time"]        =$v['update_time'];
             $list["group_code"]         =$v['group_code'];
@@ -774,6 +775,7 @@ class TryeController extends CommonController{
                 $count['date_time'] = $old_info->in_time;
                 $count['sale_price'] = $old_info->price;
                 $count['trye_num'] = $old_info->trye_num;
+                $count['trye_name'] = $old_info->trye_name;
 
                 $count['self_id'] = generate_id('count_');
                 $count['order_id'] = $old_info->self_id;
@@ -1038,6 +1040,7 @@ class TryeController extends CommonController{
                     foreach(json_decode($trye_list,true) as $key => $value){
                         $list['self_id']            = generate_id('list_');
                         $list['model']              = $value['model'];
+                        $list['trye_name']              = $value['trye_name'];
                         $list['trye_num']           = $value['trye_num'];
                         $list['num']                = $value['num'];
                         $list['price']              = $value['price'];
@@ -1124,7 +1127,7 @@ class TryeController extends CommonController{
             ['delete_flag','=','Y'],
         ];
         $select=['self_id','car_number','price','model','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag'];
-        $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag'];
+        $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag','trye_name'];
         $order = TmsTrye::with(['TryeOutList' => function($query) use($select1){
             $query->select($select1);
             $query->where('delete_flag','=','Y');
@@ -1164,6 +1167,7 @@ class TryeController extends CommonController{
                             ['model', '=', $v['model']],
                             ['now_num', '>', 0],
                             ['delete_flag', '=', 'Y'],
+                            ['trye_name', '=', $v['trye_name']],
 //                                ['create_time', '>',$now_time]
 //                                ['create_time', '>', substr($now_time, 0, -9)]
                         ];
@@ -1202,6 +1206,7 @@ class TryeController extends CommonController{
                                         $library_change['group_name']           =$vv['group_name'];
                                         $library_change['shiji_num']            =$shiji_number;
                                         $library_change['model']                =$vv['model'];
+                                        $library_change['trye_name']                =$vv['trye_name'];
                                         $library_change['inout_time']           =$v['inout_time'];
                                         $library_change['initial_num']          =$vv['now_num'];
                                         $library_change['create_user_id']       =$user_info->admin_id;
