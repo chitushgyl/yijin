@@ -295,6 +295,7 @@ Route::group([
     Route::any('/money/getSettleOrder', 'MoneyController@getSettleOrder');//获取应收跟单明细
     Route::any('/money/updateSettle', 'MoneyController@updateSettle');//修改应收金额
     Route::any('/money/updateReceive', 'MoneyController@updateReceive');//修改已收金额
+    Route::any('/money/getCostMoney', 'MoneyController@getCostMoney');//修改已收金额
 
     
     Route::group([

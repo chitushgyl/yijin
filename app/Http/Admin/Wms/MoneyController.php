@@ -4,6 +4,7 @@ use App\Models\Group\SystemUser;
 use App\Models\Tms\TmsMoney;
 use App\Models\Tms\TmsOrder;
 use App\Models\Tms\TmsMoneyCount;
+use App\Models\Tms\TmsCostMoney;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\DB;
@@ -935,6 +936,7 @@ class MoneyController extends CommonController{
         $self_id            =$request->input('self_id');
         $receive_money      =$request->input('receive_money');//已收费用
         $settle_money       =$request->input('settle_money');//未收费用
+        $receive_time      =$request->input('receive_time');//收款时间
 
         $rules=[
             'self_id'=>'required',
@@ -954,6 +956,15 @@ class MoneyController extends CommonController{
             $data['settle_money']  = $settle_money;
             $data['update_time']   = $now_time;
             $id = TmsMoneyCount::where('self_id',$self_id)->update($data);
+
+            $cost_money['receive_money']  = $receive_money;
+            $cost_money['receive_time']   = $receive_time;
+            $cost_money['self_id']        = generate_id('cost_');
+            $cost_money['group_code']     = $old_info->group_code;
+            $cost_money['group_name']     = $old_info->group_name;
+            $cost_money['create_user_id']     = $user_info->admin_id;
+            $cost_money['create_user_name']     = $user_info->admin_name;
+            $cost_money['create_time']    = $cost_money['update_time'] = $now_time;
 
             $operationing->access_cause='修改已收金额';
             $operationing->operation_type='create';
@@ -982,6 +993,21 @@ class MoneyController extends CommonController{
             }
             return $msg;
         }
+    }
+
+    //获取收款明细
+    public function getCostMoney(Request $request){
+         $money_id=$request->input('money_id');
+        
+//        $input['group_code'] =  $group_code = '1234';
+       
+        $select = ['self_id','receive_money','receive_time','group_name','group_code','use_flag','delete_flag','money_id'];
+        $data['info']=TmsCostMoney::whereIn('money_id',$money_id)->select($select)->get();
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
     }
 
     //应收账款上传发票
