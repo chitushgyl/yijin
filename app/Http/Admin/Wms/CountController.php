@@ -181,7 +181,7 @@ class CountController extends CommonController{
         if ($end_time) {
             $end_time = $end_time.' 23:59:59';
         }else{
-                 $msg['code']=300;
+            $msg['code']=300;
         $msg['msg']='请选择结束时间';
         
 //        dd($msg);
