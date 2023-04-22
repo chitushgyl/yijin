@@ -2108,7 +2108,7 @@ class TryeController extends CommonController{
 
         $where=get_list_where($search);
         $where1 = get_list_where($search1);
-        $select=['self_id','model','group_name','use_flag'];
+        $select=['self_id','model','group_name','use_flag','trye_name'];
         $Signselect=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time','different','date_time','trye_name'];
 //        dd($select);
         switch ($group_info['group_id']){
