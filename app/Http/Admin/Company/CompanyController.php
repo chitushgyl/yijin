@@ -58,6 +58,7 @@ class CompanyController extends CommonController{
             ['type'=>'like','name'=>'name','value'=>$name],
             ['type'=>'like','name'=>'group_name','value'=>$group_name],
             ['type'=>'like','name'=>'tel','value'=>$tel],
+            ['type'=>'like','name'=>'group_code','value'=>$group_code],
         ];
 
         $where=get_list_where($search);
