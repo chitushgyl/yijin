@@ -193,6 +193,13 @@ class LineController extends CommonController{
                 return $msg;
             }
 
+            $old_line = TmsLine::where('gather_name',$gather_name)->where('send_name',$send_name)->first();
+            if($old_line){
+                $msg['code'] = 301;
+                $msg['msg'] = '公司不存在';
+                return $msg;
+            }
+
             $data['send_id']          =$send_id;
             $data['send_name']        =$send_name;
             $data['gather_id']        =$gather_id;

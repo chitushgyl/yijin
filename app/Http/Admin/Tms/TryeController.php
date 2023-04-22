@@ -87,11 +87,11 @@ class TryeController extends CommonController{
         $type           =$request->input('type');
         $model          =$request->input('model');
         $car_number     =$request->input('car_number');
-        $trailer_num     =$request->input('trailer_num');
-        $supplier     =$request->input('supplier');
+        $trailer_num    =$request->input('trailer_num');
+        $supplier       =$request->input('supplier');
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
-        $state       =$request->input('state');
+        $state          =$request->input('state');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
