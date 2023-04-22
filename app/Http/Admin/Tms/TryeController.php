@@ -2103,6 +2103,7 @@ class TryeController extends CommonController{
             ['type'=>'=','name'=>'use_flag','value'=>'Y'],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'model','value'=>$model],
+            ['type'=>'=','name'=>'trye_name','value'=>$trye_name],
 
         ];
 
@@ -2114,9 +2115,17 @@ class TryeController extends CommonController{
             ['type'=>'<=','name'=>'inout_time','value'=>$end_time],
             ['type'=>'=','name'=>'trye_name','value'=>$trye_name],
         ];
+        $search3=[
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'=','name'=>'model','value'=>$model],
+            ['type'=>'=','name'=>'trye_name','value'=>$trye_name],
+            ['type'=>'<=','name'=>'inout_time','value'=>$start_time],
+
+        ];
 
         $where=get_list_where($search);
         $where1 = get_list_where($search1);
+        $where3 = get_list_where($search3);
         $select=['self_id','model','group_name','use_flag','trye_name'];
         $Signselect=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time','different','date_time','trye_name'];
 //        dd($select);
@@ -2199,7 +2208,7 @@ class TryeController extends CommonController{
             $v->initial_count=0;
             $v->jie_count=0;
             foreach ($v->tmsTryeChange as $kk=>$vv) {
-                $v->different_count = TmsTryeChange::where('inout_time','<',$start_time)->where('model',$v->model)->where('type','different')->sum('different');
+                $v->different_count = TmsTryeChange::where($where3)->where('type','different')->sum('different');
                 if ($vv->type == 'preentry'){
                     $v->in_count += $vv->now_num;
                 }elseif($vv->type == 'out'){
@@ -2213,8 +2222,8 @@ class TryeController extends CommonController{
                 $v->count +=$vv->now_num;
             }
 //            $v->jie_count = $v->in_count - $v->out_count;
-            $v->in_initial_count = TmsTryeChange::where('inout_time','<',$start_time)->where('model',$v->model)->where('type','preentry')->sum('change_num');
-            $v->out_initial_count = TmsTryeChange::where('inout_time','<',$start_time)->where('model',$v->model)->where('type','out')->sum('change_num');
+            $v->in_initial_count = TmsTryeChange::where($where3)->where('type','preentry')->sum('change_num');
+            $v->out_initial_count = TmsTryeChange::where($where3)->where('type','out')->sum('change_num');
             
             $v->initial_count = $v->in_initial_count - $v->out_initial_count;
             $v->jie_count = $v->in_count + $v->initial_count - $v->out_count + $v->different;
