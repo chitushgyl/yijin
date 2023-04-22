@@ -965,7 +965,7 @@ class MoneyController extends CommonController{
             $cost_money['create_user_id']     = $user_info->admin_id;
             $cost_money['create_user_name']     = $user_info->admin_name;
             $cost_money['create_time']    = $cost_money['update_time'] = $now_time;
-
+            TmsCostMoney::insert($cost_money);
             $operationing->access_cause='修改已收金额';
             $operationing->operation_type='create';
             $operationing->table_id=$old_info?$self_id:$data['self_id'];
