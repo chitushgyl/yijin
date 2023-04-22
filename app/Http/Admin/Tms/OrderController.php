@@ -1227,12 +1227,12 @@ class OrderController extends CommonController{
             //dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
-                $company = TmsGroup::where('company_name',$v['company_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
-                $car = TmsCar::where('car_number',$v['car_number'])->where('group_code',$group_code)->select('self_id','car_number')->first();
-                $trailer = TmsCar::where('car_number',$v['trailer_num'])->where('group_code',$group_code)->select('self_id','car_number')->first();
-                $send = TmsGroup::where('company_name',$v['send_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
-                $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
-                $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $company = TmsGroup::where('company_name',$v['company_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $car = TmsCar::where('car_number',$v['car_number'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','car_number')->first();
+                $trailer = TmsCar::where('car_number',$v['trailer_num'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','car_number')->first();
+                $send = TmsGroup::where('company_name',$v['send_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $gather = TmsGroup::where('company_name',$v['gather_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 if ($v['send_name']){
                     if (!empty((array)$send)){
                         $v['send_id']                 = $send->self_id;
@@ -1264,7 +1264,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if ($v['user_name']){
-                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('name',$v['user_name'])->where('group_code',$group_code)->where('delete_flag','Y')->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$driver){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
@@ -1274,7 +1274,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if($v['escort']){
-                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('name',$v['escort'])->where('group_code',$group_code)->where('delete_flag','Y')->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$cargo){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
@@ -1564,10 +1564,10 @@ class OrderController extends CommonController{
             //dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
-                $car = TmsCar::where('car_number',$v['car_number'])->where('group_code',$group_code)->select('self_id','car_number')->first();
-                $send = TmsGroup::where('company_name',$v['send_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
-                $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
-                $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $car = TmsCar::where('car_number',$v['car_number'])->where('group_code',$group_code)->select('self_id','car_number','delete_flag')->where('delete_flag','Y')->first();
+                $send = TmsGroup::where('company_name',$v['send_name'])->where('group_code',$group_code)->where('delete_flag','Y')->select('self_id','company_name','use_flag','delete_flag')->first();
+                $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->where('delete_flag','Y')->first();
+                $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->where('delete_flag','Y')->first();
                 if ($v['send_name']){
                     if ($send){
                         $v['send_id']                 = $send->self_id;
@@ -1614,7 +1614,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if ($v['user_name']){
-                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('delete_flag','Y')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$driver){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
@@ -1624,7 +1624,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if($v['escort']){
-                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('delete_flag','Y')->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$cargo){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
@@ -1862,11 +1862,11 @@ class OrderController extends CommonController{
             //dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
-                $car = TmsCar::where('car_number',$v['car_number'])->where('group_code',$group_code)->select('self_id','car_number')->first();
+                $car = TmsCar::where('car_number',$v['car_number'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','car_number')->first();
                 
-                $send = TmsGroup::where('company_name',$v['send_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
-                $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
-                $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $send = TmsGroup::where('company_name',$v['send_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $gather = TmsGroup::where('company_name',$v['gather_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 if ($v['send_name']){
                     if (!empty((array)$send)){
                         $v['send_id']                 = $send->self_id;
@@ -1913,7 +1913,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if ($v['user_name']){
-                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('delete_flag','Y')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$driver){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
@@ -1923,7 +1923,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if($v['escort']){
-                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('delete_flag','Y')->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$cargo){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
@@ -1941,7 +1941,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if($v['trailer_num']){
-                    $trailer = TmsCar::where('car_number',$v['trailer_num'])->where('group_code',$group_code)->select('self_id','car_number')->first();
+                    $trailer = TmsCar::where('car_number',$v['trailer_num'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','car_number')->first();
                     if (!$trailer){
                     if($abcd<$errorNum){
                         $strs .= '数据中的第'.$a."行挂车号不存在".'</br>';
@@ -2807,12 +2807,12 @@ class OrderController extends CommonController{
             //dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
-                $company = TmsGroup::where('company_name',$v['company_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
-                $car = TmsCar::where('car_number',$v['car_number'])->where('group_code',$group_code)->select('self_id','car_number')->first();
-                $trailer = TmsCar::where('car_number',$v['trailer_num'])->where('group_code',$group_code)->select('self_id','car_number')->first();
-                $send = TmsGroup::where('company_name',$v['send_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
-                $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
-                $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $company = TmsGroup::where('company_name',$v['company_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $car = TmsCar::where('car_number',$v['car_number'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','car_number')->first();
+                $trailer = TmsCar::where('car_number',$v['trailer_num'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','car_number')->first();
+                $send = TmsGroup::where('company_name',$v['send_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $gather = TmsGroup::where('company_name',$v['gather_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 if ($v['send_name']){
                     if (!empty((array)$send)){
                         $v['send_id']                 = $send->self_id;
@@ -2844,7 +2844,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if ($v['user_name']){
-                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('delete_flag','Y')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$driver){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
@@ -2854,7 +2854,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if($v['escort']){
-                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('delete_flag','Y')->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$cargo){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
@@ -3277,10 +3277,10 @@ $table_name         ='wms_warehouse_area';
             //dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
-                $car = TmsCar::where('car_number',$v['car_number'])->where('group_code',$group_code)->select('self_id','car_number')->first();
-                $send = TmsGroup::where('company_name',$v['send_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
-                $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
-                $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $car = TmsCar::where('car_number',$v['car_number'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','car_number')->first();
+                $send = TmsGroup::where('company_name',$v['send_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $gather = TmsGroup::where('company_name',$v['gather_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 if ($v['send_name']){
                     if (empty($send)){
                         $v['send_id']                 = $send->self_id;
@@ -3327,7 +3327,7 @@ $table_name         ='wms_warehouse_area';
                     }
                 }
                 if ($v['user_name']){
-                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    $driver = SystemUser::whereIn('type',['driver','dr_cargo'])->where('delete_flag','Y')->where('name',$v['user_name'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$driver){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行驾驶员不存在".'</br>';
@@ -3337,7 +3337,7 @@ $table_name         ='wms_warehouse_area';
                     }
                 }
                 if($v['escort']){
-                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
+                    $cargo = SystemUser::whereIn('type',['cargo','dr_cargo'])->where('delete_flag','Y')->where('name',$v['escort'])->where('group_code',$group_code)->select('self_id','name','type','tel','use_flag','delete_flag','social_flag')->first();
                     if (!$cargo){
                         if($abcd<$errorNum){
                             $strs .= '数据中的第'.$a."行副驾驶员不存在".'</br>';
