@@ -1569,7 +1569,7 @@ class OrderController extends CommonController{
                 $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 if ($v['send_name']){
-                    if (empty($send)){
+                    if ($send){
                         $v['send_id']                 = $send->self_id;
                         $v['send_name']               = $send->company_name;
                     }else{
@@ -1584,7 +1584,7 @@ class OrderController extends CommonController{
                     }
                 }
                 if ($v['gather_name']){
-                    if (empty($gather)){
+                    if ($gather){
                         $v['gather_id']                 = $gather->self_id;
                         $v['gather_name']               = $gather->company_name;
                     }else{
