@@ -91,6 +91,7 @@ class TryeController extends CommonController{
         $supplier       =$request->input('supplier');
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
+        $trye_name      =$request->input('trye_name');
         $state          =$request->input('state');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
@@ -109,7 +110,7 @@ class TryeController extends CommonController{
             ['type'=>'=','name'=>'model','value'=>$model],
             ['type'=>'=','name'=>'supplier','value'=>$supplier],
             ['type'=>'=','name'=>'state','value'=>$state],
-            
+            ['type'=>'=','name'=>'trye_name','value'=>$trye_name],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
             ['type'=>'like','name'=>'trailer_num','value'=>$trailer_num],
             ['type'=>'>=','name'=>'in_time','value'=>$start_time],
@@ -119,7 +120,7 @@ class TryeController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','car_number','price','model','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag','state','user_id','trailer_num','remark'];
+        $select=['self_id','car_number','price','model','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag','state','user_id','trailer_num','remark','trye_name'];
         $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag'];
         switch ($group_info['group_id']){
             case 'all':
@@ -215,8 +216,8 @@ class TryeController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $select=['self_id','car_number','price','car_number','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag','state','user_id','trailer_num','remark'];
-        $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag'];
+        $select=['self_id','car_number','price','car_number','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag','state','user_id','trailer_num','remark','trye_name'];
+        $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag','trye_name'];
         $data['info']=TmsTrye::with(['TryeOutList'=>function($query)use($select1){
             $query->where('delete_flag','Y');
              $query->select($select1);
@@ -619,6 +620,7 @@ class TryeController extends CommonController{
         $trye_list          =$request->input('trye_list');//更换位置
         $price              =$request->input('price');//更换位置
         $supplier           =$request->input('supplier');//供应商
+        $trye_name          =$request->input('trye_name');//供应商
         $remark             =$request->input('remark');
 
         /**
@@ -649,6 +651,7 @@ class TryeController extends CommonController{
             $data['operator']          =$operator;
             $data['price']             =$price;
             $data['supplier']          =$supplier;
+            $data['trye_name']         =$trye_name;
             $data['state']             ='N';
             $data['remark']            =$remark;
             $trye_model = TmsTryeList::where('model',$model)->first();
@@ -677,6 +680,7 @@ class TryeController extends CommonController{
                     $model_list['self_id'] = generate_id('model_');
                     $model_list['model']   = $model;
                     $model_list['price']   = $price;
+                    $model_list['trye_name'] = $trye_name;
                     $model_list['create_user_id']     =$user_info->admin_id;
                     $model_list['create_user_name']   =$user_info->name;
                     $model_list['create_time']        =$model_list['update_time']=$now_time;
@@ -1091,12 +1095,12 @@ class TryeController extends CommonController{
 
         $select = ['self_id','model','order_id','sale_price','initial_num','change_num','now_num','trye_num','use_flag','delete_flag','group_code','group_name','create_time'];
         $data['info']=TmsTryeCount::where($where)->where('now_num','>',0)->select($select)->get();
-        $arr = [];
-        $res = [];
+        $arr = '';
+        $res = '';
         foreach($data['info'] as $k => $v){
-            $res = array_merge($arr,explode(',',$v->trye_num));
+            $res = $arr.$v->trye_num;
         }
-        
+        $res = implode(',',$res);
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$res;
