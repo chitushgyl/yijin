@@ -171,7 +171,7 @@ class CountController extends CommonController{
 
         if ($start_time) {
             $start_time = $start_time.' 00:00:00';
-        }elese{
+        }else{
             $msg['code']=300;
         $msg['msg']='请选择开始时间';
         
