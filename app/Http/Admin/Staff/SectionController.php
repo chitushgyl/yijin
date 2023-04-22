@@ -50,6 +50,7 @@ class SectionController extends CommonController{
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+            ['type'=>'all','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'group_name','value'=>$group_name],
             ['type'=>'like','name'=>'section_name','value'=>$section_name],
 

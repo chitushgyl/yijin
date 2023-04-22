@@ -196,7 +196,7 @@ class LineController extends CommonController{
             $old_line = TmsLine::where('gather_name',$gather_name)->where('send_name',$send_name)->first();
             if($old_line){
                 $msg['code'] = 301;
-                $msg['msg'] = '公司不存在';
+                $msg['msg'] = '该线路已存在！';
                 return $msg;
             }
 
