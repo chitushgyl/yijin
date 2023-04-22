@@ -360,6 +360,7 @@ Route::group([
     Route::any('/trye/updateInState','TryeController@updateInState');
     Route::any('/trye/tryeIn','TryeController@tryeIn');
     Route::any('/trye/getTryeNum','TryeController@getTryeNum');
+    Route::any('/trye/getTryeNum1','TryeController@getTryeNum1');
     
 
     Route::any('/trye/searchList','TryeController@searchList');
