@@ -1120,10 +1120,10 @@ class TryeController extends CommonController{
         $data['info']=TmsTryeCount::where($where)->where('now_num','>',0)->select($select)->get();
         dump($data['info']);
 
-        $arr = [];
-        $res = [];
+        $arr = '';
+        $res = '';
         foreach($data['info'] as $k => $v){
-            $res = array_merge($arr,explode(',',$v->trye_num));
+            $res += $v->trye_num;
         }
         dd($arr,$res);
         
