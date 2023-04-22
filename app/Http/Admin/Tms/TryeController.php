@@ -1924,6 +1924,7 @@ class TryeController extends CommonController{
         $good_name           =$request->input('good_name');
         $start_time          =$request->input('start_time');
         $end_time            =$request->input('end_time');
+        $trye_name            =$request->input('trye_name');
         $listrows            =$num;
         $firstrow            =($page-1)*$listrows;
 
@@ -1956,12 +1957,13 @@ class TryeController extends CommonController{
             ['type'=>'>=','name'=>'now_num','value'=>0],
             ['type'=>'>','name'=>'date_time','value'=>$start_time],
             ['type'=>'<=','name'=>'date_time','value'=>$end_time],
+            ['type'=>'<=','name'=>'trye_name','value'=>$trye_name],
         ];
 
         $where=get_list_where($search);
         $where1 = get_list_where($search1);
         $select=['self_id','model','group_name','use_flag'];
-        $Signselect=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time'];
+        $Signselect=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time','trye_name'];
 //        dd($select);
         switch ($group_info['group_id']){
             case 'all':
@@ -2068,6 +2070,7 @@ class TryeController extends CommonController{
         $start_time          =$request->input('start_time');
         $end_time            =$request->input('end_time');
         $model               =$request->input('model');
+        $trye_name               =$request->input('trye_name');
         $listrows            =$num;
         $firstrow            =($page-1)*$listrows;
 
@@ -2100,12 +2103,13 @@ class TryeController extends CommonController{
             ['type'=>'>=','name'=>'now_num','value'=>0],
             ['type'=>'>=','name'=>'inout_time','value'=>$start_time],
             ['type'=>'<=','name'=>'inout_time','value'=>$end_time],
+            ['type'=>'=','name'=>'trye_name','value'=>$trye_name],
         ];
 
         $where=get_list_where($search);
         $where1 = get_list_where($search1);
         $select=['self_id','model','group_name','use_flag'];
-        $Signselect=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time','different','date_time'];
+        $Signselect=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time','different','date_time','trye_name'];
 //        dd($select);
         switch ($group_info['group_id']){
             case 'all':
@@ -2241,6 +2245,7 @@ class TryeController extends CommonController{
         $page               =$request->input('page')??1;
         $use_flag           =$request->input('use_flag');
         $model              =$request->input('model');
+        $trye_name              =$request->input('trye_name');
         $price              =$request->input('price');
         $start_time         =$request->input('start_time');
         $end_time           =$request->input('end_time');
@@ -2253,6 +2258,7 @@ class TryeController extends CommonController{
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'>','name'=>'now_num','value'=>0],
             ['type'=>'=','name'=>'model','value'=>$model],
+            ['type'=>'=','name'=>'trye_name','value'=>$trye_name],
             ['type'=>'=','name'=>'sale_price','value'=>$price],
             ['type'=>'>=','name'=>'date_time','value'=>$start_time],
             ['type'=>'<=','name'=>'date_time','value'=>$end_time],
@@ -2262,7 +2268,7 @@ class TryeController extends CommonController{
         $where=get_list_where($search);
 
         //DUMP($where);
-        $select=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time','group_code','group_name','delete_flag','use_flag','sale_price','trye_num'];
+        $select=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time','group_code','group_name','delete_flag','use_flag','sale_price','trye_num','trye_name'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -2324,8 +2330,11 @@ class TryeController extends CommonController{
         $self_id            =$request->input('self_id');
         $num                =$request->input('num');
         $time                =$request->input('time');
+        $model                =$request->input('model');
+        $trye_name                =$request->input('trye_name');
+        $remark                =$request->input('remark');
 
-        $table_name         ='wms_library_sige';
+        $table_name         ='tms_trye_count';
         $operationing       = $request->get('operationing');//接收中间件产生的参数
         $operationing->access_cause='修改差异';
         $operationing->operation_type='update';
