@@ -1123,7 +1123,7 @@ class TryeController extends CommonController{
         $arr = '';
         $res = '';
         foreach($data['info'] as $k => $v){
-            $res +. $v->trye_num;
+            // $res +. $v->trye_num;
         }
         dd($arr,$res);
         
