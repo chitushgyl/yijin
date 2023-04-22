@@ -1054,6 +1054,7 @@ class WagesController extends CommonController{
         foreach($data['items'] as $k => $v){
             
             $v->button_info = $button_info;
+            $v->type               =$user_type[$v->type]??null;
         }
         
         
