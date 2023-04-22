@@ -44,6 +44,7 @@ class CompanyController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $name           =$request->input('name');
+        $group_code           =$request->input('group_code');
         $group_name     =$request->input('group_name');
         $tel            =$request->input('tel');
 
