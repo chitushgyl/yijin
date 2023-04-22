@@ -34,6 +34,7 @@ class AdministrateController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_name     =$request->input('group_name');
+        $group_code     =$request->input('group_code');
 
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
