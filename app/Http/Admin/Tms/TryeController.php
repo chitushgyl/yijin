@@ -1098,7 +1098,7 @@ class TryeController extends CommonController{
         $res = '';
     
         foreach($data['info'] as $k => $v){
-            // $res = $arr.$v->trye_num;
+            $res .= $v->trye_num;
         }
         // $res = implode(',',$res);
         $msg['code']=200;
@@ -1107,35 +1107,6 @@ class TryeController extends CommonController{
         return $msg;
     }
 
-    public function getTryeNum1(Request $request){
-        $group_code=$request->input('group_code');
-        $model=$request->input('model');
-
-//        $input['group_code'] =  $group_code = '1234';
-        $search=[
-            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
-            ['type'=>'all','name'=>'use_flag','value'=>'Y'],
-            ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'=','name'=>'model','value'=>$model],
-        ];
-        $where=get_list_where($search);
-
-        $select = ['self_id','model','order_id','sale_price','initial_num','change_num','now_num','trye_num','use_flag','delete_flag','group_code','group_name','create_time'];
-        $data['info']=TmsTryeCount::where($where)->where('now_num','>',0)->select($select)->get();
-        dump($data['info']);
-
-        $arr = '';
-        $res = '';
-        foreach($data['info'] as $k => $v){
-            // $res +. $v->trye_num;
-        }
-        dd($arr,$res);
-        
-        $msg['code']=200;
-        $msg['msg']="数据拉取成功";
-        $msg['data']=$res;
-        return $msg;
-    }
 
     /**
      * 出库审核
