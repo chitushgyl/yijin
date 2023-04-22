@@ -44,6 +44,7 @@ class SectionController extends CommonController{
         $section_name       =$request->input('section_name');
         $tel        =$request->input('tel');
         $use_flag   =$request->input('use_flag');
+        $group_code   =$request->input('group_code');
 
         $listrows   =$num;
         $firstrow   =($page-1)*$listrows;

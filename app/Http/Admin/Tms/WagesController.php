@@ -994,7 +994,8 @@ class WagesController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-        $salary_time     =$request->input('salary_time');
+        $salary_time    =$request->input('salary_time');
+        $type           =$request->input('type');
         
      
         $user_name      =$request->input('user_name');
@@ -1009,12 +1010,13 @@ class WagesController extends CommonController{
             ['type'=>'like','name'=>'user_name','value'=>$user_name],
             ['type'=>'=','name'=>'self_id','value'=>$user_id],
             ['type'=>'=','name'=>'salary_time','value'=>$salary_time],
+            ['type'=>'=','name'=>'type','value'=>$type]
            
         ];
        
         $where=get_list_where($search);
        
-        $select =['self_id','user_id','user_name','salary_time','company_fine','money','water_money','income_tax','salary','live_cost','social_money','safe_reward','reward_price','salary_fine','money_award','group_code','group_name','use_flag','delete_flag','total_money','date_num','remark'];
+        $select =['self_id','user_id','user_name','salary_time','company_fine','money','water_money','income_tax','salary','live_cost','social_money','safe_reward','reward_price','salary_fine','money_award','group_code','group_name','use_flag','delete_flag','total_money','date_num','remark','type'];
         
         switch ($group_info['group_id']){
             case 'all':

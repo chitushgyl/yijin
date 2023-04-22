@@ -40,6 +40,7 @@ class AdministrateController extends CommonController{
 	 	$search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'like','name'=>'group_name','value'=>$group_name],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
         ];
         $where=get_list_where($search);
