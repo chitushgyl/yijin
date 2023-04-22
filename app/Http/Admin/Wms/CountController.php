@@ -171,9 +171,21 @@ class CountController extends CommonController{
 
         if ($start_time) {
             $start_time = $start_time.' 00:00:00';
+        }elese{
+            $msg['code']=300;
+        $msg['msg']='请选择开始时间';
+        
+//        dd($msg);
+        return $msg;
         }
         if ($end_time) {
             $end_time = $end_time.' 23:59:59';
+        }else{
+                 $msg['code']=300;
+        $msg['msg']='请选择结束时间';
+        
+//        dd($msg);
+        return $msg;
         }
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
