@@ -1100,7 +1100,7 @@ class TryeController extends CommonController{
         foreach($data['info'] as $k => $v){
             $res .= $v->trye_num;
         }
-        $res = implode(',',$res);
+        $res = explode(',',$res);
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$res;
