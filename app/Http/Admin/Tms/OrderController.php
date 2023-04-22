@@ -444,6 +444,9 @@ class OrderController extends CommonController{
             foreach($pay_type as $k =>$v){
                 if (in_array($send_name,explode(',',$v->line_list)) && in_array($gather_name,explode(',',$v->line_list))) {
                      $data['pay_id'] = $v->self_id; 
+                     if($list['car_number'] == $vv->car_number){
+                       $list['pay_id'] = $vv->self_id;
+                    }
                 }
                 if($car_number == $v->car_number){
                     $data['pay_id'] = $v->self_id;
@@ -1409,6 +1412,9 @@ class OrderController extends CommonController{
                     foreach($pay_type as $kk =>$vv){
                     if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
                        $list['pay_id'] = $vv->self_id; 
+                       if($list['car_number'] == $vv->car_number){
+                       $list['pay_id'] = $vv->self_id;
+                    }
                     }
                     if($list['car_number'] == $vv->car_number){
                        $list['pay_id'] = $vv->self_id;
