@@ -1249,7 +1249,7 @@ class TryeController extends CommonController{
                         }
 
                         /***保存费用**/
-                        $trye = TmsTrye::where('self_id',$v['order_id'])->select('car_id','car_number','user_id','driver_name','group_code','group_name','create_user_id','create_user_name')->first();
+                        $trye = TmsTrye::where('self_id',$v['order_id'])->select('car_id','car_number','user_id','driver_name','group_code','group_name','create_user_id','create_user_name','in_time')->first();
                         $money['pay_type']           = 'trye';
                         $money['money']              = $v['price'];
                         $money['pay_state']          = 'Y';
@@ -1266,7 +1266,7 @@ class TryeController extends CommonController{
                         $money['group_name']         = $trye->group_name;
                         $money['create_user_id']     = $trye->create_user_id;
                         $money['create_user_name']   = $trye->create_user_name;
-                        $money['create_time']        =$money['update_time']=$now_time;
+                        $money['create_time']        =$money['update_time']=$trye->in_time;
                         $moneylist[]=$money;
                     }
                     $id = TmsTrye::whereIn('self_id',$order_id)->update($temp);
