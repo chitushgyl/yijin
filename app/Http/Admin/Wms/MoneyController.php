@@ -1002,7 +1002,7 @@ class MoneyController extends CommonController{
 //        $input['group_code'] =  $group_code = '1234';
        
         $select = ['self_id','receive_money','receive_time','group_name','group_code','use_flag','delete_flag','money_id'];
-        $data['info']=TmsCostMoney::whereIn('money_id',$money_id)->select($select)->get();
+        $data['info']=TmsCostMoney::where('money_id',$money_id)->select($select)->get();
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
