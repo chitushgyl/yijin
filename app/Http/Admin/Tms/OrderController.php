@@ -614,7 +614,7 @@ class OrderController extends CommonController{
             $data['leave_time']              = $leave_time;
             $data['order_weight']            = $order_weight;
             $data['upload_weight']           = $upload_weight;
-            $data['leave_time']              = $leave_time;
+            // $data['leave_time']              = $leave_time;
             $data['sale_price']              = $sale_price;
 
 
@@ -737,7 +737,7 @@ class OrderController extends CommonController{
                 $money['group_name']             = $old_info->group_name;
                 $money['create_user_id']         = $user_info->admin_id;
                 $money['create_user_name']       = $user_info->name;
-                $money['create_time']            = $money['update_time'] = $now_time;
+                $money['create_time']            = $money['update_time'] = $leave_time;
                 TmsMoney::insert($money);
                 
             }
