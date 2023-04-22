@@ -655,7 +655,14 @@ class TryeController extends CommonController{
             $data['trye_name']         =$trye_name;
             $data['state']             ='N';
             $data['remark']            =$remark;
-            $trye_model = TmsTryeList::where('model',$model)->first();
+
+             $search=[
+            ['type'=>'=','name'=>'model','value'=>$model],
+            ['type'=>'=','name'=>'trye_name','value'=>$trye_name],
+        ];
+
+        $where3=get_list_where($search);
+            $trye_model = TmsTryeList::where($where3)->first();
 
             $wheres['self_id'] = $self_id;
             $old_info=TmsTrye::where($wheres)->first();
@@ -846,7 +853,7 @@ class TryeController extends CommonController{
         ];
 
         $where=get_list_where($search);
-        $select = ['self_id','model','price','use_flag','delete_flag','group_code','group_name','create_time'];
+        $select = ['self_id','model','price','use_flag','delete_flag','group_code','group_name','create_time','trye_name'];
         $data['info']=TmsTryeList::where($where)->select($select)->get();
 
         $msg['code']=200;
