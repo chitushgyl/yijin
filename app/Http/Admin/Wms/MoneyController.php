@@ -48,6 +48,7 @@ class MoneyController extends CommonController{
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
         $type_state     =$request->input('type_state');
+        $name           =$request->input('name');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -68,6 +69,7 @@ class MoneyController extends CommonController{
             ['type'=>'>=','name'=>'create_time','value'=>$start_time],
             ['type'=>'<=','name'=>'create_time','value'=>$end_time],
             ['type'=>'=','name'=>'type_state','value'=>$type_state],
+            ['type'=>'=','name'=>'user_name','value'=>$name],
         ];
 
 
