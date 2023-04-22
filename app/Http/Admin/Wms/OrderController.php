@@ -343,7 +343,7 @@ class OrderController extends CommonController{
                         $money['group_name']         = $group_name;
                         $money['create_user_id']     = $user_info->admin_id;
                         $money['create_user_name']   = $user_info->name;
-                        $money['create_time']       =$money['update_time']=$now_time;
+                        $money['create_time']       =$money['update_time']=$out_time;
                         $moneylist[]=$money;
                     }
 
