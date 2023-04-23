@@ -2108,21 +2108,21 @@ class TryeController extends CommonController{
         $listrows            =$num;
         $firstrow            =($page-1)*$listrows;
 
-        if ($start_time) {
-            $start_time = $start_time.' 00:00:00';
-        }else{
-            $msg['code']=300;
-            $msg['msg']="请选择开始时间";
-            return $msg;
-        }
-        if ($end_time) {
-            $end_time = $end_time.' 23:59:59';
-        }else{
-            $msg['code']=300;
-            $msg['msg']="请选择结束时间";
+        // if ($start_time) {
+        //     $start_time = $start_time.' 00:00:00';
+        // }else{
+        //     $msg['code']=300;
+        //     $msg['msg']="请选择开始时间";
+        //     return $msg;
+        // }
+        // if ($end_time) {
+        //     $end_time = $end_time.' 23:59:59';
+        // }else{
+        //     $msg['code']=300;
+        //     $msg['msg']="请选择结束时间";
      
-        return $msg;
-        }
+        // return $msg;
+        // }
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'=','name'=>'use_flag','value'=>'Y'],
