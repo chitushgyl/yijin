@@ -970,10 +970,10 @@ class OrderController extends CommonController{
                                $once1 += $vv->tmsLine->once_price;
                             }
                             }                              
-                            $new_order_id .= $vv->self_id;
+                            $new_order_id .= $vv->self_id.',';
                         }
                     
-                    dd($new_order_id);
+                   
                     $count_pay1 = ($pay1-$base_pay);
                         if($count_pay1 > 0){
                             $count_pay1 = $count_pay1 + $reward1;
