@@ -262,6 +262,7 @@ class TryeController extends CommonController{
         $driver_name        =$request->input('driver_name');//驾驶员
         $change             =$request->input('change');//更换位置
         $trye_list          =$request->input('trye_list');//更换位置
+        $trye_sku_id        =$request->input('trye_sku_id');//产品编号
 
         /**
          $trye_list = [[
@@ -382,6 +383,8 @@ class TryeController extends CommonController{
             $list["self_id"]            =generate_id('change_');
             $list["model"]              =$v['model'];
             $list["trye_name"]              =$v['trye_name'];
+            $list["sku_id"]              =$v['sku_id'];
+            $list["trye_sku_id"]              =$v['trye_sku_id'];
             $list['create_time']        =$v['create_time'];
             $list["update_time"]        =$v['update_time'];
             $list["group_code"]         =$v['group_code'];
@@ -622,6 +625,7 @@ class TryeController extends CommonController{
         $price              =$request->input('price');//更换位置
         $supplier           =$request->input('supplier');//供应商
         $trye_name          =$request->input('trye_name');//供应商
+        $trye_sku_id          =$request->input('trye_sku_id');//轮胎产品编号
         $remark             =$request->input('remark');
 
         /**
@@ -643,7 +647,19 @@ class TryeController extends CommonController{
 
         $validator=Validator::make($input,$rules,$message);
         if($validator->passes()) {
+            
+            $name_where=[
+                ['trye_sku_id','=',trim($trye_sku_id)],
+                ['delete_flag','=','Y'],
+            ];
+            
+            $name_count = TmsTryeList::where($name_where)->count();            //检查名字是不是重复
 
+            if($name_count > 0){
+                $msg['code'] = 301;
+                $msg['msg'] = '产品编号重复';
+                return $msg;
+            }
             $data['type']              =$type;
             $data['model']             =$model;
             $data['num']               =$num;
@@ -675,23 +691,24 @@ class TryeController extends CommonController{
                 $operationing->operation_type='update';
 
             }else{
-                $data['self_id']            =generate_id('trye_');
-                $data['create_user_id']     =$user_info->admin_id;
-                $data['create_user_name']   =$user_info->name;
-                $data['create_time']        =$data['update_time']=$now_time;
+                $data['self_id']            = generate_id('trye_');
+                $data['create_user_id']     = $user_info->admin_id;
+                $data['create_user_name']   = $user_info->name;
+                $data['create_time']        = $data['update_time']=$now_time;
                 $data['group_code']         = $user_info->group_code;
                 $data['group_name']         = $user_info->group_name;
 
                 $id=TmsTrye::insert($data);
                 
                 if (!$trye_model){
-                    $model_list['self_id'] = generate_id('model_');
-                    $model_list['model']   = $model;
-                    $model_list['price']   = $price;
-                    $model_list['trye_name'] = $trye_name;
-                    $model_list['create_user_id']     =$user_info->admin_id;
-                    $model_list['create_user_name']   =$user_info->name;
-                    $model_list['create_time']        =$model_list['update_time']=$now_time;
+                    $model_list['self_id']            = generate_id('model_');
+                    $model_list['model']              = $model;
+                    $model_list['price']              = $price;
+                    $model_list['trye_name']          = $trye_name;
+                    $model_list['trye_sku_id']        = $trye_sku_id;
+                    $model_list['create_user_id']     = $user_info->admin_id;
+                    $model_list['create_user_name']   = $user_info->name;
+                    $model_list['create_time']        = $model_list['update_time']=$now_time;
                     $model_list['group_code']         = $user_info->group_code;
                     $model_list['group_name']         = $user_info->group_name;
                    TmsTryeList::insert($model_list);
@@ -761,6 +778,7 @@ class TryeController extends CommonController{
             foreach(explode(',',$self_id) as $k => $v){
                 $wheres['self_id'] = $v;
                 $old_info=TmsTrye::where($wheres)->first();
+                $good_trye= TmsTryeList::where('trye_sku_id',$old_info->trye_sku_id)->first();
                 // $trye_model = TmsTryeList::where('model',$old_info->model)->first();
 
                 // if (!$trye_model){
@@ -783,6 +801,8 @@ class TryeController extends CommonController{
                 $count['sale_price'] = $old_info->price;
                 $count['trye_num'] = $old_info->trye_num;
                 $count['trye_name'] = $old_info->trye_name;
+                $count['sku_id'] = $good_trye->self_id;
+                $count['trye_sku_id'] = $old_info->trye_sku_id;
 
                 $count['self_id'] = generate_id('count_');
                 $count['order_id'] = $old_info->self_id;
