@@ -911,7 +911,7 @@ class OrderController extends CommonController{
             if ($ti_order1) {
                 //制作提成表数据
                  $ti_money1['update_time']            = $now_time;
-                 $ti_money1['money']                  = $count_pay;
+                 $ti_money1['money']                  = $count_pay1;
                  $ti_money1['order_id']               = $ti_order->order_id.','.$self_id;
                  DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$old_info->leave_time)->update($ti_money);
             }
