@@ -737,6 +737,7 @@ class MoneyController extends CommonController{
         /** 接收中间件参数**/
         $group_info     = $request->get('group_info');//接收中间件产生的参数
         $button_info    = $request->get('anniu');//接收中间件产生的参数
+        $user_info     = $request->get('user_info');//接收中间件产生的参数
 
         /**接收数据*/
         $num            =$request->input('num')??10;
@@ -1136,6 +1137,94 @@ class MoneyController extends CommonController{
         $msg['data'] = $data;
         return $msg;
 
+    }
+
+    //
+    public function execl(Request $request){
+        $user_info  = $request->get('user_info');//接收中间件产生的参数
+        $now_time   =date('Y-m-d H:i:s',time());
+        $input      =$request->all();
+        /** 接收数据*/
+        $group_code     =$request->input('group_code');
+//        $group_code  =$input['group_code']   ='group_202012251449437824125582';
+        //dd($group_code);
+        $rules=[
+            'group_code'=>'required',
+        ];
+        $message=[
+            'group_code.required'=>'必须选择公司',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()){
+            /** 下面开始执行导出逻辑**/
+            $group_name     =SystemGroup::where('group_code','=',$group_code)->value('group_name');
+            //查询条件
+            $search=[
+                ['type'=>'=','name'=>'group_code','value'=>$group_code],
+                ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ];
+            $where=get_list_where($search);
+
+            $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name','trailer_num',
+            'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money','bill_flag','receipt'];
+            $info=TmsMoney::where($where)->orderBy('create_time', 'desc')->select($select)->get();
+//dd($info);
+            if($info){
+                //设置表头
+                $row = [[
+                    "id"=>'ID',
+                    "pay_type"=>'费用类型',
+                    "car_number"=>'车牌号',
+                    "trailer_num"=>'挂车号', 
+                    "user_name"=>'人员', 
+                    "money"=>'费用',   
+                    "create_time"=>'时间',
+                    "pay_state"=>'收支类型',
+                    "use_flag"=>'是否作废',
+                    "receipt_flag"=>'有无发票',
+                ]];
+
+                /** 现在根据查询到的数据去做一个导出的数据**/
+                $data_execl=[];
+
+
+                foreach ($info as $k=>$v){
+                    $list=[];
+
+                    $list['id']=($k+1);
+                 
+                    $list['send_name']       = $v['send_name'];
+                    $list['gather_name']     = $v['gather_name'];
+                    $list['pay_type']        = $v['pay_type'];
+                    $list['base_pay']        = $v['base_pay'];
+                    $list['once_price']      = $v['once_price'];
+                    $list['car_number']      = $v['car_number'];
+                    $list['car_num']         = $v['car_num'];
+                   
+                    $data_execl[]=$list;
+                }
+                /** 调用EXECL导出公用方法，将数据抛出来***/
+                $browse_type=$request->path();
+                $msg=$file->export($data_execl,$row,$group_code,$group_name,$browse_type,$user_info,$where,$now_time);
+
+                //dd($msg);
+                return $msg;
+
+            }else{
+                $msg['code']=301;
+                $msg['msg']="没有数据可以导出";
+                return $msg;
+            }
+        }else{
+            $erro=$validator->errors()->all();
+            $msg['msg']=null;
+            foreach ($erro as $k=>$v) {
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            $msg['code']=300;
+            return $msg;
+        }
     }
 
 

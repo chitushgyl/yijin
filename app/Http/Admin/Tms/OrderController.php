@@ -557,7 +557,7 @@ class OrderController extends CommonController{
 
     }
 
-    public function editOrder(Request $request,Tms $tms){
+    public function editOrder_ti(Request $request,Tms $tms){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ='tms_order';
@@ -787,7 +787,7 @@ class OrderController extends CommonController{
     }
 
 
-    public function editOrder_ti(Request $request,Tms $tms){
+    public function editOrder(Request $request,Tms $tms){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ='tms_order';
