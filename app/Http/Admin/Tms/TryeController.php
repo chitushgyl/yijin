@@ -92,6 +92,8 @@ class TryeController extends CommonController{
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
         $trye_name      =$request->input('trye_name');
+        $trye_sku_id      =$request->input('trye_sku_id');
+        $price      =$request->input('price');
         $state          =$request->input('state');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
@@ -108,6 +110,8 @@ class TryeController extends CommonController{
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'type','value'=>$type],
             ['type'=>'=','name'=>'model','value'=>$model],
+            ['type'=>'=','name'=>'trye_sku_id','value'=>$trye_sku_id],
+            ['type'=>'=','name'=>'price','value'=>$price],
             ['type'=>'=','name'=>'supplier','value'=>$supplier],
             ['type'=>'=','name'=>'state','value'=>$state],
             ['type'=>'=','name'=>'trye_name','value'=>$trye_name],
@@ -120,13 +124,25 @@ class TryeController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','car_number','price','model','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag','state','user_id','trailer_num','remark','trye_name'];
-        $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag','trye_name'];
+        $select=['self_id','car_number','price','model','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag','state','user_id','trailer_num','remark'];
+        $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag','trye_name','sku_id','trye_sku_id'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsTrye::where($where)->count(); //总的数据量
                 $data['items']=TmsTrye::with(['TryeOutList'=>function($query)use($select1){
                     $query->where('delete_flag','Y');
+                    if ($trye_name){
+                        $query->where('trye_name','like',$trye_name);
+                    }
+                    if ($trye_sku_id){
+                        $query->where('trye_sku_id','like',$trye_sku_id);
+                    }
+                    if ($model){
+                        $query->where('model','=',$model);
+                    }
+                    if ($number){
+                        $query->where('price','=',$price);
+                    }
                     $query->select($select1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
@@ -139,6 +155,18 @@ class TryeController extends CommonController{
                 $data['total']=TmsTrye::where($where)->count(); //总的数据量
                 $data['items']=TmsTrye::with(['TryeOutList'=>function($query)use($select1){
                     $query->where('delete_flag','Y');
+                    if ($trye_name){
+                        $query->where('trye_name','like',$trye_name);
+                    }
+                    if ($trye_sku_id){
+                        $query->where('trye_sku_id','like',$trye_sku_id);
+                    }
+                    if ($model){
+                        $query->where('model','=',$model);
+                    }
+                    if ($number){
+                        $query->where('price','=',$price);
+                    }
                     $query->select($select1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
@@ -150,6 +178,18 @@ class TryeController extends CommonController{
                 $data['total']=TmsTrye::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
                 $data['items']=TmsTrye::with(['TryeOutList'=>function($query)use($select1){
                     $query->where('delete_flag','Y');
+                    if ($trye_name){
+                        $query->where('trye_name','like',$trye_name);
+                    }
+                    if ($trye_sku_id){
+                        $query->where('trye_sku_id','like',$trye_sku_id);
+                    }
+                    if ($model){
+                        $query->where('model','=',$model);
+                    }
+                    if ($number){
+                        $query->where('price','=',$price);
+                    }
                     $query->select($select1);
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
@@ -2150,18 +2190,7 @@ class TryeController extends CommonController{
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsTryeList::where($where)->count(); //总的数据量
-                $data['items']=TmsTryeList::with(['TmsTryeCount' => function($query)use($Signselect,$where1) {
-                 
-                    $query->select($Signselect);
-                }])
-                    ->with(['tryeOutList' => function($query)use($where) {
-                        $query->where('use_flag','Y');
-                        $query->where('delete_flag','Y');
-                }])
-                    ->with(['tmsTrye' => function($query)use($where) {
-                        $query->where('state','Y');
-                    }])
-                    ->with(['tmsTryeChange' => function($query)use($where1) {
+                $data['items']=TmsTryeList::with(['tmsTryeChange' => function($query)use($where1) {
                           $query->where($where1);
                     }])
                     ->where($where)
@@ -2173,18 +2202,7 @@ class TryeController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=TmsTryeList::where($where)->count(); //总的数据量
-                $data['items']=TmsTryeList::with(['TmsTryeCount' => function($query)use($Signselect,$where1) {
-                 
-                    $query->select($Signselect);
-                }])
-                    ->with(['tryeOutList' => function($query)use($where) {
-                        $query->where('use_flag','Y');
-                        $query->where('delete_flag','Y');
-                    }])
-                    ->with(['tmsTrye' => function($query)use($where) {
-                        $query->where('state','Y');
-                    }])
-                    ->with(['tmsTryeChange' => function($query)use($where1) {
+                $data['items']=TmsTryeList::with(['tmsTryeChange' => function($query)use($where1) {
                           $query->where($where1);
                     }])
                     ->where($where)
@@ -2195,18 +2213,7 @@ class TryeController extends CommonController{
 
             case 'more':
                 $data['total']=TmsTryeList::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=TmsTryeList::with(['TmsTryeCount' => function($query)use($Signselect,$where1) {
-                   
-                    $query->select($Signselect);
-                }])
-                    ->with(['tryeOutList' => function($query)use($where) {
-                        $query->where('use_flag','Y');
-                        $query->where('delete_flag','Y');
-                    }])
-                    ->with(['tmsTrye' => function($query)use($where) {
-                          $query->where('state','Y');
-                    }])
-                    ->with(['tmsTryeChange' => function($query)use($where1) {
+                $data['items']=TmsTryeList::with(['tmsTryeChange' => function($query)use($where1) {
                           $query->where($where1);
                     }])
                     ->where($where)->whereIn('group_code',$group_info['group_code'])
