@@ -2620,8 +2620,8 @@ class TryeController extends CommonController{
 
         /** 接收数据*/
         $self_id            =$request->input('self_id');
-        $external_sku_id    =$request->input('trye_sku_id');//商品编号
-        $good_name          =$request->input('trye_name');//产品名称
+        $trye_sku_id    =$request->input('trye_sku_id');//商品编号
+        $trye_name          =$request->input('trye_name');//产品名称
         $model              =$request->input('model');//规格
         $price              =$request->input('price');//单价
         $remark             =$request->input('remark');
@@ -2673,7 +2673,6 @@ class TryeController extends CommonController{
 
             $data['trye_sku_id']        = $trye_sku_id;
             $data['trye_name']          = $trye_name;
-            $data['wms_unit']           = $wms_unit;
             $data['model']              = $model;//规格
             $data['price']              = $price;
             $data['remark']             = $remark;
