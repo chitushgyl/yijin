@@ -408,23 +408,8 @@ class LineController extends CommonController{
              */
             $shuzu=[
                 '车牌号' =>['Y','Y','10','car_number'],
-                '车型' =>['Y','Y','20','car_type'],
-                '车架号' =>['N','Y','64','carframe_num'],
-                '罐体介质' =>['N','Y','16','crock_medium'],
-                '罐体容积' =>['N','Y','64','volume'],
-                '罐检到期日期' =>['N','Y','64','tank_validity'],
-                '核载吨位' =>['N','Y','64','weight'],
-                '行驶证到期日期' =>['Y','Y','64','license_date'],
-                '运输证到期日期' =>['Y','Y','64','medallion_date'],
-                '保险' =>['N','Y','64','insure'],
-                '保险金额' =>['N','Y','64','insure_price'],
-                '交强险购买时间' =>['N','Y','64','compulsory'],
-                '交强险到期时间' =>['N','Y','64','compulsory_end'],
-                '商业险购买时间' =>['N','Y','64','commercial'],
-                '商业险到期时间' =>['N','Y','64','commercial_end'],
-                '承运险购买时间' =>['N','Y','64','carrier'],
-                '承运险到期时间' =>['N','Y','64','carrier_end'],
-                '备注' =>['N','Y','64','remark'],
+                '装车点' =>['Y','Y','20','send_name'],
+                '卸车点' =>['N','Y','64','gather_name'], 
             ];
             $ret=arr_check($shuzu,$info_check);
 
@@ -673,35 +658,15 @@ class LineController extends CommonController{
             ];
             $where=get_list_where($search);
 
-            $select=['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
-                'license','medallion','payment_state','insure_price','create_time','update_time','use_flag','delete_flag','compulsory_end','commercial_end','carrier_end','compulsory','commercial','carrier'];
-            $select1 = ['self_id','parame_name'];
-            $info=TmsCar::with(['tmsCarType' => function($query) use($select1){
-                $query->select($select1);
-            }])->where($where)->orderBy('create_time', 'desc')->select($select)->get();
+            $select=['self_id','send_name','gather_name'];
+            $info=TmsLine::where($where)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头
                 $row = [[
                     "id"=>'ID',
-                    "car_number"=>'车牌号',
-                    "car_type"=>'车型',
-                    "carframe_num"=>'车架号',
-                    "crock_medium"=>'罐体介质',
-                    "volume"=>'罐体容积',
-                    "tank_validity"=>'罐检到期日期',
-                    "weight"=>'核载吨位',
-                    "license_date"=>'行驶证到期日期',
-                    "medallion_date"=>'运输证到期日期',
-                    "insure"=>'保险',
-                    "insure_price"=>'保险金额',
-                    "compulsory"=>'交强险购买时间',
-                    "compulsory_end"=>'交强险到期时间',
-                    "commercial"=>'商业险购买时间',
-                    "commercial_end"=>'商业险到期时间',
-                    "carrier"=>'承运险购买时间',
-                    "carrier_end"=>'承运险到期时间',
-                    "remark"=>'备注'
+                    "send_name"=>'装车点',
+                    "gather_name"=>'卸车点',                  
                 ]];
 
                 /** 现在根据查询到的数据去做一个导出的数据**/
@@ -712,24 +677,10 @@ class LineController extends CommonController{
                     $list=[];
 
                     $list['id']=($k+1);
-                    $list['car_number']         = $v['car_number'];
-                    $list['car_type']           = $v->tmsCarType->parame_name;
-                    $list['carframe_num']       = $v['carframe_num'];
-                    $list['crock_medium']       = $v['crock_medium'];
-                    $list['volume']             = $v['volume'];
-                    $list['tank_validity']      = $v['tank_validity'];
-                    $list['weight']             = $v['weight'];
-                    $list['license_date']       = $v['license_date'] ;
-                    $list['medallion_date']     = $v['medallion_date'];
-                    $list['insure']             = $v['insure'];
-                    $list['insure_price']       = $v['insure_price'];
-                    $list['compulsory']         = $v['compulsory'];
-                    $list['compulsory_end']     = $v['compulsory_end'];
-                    $list['commercial']         = $v['commercial'];
-                    $list['commercial_end']     = $v['commercial_end'];
-                    $list['carrier']            = $v['carrier'];
-                    $list['carrier_end']        = $v['carrier_end'];
-                    $list['remark']             = $v['remark'];
+                 
+                    $list['send_name']       = $v['send_name'];
+                    $list['gather_name']       = $v['gather_name'];
+                   
                     $data_execl[]=$list;
                 }
                 /** 调用EXECL导出公用方法，将数据抛出来***/

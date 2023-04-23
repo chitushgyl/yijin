@@ -386,6 +386,7 @@ Route::group([
     Route::any('/line/lineUseFlag','LineController@lineUseFlag');//启用/禁用
     Route::any('/line/lineDelFlag','LineController@lineDelFlag');//删除
     Route::any('/line/getLine','LineController@getLine');//获取线路
+    Route::any('/line/excel','LineController@excel');//获取线路
 
     Route::any('/wages/wagesList','WagesController@wagesList');//获取线路
     Route::any('/wages/wagesPage','WagesController@wagesPage');//获取线路

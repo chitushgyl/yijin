@@ -139,11 +139,12 @@ class MoneyController extends CommonController{
         $in = $out = 0;
         foreach ($data['cost'] as $k=>$v) {
             if ($v->type_state == 'in'){
-                $in = $v->total_price;
+                $in = round($v->total_price,2);
             }
             if ($v->type_state == 'out'){
-                $out = $v->total_price;
+                $out = round($v->total_price,2);
             }
+
         }
         $data['diff_price'] = $in-$out;
         $msg['code']=200;
