@@ -146,7 +146,7 @@ class MoneyController extends CommonController{
             }
 
         }
-        $data['diff_price'] = $in-$out;
+        $data['diff_price'] = round(($in-$out),2);
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
