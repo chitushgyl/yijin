@@ -2179,6 +2179,7 @@ class TryeController extends CommonController{
             ['type'=>'>=','name'=>'inout_time','value'=>$start_time],
             ['type'=>'<=','name'=>'inout_time','value'=>$end_time],
             ['type'=>'=','name'=>'trye_name','value'=>$trye_name],
+            ['type'=>'=','name'=>'model','value'=>$model],
         ];
 
         $where=get_list_where($search);
