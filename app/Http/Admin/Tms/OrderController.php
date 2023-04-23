@@ -875,6 +875,7 @@ class OrderController extends CommonController{
                         $query->where('delete_flag','Y');
                         $query->select($select1);
                         }])->where('driver_id',$old_info->driver_id)->where('leave_time',$old_info->leave_time)->where('delete_flag','Y')->get();
+                     dd($old_order);
                         
                         foreach ($old_order as $kk=>$vv) {
                             if($vv->tmsLine){
@@ -915,7 +916,11 @@ class OrderController extends CommonController{
                  $ti_money1['order_id']               = $ti_order1->order_id.','.$self_id;
                  DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$old_info->leave_time)->update($ti_money1);
             }
+            
 
+
+            
+            //end
             }
             $id=TmsOrder::where('self_id',$self_id)->update($data);
 
