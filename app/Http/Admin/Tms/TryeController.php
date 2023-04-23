@@ -2176,14 +2176,7 @@ class TryeController extends CommonController{
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsTryeList::where($where)->count(); //总的数据量
-                $data['items']=TmsTryeList::with(['tryeOutList' => function($query)use($where,$where1) {
-                        $query->where('use_flag','Y');
-                        $query->where('delete_flag','Y');
-                }])
-                    ->with(['tmsTrye' => function($query)use($where) {
-                        $query->where('state','Y');
-                    }])
-                    ->with(['tmsTryeChange' => function($query)use($where1) {
+                $data['items']=TmsTryeList::with(['tmsTryeChange' => function($query)use($where1) {
                           $query->where($where1);
                     }])
                     ->where($where)
@@ -2195,14 +2188,7 @@ class TryeController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=TmsTryeList::where($where)->count(); //总的数据量
-                $data['items']=TmsTryeList::with(['tryeOutList' => function($query)use($where,$where1) {
-                        $query->where('use_flag','Y');
-                        $query->where('delete_flag','Y');
-                    }])
-                    ->with(['tmsTrye' => function($query)use($where) {
-                        $query->where('state','Y');
-                    }])
-                    ->with(['tmsTryeChange' => function($query)use($where1) {
+                $data['items']=TmsTryeList::with(['tmsTryeChange' => function($query)use($where1) {
                           $query->where($where1);
                     }])
                     ->where($where)
@@ -2213,14 +2199,7 @@ class TryeController extends CommonController{
 
             case 'more':
                 $data['total']=TmsTryeList::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=TmsTryeList::with(['tryeOutList' => function($query)use($where,$where1) {
-                        $query->where('use_flag','Y');
-                        $query->where('delete_flag','Y');
-                    }])
-                    ->with(['tmsTrye' => function($query)use($where) {
-                          $query->where('state','Y');
-                    }])
-                    ->with(['tmsTryeChange' => function($query)use($where1) {
+                $data['items']=TmsTryeList::with(['tmsTryeChange' => function($query)use($where1) {
                           $query->where($where1);
                     }])
                     ->where($where)->whereIn('group_code',$group_info['group_code'])
