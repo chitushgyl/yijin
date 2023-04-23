@@ -1157,7 +1157,7 @@ class TryeController extends CommonController{
             ['delete_flag','=','Y'],
         ];
         $select=['self_id','car_number','price','model','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag'];
-        $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag','trye_name'];
+        $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag','trye_name','sku_id','trye_sku_id'];
         $order = TmsTrye::with(['TryeOutList' => function($query) use($select1){
             $query->select($select1);
             $query->where('delete_flag','=','Y');
@@ -1197,7 +1197,7 @@ class TryeController extends CommonController{
                             ['model', '=', $v['model']],
                             ['now_num', '>', 0],
                             ['delete_flag', '=', 'Y'],
-                            ['trye_name', '=', $v['trye_name']],
+                            ['sku_id', '=', $v['sku_id']],
 //                                ['create_time', '>',$now_time]
 //                                ['create_time', '>', substr($now_time, 0, -9)]
                         ];
@@ -1236,7 +1236,9 @@ class TryeController extends CommonController{
                                         $library_change['group_name']           =$vv['group_name'];
                                         $library_change['shiji_num']            =$shiji_number;
                                         $library_change['model']                =$vv['model'];
-                                        $library_change['trye_name']                =$vv['trye_name'];
+                                        $library_change['trye_name']            =$vv['trye_name'];
+                                        $library_change['sku_id']               =$vv['sku_id'];
+                                        $library_change['trye_sku_id']          =$vv['trye_sku_id'];
                                         $library_change['inout_time']           =$v['inout_time'];
                                         $library_change['initial_num']          =$vv['now_num'];
                                         $library_change['create_user_id']       =$user_info->admin_id;
