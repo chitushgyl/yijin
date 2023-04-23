@@ -49,6 +49,7 @@ class MoneyController extends CommonController{
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
         $type_state     =$request->input('type_state');
+        $receipt_flag   =$request->input('receipt_flag');
 
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
@@ -70,13 +71,14 @@ class MoneyController extends CommonController{
             ['type'=>'>=','name'=>'create_time','value'=>$start_time],
             ['type'=>'<=','name'=>'create_time','value'=>$end_time],
             ['type'=>'=','name'=>'type_state','value'=>$type_state],
+            ['type'=>'=','name'=>'receipt_flag','value'=>$receipt_flag],
         ];
 
 
         $where=get_list_where($search);
 
         $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name','trailer_num',
-            'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money','bill_flag','receipt'];
+            'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money','bill_flag','receipt','receipt_flag'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -181,7 +183,7 @@ class MoneyController extends CommonController{
         //$self_id='money_202012231738203885359374';
         $table_name='tms_money';
         $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name','approver','submit_connect','trailer_num',
-            'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money','bill_flag','receipt'];
+            'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money','bill_flag','receipt','receipt_flag'];
 
         $where=[
             ['delete_flag','=','Y'],
@@ -356,6 +358,8 @@ class MoneyController extends CommonController{
         $type_state         =$request->input('type_state');//审核状态
         $approver           =$request->input('approver');//审批人
         $submit_connect     =$request->input('submit_connect');//报销内容
+        $receipt            =$request->input('receipt');//发票
+        $receipt_flag     =$request->input('receipt_flag');//有无发票
 
 
         $rules=[
@@ -383,6 +387,8 @@ class MoneyController extends CommonController{
             $data['type_state']         = $type_state;
             $data['approver']           = $approver;
             $data['submit_connect']     = $submit_connect;
+            $data['receipt_flag']       = $receipt_flag;
+            $data['receipt']            = img_for($receipt,'in');
 
 
             $wheres['self_id'] = $self_id;
@@ -1140,7 +1146,8 @@ class MoneyController extends CommonController{
     }
 
     //
-    public function execl(Request $request){
+    public function excel(Request $request,File $file){
+        $money_type_show    =array_column(config('tms.money_type'),'name','key');
         $user_info  = $request->get('user_info');//接收中间件产生的参数
         $now_time   =date('Y-m-d H:i:s',time());
         $input      =$request->all();
@@ -1166,7 +1173,7 @@ class MoneyController extends CommonController{
             $where=get_list_where($search);
 
             $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name','trailer_num',
-            'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money','bill_flag','receipt'];
+            'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money','bill_flag','receipt','receipt_flag'];
             $info=TmsMoney::where($where)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
@@ -1192,14 +1199,31 @@ class MoneyController extends CommonController{
                     $list=[];
 
                     $list['id']=($k+1);
-                 
-                    $list['send_name']       = $v['send_name'];
-                    $list['gather_name']     = $v['gather_name'];
-                    $list['pay_type']        = $v['pay_type'];
-                    $list['base_pay']        = $v['base_pay'];
-                    $list['once_price']      = $v['once_price'];
+                    $list['pay_type']        = $money_type_show$v['pay_type']??null;
                     $list['car_number']      = $v['car_number'];
-                    $list['car_num']         = $v['car_num'];
+                    $list['trailer_num']     = $v['trailer_num'];
+                    $list['user_name']       = $v['user_name'];
+                    $list['money']           = $v['money'];
+                    $list['create_time']     = $v['create_time'];
+                    if($v['pay_state'] == 'in'){
+                        $pay_state = '收入';
+                    }else{
+                        $pay_state = '支出';
+                    }
+
+                    $list['pay_state']       = $pay_state;
+                    if($v['use_flag'] == 'Y'){
+                        $use_flag = '正常';
+                    }else{
+                        $use_flag = '作废';
+                    }
+                    $list['use_flag']        = $use_flag;
+                    if($v['receipt_flag'] == 'Y'){
+                        $receipt_flag = '有';
+                    }else{
+                        $receipt_flag = '无';
+                    }
+                    $list['receipt_flag']    = $receipt_flag;
                    
                     $data_execl[]=$list;
                 }
