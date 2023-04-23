@@ -870,58 +870,7 @@ class OrderController extends CommonController{
              $carnum = $carnum1= 0;
              $once = $once1 = 0;
              $line_list= [];
-             if($old_info->leave_time != $leave_time){
-                     $old_order = TmsOrder::with(['tmsLine' => function($query) use($select1){
-                        $query->where('delete_flag','Y');
-                        $query->select($select1);
-                        }])->where('driver_id',$old_info->driver_id)->where('leave_time',$old_info->leave_time)->where('delete_flag','Y')->get();
-                     dd($old_order->toArray());
-                        
-                        foreach ($old_order as $kk=>$vv) {
-                            if($vv->tmsLine){
-                                if($vv->tmsLine->pay_type == 'A'){
-                                    $pay1 += $vv->tmsLine->base_pay;
-                                    $reward1 += $vv->tmsLine->once_price;
-                                }
-                            if ($vv->tmsLine->pay_type == 'B' && $vv->car_number == $vv->tmsLine->car_number) {
-                               $a1 += 1;
-                               $carnum1 += $vv->tmsLine->car_num;
-                               $once1 += $vv->tmsLine->once_price;
-                            }
-                            }                              
-          
-                        }
-
-                    $count_pay1 = ($pay1-$base_pay);
-                        if($count_pay1 > 0){
-                            $count_pay1 = $count_pay1 + $reward1;
-                        }else{
-                            $count_pay1 = 0;
-                        }
-                 
-                        if($a1>0){
-                           if($a1>$carnum1/$a1){
-                              $count_pay1 = ($a1-($carnum1/$a1))*$once1/$a1;
-                           }else{
-                              $count_pay1 = 0;
-                           }
-                        }
-
-                        //判断该订单是否算过提成
-            $ti_order1 =DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$old_info->leave_time)->first();
-            if ($ti_order1) {
-                //制作提成表数据
-                 $ti_money1['update_time']            = $now_time;
-                 $ti_money1['money']                  = $count_pay1;
-                 $ti_money1['order_id']               = $ti_order1->order_id.','.$self_id;
-                 DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$old_info->leave_time)->update($ti_money1);
-            }
-            
-
-
-            
-            //end
-            }
+     
             $id=TmsOrder::where('self_id',$self_id)->update($data);
 
             //保存提成表 计算提成
@@ -1000,6 +949,59 @@ class OrderController extends CommonController{
                  DriverCommission::insert($ti_money);
 
                 
+            }
+
+                    if($old_info->leave_time != $leave_time){
+                     $old_order = TmsOrder::with(['tmsLine' => function($query) use($select1){
+                        $query->where('delete_flag','Y');
+                        $query->select($select1);
+                        }])->where('driver_id',$old_info->driver_id)->where('leave_time',$old_info->leave_time)->where('delete_flag','Y')->get();
+                     dd($old_order->toArray());
+                        
+                        foreach ($old_order as $kk=>$vv) {
+                            if($vv->tmsLine){
+                                if($vv->tmsLine->pay_type == 'A'){
+                                    $pay1 += $vv->tmsLine->base_pay;
+                                    $reward1 += $vv->tmsLine->once_price;
+                                }
+                            if ($vv->tmsLine->pay_type == 'B' && $vv->car_number == $vv->tmsLine->car_number) {
+                               $a1 += 1;
+                               $carnum1 += $vv->tmsLine->car_num;
+                               $once1 += $vv->tmsLine->once_price;
+                            }
+                            }                              
+          
+                        }
+
+                    $count_pay1 = ($pay1-$base_pay);
+                        if($count_pay1 > 0){
+                            $count_pay1 = $count_pay1 + $reward1;
+                        }else{
+                            $count_pay1 = 0;
+                        }
+                 
+                        if($a1>0){
+                           if($a1>$carnum1/$a1){
+                              $count_pay1 = ($a1-($carnum1/$a1))*$once1/$a1;
+                           }else{
+                              $count_pay1 = 0;
+                           }
+                        }
+
+                        //判断该订单是否算过提成
+            $ti_order1 =DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$old_info->leave_time)->first();
+            if ($ti_order1) {
+                //制作提成表数据
+                 $ti_money1['update_time']            = $now_time;
+                 $ti_money1['money']                  = $count_pay1;
+                 $ti_money1['order_id']               = $ti_order1->order_id.','.$self_id;
+                 DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$old_info->leave_time)->update($ti_money1);
+            }
+            
+
+
+            
+            //end
             }
             $old_money = TmsMoney::where('order_id',$self_id)->first();
             if ($old_money) {
