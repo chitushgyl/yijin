@@ -370,6 +370,12 @@ Route::group([
     Route::any('/trye/searchList','TryeController@searchList');
     Route::any('/trye/searchPage','TryeController@searchPage');
     Route::any('/trye/mistakeRevise','TryeController@mistakeRevise');
+    Route::any('/trye/tryeSkuList','TryeController@tryeSkuList');
+    Route::any('/trye/tryeSkuPage','TryeController@tryeSkuPage');
+    Route::any('/trye/addTryeSku','TryeController@addTryeSku');
+    Route::any('/trye/createTryeSku','TryeController@createTryeSku');
+  
+
 
     /**二级维护***/
     Route::any('/diplasic/diplasicList','DiplasicController@diplasicList');

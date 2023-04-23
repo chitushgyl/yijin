@@ -2507,5 +2507,242 @@ class TryeController extends CommonController{
         }
     }
 
+    //轮胎管理
+    public function tryeSkuList(Request $$request){
+        $data['page_info']      =config('page.listrows');
+        $data['button_info']    =$request->get('anniu');
+        $type                   = $request->input('type');
+
+        $abc='车辆类型';
+        $data['import_info']    =[
+            'import_text'=>'下载'.$abc.'导入示例文件',
+            'import_color'=>'#FC5854',
+            'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/轮胎出入库导入.xlsx',
+        ];
+  
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
+
+    public function tryeSkuPage(Request $request){
+        /** 接收中间件参数**/
+        $group_info     = $request->get('group_info');//接收中间件产生的参数
+        $button_info    = $request->get('anniu');//接收中间件产生的参数
+
+        /**接收数据*/
+        $num            =$request->input('num')??10;
+        $page           =$request->input('page')??1;
+        $use_flag       =$request->input('use_flag');
+        $group_code     =$request->input('group_code');
+
+        $listrows       =$num;
+        $firstrow       =($page-1)*$listrows;
+
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'=','name'=>'price','value'=>$price],
+            ['type'=>'=','name'=>'model','value'=>$model],
+            ['type'=>'=','name'=>'trye_name','value'=>$trye_name],
+        ];
+
+        $where=get_list_where($search);
+
+        $select=['self_id','price','model','trye_name','trye_sku_id','create_user_name','create_time','group_code','use_flag','delete_flag'];
+        
+        switch ($group_info['group_id']){
+            case 'all':
+                $data['total']=TmsTryeList::where($where)->count(); //总的数据量
+                $data['items']=TmsTryeList::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='Y';
+                break;
+
+            case 'one':
+                $where[]=['group_code','=',$group_info['group_code']];
+                $data['total']=TmsTryeList::where($where)->count(); //总的数据量
+                $data['items']=TmsTryeList::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='N';
+                break;
+
+            case 'more':
+                $data['total']=TmsTryeList::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=TmsTryeList::where($where)->whereIn('group_code',$group_info['group_code'])
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='Y';
+                break;
+        }
+
+        foreach ($data['items'] as $k=>$v) {
+            $v->button_info = $button_info;
+        }
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
+
+
+      /***    新建商品      /tms/trye/createTryeSku
+     */
+    public function createTryeSku(Request $request){
+      
+        /** 接收数据*/
+        $self_id=$request->input('self_id');
+        $where=[
+            ['delete_flag','=','Y'],
+            ['self_id','=',$self_id],
+        ];
+
+        $data['info']=TmsTryeList::where($where)->first();
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        //dd($msg);
+        return $msg;
+    }
+
+    /***    新建商品入库      /tms/trye/addTryeSku
+     */
+    public function addTryeSku(Request $request){
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='erp_shop_goods_sku';
+
+        $operationing->access_cause     ='创建/修改商品';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+
+        $user_info = $request->get('user_info');//接收中间件产生的参数
+        $input              =$request->all();
+
+        /** 接收数据*/
+        $self_id            =$request->input('self_id');
+        $external_sku_id    =$request->input('trye_sku_id');//商品编号
+        $good_name          =$request->input('trye_name');//产品名称
+        $model              =$request->input('model');//规格
+        $price              =$request->input('price');//单价
+        $remark             =$request->input('remark');
+
+
+        $rules=[
+            'trye_sku_id'=>'required',
+            'trye_name'=>'required',
+            'model'=>'required',
+        ];
+        $message=[
+            'trye_sku_id.required'=>'请输入编号',
+            'trye_name.required'=>'请填写名称',
+            'model.required'=>'请填写型号',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+
+        //操作的表
+
+        if($validator->passes()){
+            if($self_id){
+                $name_where=[
+                    ['trye_sku_id','=',trim($external_sku_id)],
+                    ['self_id','!=',$self_id],
+                    ['delete_flag','=','Y'],
+                ];
+            }else{
+                $name_where=[
+                    ['trye_sku_id','=',trim($external_sku_id)],
+                    ['delete_flag','=','Y'],
+                ];
+            }
+            $name_count = TmsTryeList::where($name_where)->count();            //检查名字是不是重复
+
+            if($name_count > 0){
+                $msg['code'] = 301;
+                $msg['msg'] = '编号重复';
+                return $msg;
+            }
+
+            $where_goods=[
+                ['delete_flag','=','Y'],
+                ['use_flag','=','Y'],
+                ['self_id','=',$user_info->group_code],
+            ];
+
+            $info2 = SystemGroup::where($where_goods)->select('self_id','group_code','group_name')->first();
+
+
+            $data['trye_sku_id']        = $trye_sku_id;
+            $data['trye_name']          = $trye_name;
+            $data['wms_unit']           = $wms_unit;
+            $data['model']              = $model;//规格
+            $data['price']              = $price;
+            $data['remark']             = $remark;
+
+            $wheres['self_id'] = $self_id;
+            $old_info=TmsTryeList::where($wheres)->first();
+
+            if($old_info){
+                //dd(1111);
+                $data['update_time']=$now_time;
+                $id=TmsTryeList::where($wheres)->update($data);
+
+                $operationing->access_cause='修改商品';
+                $operationing->operation_type='update';
+
+
+            }else{
+
+                $data['self_id']=generate_id('model_');       //优惠券表ID
+                $data['group_code'] = $info2->group_code;
+                $data['group_name'] = $info2->group_name;
+                $data['create_user_id']=$user_info->admin_id;
+                $data['create_user_name']=$user_info->name;
+                $data['create_time']=$data['update_time']=$now_time;
+                $id=ErpShopGoodsSku::insert($data);
+                $operationing->access_cause='新建商品';
+                $operationing->operation_type='create';
+
+            }
+
+            $operationing->table_id=$old_info?$self_id:$data['self_id'];
+            $operationing->old_info=$old_info;
+            $operationing->new_info=$data;
+
+            if($id){
+                $msg['code'] = 200;
+                $msg['msg'] = "操作成功";
+                return $msg;
+            }else{
+                $msg['code'] = 302;
+                $msg['msg'] = "操作失败";
+                return $msg;
+            }
+
+
+
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
+
+
+    }
+
 }
 ?>
