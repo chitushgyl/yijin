@@ -1159,7 +1159,7 @@ class TryeController extends CommonController{
         $res = '';
     
         foreach($data['info'] as $k => $v){
-            $res .= $v->trye_num;
+            $res .= $v->trye_num.',';
         }
         $res = explode(',',$res);
         $msg['code']=200;
