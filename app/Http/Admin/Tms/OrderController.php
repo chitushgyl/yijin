@@ -875,7 +875,7 @@ class OrderController extends CommonController{
                         $query->where('delete_flag','Y');
                         $query->select($select1);
                         }])->where('driver_id',$old_info->driver_id)->where('leave_time',$old_info->leave_time)->where('delete_flag','Y')->get();
-                     dd($old_order);
+                     dd($old_order->toArray());
                         
                         foreach ($old_order as $kk=>$vv) {
                             if($vv->tmsLine){
