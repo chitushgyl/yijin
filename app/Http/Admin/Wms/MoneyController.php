@@ -937,7 +937,8 @@ class MoneyController extends CommonController{
         $self_id            =$request->input('self_id');
         $receive_money      =$request->input('receive_money');//已收费用
         $settle_money       =$request->input('settle_money');//未收费用
-        $receive_time      =$request->input('receive_time');//收款时间
+        $receive_time       =$request->input('receive_time');//收款时间
+        $price              =$request->input('price');
 
         $rules=[
             'self_id'=>'required',
@@ -958,9 +959,9 @@ class MoneyController extends CommonController{
             $data['update_time']   = $now_time;
             $id = TmsMoneyCount::where('self_id',$self_id)->update($data);
 
-            $cost_money['receive_money']  = $receive_money;
+            $cost_money['receive_money']  = $price;
             $cost_money['receive_time']   = $receive_time;
-            $cost_money['money_id']   = $self_id;
+            $cost_money['money_id']       = $self_id;
             $cost_money['self_id']        = generate_id('cost_');
             $cost_money['group_code']     = $old_info->group_code;
             $cost_money['group_name']     = $old_info->group_name;
