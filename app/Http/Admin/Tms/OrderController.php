@@ -956,8 +956,8 @@ class OrderController extends CommonController{
                         $query->where('delete_flag','Y');
                         $query->select($select1);
                         }])->where('driver_id',$old_info->driver_id)->where('leave_time',$old_info->leave_time)->where('delete_flag','Y')->get();
-                     dd($old_order->toArray());
-                        
+                    
+                        $new_order_id = '';
                         foreach ($old_order as $kk=>$vv) {
                             if($vv->tmsLine){
                                 if($vv->tmsLine->pay_type == 'A'){
@@ -970,7 +970,7 @@ class OrderController extends CommonController{
                                $once1 += $vv->tmsLine->once_price;
                             }
                             }                              
-          
+                            $new_order_id .= $vv->self_id;
                         }
 
                     $count_pay1 = ($pay1-$base_pay);
@@ -994,7 +994,7 @@ class OrderController extends CommonController{
                 //制作提成表数据
                  $ti_money1['update_time']            = $now_time;
                  $ti_money1['money']                  = $count_pay1;
-                 $ti_money1['order_id']               = $ti_order1->order_id.','.$self_id;
+                 $ti_money1['order_id']               = $new_order_id;
                  DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$old_info->leave_time)->update($ti_money1);
             }
             
