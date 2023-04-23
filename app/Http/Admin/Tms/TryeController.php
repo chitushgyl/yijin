@@ -124,7 +124,7 @@ class TryeController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','car_number','price','model','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag','state','user_id','trailer_num','remark'];
+        $select=['self_id','car_number','price','model','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag','state','user_id','trailer_num','remark','trye_name'];
         $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag','trye_name','sku_id','trye_sku_id'];
         switch ($group_info['group_id']){
             case 'all':
@@ -140,7 +140,7 @@ class TryeController extends CommonController{
                     if ($model){
                         $query->where('model','=',$model);
                     }
-                    if ($number){
+                    if ($price){
                         $query->where('price','=',$price);
                     }
                     $query->select($select1);
@@ -164,7 +164,7 @@ class TryeController extends CommonController{
                     if ($model){
                         $query->where('model','=',$model);
                     }
-                    if ($number){
+                    if ($price){
                         $query->where('price','=',$price);
                     }
                     $query->select($select1);
@@ -187,7 +187,7 @@ class TryeController extends CommonController{
                     if ($model){
                         $query->where('model','=',$model);
                     }
-                    if ($number){
+                    if ($price){
                         $query->where('price','=',$price);
                     }
                     $query->select($select1);
