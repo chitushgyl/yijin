@@ -874,7 +874,7 @@ class TryeController extends CommonController{
         ];
 
         $where=get_list_where($search);
-        $select = ['self_id','model','price','use_flag','delete_flag','group_code','group_name','create_time','trye_name'];
+        $select = ['self_id','model','price','use_flag','delete_flag','group_code','group_name','create_time','trye_name','trye_sku_id'];
         $data['info']=TmsTryeList::where($where)->select($select)->get();
 
         $msg['code']=200;
@@ -908,7 +908,7 @@ class TryeController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','car_number','price','model','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag','state','user_id','trailer_num'];
-        $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag','trye_name'];
+        $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag','trye_name','sku_id','trye_sku_id'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsTrye::where($where)->count(); //总的数据量
@@ -1068,7 +1068,9 @@ class TryeController extends CommonController{
                     foreach(json_decode($trye_list,true) as $key => $value){
                         $list['self_id']            = generate_id('list_');
                         $list['model']              = $value['model'];
-                        $list['trye_name']              = $value['trye_name'];
+                        $list['trye_name']          = $value['trye_name'];
+                        $list['sku_id']             = $value['sku_id'];
+                        $list['trye_sku_id']          = $value['trye_sku_id'];
                         $list['trye_num']           = $value['trye_num'];
                         $list['num']                = $value['num'];
                         $list['price']              = $value['price'];
