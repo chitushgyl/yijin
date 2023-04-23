@@ -152,6 +152,10 @@ Route::group([
     Route::any('/order/orderWasteImport','OrderController@orderWasteImport');//跟单结算
     Route::any('/order/orderWasteExcel','OrderController@orderWasteExcel');//跟单结算
 
+
+    Route::any('/order/editOrder_ti','OrderController@editOrder_ti');//跟单结算
+    
+
     Route::group([
         "middleware"=>['daily'],
     ], function(){

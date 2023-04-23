@@ -787,6 +787,291 @@ class OrderController extends CommonController{
     }
 
 
+    public function editOrder_ti(Request $request,Tms $tms){
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='tms_order';
+
+        $operationing->access_cause     ='创建/修改订单';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+        $operationing->type             ='add';
+        $user_info = $request->get('user_info');//接收中间件产生的参数
+        $input                          =$request->all();
+
+//        /** 接收数据*/
+        $self_id                   = $request->input('self_id');
+        $group_code                = $request->input('group_code');//
+        $leave_time                = $request->input('leave_time');//出厂时间
+        $order_weight              = $request->input('order_weight');//装货吨位
+        $upload_weight             = $request->input('upload_weight');//卸货吨位
+        $sale_price                = $request->input('sale_price');//单价
+        $total_money               = $request->input('total_money');//运费总额
+
+
+        $rules=[
+            'leave_time'=>'required',
+            'order_weight'=>'required',
+            'upload_weight'=>'required',
+            'sale_price'=>'required',
+            'total_money'=>'required',
+        ];
+        $message=[
+            'leave_time.required'=>'请填写卸货时间！',
+            'order_weight.required'=>'请填写装货吨位！',
+            'upload_weight.required'=>'请填写卸货吨位！',
+            'sale_price.required'=>'请填写单价！',
+            'total_money.required'=>'请填写运费总额！',
+        ];
+
+        $validator=Validator::make($input,$rules,$message);
+        if($validator->passes()) {
+            /***开始做二次效验**/
+            $where_group=[
+                ['delete_flag','=','Y'],
+                ['self_id','=',$group_code],
+            ];
+            $group_info    =SystemGroup::where($where_group)->select('group_code','group_name')->first();
+            if(empty($group_info)){
+                $msg['code'] = 301;
+                $msg['msg'] = '公司不存在';
+                return $msg;
+            }
+
+            /** 开始处理正式的数据*/
+            $data['total_money']             = $total_money;
+            $data['leave_time']              = $leave_time;
+            $data['order_weight']            = $order_weight;
+            $data['upload_weight']           = $upload_weight;
+            // $data['leave_time']              = $leave_time;
+            $data['sale_price']              = $sale_price;
+
+
+            $old_info = TmsOrder::where('self_id',$self_id)->select('self_id','car_id','car_number','carriage_id','carriage_name','group_code','group_name','use_flag','driver_id','user_name','leave_time')->first();
+
+            $data['update_time']=$now_time;
+            DB::beginTransaction();
+            try{
+                $select1=['self_id','send_id','send_name','gather_id','gather_name','delete_flag','create_time','kilo_num','num','group_code','group_name','use_flag','car_num','line_list','pay_type','once_price','base_pay','car_number'];
+                 //获取当月天数
+             $day_num = date('t',strtotime($leave_time));
+             //获取驾驶员的基本工资
+             $base_pay=0;
+             $salary = SystemUser::where('self_id',$old_info->driver_id)->select('self_id','salary')->first();
+             if($salary){
+                  $base_pay = $salary->salary/30;
+             }
+        
+             // dump($base_pay);
+             $pay = $pay1 = 0;
+             $reward = $reward1= 0;
+             $a = $a1 = 0;
+             $carnum = $carnum1= 0;
+             $once = $once1 = 0;
+             $line_list= [];
+             if($old_info->leave_time != $leave_time){
+                     $old_order = TmsOrder::with(['tmsLine' => function($query) use($select1){
+                        $query->where('delete_flag','Y');
+                        $query->select($select1);
+                        }])->where('driver_id',$old_info->driver_id)->where('leave_time',$old_info->leave_time)->where('delete_flag','Y')->get();
+                        
+                        foreach ($old_order as $kk=>$vv) {
+                            if($vv->tmsLine){
+                                if($vv->tmsLine->pay_type == 'A'){
+                                    $pay1 += $vv->tmsLine->base_pay;
+                                    $reward1 += $vv->tmsLine->once_price;
+                                }
+                            if ($vv->tmsLine->pay_type == 'B' && $vv->car_number == $vv->tmsLine->car_number) {
+                               $a1 += 1;
+                               $carnum1 += $vv->tmsLine->car_num;
+                               $once1 += $vv->tmsLine->once_price;
+                            }
+                            }                              
+          
+                        }
+
+                    $count_pay1 = ($pay1-$base_pay);
+                        if($count_pay1 > 0){
+                            $count_pay1 = $count_pay1 + $reward1;
+                        }else{
+                            $count_pay1 = 0;
+                        }
+                 
+                        if($a1>0){
+                           if($a1>$carnum1/$a1){
+                              $count_pay1 = ($a1-($carnum1/$a1))*$once1/$a1;
+                           }else{
+                              $count_pay1 = 0;
+                           }
+                        }
+
+                        //判断该订单是否算过提成
+            $ti_order1 =DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$old_info->leave_time)->first();
+            if ($ti_order1) {
+                //制作提成表数据
+                 $ti_money1['update_time']            = $now_time;
+                 $ti_money1['money']                  = $count_pay;
+                 $ti_money1['order_id']               = $ti_order->order_id.','.$self_id;
+                 DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$old_info->leave_time)->update($ti_money);
+            }
+
+            }
+            $id=TmsOrder::where('self_id',$self_id)->update($data);
+
+            //保存提成表 计算提成
+            
+            $order = TmsOrder::with(['tmsLine' => function($query) use($select1){
+                    $query->where('delete_flag','Y');
+                    $query->select($select1);
+                }])->where('driver_id',$old_info->driver_id)->where('leave_time',$leave_time)->where('delete_flag','Y')->get();
+            
+             //计算提成  
+             //查找当前司机 本次卸货时间 总共有几个订单   分别找出结算方式为A和B的订单        
+                  foreach ($order as $k=>$v) {
+                    if($v->tmsLine){
+                      if($v->tmsLine->pay_type == 'A'){
+                         $pay += $v->tmsLine->base_pay;
+                         $reward += $v->tmsLine->once_price;
+                      }
+                      if ($v->tmsLine->pay_type == 'B' && $v->car_number == $v->tmsLine->car_number) {
+                          $a += 1;
+                          $carnum += $v->tmsLine->car_num;
+                          $once += $v->tmsLine->once_price;
+                      }
+                    }                             
+          
+                  }
+                  //计算结算结算方式为A时候的提成
+
+                  //计算结算方式为B时候的提成
+
+                  //A+B 得出总提成
+
+                 $count_pay = ($pay-$base_pay);
+                 if($count_pay > 0){
+                     $count_pay = $count_pay + $reward;
+                 }else{
+                     $count_pay = 0;
+                 }
+                 
+                 if($a>0){
+                    if($a>$carnum/$a){
+                        $count_pay = ($a-($carnum/$a))*$once/$a;
+                    }else{
+                        $count_pay = 0;
+                    }
+                 }
+
+            //判断该订单是否算过提成
+            $ti_order =DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$leave_time)->first();
+            if ($ti_order) {
+                if(in_array($self_id,explode(',',$ti_order->order_id))){
+                    //参与过计算提成 本次不统计
+                    
+                }else{
+                 //制作提成表数据
+                 $ti_money['update_time']            = $now_time;
+                 $ti_money['money']                  = $count_pay;
+                 $ti_money['order_id']               = $ti_order->order_id.','.$self_id;
+                 DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$leave_time)->update($ti_money);
+
+                 $update_ti['ti_id'] = $ti_money['self_id'];
+                 $update_ti['update_time'] = $now_time;
+                 TmsOrder::where('self_id',$self_id)->update($update_ti);
+                }
+            }else{
+                 $ti_money['self_id'] = generate_id('ti_');
+                 $ti_money['driver_id'] = $old_info->driver_id;
+                 $ti_money['driver_name'] = $old_info->user_name;
+                 $ti_money['leave_time']  = $leave_time;
+                 $ti_money['group_code']             = $old_info->group_code;
+                 $ti_money['group_name']             = $old_info->group_name;
+                 $ti_money['create_user_id']         = $user_info->admin_id;
+                 $ti_money['create_user_name']       = $user_info->name;
+                 $ti_money['create_time']            = $ti_money['update_time'] = $now_time;
+                 $ti_money['money']                  = $count_pay;
+                 $ti_money['order_id']               = $self_id;
+                 DriverCommission::insert($ti_money);
+
+                
+            }
+            $old_money = TmsMoney::where('order_id',$self_id)->first();
+            if ($old_money) {
+                $money['money']                  = $total_money; 
+                $money['before_money']           = $total_money;
+                $money['update_time']            = $now_time;
+                TmsMoney::where('self_id',$old_money->self_id)->update($money);
+            }else{
+                /**保存费用**/
+                $money['self_id']                = generate_id('money_');
+                $money['pay_type']               = 'freight';
+                $money['money']                  = $total_money;
+                $money['before_money']           = $total_money;
+                $money['car_id']                 = $old_info->car_id;
+                $money['car_number']             = $old_info->car_number;
+                $money['user_id']                = $old_info->driver_id;
+                $money['user_name']              = $old_info->user_name;
+                $money['pay_state']              = 'N';
+                $money['order_id']               = $self_id;
+                $money['process_state']          = 'N';
+                $money['type_state']             = 'in';
+                $money['company_id']             = $old_info->carriage_id;
+                $money['company_name']           = $old_info->carriage_name;
+                $money['group_code']             = $old_info->group_code;
+                $money['group_name']             = $old_info->group_name;
+                $money['create_user_id']         = $user_info->admin_id;
+                $money['create_user_name']       = $user_info->name;
+                $money['create_time']            = $money['update_time'] = $leave_time;
+                TmsMoney::insert($money);
+                
+            }
+            if($id){
+                   DB::commit();
+                   $msg['code'] = 200;
+                   $msg['msg'] = "操作成功";
+                   return $msg;
+                }else{
+                   DB::rollBack();
+                   $msg['code'] = 302;
+                   $msg['msg'] = "操作失败";
+                   return $msg;
+                }
+
+            }catch(\Exception $e){
+                   dd($e);
+                   DB::rollBack();
+                   $msg['code'] = 302;
+                   $msg['msg'] = "操作失败";
+                   return $msg;
+            }
+            
+            
+
+            $operationing->access_cause='修改跟单金额';
+            $operationing->operation_type='update';
+            $operationing->table_id=$old_info?$self_id:$self_id;
+            $operationing->old_info=$old_info;
+            $operationing->new_info=$data;
+
+            
+
+            /***二次效验结束**/
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
+
+    }
+
+
     //结算订单
     public function settleOrder(Request $request){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
