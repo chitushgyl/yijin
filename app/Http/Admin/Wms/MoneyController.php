@@ -1199,7 +1199,7 @@ class MoneyController extends CommonController{
                     $list=[];
 
                     $list['id']=($k+1);
-                    $list['pay_type']        = $money_type_show$v['pay_type']??null;
+                    $list['pay_type']        = $money_type_show[$v['pay_type']]??null;
                     $list['car_number']      = $v['car_number'];
                     $list['trailer_num']     = $v['trailer_num'];
                     $list['user_name']       = $v['user_name'];
