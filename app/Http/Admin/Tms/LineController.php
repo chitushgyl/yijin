@@ -658,7 +658,7 @@ class LineController extends CommonController{
             ];
             $where=get_list_where($search);
 
-            $select=['self_id','send_name','gather_name'];
+            $select=['self_id','send_name','gather_name','pay_type','base_pay','once_price','car_number','car_num'];
             $info=TmsLine::where($where)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
@@ -666,7 +666,12 @@ class LineController extends CommonController{
                 $row = [[
                     "id"=>'ID',
                     "send_name"=>'装车点',
-                    "gather_name"=>'卸车点',                  
+                    "gather_name"=>'卸车点', 
+                    "pay_type"=>'结算方式', 
+                    "base_pay"=>'基本提成',   
+                    "once_price"=>'每车奖励',
+                    "car_number"=>'车牌号',
+                    "car_num"=>'车数',
                 ]];
 
                 /** 现在根据查询到的数据去做一个导出的数据**/
@@ -679,7 +684,12 @@ class LineController extends CommonController{
                     $list['id']=($k+1);
                  
                     $list['send_name']       = $v['send_name'];
-                    $list['gather_name']       = $v['gather_name'];
+                    $list['gather_name']     = $v['gather_name'];
+                    $list['pay_type']        = $v['pay_type'];
+                    $list['base_pay']        = $v['base_pay'];
+                    $list['once_price']      = $v['once_price'];
+                    $list['car_number']      = $v['car_number'];
+                    $list['car_num']         = $v['car_num'];
                    
                     $data_execl[]=$list;
                 }
