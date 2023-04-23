@@ -1070,7 +1070,7 @@ class TryeController extends CommonController{
                         $list['model']              = $value['model'];
                         $list['trye_name']          = $value['trye_name'];
                         $list['sku_id']             = $value['sku_id'];
-                        $list['trye_sku_id']          = $value['trye_sku_id'];
+                        $list['trye_sku_id']        = $value['trye_sku_id'];
                         $list['trye_num']           = $value['trye_num'];
                         $list['num']                = $value['num'];
                         $list['price']              = $value['price'];
