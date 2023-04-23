@@ -2729,6 +2729,111 @@ class TryeController extends CommonController{
     }
 
 
+    //轮胎出入库记录
+    public function historyPage(Request $request){
+        $wms_order_type      = config('wms.wms_order_type');
+        $wms_order_type_show  =array_column($wms_order_type,'name','key');
+        /** 接收中间件参数**/
+        $group_info     = $request->get('group_info');//接收中间件产生的参数
+        $button_info    = $request->get('anniu');//接收中间件产生的参数
+
+        /**接收数据*/
+        $num                =$request->input('num')??10;
+        $page               =$request->input('page')??1;
+        $use_flag           =$request->input('use_flag');
+        $sku_id             =$request->input('sku_id');
+        $trye_sku_id    =$request->input('trye_sku_id');
+        $price              =$request->input('price');
+        $spec               =$request->input('model');
+        $group_code         =$request->input('group_code');
+     
+        $trye_name          =$request->input('trye_name');
+        $start_time         =$request->input('start_time');
+        $end_time           =$request->input('end_time');
+        $type               =$request->input('type');
+        $listrows           =$num;
+        $firstrow           =($page-1)*$listrows;
+        if ($start_time) {
+            $start_time = $start_time.' 00:00:00';
+        }
+        if ($end_time) {
+            $end_time = $end_time.' 23:59:59';
+        }
+
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'use_flag','value'=>'Y'],
+            ['type'=>'like','name'=>'sku_id','value'=>$sku_id],
+            ['type'=>'like','name'=>'price','value'=>$price],
+            ['type'=>'like','name'=>'model','value'=>$model],
+            ['type'=>'like','name'=>'trye_sku_id','value'=>$trye_sku_id],
+            ['type'=>'like','name'=>'group_code','value'=>$group_code],
+            ['type'=>'like','name'=>'trye_name','value'=>$trye_name],
+            ['type'=>'>=','name'=>'inout_time','value'=>$start_time],
+            ['type'=>'<','name'=>'inout_time','value'=>$end_time],
+            ['type'=>'=','name'=>'type','value'=>$type],
+        ];
+
+        $where=get_list_where($search);
+
+        $select=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','different','date_time','trye_name','sku_id','trye_sku_id'];
+
+        switch ($group_info['group_id']){
+            case 'all':
+                $data['total']=TmsTryeChange::where($where)->count(); //总的数据量
+                $data['items']=TmsTryeChange::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
+                    ->select($select)->get();
+                $data['group_show']='Y';
+                break;
+
+            case 'one':
+                $where[]=['group_code','=',$group_info['group_code']];
+                $data['total']=TmsTryeChange::where($where)->count(); //总的数据量
+                $data['items']=TmsTryeChange::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
+                    ->select($select)->get();
+                $data['group_show']='N';
+                break;
+
+            case 'more':
+                $data['total']=TmsTryeChange::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=TmsTryeChange::where($where)->whereIn('group_code',$group_info['group_code'])
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
+                    ->select($select)->get();
+                $data['group_show']='Y';
+                break;
+        }
+
+
+        foreach ($data['items'] as $k=>$v) {
+            $v->type_show=$wms_order_type_show[$v->type]??null;
+            
+            if($v->initial_num >$v->now_num){
+                $v->change_num='-'.$v->change_num;
+             
+            }else{
+                $v->change_num='+'.$v->change_num;
+              
+            }
+            $v->date_time = date('Y-m-d',strtotime($v->date_time));
+
+            $v->button_info=$button_info;
+
+        }
+
+//        dd($data['items']->toArray());
+
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        //dd($msg);
+        return $msg;
+
+    }
+
+
 
 }
 ?>

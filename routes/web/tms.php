@@ -375,6 +375,7 @@ Route::group([
     Route::any('/trye/addTryeSku','TryeController@addTryeSku');
     Route::any('/trye/createTryeSku','TryeController@createTryeSku');
     Route::any('/trye/skuDelFlag','TryeController@skuDelFlag');
+    Route::any('/trye/historyPage','TryeController@historyPage');
   
 
 
