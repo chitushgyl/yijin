@@ -2124,9 +2124,6 @@ class TryeController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-
-        $warehouse_name      =$request->input('warehouse_name');
-        $good_name           =$request->input('good_name');
         $start_time          =$request->input('start_time');
         $end_time            =$request->input('end_time');
         $supplier            =$request->input('supplier');
@@ -2179,11 +2176,7 @@ class TryeController extends CommonController{
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsTryeList::where($where)->count(); //总的数据量
-                $data['items']=TmsTryeList::with(['TmsTryeCount' => function($query)use($Signselect,$where1) {
-                 
-                    $query->select($Signselect);
-                }])
-                    ->with(['tryeOutList' => function($query)use($where) {
+                $data['items']=TmsTryeList::with(['tryeOutList' => function($query)use($where,$where1) {
                         $query->where('use_flag','Y');
                         $query->where('delete_flag','Y');
                 }])
@@ -2202,11 +2195,7 @@ class TryeController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=TmsTryeList::where($where)->count(); //总的数据量
-                $data['items']=TmsTryeList::with(['TmsTryeCount' => function($query)use($Signselect,$where1) {
-                 
-                    $query->select($Signselect);
-                }])
-                    ->with(['tryeOutList' => function($query)use($where) {
+                $data['items']=TmsTryeList::with(['tryeOutList' => function($query)use($where,$where1) {
                         $query->where('use_flag','Y');
                         $query->where('delete_flag','Y');
                     }])
@@ -2224,11 +2213,7 @@ class TryeController extends CommonController{
 
             case 'more':
                 $data['total']=TmsTryeList::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=TmsTryeList::with(['TmsTryeCount' => function($query)use($Signselect,$where1) {
-                   
-                    $query->select($Signselect);
-                }])
-                    ->with(['tryeOutList' => function($query)use($where) {
+                $data['items']=TmsTryeList::with(['tryeOutList' => function($query)use($where,$where1) {
                         $query->where('use_flag','Y');
                         $query->where('delete_flag','Y');
                     }])
