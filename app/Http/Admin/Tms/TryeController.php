@@ -669,6 +669,7 @@ class TryeController extends CommonController{
             $data['price']             =$price;
             $data['supplier']          =$supplier;
             $data['trye_name']         =$trye_name;
+            $data['trye_sku_id']         =$trye_sku_id;
             $data['state']             ='N';
             $data['remark']            =$remark;
 
