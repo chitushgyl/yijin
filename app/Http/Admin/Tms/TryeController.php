@@ -2710,7 +2710,7 @@ class TryeController extends CommonController{
                 $data['create_user_id']=$user_info->admin_id;
                 $data['create_user_name']=$user_info->name;
                 $data['create_time']=$data['update_time']=$now_time;
-                $id=ErpShopGoodsSku::insert($data);
+                $id=TmsTryeList::insert($data);
                 $operationing->access_cause='新建商品';
                 $operationing->operation_type='create';
 
@@ -2748,13 +2748,13 @@ class TryeController extends CommonController{
     }
 
 
-     /***    商品删除      /wms/good/goodDelFlag
+     /***    商品删除      /tms/trye/skuDelFlag
      */
-    public function goodDelFlag(Request $request,Status $status){
+    public function skuDelFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='erp_shop_goods_sku';
-        $medol_name='erpShopGoodsSku';
+        $table_name='tms_trye_list';
+        $medol_name='TmsTryeList';
         $self_id=$request->input('self_id');
         $flag='delFlag';
         //$self_id='group_202007311841426065800243';
