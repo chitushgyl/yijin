@@ -976,9 +976,9 @@ class OrderController extends CommonController{
                  $ti_money['order_id']               = $ti_order->order_id.','.$self_id;
                  DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$leave_time)->update($ti_money);
 
-                 $update_ti['ti_id'] = $ti_money['self_id'];
-                 $update_ti['update_time'] = $now_time;
-                 TmsOrder::where('self_id',$self_id)->update($update_ti);
+                 // $update_ti['ti_id'] = $ti_money['self_id'];
+                 // $update_ti['update_time'] = $now_time;
+                 // TmsOrder::where('self_id',$self_id)->update($update_ti);
                 }
             }else{
                  $ti_money['self_id'] = generate_id('ti_');
