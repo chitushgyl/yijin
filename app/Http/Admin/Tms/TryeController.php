@@ -2508,7 +2508,7 @@ class TryeController extends CommonController{
     }
 
     //轮胎管理
-    public function tryeSkuList(Request $$request){
+    public function tryeSkuList(Request $request){
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
         $type                   = $request->input('type');
@@ -2743,6 +2743,8 @@ class TryeController extends CommonController{
 
 
     }
+
+
 
 }
 ?>
