@@ -129,7 +129,7 @@ class TryeController extends CommonController{
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsTrye::where($where)->count(); //总的数据量
-                $data['items']=TmsTrye::with(['TryeOutList'=>function($query)use($select1){
+                $data['items']=TmsTrye::with(['TryeOutList'=>function($query)use($select1,$trye_name,$trye_sku_id,$model,$price){
                     $query->where('delete_flag','Y');
                     if ($trye_name){
                         $query->where('trye_name','like',$trye_name);
@@ -153,7 +153,7 @@ class TryeController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=TmsTrye::where($where)->count(); //总的数据量
-                $data['items']=TmsTrye::with(['TryeOutList'=>function($query)use($select1){
+                $data['items']=TmsTrye::with(['TryeOutList'=>function($query)use($select1,$trye_name,$trye_sku_id,$model,$price){
                     $query->where('delete_flag','Y');
                     if ($trye_name){
                         $query->where('trye_name','like',$trye_name);
@@ -176,7 +176,7 @@ class TryeController extends CommonController{
 
             case 'more':
                 $data['total']=TmsTrye::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=TmsTrye::with(['TryeOutList'=>function($query)use($select1){
+                $data['items']=TmsTrye::with(['TryeOutList'=>function($query)use($select1,$trye_name,$trye_sku_id,$model,$price){
                     $query->where('delete_flag','Y');
                     if ($trye_name){
                         $query->where('trye_name','like',$trye_name);
