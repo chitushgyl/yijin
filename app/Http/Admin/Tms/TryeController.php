@@ -688,18 +688,6 @@ class TryeController extends CommonController{
         $validator=Validator::make($input,$rules,$message);
         if($validator->passes()) {
             
-            $name_where=[
-                ['trye_sku_id','=',trim($trye_sku_id)],
-                ['delete_flag','=','Y'],
-            ];
-            
-            $name_count = TmsTryeList::where($name_where)->count();            //检查名字是不是重复
-
-            if($name_count > 0){
-                $msg['code'] = 301;
-                $msg['msg'] = '产品编号重复';
-                return $msg;
-            }
             $data['type']              =$type;
             $data['model']             =$model;
             $data['num']               =$num;
@@ -2656,13 +2644,13 @@ class TryeController extends CommonController{
         if($validator->passes()){
             if($self_id){
                 $name_where=[
-                    ['trye_sku_id','=',trim($external_sku_id)],
+                    ['trye_sku_id','=',trim($trye_sku_id)],
                     ['self_id','!=',$self_id],
                     ['delete_flag','=','Y'],
                 ];
             }else{
                 $name_where=[
-                    ['trye_sku_id','=',trim($external_sku_id)],
+                    ['trye_sku_id','=',trim($trye_sku_id)],
                     ['delete_flag','=','Y'],
                 ];
             }
