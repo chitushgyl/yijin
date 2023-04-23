@@ -54,24 +54,24 @@ class TmsTryeList extends Model{
  public function TmsTryeCount(){
         //参数：关联模型名称，外键，主键
         //如果主键是id可以省略
-        return $this->hasMany('App\Models\Tms\TmsTryeCount','model','model');
+        return $this->hasMany('App\Models\Tms\TmsTryeCount','sku_id','self_id');
      }
 
     public function tryeOutList(){
         //参数：关联模型名称，外键，主键
         //如果主键是id可以省略
-        return $this->hasMany('App\Models\Tms\TryeOutList','model','model');
+        return $this->hasMany('App\Models\Tms\TryeOutList','sku_id','self_id');
     }
     public function tmsTrye(){
         //参数：关联模型名称，外键，主键
         //如果主键是id可以省略
-        return $this->hasMany('App\Models\Tms\TmsTrye','model','model');
+        return $this->hasMany('App\Models\Tms\TmsTrye','sku_id','self_id');
     }
 
     public function tmsTryeChange(){
         //参数：关联模型名称，外键，主键
         //如果主键是id可以省略
-        return $this->hasMany('App\Models\Tms\TmsTryeChange','model','model');
+        return $this->hasMany('App\Models\Tms\TmsTryeChange','sku_id','self_id');
     }
 
 
