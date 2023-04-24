@@ -2776,7 +2776,7 @@ class TryeController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','different','date_time','trye_name','sku_id','trye_sku_id'];
+        $select=['self_id','model','initial_num','change_num','now_num','create_time','now_num','different','trye_name','sku_id','trye_sku_id','group_name','group_code','use_flag','delete_flag','order_id','library_sige_id','price','inout_time','create_time','type'];
 
         switch ($group_info['group_id']){
             case 'all':
