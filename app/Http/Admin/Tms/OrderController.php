@@ -1363,45 +1363,7 @@ class OrderController extends CommonController{
     /***    订单删除     /tms/order/orderDelFlag
      */
     public function orderDelFlag(Request $request,Status $status){
-        $now_time=date('Y-m-d H:i:s',time());
-        $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='tms_order';
-        $medol_name='TmsOrder';
-        $self_id=$request->input('self_id');
-        $flag='delFlag';
-        $now_time=date('Y-m-d H:i:s',time());
-        $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='road_toll';
-        $medol_name='RoadToll';
-        $self_id=$request->input('self_id');
-        $flag='delFlag';
-
-        $old_info = TmsOrder::whereIn('self_id',explode(',',$self_id))->select('use_flag','self_id','delete_flag','group_code')->get();
-        $data['delete_flag']='N';
-        $data['update_time']=$now_time;
-
-        DB::beginTransaction();
-        try{
-            $id=TmsOrder::whereIn('self_id',explode(',',$self_id))->update($data);
-            TmsMoney::whereIn('order_id',explode(',',$self_id))->update($data);
-            DB::commit();
-            $msg['code']=200;
-            $msg['msg']='删除成功！';
-        }catch(\Exception $e){
-            DB::rollBack();
-            $msg['code']=301;
-            $msg['msg']='删除失败！';
-        }
-
-        return $msg;
-
-        $operationing->access_cause='删除';
-        $operationing->table=$table_name;
-        $operationing->table_id=$self_id;
-        $operationing->now_time=$now_time;
-        $operationing->old_info=$old_info;
-        $operationing->new_info=(object)$data;
-        $operationing->operation_type=$flag;
+        
     }
 
 
