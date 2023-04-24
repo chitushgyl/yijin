@@ -1709,7 +1709,16 @@ class OrderController extends CommonController{
                     if($list['car_number'] == $vv->car_number){
                        $list['pay_id'] = $vv->self_id;
                     }
-            }
+                    }
+                    if($list['pay_id']){
+
+                    }else{
+                        if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行没有匹配到线路".'</br>';
+                                $cando='N';
+                                $abcd++;
+                         }
+                    }
 
                     $datalist[]=$list;
 
@@ -2004,6 +2013,15 @@ class OrderController extends CommonController{
                     if($list['car_number'] == $vv->car_number){
                        $list['pay_id'] = $vv->self_id;
                     }
+                    }
+                    if($list['pay_id']){
+
+                    }else{
+                        if($abcd<$errorNum){
+                                $strs .= '数据中的第'.$a."行没有匹配到线路".'</br>';
+                                $cando='N';
+                                $abcd++;
+                         }
                     }
 
                     $datalist[]=$list;
@@ -2321,15 +2339,15 @@ class OrderController extends CommonController{
                        $list['pay_id'] = $vv->self_id;
                     }
                 }
-                if($list['pay_id']){
+                    if($list['pay_id']){
 
-                }else{
-                    if($abcd<$errorNum){
+                    }else{
+                        if($abcd<$errorNum){
                                 $strs .= '数据中的第'.$a."行没有匹配到线路".'</br>';
                                 $cando='N';
                                 $abcd++;
-                            }
-                }
+                         }
+                    }
 
                     $datalist[]=$list;
 
