@@ -2744,7 +2744,7 @@ class TryeController extends CommonController{
         $sku_id             =$request->input('sku_id');
         $trye_sku_id    =$request->input('trye_sku_id');
         $price              =$request->input('price');
-        $spec               =$request->input('model');
+        $model               =$request->input('model');
         $group_code         =$request->input('group_code');
      
         $trye_name          =$request->input('trye_name');
@@ -2769,8 +2769,8 @@ class TryeController extends CommonController{
             ['type'=>'like','name'=>'trye_sku_id','value'=>$trye_sku_id],
             ['type'=>'like','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'trye_name','value'=>$trye_name],
-            ['type'=>'>=','name'=>'inout_time','value'=>$start_time],
-            ['type'=>'<','name'=>'inout_time','value'=>$end_time],
+            ['type'=>'>=','name'=>'date_time','value'=>$start_time],
+            ['type'=>'<','name'=>'date_time','value'=>$end_time],
             ['type'=>'=','name'=>'type','value'=>$type],
         ];
 
