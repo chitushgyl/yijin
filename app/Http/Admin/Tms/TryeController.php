@@ -1610,7 +1610,7 @@ class TryeController extends CommonController{
         $old_info = TmsTrye::where('self_id',$self_id)->select('use_flag','type','self_id','delete_flag','group_code','state')->get();
         $data['delete_flag']='N';
         $data['update_time']=$now_time;
-        Trye::where('self_id',$self_id)->update($data);
+        TmsTrye::where('self_id',$self_id)->update($data);
         foreach($old_info as $k => $v){
             if ($v->type == 'out'){
                 TryeOutList::where('order_id',$v->self_id)->update($data);

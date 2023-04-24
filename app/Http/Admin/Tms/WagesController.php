@@ -354,8 +354,8 @@ class WagesController extends CommonController{
     public function waresDelFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='tms_wares';
-        $medol_name='TmsWares';
+        $table_name='tms_wages';
+        $medol_name='TmsWages';
         $self_id=$request->input('self_id');
         $flag='delFlag';
         //$self_id='group_202007311841426065800243';
