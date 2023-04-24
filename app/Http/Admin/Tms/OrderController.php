@@ -3370,6 +3370,7 @@ $user_info  = $request->get('user_info');//接收中间件产生的参数
         /** 接收数据*/
         $group_code     =$request->input('group_code');
         $type           =$request->input('type');
+        $ids           =$request->input('ids');
 //        $group_code  =$input['group_code']   ='group_202012251449437824125582';
         //dd($group_code);
         $rules=[
@@ -3393,9 +3394,9 @@ $user_info  = $request->get('user_info');//接收中间件产生的参数
                 'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
                 'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
                 'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
-                ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name','id'];
+                ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name','id','sale_price'];
             $select1 = ['self_id','parame_name'];
-            $info=TmsOrder::where($where)->where('order_type',1)->orderBy('create_time', 'desc')->select($select)->get();
+            $info=TmsOrder::where($where)->where('self_id',explode(',',$ids))->where('order_type',1)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头
@@ -3798,6 +3799,7 @@ $user_info  = $request->get('user_info');//接收中间件产生的参数
         $input      =$request->all();
         /** 接收数据*/
         $group_code     =$request->input('group_code');
+        $ids            =$request->input('ids');
 //        $group_code  =$input['group_code']   ='group_202012251449437824125582';
         //dd($group_code);
         $rules=[
@@ -3820,10 +3822,10 @@ $user_info  = $request->get('user_info');//接收中间件产生的参数
             $select=['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code',
                 'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
                 'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
-                'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
+                'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark','sale_price',
                 ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name'];
             $select1 = ['self_id','parame_name'];
-            $info=TmsOrder::where($where)->where('order_type',2)->orderBy('create_time', 'desc')->select($select)->get();
+            $info=TmsOrder::where($where)->whereIn('self_id',explode(',',$ids))->where('order_type',2)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头
@@ -4227,6 +4229,7 @@ $user_info  = $request->get('user_info');//接收中间件产生的参数
         $input      =$request->all();
         /** 接收数据*/
         $group_code     =$request->input('group_code');
+        $ids     =$request->input('ids');
 //        $group_code  =$input['group_code']   ='group_202012251449437824125582';
         //dd($group_code);
         $rules=[
@@ -4249,10 +4252,10 @@ $user_info  = $request->get('user_info');//接收中间件产生的参数
             $select=['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code',
                 'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
                 'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
-                'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
+                'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark','sale_price',
                 ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name'];
             $select1 = ['self_id','parame_name'];
-            $info=TmsOrder::where($where)->where('order_type',3)->orderBy('create_time', 'desc')->select($select)->get();
+            $info=TmsOrder::where($where)->where('self_id',explode(',',$ids))->where('order_type',3)->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头
