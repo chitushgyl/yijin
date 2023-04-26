@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Input;
 use App\Http\Controllers\DetailsController as Details;
 use App\Models\Wms\WmsMoney;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\FileController as File;
 
 class MoneyController extends CommonController{
 
@@ -77,7 +78,7 @@ class MoneyController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name','trailer_num',
+        $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name','trailer_num','submit_connect',
             'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money','bill_flag','receipt','receipt_flag'];
 
         switch ($group_info['group_id']){
