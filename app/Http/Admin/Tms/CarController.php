@@ -1093,7 +1093,7 @@ class CarController extends CommonController{
                 $browse_type=$request->path();
                 $msg=$file->export($data_execl,$row,$group_code,$group_name,$browse_type,$user_info,$where,$now_time);
 
-                //dd($msg);
+                dd($msg);
                 return $msg;
 
             }else{
