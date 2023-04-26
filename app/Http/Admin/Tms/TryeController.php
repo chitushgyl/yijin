@@ -205,7 +205,7 @@ class TryeController extends CommonController{
         foreach ($button_info as $k => $v){
             if($v->id == 144){
                 $button_info1[]=$v;
-                
+
             }
             if($v->id == 145){
                 $button_info1[]=$v;
@@ -213,7 +213,7 @@ class TryeController extends CommonController{
             }
             if($v->id == 146){
                 $button_info2[]=$v;
-                
+
             }
             if($v->id == 147){
                 $button_info2[]=$v;
@@ -221,7 +221,7 @@ class TryeController extends CommonController{
             }
         }
         foreach ($data['items'] as $k=>$v) {
-            
+
             $v->button_info=$button_info;
             if($v->type == 'in'){
                 if ($v->state == 'N') {
@@ -288,7 +288,7 @@ class TryeController extends CommonController{
         $operationing->type             ='add';
 
         $input              =$request->all();
-    
+
         /** 接收数据*/
         $self_id            =$request->input('self_id');
         $car_id             =$request->input('car_id');//车牌号
@@ -417,7 +417,7 @@ class TryeController extends CommonController{
         $data=[];
         $payment = [];
         foreach ($datalist as $k => $v){
-        
+
             $list=[];
             $money=[];
             $list["self_id"]            =generate_id('change_');
@@ -687,7 +687,7 @@ class TryeController extends CommonController{
 
         $validator=Validator::make($input,$rules,$message);
         if($validator->passes()) {
-            
+
             $data['type']              =$type;
             $data['model']             =$model;
             $data['num']               =$num;
@@ -715,7 +715,7 @@ class TryeController extends CommonController{
             if($old_info){
                 $data['update_time']=$now_time;
                 $id=TmsTrye::where($wheres)->update($data);
-                
+
                 $operationing->access_cause='修改入库';
                 $operationing->operation_type='update';
 
@@ -728,7 +728,7 @@ class TryeController extends CommonController{
                 $data['group_name']         = $user_info->group_name;
 
                 $id=TmsTrye::insert($data);
-                
+
                 if (!$trye_model){
                     $model_list['self_id']            = generate_id('model_');
                     $model_list['model']              = $model;
@@ -791,7 +791,7 @@ class TryeController extends CommonController{
         //dd($input);
         /** 接收数据*/
         $self_id            =$request->input('self_id');
-        
+
         $rules=[
             'self_id'=>'required',
         ];
@@ -853,13 +853,13 @@ class TryeController extends CommonController{
                    self::tryeChange($change,'preentry');
                    DB::commit();
                 }catch(\Exception $e){
-                    dd($e);
+//                    dd($e);
                     DB::rollBack();
                 }
-                
+
                 $operationing->access_cause='轮胎入库审核';
                 $operationing->operation_type='create';
-            
+
 
             $operationing->table_id=$old_info?$self_id:$old_info->self_id;
             $operationing->old_info=$old_info;
@@ -1049,9 +1049,9 @@ class TryeController extends CommonController{
             $data['trye_list']         =$trye_list;
             $trye_out_lists = [];
             foreach(json_decode($trye_list,true) as $k => $v){
-                   
+
                     $trye_num_list['trye_num']           = $v['trye_num'];
-                    
+
                     array_push($trye_out_lists,$v['trye_num']);
 
             }
@@ -1110,7 +1110,7 @@ class TryeController extends CommonController{
 
                         $list['kilo']               = $value['kilo_num'];
                         $list['change']             = $value['change'];
-                        $list['trye_img']           = $value['trye_img'];
+                        $list['trye_img']           = json_encode($value['trye_img'],JSON_UNESCAPED_UNICODE);
                         $list['create_user_id']     = $user_info->admin_id;
                         $list['create_user_name']   = $user_info->name;
                         $list['create_time']        = $list['update_time']=$now_time;
@@ -1157,7 +1157,7 @@ class TryeController extends CommonController{
         $select = ['self_id','model','order_id','sale_price','initial_num','change_num','now_num','trye_num','use_flag','delete_flag','group_code','group_name','create_time'];
         $data['info']=TmsTryeCount::where($where)->where('now_num','>',0)->select($select)->get();
         $res = '';
-    
+
         foreach($data['info'] as $k => $v){
             $res .= $v->trye_num.',';
         }
@@ -1229,7 +1229,7 @@ class TryeController extends CommonController{
 //                                ['create_time', '>',$now_time]
 //                                ['create_time', '>', substr($now_time, 0, -9)]
                         ];
-                      
+
                         $resssss = TmsTryeCount::where($where2)->orderBy('create_time', 'asc')->get()->toArray();
                         if ($resssss) {
                             $totalNum = array_sum(array_column($resssss, 'now_num'));
@@ -1243,7 +1243,7 @@ class TryeController extends CommonController{
                                 $wms_library_change =[];
                                 $number=$v['num'];
                                 foreach ($resssss as $kk =>$vv){
-                                  
+
                                     if($number > 0 && in_array($v['trye_num'],explode(',',$vv['trye_num']))) {
                                         if ($number - $vv['now_num'] > 0) {
                                             $shiji_number = $vv['now_num'];
@@ -1257,9 +1257,9 @@ class TryeController extends CommonController{
                                         $library_sige['trye_num'] = $v['trye_num'];
                                         $wms_library_sige[] = $library_sige;
 
-                                        
+
                                         $library_change['self_id']      =$vv['self_id'];
-                                        $library_change['sale_price']                =$vv['sale_price'];   
+                                        $library_change['sale_price']                =$vv['sale_price'];
                                         $library_change['group_code']           =$vv['group_code'];
                                         $library_change['group_name']           =$vv['group_name'];
                                         $library_change['shiji_num']            =$shiji_number;
@@ -1281,7 +1281,7 @@ class TryeController extends CommonController{
                                     }
 
                                 }
-                               
+
                                 self::tryeChange($wms_library_change,'out');
                                 foreach ($wms_library_sige as $kkk => $vvv){
                                     $where21['self_id']=$vvv['self_id'];
@@ -2001,7 +2001,7 @@ class TryeController extends CommonController{
         // }else{
         //     $msg['code']=300;
         //     $msg['msg']="请选择结束时间";
-     
+
         // return $msg;
         // }
         $search=[
@@ -2128,7 +2128,7 @@ class TryeController extends CommonController{
         $start_time          =$request->input('start_time');
         $end_time            =$request->input('end_time');
         $supplier            =$request->input('supplier');
-        
+
         $model               =$request->input('model');
         $trye_name               =$request->input('trye_name');
         $listrows            =$num;
@@ -2146,7 +2146,7 @@ class TryeController extends CommonController{
         // }else{
         //     $msg['code']=300;
         //     $msg['msg']="请选择结束时间";
-     
+
         // return $msg;
         // }
         $search=[
@@ -2170,7 +2170,7 @@ class TryeController extends CommonController{
 
         $where=get_list_where($search);
         $where1 = get_list_where($search1);
-   
+
         $select=['self_id','model','group_name','use_flag','trye_name','sku_id','trye_sku_id'];
         $Signselect=['self_id','model','initial_num','change_num','create_time','now_num','trye_list','date_time','different','date_time','trye_name','sku_id','trye_sku_id'];
 //        dd($select);
@@ -2230,13 +2230,13 @@ class TryeController extends CommonController{
                 }
 //                $v->initial_count += $vv->initial_num;
 
-               
+
                 $v->count +=$vv->now_num;
             }
 //            $v->jie_count = $v->in_count - $v->out_count;
             $v->in_initial_count = TmsTryeChange::where('sku_id',$v->self_id)->where('inout_time','<',$start_time)->where('type','preentry')->sum('change_num');
             $v->out_initial_count = TmsTryeChange::where('sku_id',$v->self_id)->where('inout_time','<',$start_time)->where('type','out')->sum('change_num');
-            
+
             $v->initial_count = $v->in_initial_count - $v->out_initial_count;
             $v->jie_count = $v->in_count + $v->initial_count - $v->out_count + $v->different;
             $v->different_counts = $v->different_count;
@@ -2433,11 +2433,11 @@ class TryeController extends CommonController{
                 $abc[0]=$andd;
                 //DUMP($abc);
                 // $change->change($abc,'change');
-                
+
                 self::tryeChange($abc,'change');
-                   
-                
-                
+
+
+
 
                 //dd(11111);
                 $msg['code'] = 200;
@@ -2473,7 +2473,7 @@ class TryeController extends CommonController{
             'import_color'=>'#FC5854',
             'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/轮胎出入库导入.xlsx',
         ];
-  
+
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
@@ -2510,7 +2510,7 @@ class TryeController extends CommonController{
         $where=get_list_where($search);
 
         $select=['self_id','price','model','trye_name','trye_sku_id','create_user_name','create_time','group_code','use_flag','delete_flag','remark'];
-        
+
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsTryeList::where($where)->count(); //总的数据量
@@ -2552,7 +2552,7 @@ class TryeController extends CommonController{
       /***    新建商品      /tms/trye/createTryeSku
      */
     public function createTryeSku(Request $request){
-      
+
         /** 接收数据*/
         $self_id=$request->input('self_id');
         $where=[
@@ -2747,7 +2747,7 @@ class TryeController extends CommonController{
         $price              =$request->input('price');
         $model               =$request->input('model');
         $group_code         =$request->input('group_code');
-     
+
         $trye_name          =$request->input('trye_name');
         $start_time         =$request->input('start_time');
         $end_time           =$request->input('end_time');
@@ -2809,13 +2809,13 @@ class TryeController extends CommonController{
 
         foreach ($data['items'] as $k=>$v) {
             $v->type_show=$wms_order_type_show[$v->type]??null;
-            
+
             if($v->initial_num >$v->now_num){
                 $v->change_num='-'.$v->change_num;
-             
+
             }else{
                 $v->change_num='+'.$v->change_num;
-              
+
             }
             $v->date_time = date('Y-m-d',strtotime($v->date_time));
 
