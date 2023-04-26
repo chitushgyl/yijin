@@ -939,7 +939,7 @@ class CarOilController extends CommonController{
         if($validator->passes()){
             $wheres['self_id'] = $self_id;
             $old_info=TmsOil::where($wheres)->first();
-            if($old_info->state == 'N'){
+            if($old_info->state == 'Y'){
                 $msg['code'] = 303;
                 $msg['msg'] = "入库已审核，不可修改！";
                 return $msg;
