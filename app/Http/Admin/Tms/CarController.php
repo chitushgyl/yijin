@@ -875,7 +875,7 @@ class CarController extends CommonController{
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $user_info  = $request->get('user_info');//接收中间件产生的参数
 //        $table_name = 'tms_car';
-//        $now_time   =date('Y-m-d H:i:s',time());
+        $now_time   =date('Y-m-d H:i:s',time());
 //        $operationing->access_cause     ='车辆导出';
 //        $operationing->table            =$table_name;
 //        $operationing->operation_type   ='create';
