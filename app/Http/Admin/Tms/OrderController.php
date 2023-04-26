@@ -79,7 +79,7 @@ class OrderController extends CommonController{
             ];
         }
 
-            
+
         if ($type == 1){
             $button_info1=[];
             $button_info2=[];
@@ -119,7 +119,7 @@ class OrderController extends CommonController{
                    $button_info1[] = $v;
                 }
 
-            }  
+            }
             $data['button_info'] = $button_info1;
         }
 
@@ -187,7 +187,7 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'escort_name','value'=>$escort_name],
             ['type'=>'=','name'=>'order_type','value'=>$order_type],
         ];
-        
+
 
         $where=get_list_where($search);
 
@@ -443,7 +443,7 @@ class OrderController extends CommonController{
             $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->where('group_code',$group_info->group_code)->get();
             foreach($pay_type as $k =>$v){
                 if (in_array($send_name,explode(',',$v->line_list)) && in_array($gather_name,explode(',',$v->line_list))) {
-                     $data['pay_id'] = $v->self_id; 
+                     $data['pay_id'] = $v->self_id;
                 }
                 if($car_number == $v->car_number){
                     $data['pay_id'] = $v->self_id;
@@ -639,7 +639,7 @@ class OrderController extends CommonController{
              if($salary){
                   $base_pay = $salary->salary/30;
              }
-        
+
              // dump($base_pay);
              $pay = 0;
              $reward = 0;
@@ -647,8 +647,8 @@ class OrderController extends CommonController{
              $carnum = 0;
              $once = 0;
              $line_list= [];
-             //计算提成  
-             //查找当前司机 本次卸货时间 总共有几个订单   分别找出结算方式为A和B的订单        
+             //计算提成
+             //查找当前司机 本次卸货时间 总共有几个订单   分别找出结算方式为A和B的订单
                   foreach ($order as $k=>$v) {
                     if($v->tmsLine){
                       if($v->tmsLine->pay_type == 'A'){
@@ -660,8 +660,8 @@ class OrderController extends CommonController{
                           $carnum += $v->tmsLine->car_num;
                           $once += $v->tmsLine->once_price;
                       }
-                    }                             
-          
+                    }
+
                   }
                   //计算结算结算方式为A时候的提成
 
@@ -675,7 +675,7 @@ class OrderController extends CommonController{
                  }else{
                      $count_pay = 0;
                  }
-                 
+
                  if($a>0){
                     if($a>$carnum/$a){
                         $count_pay = ($a-($carnum/$a))*$once/$a;
@@ -689,7 +689,7 @@ class OrderController extends CommonController{
             if ($ti_order) {
                 if(in_array($self_id,explode(',',$ti_order->order_id))){
                     //参与过计算提成 本次不统计
-                    
+
                 }else{
                  //制作提成表数据
                  $ti_money['update_time']            = $now_time;
@@ -713,7 +713,7 @@ class OrderController extends CommonController{
             }
             $old_money = TmsMoney::where('order_id',$self_id)->first();
             if ($old_money) {
-                $money['money']                  = $total_money; 
+                $money['money']                  = $total_money;
                 $money['before_money']           = $total_money;
                 $money['update_time']            = $now_time;
                 TmsMoney::where('self_id',$old_money->self_id)->update($money);
@@ -739,7 +739,7 @@ class OrderController extends CommonController{
                 $money['create_user_name']       = $user_info->name;
                 $money['create_time']            = $money['update_time'] = $leave_time;
                 TmsMoney::insert($money);
-                
+
             }
             if($id){
                    DB::commit();
@@ -754,14 +754,14 @@ class OrderController extends CommonController{
                 }
 
             }catch(\Exception $e){
-                   dd($e);
+//                   dd($e);
                    DB::rollBack();
                    $msg['code'] = 302;
                    $msg['msg'] = "操作失败";
                    return $msg;
             }
-            
-            
+
+
 
             $operationing->access_cause='修改跟单金额';
             $operationing->operation_type='update';
@@ -769,7 +769,7 @@ class OrderController extends CommonController{
             $operationing->old_info=$old_info;
             $operationing->new_info=$data;
 
-            
+
 
             /***二次效验结束**/
         }else{
@@ -862,7 +862,7 @@ class OrderController extends CommonController{
              if($salary){
                   $base_pay = $salary->salary/30;
              }
-        
+
              // dump($base_pay);
              $pay = $pay1 = 0;
              $reward = $reward1= 0;
@@ -870,18 +870,18 @@ class OrderController extends CommonController{
              $carnum = $carnum1= 0;
              $once = $once1 = 0;
              $line_list= [];
-     
+
             $id=TmsOrder::where('self_id',$self_id)->update($data);
 
             //保存提成表 计算提成
-            
+
             $order = TmsOrder::with(['tmsLine' => function($query) use($select1){
                     $query->where('delete_flag','Y');
                     $query->select($select1);
                 }])->where('driver_id',$old_info->driver_id)->where('leave_time',$leave_time)->where('delete_flag','Y')->get();
-            
-             //计算提成  
-             //查找当前司机 本次卸货时间 总共有几个订单   分别找出结算方式为A和B的订单        
+
+             //计算提成
+             //查找当前司机 本次卸货时间 总共有几个订单   分别找出结算方式为A和B的订单
                   foreach ($order as $k=>$v) {
                     if($v->tmsLine){
                       if($v->tmsLine->pay_type == 'A'){
@@ -893,8 +893,8 @@ class OrderController extends CommonController{
                           $carnum += $v->tmsLine->car_num;
                           $once += $v->tmsLine->once_price;
                       }
-                    }                             
-          
+                    }
+
                   }
                   //计算结算结算方式为A时候的提成
 
@@ -908,7 +908,7 @@ class OrderController extends CommonController{
                  }else{
                      $count_pay = 0;
                  }
-                 
+
                  if($a>0){
                     if($a>$carnum/$a){
                         $count_pay = ($a-($carnum/$a))*$once/$a;
@@ -922,7 +922,7 @@ class OrderController extends CommonController{
             if ($ti_order) {
                 if(in_array($self_id,explode(',',$ti_order->order_id))){
                     //参与过计算提成 本次不统计
-                    
+
                 }else{
                  //制作提成表数据
                  $ti_money['update_time']            = $now_time;
@@ -948,7 +948,7 @@ class OrderController extends CommonController{
                  $ti_money['order_id']               = $self_id;
                  DriverCommission::insert($ti_money);
 
-                
+
             }
 
                     if($old_info->leave_time != $leave_time){
@@ -956,7 +956,7 @@ class OrderController extends CommonController{
                         $query->where('delete_flag','Y');
                         $query->select($select1);
                         }])->where('driver_id',$old_info->driver_id)->where('leave_time',$old_info->leave_time)->where('delete_flag','Y')->get();
-                    
+
                         $new_order_id = '';
                         foreach ($old_order as $kk=>$vv) {
                             if($vv->tmsLine){
@@ -969,18 +969,18 @@ class OrderController extends CommonController{
                                $carnum1 += $vv->tmsLine->car_num;
                                $once1 += $vv->tmsLine->once_price;
                             }
-                            }                              
+                            }
                             $new_order_id .= $vv->self_id.',';
                         }
-                    
-                   
+
+
                     $count_pay1 = ($pay1-$base_pay);
                         if($count_pay1 > 0){
                             $count_pay1 = $count_pay1 + $reward1;
                         }else{
                             $count_pay1 = 0;
                         }
-                 
+
                         if($a1>0){
                            if($a1>$carnum1/$a1){
                               $count_pay1 = ($a1-($carnum1/$a1))*$once1/$a1;
@@ -998,15 +998,15 @@ class OrderController extends CommonController{
                  $ti_money1['order_id']               = $new_order_id;
                  DriverCommission::where('driver_id',$old_info->driver_id)->where('leave_time',$old_info->leave_time)->update($ti_money1);
             }
-            
 
 
-            
+
+
             //end
             }
             $old_money = TmsMoney::where('order_id',$self_id)->first();
             if ($old_money) {
-                $money['money']                  = $total_money; 
+                $money['money']                  = $total_money;
                 $money['before_money']           = $total_money;
                 $money['update_time']            = $now_time;
                 TmsMoney::where('self_id',$old_money->self_id)->update($money);
@@ -1032,7 +1032,7 @@ class OrderController extends CommonController{
                 $money['create_user_name']       = $user_info->name;
                 $money['create_time']            = $money['update_time'] = $leave_time;
                 TmsMoney::insert($money);
-                
+
             }
             if($id){
                    DB::commit();
@@ -1053,8 +1053,8 @@ class OrderController extends CommonController{
                    $msg['msg'] = "操作失败";
                    return $msg;
             }
-            
-            
+
+
 
             $operationing->access_cause='修改跟单金额';
             $operationing->operation_type='update';
@@ -1062,7 +1062,7 @@ class OrderController extends CommonController{
             $operationing->old_info=$old_info;
             $operationing->new_info=$data;
 
-            
+
 
             /***二次效验结束**/
         }else{
@@ -1151,7 +1151,7 @@ class OrderController extends CommonController{
 
     }
 
-   
+
     /**
      * 调度  tms/order/dispatchOrder
      * */
@@ -1695,7 +1695,7 @@ class OrderController extends CommonController{
                     $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->where('group_code',$info->group_code)->get();
                     foreach($pay_type as $kk =>$vv){
                     if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
-                       $list['pay_id'] = $vv->self_id; 
+                       $list['pay_id'] = $vv->self_id;
                        if($list['car_number'] == $vv->car_number){
                        $list['pay_id'] = $vv->self_id;
                     }
@@ -2002,7 +2002,7 @@ class OrderController extends CommonController{
                     $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->where('group_code',$info->group_code)->get();
                     foreach($pay_type as $kk =>$vv){
                     if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
-                       $list['pay_id'] = $vv->self_id; 
+                       $list['pay_id'] = $vv->self_id;
                     }
                     if($list['car_number'] == $vv->car_number){
                        $list['pay_id'] = $vv->self_id;
@@ -2171,7 +2171,7 @@ class OrderController extends CommonController{
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
                 $car = TmsCar::where('car_number',$v['car_number'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','car_number')->first();
-                
+
                 $send = TmsGroup::where('company_name',$v['send_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $gather = TmsGroup::where('company_name',$v['gather_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
@@ -2258,7 +2258,7 @@ class OrderController extends CommonController{
                     }
                 }
                 }
-                
+
                 if ($v['send_time']){
                     if (is_numeric($v['send_time'])){
                         $v['send_time']              = gmdate('Y-m-d',($v['send_time'] - 25569) * 3600 * 24);
@@ -2290,7 +2290,7 @@ class OrderController extends CommonController{
                     }else{
                         $list['trailer_num']              = null;
                     }
-                    
+
                     if ($v['user_name']){
                         $list['driver_id']               = $driver->self_id;
                         $list['user_name']               = $driver->name;
@@ -2327,7 +2327,7 @@ class OrderController extends CommonController{
                     $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->where('group_code',$info->group_code)->get();
                     foreach($pay_type as $kk =>$vv){
                     if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
-                       $list['pay_id'] = $vv->self_id; 
+                       $list['pay_id'] = $vv->self_id;
                     }
                     if($list['car_number'] == $vv->car_number){
                        $list['pay_id'] = $vv->self_id;
@@ -2349,7 +2349,7 @@ class OrderController extends CommonController{
 
                 $a++;
             }
-        
+
 
 
             $operationing->new_info=$datalist;
@@ -2452,8 +2452,8 @@ class OrderController extends CommonController{
                     "road_card"=>'路卡',
                     "carriage_group"=>'承运商组别',
                 ]];
-            
-                
+
+
 
                 /** 现在根据查询到的数据去做一个导出的数据**/
                 $data_execl=[];
@@ -3003,7 +3003,7 @@ class OrderController extends CommonController{
         $msg['data']=$data;
         return $msg;
     }
-    
+
     //硫磺一队跟单导入  tms/order/orderOneImport
     public function orderOneImport(Request $request){
         $table_name         ='wms_warehouse_area';
@@ -3305,7 +3305,7 @@ class OrderController extends CommonController{
                     // $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->where('group_code',$info->group_code)->get();
                     // foreach($pay_type as $kk =>$vv){
                     // if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
-                    //    $list['pay_id'] = $vv->self_id; 
+                    //    $list['pay_id'] = $vv->self_id;
                     // }
                     // if($list['car_number'] == $vv->car_number){
                     //    $list['pay_id'] = $vv->self_id;
@@ -3429,7 +3429,7 @@ $user_info  = $request->get('user_info');//接收中间件产生的参数
                     "sale_price"=>'单价',
                     "total_money"=>'总运费',
                 ]];
-                
+
                 /** 现在根据查询到的数据去做一个导出的数据**/
                 $data_execl=[];
 
@@ -3734,7 +3734,7 @@ $table_name         ='wms_warehouse_area';
                     // $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->where('group_code',$info->group_code)->get();
                     // foreach($pay_type as $kk =>$vv){
                     // if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
-                    //    $list['pay_id'] = $vv->self_id; 
+                    //    $list['pay_id'] = $vv->self_id;
                     // }
                     // if($list['car_number'] == $vv->car_number){
                     //    $list['pay_id'] = $vv->self_id;
@@ -4007,7 +4007,7 @@ $user_info  = $request->get('user_info');//接收中间件产生的参数
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
                 $car = TmsCar::where('car_number',$v['car_number'])->where('group_code',$group_code)->select('self_id','car_number')->first();
-                
+
                 $send = TmsGroup::where('company_name',$v['send_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $gather = TmsGroup::where('company_name',$v['gather_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
                 $carriage = TmsGroup::where('company_name',$v['carriage_name'])->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
@@ -4094,7 +4094,7 @@ $user_info  = $request->get('user_info');//接收中间件产生的参数
                     }
                 }
                 }
-                
+
                 if ($v['send_time']){
                     if (is_numeric($v['send_time'])){
                         $v['send_time']              = gmdate('Y-m-d',($v['send_time'] - 25569) * 3600 * 24);
@@ -4126,7 +4126,7 @@ $user_info  = $request->get('user_info');//接收中间件产生的参数
                     }else{
                         $list['trailer_num']              = null;
                     }
-                    
+
                     if ($v['user_name']){
                         $list['driver_id']               = $driver->self_id;
                         $list['user_name']               = $driver->name;
@@ -4163,7 +4163,7 @@ $user_info  = $request->get('user_info');//接收中间件产生的参数
                     // $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->where('group_code',$info->group_code)->get();
                     // foreach($pay_type as $kk =>$vv){
                     // if (in_array($v['send_name'],explode(',',$vv->line_list)) && in_array($v['gather_name'],explode(',',$vv->line_list))) {
-                    //    $list['pay_id'] = $vv->self_id; 
+                    //    $list['pay_id'] = $vv->self_id;
                     // }
                     // if($list['car_number'] == $vv->car_number){
                     //    $list['pay_id'] = $vv->self_id;
@@ -4182,7 +4182,7 @@ $user_info  = $request->get('user_info');//接收中间件产生的参数
 
                 $a++;
             }
-        
+
 
 
             $operationing->new_info=$datalist;
