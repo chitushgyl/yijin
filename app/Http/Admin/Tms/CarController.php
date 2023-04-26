@@ -877,6 +877,7 @@ class CarController extends CommonController{
         $input      =$request->all();
         /** 接收数据*/
         $group_code     =$request->input('group_code');
+        $ids     =$request->input('ids');
 //        $group_code  =$input['group_code']   ='group_202012251449437824125582';
         //dd($group_code);
         $rules=[
@@ -897,11 +898,17 @@ class CarController extends CommonController{
             $where=get_list_where($search);
 
             $select=['self_id','car_number','car_type','carframe_num','crock_medium','crock_medium','license_date','medallion_date','remark','weight','volume','insure','tank_validity',
-                'license','medallion','payment_state','insure_price','create_time','update_time','use_flag','delete_flag','compulsory_end','commercial_end','carrier_end','compulsory','commercial','carrier'];
+                'license','medallion','payment_state','insure_price','compulsory_end','commercial_end','carrier_end','compulsory','commercial','carrier','medallion_num','curb_weight','all_weight','medallion_change','license_begin','production_date','scrap_date','business_scope','goods',
+                'design_code','operation_date','tank_num','tank_type','registr_cert','carrier_cert','tank_cert','medallion_change_end','nameplate','pass_cert','car_color','car_brand',
+                'car_made','engine_num','fuel_type','displacement_power','maker','turn_view','tread','trye_num','steel_plate','wheel_base','axles_num','outline','car_model',
+                'car_size','car_user','gps_flag','bussiness_license','license_plate','engine_model','license_back','medallion_back','registr_date','medallion_begin',
+                'license_start','compulsory_cert','commercial_cert','registr_cert_date','carrier_insurer','carrier_insurer_num','carrier_baoe','carrier_zrx','carrier_zr','carrier_good',
+                'compulsory_insurer','compulsory_num','compulsory_sc','compulsory_yl','compulsory_property','commercial_insurer','commercial_num','commercial_tz','commercial_zr','commercial_driver','vessel_tax',
+                'commercial_user','car_unit','goods_type','sgs_cert','sgs_date'];
             $select1 = ['self_id','parame_name'];
             $info=TmsCar::with(['tmsCarType' => function($query) use($select1){
                 $query->select($select1);
-            }])->where($where)->orderBy('create_time', 'desc')->select($select)->get();
+            }])->where($where)->whereIn('self_id',explode(',',$ids))->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头
