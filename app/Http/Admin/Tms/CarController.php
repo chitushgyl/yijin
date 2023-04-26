@@ -3,6 +3,7 @@ namespace App\Http\Admin\Tms;
 use App\Http\Controllers\FileController as File;
 use App\Models\Tms\CarCount;
 use App\Models\Tms\CarDanger;
+use App\Models\Tms\CarOil;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
@@ -1312,6 +1313,63 @@ class CarController extends CommonController{
         foreach ($data['items'] as $k=>$v) {
             $v->button_info=$button_info;
         }
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
+
+
+    /***    月油耗      /tms/car/createCount
+     */
+    public function createCount(Request $request){
+        /** 接收数据*/
+        $self_id=$request->input('self_id');
+//        $self_id = 'car_20210313180835367958101';
+
+        $where=[
+            ['delete_flag','=','Y'],
+            ['self_id','=',$self_id],
+        ];
+
+        $select = ['self_id','car_number','car_id','month','month_kilo','month_fat','use_flag','delete_flag','group_code','group_name','create_time'];
+
+        $data['info']= CarCount::where('self_id',$self_id)->select($select)->first();
+
+        if ($data['info']){
+
+        }
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+//        dd($msg);
+        return $msg;
+
+    }
+
+    /**
+     * 获取本月加油量 tms/car/getCarOil
+     * */
+    public function getCarOil(Request $request){
+        $group_code=$request->input('group_code');
+        $car_number=$request->input('car_number');
+        $start_time      =$request->input('start_time');
+        $end_time      =$request->input('end_time');
+//        $input['group_code'] =  $group_code = '1234';
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'all','name'=>'use_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'=','name'=>'car_number','value'=>$car_number],
+            ['type'=>'>=','name'=>'add_time','value'=>$start_time],
+            ['type'=>'<=','name'=>'add_time','value'=>$end_time],
+        ];
+
+        $where=get_list_where($search);
+        $select = ['self_id','car_number','number','group_code','use_flag','delete_flag'];
+        $data['info']=CarOil::where($where)->select($select)->sum('number');
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";

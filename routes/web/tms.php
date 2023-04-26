@@ -42,6 +42,7 @@ Route::group([
     Route::any('/car/import', 'CarController@import');
     Route::any('/car/excel', 'CarController@excel');
     Route::any('/car/insurExecl', 'CarController@insurExecl');
+    Route::any('/car/getCarOil', 'CarController@getCarOil');
 
     Route::group([
         "middleware"=>['daily'],
