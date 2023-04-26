@@ -735,6 +735,7 @@ class CarOilController extends CommonController{
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
         $suppliere       =$request->input('suppliere');
+        $state          =$request->input('state');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -752,12 +753,13 @@ class CarOilController extends CommonController{
             ['type'=>'like','name'=>'suppliere','value'=>$suppliere],
             ['type'=>'>=','name'=>'create_time','value'=>$start_time],
             ['type'=>'<=','name'=>'create_time','value'=>$end_time],
+            ['type'=>'=','name'=>'state','value'=>$state],
         ];
 
         $where=get_list_where($search);
 
         $select=['self_id','num','price','total_price','enter_time','create_time','update_time','delete_flag','group_code','suppliere','operator',
-            'create_user_id','create_user_name','use_flag'];
+            'create_user_id','create_user_name','use_flag','state'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsOil::where($where)->count(); //总的数据量
@@ -827,6 +829,7 @@ class CarOilController extends CommonController{
         $operator           =$request->input('operator');//经手人
         $total_price        =$request->input('total_price');//加油总价
 
+
         $rules=[
             'num'=>'required',
             'price'=>'required',
@@ -870,7 +873,6 @@ class CarOilController extends CommonController{
                 $data['create_user_name']   =$user_info->name;
                 $data['create_time']        =$data['update_time']=$now_time;
 
-
                 $id=TmsOil::insert($data);
 
                 $operationing->access_cause='新建加油记录';
@@ -878,6 +880,78 @@ class CarOilController extends CommonController{
 
             }
 
+            $operationing->table_id=$old_info?$self_id:$data['self_id'];
+            $operationing->old_info=$old_info;
+            $operationing->new_info=$data;
+
+            if($id){
+                $msg['code'] = 200;
+                $msg['msg'] = "操作成功";
+                return $msg;
+            }else{
+                $msg['code'] = 302;
+                $msg['msg'] = "操作失败";
+                return $msg;
+            }
+
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
+    }
+
+    /**
+     * 油库入库审核
+     * */
+    public function updateOilState(Request $request){
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='tms_oil';
+
+        $operationing->access_cause     ='创建/修改入库状态';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+
+        $user_info = $request->get('user_info');//接收中间件产生的参数
+        $input              =$request->all();
+
+        /** 接收数据*/
+        $self_id            =$request->input('self_id');
+
+        $rules=[
+            'self_id'=>'required',
+
+        ];
+        $message=[
+            'self_id.required'=>'请选择审核条目！',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+
+        //操作的表
+        if($validator->passes()){
+            $wheres['self_id'] = $self_id;
+            $old_info=TmsOil::where($wheres)->first();
+            if($old_info->state == 'N'){
+                $msg['code'] = 303;
+                $msg['msg'] = "入库已审核，不可修改！";
+                return $msg;
+
+            }
+
+            $data['state'] = 'N';
+            $data['update_time']   = $now_time;
+            $id = TmsOil::where('self_id',explode(',',$self_id))->update($data);
+
+            $operationing->access_cause='费用作废';
+            $operationing->operation_type='create';
             $operationing->table_id=$old_info?$self_id:$data['self_id'];
             $operationing->old_info=$old_info;
             $operationing->new_info=$data;
