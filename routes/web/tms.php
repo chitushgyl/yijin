@@ -40,9 +40,9 @@ Route::group([
     Route::any('/car/carUseFlag', 'CarController@carUseFlag');
     Route::any('/car/carDelFlag', 'CarController@carDelFlag');
     Route::any('/car/import', 'CarController@import');
-    Route::any('/car/execl', 'CarController@execl');
+    Route::any('/car/excel', 'CarController@excel');
     Route::any('/car/insurExecl', 'CarController@insurExecl');
-    
+
     Route::group([
         "middleware"=>['daily'],
     ], function(){
@@ -50,7 +50,7 @@ Route::group([
         Route::any('/car/carUseFlag', 'CarController@carUseFlag');
         Route::any('/car/carDelFlag', 'CarController@carDelFlag');
         Route::any('/car/import', 'CarController@import');
-        Route::any('/car/execl', 'CarController@execl');
+        Route::any('/car/excel', 'CarController@excel');
     });
 
     /**TMS车辆业务公司管理**/
@@ -154,7 +154,7 @@ Route::group([
 
 
     Route::any('/order/editOrder_ti','OrderController@editOrder_ti');//跟单结算
-    
+
 
     Route::group([
         "middleware"=>['daily'],
@@ -236,6 +236,7 @@ Route::group([
     });
 
     /**月公里数，月油耗***/
+    Route::any('/car/countList','CarController@countList');
     Route::any('/car/countPage','CarController@countPage');
     Route::any('/car/addCount','CarController@addCount');
 
@@ -365,7 +366,7 @@ Route::group([
     Route::any('/trye/tryeIn','TryeController@tryeIn');
     Route::any('/trye/getTryeNum','TryeController@getTryeNum');
     Route::any('/trye/getTryeNum1','TryeController@getTryeNum1');
-    
+
 
     Route::any('/trye/searchList','TryeController@searchList');
     Route::any('/trye/searchPage','TryeController@searchPage');
@@ -376,7 +377,7 @@ Route::group([
     Route::any('/trye/createTryeSku','TryeController@createTryeSku');
     Route::any('/trye/skuDelFlag','TryeController@skuDelFlag');
     Route::any('/trye/historyPage','TryeController@historyPage');
-  
+
 
 
     /**二级维护***/
@@ -417,9 +418,9 @@ Route::group([
     Route::any('/wages/printWages','WagesController@printWages');//
     Route::any('/wages/printSalary','WagesController@printSalary');//
     Route::any('/wages/editCommission','WagesController@editCommission');//
-    
-    
-    
+
+
+
 
 
 });
