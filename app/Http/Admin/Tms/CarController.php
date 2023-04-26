@@ -925,7 +925,6 @@ class CarController extends CommonController{
                     "type"=>'类型',
                     "car_number"=>'车牌号',
                     "car_type"=>'车型',
-                    "carframe_num"=>'车架号',
                     "crock_medium"=>'罐体介质',
                     "volume"=>'罐体容积',
                     "tank_validity"=>'罐检到期日期',
