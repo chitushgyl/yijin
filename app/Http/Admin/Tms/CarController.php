@@ -360,7 +360,7 @@ class CarController extends CommonController{
             $data['tank_num']          =$tank_num;
             $data['tank_type']         =$tank_type;
             $data['vessel_tax']         =$vessel_tax;
-            
+
             $data['medallion_change_end']         =$medallion_change_end;
             $data['registr_cert']      =img_for($registr_cert,'one_in');
             $data['carrier_cert']      =img_for($carrier_cert,'one_in');
@@ -869,9 +869,9 @@ class CarController extends CommonController{
 
     }
 
-    /***    车辆导出     /tms/car/execl
+    /***    车辆导出     /tms/car/excel
      */
-    public function execl(Request $request,File $file){
+    public function excel(Request $request,File $file){
         $user_info  = $request->get('user_info');//接收中间件产生的参数
         $now_time   =date('Y-m-d H:i:s',time());
         $input      =$request->all();
@@ -907,6 +907,7 @@ class CarController extends CommonController{
                 //设置表头
                 $row = [[
                     "id"=>'ID',
+                    "type"=>'类型',
                     "car_number"=>'车牌号',
                     "car_type"=>'车型',
                     "carframe_num"=>'车架号',
@@ -914,6 +915,7 @@ class CarController extends CommonController{
                     "volume"=>'罐体容积',
                     "tank_validity"=>'罐检到期日期',
                     "weight"=>'核载吨位',
+
                     "license_date"=>'行驶证到期日期',
                     "medallion_date"=>'运输证到期日期',
                     "insure"=>'保险',
@@ -926,6 +928,85 @@ class CarController extends CommonController{
                     "carrier_end"=>'承运险到期时间',
                     "remark"=>'备注'
                 ]];
+
+                $car_type           =$request->input('car_type');//车型
+                $type               =$request->input('type');//车型
+                $carframe_num       =$request->input('carframe_num');//车架号
+                $crock_medium       =$request->input('crock_medium');//罐体介质
+                $license_date       =$request->input('license_date');// 行驶证到期时间
+                $medallion_date     =$request->input('medallion_date');//运输证到期时间
+                $weight             =$request->input('weight');//核载吨位
+                $volume             =$request->input('volume');//罐体容积
+                $tank_validity      =$request->input('tank_validity');//罐检有效期
+                $medallion_num      =$request->input('medallion_num');//运输证号
+                $curb_weight        =$request->input('curb_weight');//整备质量
+                $all_weight         =$request->input('all_weight');//总质量
+                $medallion_change   =$request->input('medallion_change');//运输证换证日期
+                $license_begin      =$request->input('license_begin');//行驶证注册日期
+                $production_date    =$request->input('production_date');//出厂日期
+                $scrap_date         =$request->input('scrap_date');//强制报废日期
+                $business_scope     =$request->input('business_scope');//经营范围
+                $goods              =$request->input('goods');//产品名称  危货/普货
+                $goods_type         =$request->input('goods_type');//产品名称  危货/普货
+                $design_code        =$request->input('design_code');//设计代码
+                $operation_date     =$request->input('operation_date');//投运日期
+                $tank_num           =$request->input('tank_num');//罐体编号
+                $tank_type          =$request->input('tank_type');//罐体类型
+                $medallion_change_end          =$request->input('medallion_change_end');//运输证换成有效期截止
+                $car_color          =$request->input('car_color');//车身颜色
+                $car_brand          =$request->input('car_brand');//车辆品牌
+                $car_model          =$request->input('car_model');//车身型号
+                $car_made           =$request->input('car_made');//国产/进口
+                $engine_num         =$request->input('engine_num');//发动机号
+                $engine_model       =$request->input('engine_model');//发动机型号
+                $fuel_type          =$request->input('fuel_type');//燃料种类
+                $displacement_power =$request->input('displacement_power');//排量/功率
+                $maker              =$request->input('maker');//制造厂名称
+                $turn_view          =$request->input('turn_view');//转向形式
+                $tread              =$request->input('tread');//前后轮距
+                $trye_num           =$request->input('trye_num');//轮胎数/规格
+                $steel_plate        =$request->input('steel_plate');//钢板弹簧片数
+                $wheel_base         =$request->input('wheel_base');//轴距
+                $axles_num          =$request->input('axles_num');//车轴数
+                $outline            =$request->input('outline');//车辆外廓尺寸
+                $car_size           =$request->input('car_size');//货厢内部尺寸
+                $car_user           =$request->input('car_user');//驾驶室载客
+                $gps_flag           =$request->input('gps_flag');//卫星定位安装情况
+                $bussiness_license  =$request->input('bussiness_license');//经营许可证号
+                $license_plate      =$request->input('license_plate');//车牌颜色
+                $remark             =$request->input('remark');//备注
+
+                $compulsory         =$request->input('compulsory');//交强险
+                $compulsory_end     =$request->input('compulsory_end');//交强险有效期截止
+                $commercial         =$request->input('commercial');//商业险
+                $commercial_end     =$request->input('commercial_end');//商业险有效期截止
+                $carrier            =$request->input('carrier');//承运险
+                $carrier_end        =$request->input('carrier_end');//承运险有效期截止
+
+                $registr_date       =$request->input('registr_date');//机动车注册登记日期
+                $medallion_begin    =$request->input('medallion_begin');//运输证发证日期
+                $license_start      =$request->input('license_start');//行驶证发证日期
+                $registr_cert_date  =$request->input('registr_cert_date');//登记证书发证日期
+                $carrier_insurer    =$request->input('carrier_insurer');//保险公司
+                $carrier_insurer_num=$request->input('carrier_insurer_num');//承运险保险单号
+                $carrier_baoe       =$request->input('carrier_baoe');//人身伤亡每人保额（万元）
+                $carrier_zrx        =$request->input('carrier_zrx');//第三者责任险
+                $carrier_zr         =$request->input('carrier_zr');//每人人身伤亡责任（万元）
+                $carrier_good       =$request->input('carrier_good');//货物责任保险（万元）
+                $compulsory_insurer =$request->input('compulsory_insurer');//交强险保险公司
+                $compulsory_num     =$request->input('compulsory_num');//交强险保险保单
+                $compulsory_sc      =$request->input('compulsory_sc');//交强险死亡伤残赔偿
+                $compulsory_yl      =$request->input('compulsory_yl');//医疗费用赔偿
+                $compulsory_property=$request->input('compulsory_property');//交强险财产损失赔偿
+                $vessel_tax         =$request->input('vessel_tax');//车船税
+                $commercial_insurer =$request->input('commercial_insurer');//商业险保险单位
+                $commercial_num     =$request->input('commercial_num');//商业险保险单号
+                $commercial_tz      =$request->input('commercial_tz');//特种车损失险（万元）
+                $commercial_zr      =$request->input('commercial_zr');//商业险第三者责任险（万元）
+                $commercial_driver  =$request->input('commercial_driver');//车上司机责任险（万元）
+                $commercial_user    =$request->input('commercial_user');//车上乘客责任险（万元）
+                $car_unit           =$request->input('car_unit');//规格
+                $sgs_date           =$request->input('sgs_date');//SGS有效期截止
 
                 /** 现在根据查询到的数据去做一个导出的数据**/
                 $data_execl=[];
@@ -1047,7 +1128,7 @@ class CarController extends CommonController{
                          $list['type']           = '牵引车';
                     }else{
                          $list['type']           = '挂车';
-                    }                   
+                    }
                     $list['carrier_insurer']     = $v['carrier_insurer'];
                     $list['carrier_insurer_num'] = $v['carrier_insurer_num'];
                     $list['carrier']             = $v['carrier'];
@@ -1089,6 +1170,26 @@ class CarController extends CommonController{
 
     }
 
+
+    /**
+     * 月油耗 列表
+     * */
+    public function  countList(Request $request){
+        $data['page_info']      =config('page.listrows');
+        $data['button_info']    =$request->get('anniu');
+
+        $abc='车辆';
+        $data['import_info']    =[
+            'import_text'=>'下载'.$abc.'导入示例文件',
+            'import_color'=>'#FC5854',
+            'import_url'=>config('aliyun.oss.url').'execl/2020-07-02/车辆导入.xlsx',
+        ];
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
 
     /***    车辆分页      /tms/car/countPage
      */

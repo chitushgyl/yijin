@@ -121,7 +121,7 @@ class MoneyController extends CommonController{
         foreach ($button_info as $k => $v){
             if($v->id == 99){
                 $button_info1[] = $v;
-               
+
             }
 
         }
@@ -470,7 +470,7 @@ class MoneyController extends CommonController{
 
         $rules=[
             'self_id'=>'required',
-            
+
         ];
         $message=[
             'self_id.required'=>'请选择费用条目！',
@@ -485,7 +485,7 @@ class MoneyController extends CommonController{
                 $msg['code'] = 303;
                 $msg['msg'] = "费用已作废，不可修改！";
                 return $msg;
-            
+
             }
 
             $data['use_flag'] = 'N';
@@ -847,7 +847,7 @@ class MoneyController extends CommonController{
             }
             $v->receipt       =img_for($v->receipt,'more');
         }
-        
+
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
@@ -892,7 +892,7 @@ class MoneyController extends CommonController{
                 $msg['msg'] = "应收费用不能小于已收费用";
                 return $msg;
             }
-            
+
             $data['total_money']   = $money;
             $data['settle_money']  = $money - $old_info->receive_money;
             $data['update_time']   = $now_time;
@@ -961,7 +961,7 @@ class MoneyController extends CommonController{
         if($validator->passes()){
             $wheres['self_id'] = $self_id;
             $old_info=TmsMoneyCount::where($wheres)->first();
-            
+
             $data['receive_money'] = $receive_money;
             $data['settle_money']  = $settle_money;
             $data['update_time']   = $now_time;
@@ -1009,9 +1009,9 @@ class MoneyController extends CommonController{
     //获取收款明细
     public function getCostMoney(Request $request){
          $money_id=$request->input('money_id');
-        
+
 //        $input['group_code'] =  $group_code = '1234';
-       
+
         $select = ['self_id','receive_money','receive_time','group_name','group_code','use_flag','delete_flag','money_id'];
         $data['info']=TmsCostMoney::where('money_id',$money_id)->select($select)->get();
 
@@ -1097,9 +1097,9 @@ class MoneyController extends CommonController{
      //获取结算订单明细
     public function getSettleOrder(Request $request){
         $order_id=$request->input('order_id');
-        
+
 //        $input['group_code'] =  $group_code = '1234';
-       
+
         $select = ['self_id','company_id','company_name','create_user_id','create_user_name','create_time','update_time','delete_flag','use_flag','group_code','id','settle_flag',
             'order_status','send_time','send_id','send_name','gather_time','gather_name','gather_id','total_money','good_name','more_money','price','trailer_num',
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
@@ -1154,6 +1154,7 @@ class MoneyController extends CommonController{
         $input      =$request->all();
         /** 接收数据*/
         $group_code     =$request->input('group_code');
+        $ids     =$request->input('ids');
 //        $group_code  =$input['group_code']   ='group_202012251449437824125582';
         //dd($group_code);
         $rules=[
@@ -1175,7 +1176,7 @@ class MoneyController extends CommonController{
 
             $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name','trailer_num',
             'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money','bill_flag','receipt','receipt_flag'];
-            $info=TmsMoney::where($where)->orderBy('create_time', 'desc')->select($select)->get();
+            $info=TmsMoney::where($where)->whereIn('self_id',explode(',',$ids))->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
             if($info){
                 //设置表头
@@ -1183,9 +1184,9 @@ class MoneyController extends CommonController{
                     "id"=>'ID',
                     "pay_type"=>'费用类型',
                     "car_number"=>'车牌号',
-                    "trailer_num"=>'挂车号', 
-                    "user_name"=>'人员', 
-                    "money"=>'费用',   
+                    "trailer_num"=>'挂车号',
+                    "user_name"=>'人员',
+                    "money"=>'费用',
                     "create_time"=>'时间',
                     "pay_state"=>'收支类型',
                     "use_flag"=>'是否作废',
@@ -1225,7 +1226,7 @@ class MoneyController extends CommonController{
                         $receipt_flag = '无';
                     }
                     $list['receipt_flag']    = $receipt_flag;
-                   
+
                     $data_execl[]=$list;
                 }
                 /** 调用EXECL导出公用方法，将数据抛出来***/
