@@ -437,7 +437,7 @@ class FileController extends Controller{
 			$data['self_id']=$data_file['self_id'];
             $data['url']=$filepath;
             $data['data_file']=$data_file;
-            dd($data);
+//            dd($data);
             $msg['code'] = 200;
             $msg['msg'] = '导出成功';
             $msg['data'] = $data;

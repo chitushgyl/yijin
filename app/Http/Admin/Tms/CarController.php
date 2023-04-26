@@ -872,8 +872,16 @@ class CarController extends CommonController{
     /***    车辆导出     /tms/car/excel
      */
     public function excel(Request $request,File $file){
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
         $user_info  = $request->get('user_info');//接收中间件产生的参数
-        $now_time   =date('Y-m-d H:i:s',time());
+//        $table_name = 'tms_car';
+//        $now_time   =date('Y-m-d H:i:s',time());
+//        $operationing->access_cause     ='车辆导出';
+//        $operationing->table            =$table_name;
+//        $operationing->operation_type   ='create';
+//        $operationing->now_time         =$now_time;
+//        $operationing->type             ='excel';
+//        $user_info = $request->get('user_info');//接收中间件产生的参数
         $input      =$request->all();
         /** 接收数据*/
         $group_code     =$request->input('group_code');
@@ -1093,7 +1101,6 @@ class CarController extends CommonController{
                 $browse_type=$request->path();
                 $msg=$file->export($data_execl,$row,$group_code,$group_name,$browse_type,$user_info,$where,$now_time);
 
-                dd($msg);
                 return $msg;
 
             }else{

@@ -50,7 +50,7 @@ Route::group([
         Route::any('/car/carUseFlag', 'CarController@carUseFlag');
         Route::any('/car/carDelFlag', 'CarController@carDelFlag');
         Route::any('/car/import', 'CarController@import');
-        Route::any('/car/excel', 'CarController@excel');
+//        Route::any('/car/excel', 'CarController@excel');
     });
 
     /**TMS车辆业务公司管理**/
