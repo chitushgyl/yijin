@@ -1241,7 +1241,7 @@ class CarController extends CommonController{
     public function  countList(Request $request){
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
-        $data['group_info']    =$request->get('group_info');
+        $data['user_info']    =$request->get('user_info');
 
         $abc='车辆';
         $data['import_info']    =[
