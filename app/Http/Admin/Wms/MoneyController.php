@@ -1119,7 +1119,7 @@ class MoneyController extends CommonController{
 //        $input['group_code'] =  $group_code = '1234';
 
         $select = ['self_id','order_id','money_id','money','create_user_name','receipt_time','receipt','group_name','group_code','use_flag','delete_flag'];
-        $data['info']=TmsReceipt::where('order_id',$receipt_id)->select($select)->get();
+        $data['info']=TmsReceipt::where('money_id',$receipt_id)->select($select)->get();
         foreach ($data['info'] as $k => $v){
             $v->receipt_show = img_for($v->receipt,'more');
         }
