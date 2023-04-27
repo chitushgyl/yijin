@@ -6,6 +6,7 @@ use App\Models\Tms\TmsOrder;
 use App\Models\Tms\TmsMoneyCount;
 use App\Models\Tms\TmsCostMoney;
 use App\Models\Group\SystemGroup;
+use App\Models\Tms\TmsReceipt;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\DB;
@@ -1061,11 +1062,16 @@ class MoneyController extends CommonController{
             //     $msg['msg'] = "已上传发票请勿重复操作！";
             //     return $msg;
             // }
-            $data['bill_flag'] = 'Y';
+            $data['self_id'] = generate_id('receipt_');
             $data['receipt'] = img_for($receipt,'in');
-            $data['bill_time'] = $bill_time;
-            $data['update_time']   = $now_time;
-            $id = TmsMoneyCount::where('self_id',$self_id)->update($data);
+            $data['receipt_time'] = $bill_time;
+            $data['order_id'] = $self_id;
+            $data['group_code'] = $old_info->group_code;
+            $data['group_name'] = $old_info->group_name;
+            $data['create_user_id'] = $user_info->admin_id;
+            $data['create_user_name'] = $user_info->name;
+            $data['create_time'] = $data['update_time']   = $now_time;
+            $id = TmsReceipt::where('self_id',$self_id)->update($data);
 
             $operationing->access_cause='上传发票';
             $operationing->operation_type='create';
@@ -1094,6 +1100,26 @@ class MoneyController extends CommonController{
             }
             return $msg;
         }
+    }
+
+    /****
+     *获取应收账款开票明细
+     */
+    public function getReceipt(Request $request){
+        $receipt_id=$request->input('receipt_id');
+
+//        $input['group_code'] =  $group_code = '1234';
+
+        $select = ['self_id','order_id','create_user_name','receipt_time','receipt','group_name','group_code','use_flag','delete_flag'];
+        $data['info']=TmsReceipt::where('order_id',$receipt_id)->select($select)->get();
+        foreach ($data['info'] as $k => $v){
+            $v->receipt_show = img_for($v->receipt,'more');
+        }
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
     }
 
      //获取结算订单明细

@@ -297,9 +297,10 @@ Route::group([
     Route::any('/money/updateReceive', 'MoneyController@updateReceive');//修改已收金额
     Route::any('/money/getCostMoney', 'MoneyController@getCostMoney');//修改已收金额
     Route::any('/money/excel', 'MoneyController@excel');//修改已收金额
+    Route::any('/money/getReceipt', 'MoneyController@getReceipt');//
 
 
-    
+
     Route::group([
         "middleware"=>['daily'],
     ], function(){

@@ -1283,7 +1283,7 @@ class CarController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','car_id','car_number','month','month_kilo','month_fat','create_time','update_time','use_flag','delete_flag','group_code'];
+        $select=['self_id','car_id','car_number','month','month_kilo','month_fat','create_time','update_time','use_flag','delete_flag','group_code','total oil'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=CarCount::where($where)->count(); //总的数据量
@@ -1356,8 +1356,7 @@ class CarController extends CommonController{
     public function getCarOil(Request $request){
         $group_code=$request->input('group_code');
         $car_number=$request->input('car_number');
-
-        $start_time      =$request->input('start_time');
+        $start_time    =$request->input('start_time');
         $end_time      =$request->input('end_time');
 //        $input['group_code'] =  $group_code = '1234';
         $search=[
