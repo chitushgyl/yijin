@@ -1259,7 +1259,7 @@ class CarController extends CommonController{
         $button_info    = $request->get('anniu');//接收中间件产生的参数
 
         /**接收数据*/
-        $num            =$request->input('num')??5;
+        $num            =$request->input('num')??10;
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');

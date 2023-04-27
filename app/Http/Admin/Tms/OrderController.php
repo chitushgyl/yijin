@@ -1468,10 +1468,10 @@ class OrderController extends CommonController{
              */
             $shuzu=[
                 // '标识' =>['Y','N','100','order_mark'],
-                '所属组织' =>['Y','Y','100','company_name'],
+                '所属组织' =>['N','Y','100','company_name'],
                 '委托单位' =>['Y','Y','100','carriage_name'],
                 '货物品名' =>['Y','Y','64','good_name'],
-                '承运人' =>['Y','Y','64','group_name'],
+                '承运人' =>['N','Y','64','group_name'],
                 '车牌号' =>['Y','Y','64','car_number'],
                 '挂车号' =>['Y','Y','64','trailer_num'],
                 '驾驶员' =>['Y','Y','64','user_name'],
