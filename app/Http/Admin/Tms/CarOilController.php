@@ -987,7 +987,113 @@ class CarOilController extends CommonController{
     /**
      * 油库库存
      * */
-//    public function
+    public function depotList(Request $request){
+        $data['page_info']      =config('page.listrows');
+        $data['button_info']    =$request->get('anniu');
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+
+        //dd($msg);
+        return $msg;
+    }
+
+    public function depotPage(Request $request){
+        /** 接收中间件参数**/
+        $group_info     = $request->get('group_info');//接收中间件产生的参数
+        $button_info    = $request->get('anniu');//接收中间件产生的参数
+        $user_info    = $request->get('user_info');//接收中间件产生的参数
+
+        /**接收数据*/
+        $num            =$request->input('num')??10;
+        $page           =$request->input('page')??1;
+        $use_flag       =$request->input('use_flag');
+        $group_code     =$request->input('group_code');
+
+        $warehouse_name      =$request->input('warehouse_name');
+        $good_name           =$request->input('good_name');
+        $start_time          =$request->input('start_time');
+        $end_time            =$request->input('end_time');
+        $listrows            =$num;
+        $firstrow            =($page-1)*$listrows;
+
+        if ($start_time) {
+            $start_time = $start_time.' 00:00:00';
+        }else{
+            $msg['code']=300;
+            $msg['msg']='请选择开始时间';
+            return $msg;
+        }
+        if ($end_time) {
+            $end_time = $end_time.' 23:59:59';
+        }else{
+            $msg['code']=300;
+            $msg['msg']='请选择结束时间';
+            return $msg;
+        }
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'use_flag','value'=>'Y'],
+            ['type'=>'like','name'=>'good_name','value'=>$good_name],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'>=','name'=>'enter_time','value'=>$start_time],
+            ['type'=>'<=','name'=>'enter_time','value'=>$end_time],
+
+
+        ];
+
+        $where=get_list_where($search);
+
+        $select=['self_id','num','price','total_price','enter_time','create_time','update_time','delete_flag','group_code','suppliere','operator',
+            'create_user_id','create_user_name','use_flag','state'];
+
+        switch ($group_info['group_id']){
+            case 'all':
+                $data['total']=TmsOil::where($where)->count(); //总的数据量
+                $data['items']=TmsOil::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='Y';
+                break;
+
+            case 'one':
+                $where[]=['group_code','=',$group_info['group_code']];
+                $data['total']=TmsOil::where($where)->count(); //总的数据量
+                $data['items']=TmsOil::where($where)
+                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->select($select)->get();
+                $data['group_show']='N';
+                break;
+
+            case 'more':
+                $data['total']=TmsOil::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=TmsOil::where($where)->whereIn('group_code',$group_info['group_code'])
+                    ->select($select)
+                    ->get();
+                $data['group_show']='Y';
+                break;
+        }
+
+        $res['initial_num'] = 0;
+        $res['in_num'] = 0;
+        $res['out_num'] = 0;
+        $res['jie_num'] = 0;
+        foreach ($data['items'] as $k=>$v) {
+            //统计本期内入库总量
+            $res['in_num'] += $v->num;
+        }
+        $res['initial_num'] = TmsOil::where('enter_time','>',$start_time)->sum('num');
+        $res['out_num'] = CarOil::where('add_time','>=',$start_time)->where('add_time','<=',$end_time)->sum('number');
+        $res['jie_num'] = $res['in_num'] - $res['out_num'];
+        $res['group_code'] = $user_info->group_code;
+        $res['group_name'] = $user_info->group_name;
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$res;
+//        dd($msg);
+        return $msg;
+    }
 
 
 
