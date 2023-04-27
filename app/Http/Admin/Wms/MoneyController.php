@@ -1106,7 +1106,7 @@ class MoneyController extends CommonController{
      *获取应收账款开票明细
      */
     public function getReceipt(Request $request){
-        $receipt_id=$request->input('receipt_id');
+        $receipt_id=$request->input('money_id');
 
 //        $input['group_code'] =  $group_code = '1234';
 
