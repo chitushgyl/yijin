@@ -1356,6 +1356,7 @@ class CarController extends CommonController{
     public function getCarOil(Request $request){
         $group_code=$request->input('group_code');
         $car_number=$request->input('car_number');
+
         $start_time      =$request->input('start_time');
         $end_time      =$request->input('end_time');
 //        $input['group_code'] =  $group_code = '1234';

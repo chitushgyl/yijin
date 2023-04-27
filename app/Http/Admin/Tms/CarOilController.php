@@ -938,17 +938,19 @@ class CarOilController extends CommonController{
         //操作的表
         if($validator->passes()){
             $wheres['self_id'] = $self_id;
-            $old_info=TmsOil::where($wheres)->first();
-            if($old_info->state == 'Y'){
-                $msg['code'] = 303;
-                $msg['msg'] = "入库已审核，不可修改！";
-                return $msg;
-
+            $old_info=TmsOil::whereIn('self_id',explode(',',$self_id))->get();
+            foreach ($old_info as $k => $v){
+                if($v->state == 'Y'){
+                    $msg['code'] = 303;
+                    $msg['msg'] = "入库已审核，不可修改！";
+                    return $msg;
+                }
             }
 
-            $data['state'] = 'N';
+
+            $data['state'] = 'Y';
             $data['update_time']   = $now_time;
-            $id = TmsOil::where('self_id',explode(',',$self_id))->update($data);
+            $id = TmsOil::whereIn('self_id',explode(',',$self_id))->update($data);
 
             $operationing->access_cause='费用作废';
             $operationing->operation_type='create';
