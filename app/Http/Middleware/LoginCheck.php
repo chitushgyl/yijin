@@ -59,7 +59,7 @@ class LoginCheck{
                     $query->where($where_group);
                 });
                 $query->with(['systemGroup' => function($query){
-                    $query->select('group_code','menu_id','group_id','expire_time','company_image_url','group_qr_code','delete_flag','use_flag','company_type');
+                    $query->select('group_code','menu_id','group_id','expire_time','company_image_url','group_qr_code','delete_flag','use_flag','company_type','threshold');
                 }]);
             }])
             ->where($user_where)

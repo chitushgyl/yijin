@@ -1055,7 +1055,11 @@ class CarController extends CommonController{
                     $list['outline']            = $v['outline'];
                     $list['car_size']           = $v['car_size'];
                     $list['car_user']           = $v['car_user'];
-                    $list['gps_flag']           = $v['gps_flag'];
+                    if($v['gps_flag'] == 'Y'){
+                        $list['gps_flag']           = '是';
+                    }else{
+                        $list['gps_flag']           = '否';
+                    }
                     $list['bussiness_license']  = $v['bussiness_license'];
                     $list['license_plate']      = $v['license_plate'];
                     $list['remark']             = $v['remark'];
@@ -1237,6 +1241,7 @@ class CarController extends CommonController{
     public function  countList(Request $request){
         $data['page_info']      =config('page.listrows');
         $data['button_info']    =$request->get('anniu');
+//        $data['group_info']    =$request->get('group_info');
 
         $abc='车辆';
         $data['import_info']    =[

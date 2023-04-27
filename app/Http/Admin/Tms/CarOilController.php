@@ -700,6 +700,24 @@ class CarOilController extends CommonController{
     }
 
     /**
+     *设置油耗预警值
+     * */
+    public function setParam(Request $request){
+        $group_code=$request->input('group_code');
+        $threshold=$request->input('threshold');
+
+//        $input['group_code'] =  $group_code = '1234';
+        $data['threshold'] =  $threshold;
+        $data['update_time'] = date('Y-m-d H:i:s',time());
+        $id = SystemGroup::where('self_id',$group_code)->update($data);
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        return $msg;
+    }
+
+
+    /**
      *          /tms/carOil/oilList
      * */
     public function  oilList(Request $request){
