@@ -242,6 +242,7 @@ Route::group([
     Route::any('/car/addCount','CarController@addCount');
     Route::any('/car/oilDelFlag','CarController@oilDelFlag');//
     Route::any('/car/createCount','CarController@createCount');//
+    Route::any('/car/setParam','CarController@setParam');
 
     /**出险记录**/
     Route::any('/car/dangerPage','CarController@dangerPage');
@@ -310,7 +311,7 @@ Route::group([
     Route::any('/carOil/oilPage','CarOilController@oilPage');
     Route::any('/carOil/addOil','CarOilController@addOil');
     Route::any('/carOil/updateOilState','CarOilController@updateOilState');
-    Route::any('/carOil/setParam','CarOilController@setParam');
+
 
     /**车辆过路费***/
     Route::any('/roadToll/roadList','RoadTollController@roadList');
