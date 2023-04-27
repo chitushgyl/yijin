@@ -1400,6 +1400,7 @@ class CarController extends CommonController{
         $month              =$request->input('month');//月份
         $month_kilo         =$request->input('month_kilo');//月公里数
         $month_fat          =$request->input('month_fat');// 月油耗
+        $total_oil          =$request->input('total_oil');// 月油耗
 
         $rules=[
             'car_number'=>'required',
@@ -1422,6 +1423,7 @@ class CarController extends CommonController{
             $data['month']           =$month;
             $data['month_kilo']      =$month_kilo;
             $data['month_fat']       =$month_fat;
+            $data['total_oil']       =$total_oil;
 
             $wheres['self_id'] = $self_id;
             $old_info=CarCount::where($wheres)->first();
