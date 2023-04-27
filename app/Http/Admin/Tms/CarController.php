@@ -943,7 +943,7 @@ class CarController extends CommonController{
                     "operation_date"=>'投运日期',
                     "tank_num"=>'罐体编号',
                     "tank_type"=>'罐体类型',
-                    "medallion_change_end"=>'运输证换成有效期截止',
+                    "medallion_change_end"=>'运输证换证有效期截止',
                     "car_color"=>'车身颜色',
                     "car_brand"=>'车辆品牌',
                     "car_model"=>'车身型号',

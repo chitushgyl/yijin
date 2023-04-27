@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Admin\Crondtab;
 
+use App\Http\Admin\Tms\MessageController;
+use App\Models\Tms\TmsCar;
 use App\Models\Tms\TmsOrder;
 use App\Models\Tms\TmsWages;
 use App\Models\Tms\DriverCommission;
@@ -115,7 +117,7 @@ class CrondtabController extends Controller {
         ];
         $select = ['self_id','name','entry_time','working_age'];
         $user_list = SystemUser::where($where)->select($select)->get();
-        
+
         foreach($user_list as $k => $v){
             //计算员工入职距当前多少天
             if($v->entry_time){
@@ -125,7 +127,7 @@ class CrondtabController extends Controller {
             $work_time2 = date('m',$work_time);
             $work = $now_year-$work_time1;
 
-            if ($work==0){ 
+            if ($work==0){
                 $work_age = (date('m',time())-$work_time2).'个月';
             }elseif($work == 1){
                 if(12-$work_time2+date('m',time()) == 12){
@@ -143,10 +145,10 @@ class CrondtabController extends Controller {
             }
             $update['working_age']             = $work_age;
             $update['update_time']             = $now_time;
-            
+
             SystemUser::where('self_id',$v->self_id)->update($update);
             }
-            
+
         }
     }
 
@@ -194,7 +196,7 @@ class CrondtabController extends Controller {
             $data['date_num']     = $v->date_num;//请假天数
 
             $data['total_money']  = $data['salary'] + $data['safe_reward'] + $data['money'] + $data['money_award'] -$data['live_cost'] - $data['social_money'] - $data['company_fine'] - $data['salary_fine'] -$data['reward_price'] - $data['income_tax'] - $data['water_money'];
-            
+
             $data['update_time']  = $now_time;
 
             $old_info = TmsWages::where('user_id',$v->self_id)->where('salary_time',$salary_time)->first();
@@ -209,8 +211,24 @@ class CrondtabController extends Controller {
                 $data['create_user_id']    = null;
                 $data['create_user_name']  = null;
                 TmsWages::insert($data);
-            } 
-            
+            }
+
+        }
+    }
+
+    /**
+     * 查询即将到期的证件
+     * */
+    public function getExpireCert(Request $request){
+        $now_time = date('Y-m-d H:i:s',time());
+        $select =['self_id','car_number','medallion_change'];
+        $where = [
+            ['delete_flag','=','Y'],
+            ['use_flag','=','Y'],
+        ];
+        $car_list=TmsCar::where($where)->orderBy('self_id','desc')->select($select)->get();
+        foreach ($car_list as $k => $v){
+//            TmsMessage
         }
     }
 

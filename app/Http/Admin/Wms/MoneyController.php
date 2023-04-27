@@ -1042,6 +1042,8 @@ class MoneyController extends CommonController{
         $self_id            =$request->input('self_id');
         $receipt            =$request->input('receipt');//修改金额
         $bill_time          =$request->input('bill_time');//开票时间
+        $money              =$request->input('money');//开票时间
+        $order_id           =$request->input('order_id');//开票时间
 
         $rules=[
             'self_id'=>'required',
@@ -1065,14 +1067,20 @@ class MoneyController extends CommonController{
             $data['self_id'] = generate_id('receipt_');
             $data['receipt'] = img_for($receipt,'in');
             $data['receipt_time'] = $bill_time;
-            $data['order_id'] = $self_id;
+            $data['money_id'] = $self_id;
+            $data['order_id'] = $order_id;
+            $data['money']    = $money;
             $data['group_code'] = $old_info->group_code;
             $data['group_name'] = $old_info->group_name;
             $data['create_user_id'] = $user_info->admin_id;
             $data['create_user_name'] = $user_info->name;
             $data['create_time'] = $data['update_time']   = $now_time;
             $id = TmsReceipt::insert($data);
-
+            if($order_id){
+                $update['bill_flag'] = 'Y';
+                $update['update_time'] = $now_time;
+                TmsOrder::whereIn('self_id',explode(',',$order_id))->update($update);
+            }
             $operationing->access_cause='上传发票';
             $operationing->operation_type='create';
             $operationing->table_id=$old_info?$self_id:$data['self_id'];
@@ -1110,7 +1118,7 @@ class MoneyController extends CommonController{
 
 //        $input['group_code'] =  $group_code = '1234';
 
-        $select = ['self_id','order_id','create_user_name','receipt_time','receipt','group_name','group_code','use_flag','delete_flag'];
+        $select = ['self_id','order_id','money_id','money','create_user_name','receipt_time','receipt','group_name','group_code','use_flag','delete_flag'];
         $data['info']=TmsReceipt::where('order_id',$receipt_id)->select($select)->get();
         foreach ($data['info'] as $k => $v){
             $v->receipt_show = img_for($v->receipt,'more');
@@ -1125,6 +1133,7 @@ class MoneyController extends CommonController{
      //获取结算订单明细
     public function getSettleOrder(Request $request){
         $order_id=$request->input('order_id');
+        $type=$request->input('type');
 
 //        $input['group_code'] =  $group_code = '1234';
 
@@ -1133,7 +1142,16 @@ class MoneyController extends CommonController{
             'price','remark','enter_time','leave_time','order_weight','real_weight','upload_weight','different_weight','bill_flag','payment_state','order_number','odd_number',
             'car_number','car_id','car_conact','car_tel','company_id','company_name','ordertypes','escort','escort_name','order_type','transport_type','area','order_mark'
             ,'road_card','escort_name','pack_type','pick_time','user_name','escort_tel','carriage_id','carriage_name','order_mark','sale_price'];
-        $data['info']=TmsOrder::whereIn('self_id',explode(',',$order_id))->select($select)->get();
+        $data['info']=TmsOrder::whereIn('self_id',explode(',',$order_id));
+        if ($type == 1){
+
+        }else{
+            $data['info']=$data['info']->where('bill_flag','N');
+        }
+
+        $data['info']=$data['info']
+            ->select($select)
+            ->get();
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
