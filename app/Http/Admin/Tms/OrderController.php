@@ -1514,7 +1514,7 @@ class OrderController extends CommonController{
             //dump($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
-                $company = TmsGroup::where('company_name',$v['company_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+
                 $car = TmsCar::where('car_number',$v['car_number'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','car_number')->first();
                 $trailer = TmsCar::where('car_number',$v['trailer_num'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','car_number')->first();
                 $send = TmsGroup::where('company_name',$v['send_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
@@ -1571,11 +1571,14 @@ class OrderController extends CommonController{
                     }
                 }
 
-                if (!$company){
-                    if($abcd<$errorNum){
-                        $strs .= '数据中的第'.$a."行所属组织不存在".'</br>';
-                        $cando='N';
-                        $abcd++;
+                if ($v['company_name']){
+                    $company = TmsGroup::where('company_name',$v['company_name'])->where('delete_flag','Y')->where('group_code',$group_code)->select('self_id','company_name','use_flag','delete_flag')->first();
+                    if(!$company){
+                        if($abcd<$errorNum){
+                            $strs .= '数据中的第'.$a."行所属组织不存在".'</br>';
+                            $cando='N';
+                            $abcd++;
+                        }
                     }
                 }
                 if ($v['carriage_name']){
@@ -1644,8 +1647,13 @@ class OrderController extends CommonController{
                     $list['self_id']                 = generate_id('order_');
                     // $list['order_mark']              = $v['order_mark'];
                     $list['order_type']              = 1;
-                    $list['company_id']              = $company->self_id;
-                    $list['company_name']            = $company->company_name;
+                    if ($v['company_name']){
+                        $list['company_id']              = $company->self_id;
+                        $list['company_name']            = $company->company_name;
+                    }else{
+                        $list['company_id']               = null;
+                        $list['company_name']               = null;
+                    }
                     $list['carriage_id']             = $v['carriage_id'];
                     $list['carriage_name']           = $v['carriage_name'];
                     $list['good_name']               = $v['good_name'];

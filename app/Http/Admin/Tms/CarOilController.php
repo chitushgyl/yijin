@@ -984,6 +984,12 @@ class CarOilController extends CommonController{
     }
 
 
+    /**
+     * 油库库存
+     * */
+//    public function
+
+
 
 }
 ?>
