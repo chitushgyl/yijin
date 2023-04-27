@@ -240,6 +240,8 @@ Route::group([
     Route::any('/car/countList','CarController@countList');
     Route::any('/car/countPage','CarController@countPage');
     Route::any('/car/addCount','CarController@addCount');
+    Route::any('/car/oilDelFlag','CarController@oilDelFlag');//
+    Route::any('/car/createCount','CarController@createCount');//
 
     /**出险记录**/
     Route::any('/car/dangerPage','CarController@dangerPage');

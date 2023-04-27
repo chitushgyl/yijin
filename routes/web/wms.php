@@ -301,6 +301,7 @@ Route::group([
 
 
 
+
     Route::group([
         "middleware"=>['daily'],
     ], function(){
