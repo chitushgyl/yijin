@@ -122,7 +122,7 @@ class DiplasicController extends CommonController{
         $select=['self_id','car_id','img','car_number','production_date','input_date','service','tips','service_now','service_plan','next_service_plan','create_user_name','create_time','group_code','use_flag'];
         $data['info']=TmsDiplasic::where($where)->select($select)->first();
         if($data['info']){
-
+           $data['info']->img_show = img_for($data['info']->img,'more');
         }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
@@ -573,7 +573,7 @@ class DiplasicController extends CommonController{
             $log_num='10';
             $data['log_num']=$log_num;
             $data['log_data']=null;
-
+            $data['img_show'] = img_for($info->img,'more');
             if($log_flag =='Y'){
                 $data['log_data']=$details->change($self_id,$log_num);
             }
