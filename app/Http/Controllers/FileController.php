@@ -58,7 +58,7 @@ class FileController extends Controller{
      *      前端传递非必须参数：
      */
     public function images($pic,$browse_type,$user_info,$now_time){
-        dd($pic);
+//        dd($pic);
         if($pic){
             if ($pic->isValid()) {
                 //括号里面的是必须加的哦,如果括号里面的不加上的话，下面的方法也无法调用的
