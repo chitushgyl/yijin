@@ -1106,7 +1106,7 @@ class CarOilController extends CommonController{
         }
         $res['initial_num'] = TmsOil::where('state','Y')->where('group_code',$group_code)->where('enter_time','<',$start_time)->sum('num');
         $res['out_num'] = CarOil::where('group_code',$group_code)->where('use_flag','Y')->where('delete_flag','Y')->sum('number');
-        $res['jie_num'] = $res['initial_num'] + $res['in_num'] - $res['out_num'];
+        $res['jie_num'] = round(($res['initial_num'] + $res['in_num'] - $res['out_num']),2);
         $res['group_code'] = $user_info->group_code;
         $res['group_name'] = $user_info->group_name;
         $msg['code']=200;
