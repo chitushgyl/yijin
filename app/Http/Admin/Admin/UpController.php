@@ -20,7 +20,7 @@ class UpController extends CommonController{
         $operationing->table            =$table_name;
         $operationing->operation_type   ='create';
         $operationing->now_time         =$now_time;
-
+        dump($operationing);
         $browse_type=$request->path();
         $msg=$file->images($pic,$browse_type,$user_info,$now_time);
 
