@@ -10,7 +10,7 @@ class UpController extends CommonController{
      */
     public function img(Request $request,File $file){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
-		//dd($operationing);
+		dd($operationing);
         $user_info      = $request->get('user_info');//接收中间件产生的参数11
         $pic			=$request->file('inputfile');
         $now_time       =date('Y-m-d H:i:s',time());
