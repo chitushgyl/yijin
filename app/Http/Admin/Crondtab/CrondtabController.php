@@ -155,11 +155,13 @@ class CrondtabController extends Controller {
 
     //计算员工上月工资
     public function countSalary(Request $request){
+        $group_code=$request->input('group_code');
         $now_time = date('Y-m-d H:i:s',time());
         $select =['self_id','name','salary','live_cost','social_money','safe_reward','group_code','group_name','use_flag','delete_flag','type'];
         $where = [
             ['delete_flag','=','Y'],
             ['use_flag','=','Y'],
+            ['group_code','=',$group_code],
         ];
         $user_list=SystemUser::where($where)->orderBy('self_id','desc')->select($select)->get();
 
@@ -196,7 +198,7 @@ class CrondtabController extends Controller {
             $data['money_award']  = $v->money_award;//奖励
             $data['date_num']     = $v->date_num;//请假天数
 
-            $data['total_money']  = $data['salary'] + $data['safe_reward'] + $data['money'] + $data['money_award'] -$data['live_cost'] - $data['social_money'] - $data['company_fine'] - $data['salary_fine'] -$data['reward_price'] - $data['income_tax'] - $data['water_money'];
+            $data['total_money']  = ($data['salary'] + $data['safe_reward'] + $data['money'] + $data['money_award']) -($data['live_cost'] - $data['social_money'] - $data['company_fine'] - $data['salary_fine'] -$data['reward_price'] - $data['income_tax'] - $data['water_money']);
 
             $data['update_time']  = $now_time;
 

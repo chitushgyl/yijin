@@ -350,6 +350,8 @@ class CarServiceController extends CommonController{
 
                 if ($v->type == 'service'){
                     $money['pay_type']           = 'repair';
+                }elseif($v->type == 'vehicle'){
+                    $money['pay_type']           = 'vehicle_fee';
                 }else{
                     $money['pay_type']           = 'preserve';
                 }
@@ -370,7 +372,7 @@ class CarServiceController extends CommonController{
                 $money['create_user_name']   = $v->name;
                 $money['create_time']        =$money['update_time']=$v->service_time;
                 $moneyList[] = $money;
-                
+
         }
         $data['settle_flag']='Y';
         $data['update_time']=$now_time;
@@ -412,7 +414,7 @@ class CarServiceController extends CommonController{
         $flag='useFlag';
 //        $self_id='car_202012242220439016797353';
 
-        
+
 
        $old_info = CarService::where('self_id',$self_id)->select('use_flag','self_id','delete_flag','group_code')->get();
         $data['use_flag']='N';
@@ -554,12 +556,12 @@ class CarServiceController extends CommonController{
                 '车牌号' =>['Y','Y','30','car_number'],
                 '挂车号' =>['N','Y','30','trailer_num'],
                 '品牌型号' =>['N','Y','30','brand'],
-                '维修/保养日期' =>['Y','Y','30','service_time'],
-                '送修/保养驾驶员' =>['N','Y','30','driver_name'],
-                '维修/保养项目' =>['Y','Y','50','service_item'],
-                '维修/保养明细' =>['N','Y','200','service_view'],
-                '维修/保养单位' =>['N','Y','50','service_partne'],
-                '维修人员' =>['N','Y','30','servicer'],
+                '维修/保养/检车日期' =>['Y','Y','30','service_time'],
+                '送修/保养/检车驾驶员' =>['N','Y','30','driver_name'],
+                '维修/保养/检车项目' =>['Y','Y','50','service_item'],
+                '维修/保养/检车明细' =>['N','Y','200','service_view'],
+                '维修/保养/检车单位' =>['N','Y','50','service_partne'],
+                '维修/检车人员' =>['N','Y','30','servicer'],
                 '保养公里数' =>['N','Y','50','kilo_num'],
                 '下次保养公里数' =>['N','Y','50','next_kilo'],
                 '金额' =>['Y','Y','50','service_price'],
@@ -613,6 +615,8 @@ class CarServiceController extends CommonController{
                      $type = 'service';
                 }elseif($v['type'] == '保养'){
                      $type = 'preserve';
+                }elseif($v['type'] == '检车'){
+                    $type = 'vehicle';
                 }else{
                     if($abcd<$errorNum){
                         $strs .= '数据中的第'.$a."行类型错误！".'</br>';
@@ -659,7 +663,14 @@ class CarServiceController extends CommonController{
                     $datalist[]=$list;
 
                     if ($v['service_price']){
-                        $money['pay_type']           = 'repair';
+                        if($type == 'service'){
+                            $money['pay_type']           = 'repair';
+                        }elseif($type == 'preserve'){
+                            $money['pay_type']           = 'preserve';
+                        }else{
+                            $money['pay_type']           = 'vehicle_fee';
+                        }
+
                         $money['money']              = $v['service_price'];
                         $money['pay_state']          = 'Y';
 //                        $money['car_id']             = $car_id;
@@ -729,7 +740,7 @@ class CarServiceController extends CommonController{
         if($info){
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
 
-            
+
             $data['info']=$info;
             $log_flag='Y';
             $data['log_flag']=$log_flag;
@@ -794,12 +805,12 @@ class CarServiceController extends CommonController{
                     "car_number"=>'车牌号',
                     "trailer_num"=>'挂车号',
                     "brand"=>'品牌型号',
-                    "driver_name"=>'送修/保养驾驶员',
-                    "service_time"=>'维修/保养日期',
-                    "service_item"=>'维修/保养项目',
-                    "service_view"=>'维修/保养明细',
-                    "servicer"=>'维修人员',
-                    "service_partne"=>'维修/保养单位',
+                    "driver_name"=>'送修/保养/检车驾驶员',
+                    "service_time"=>'维修/保养/检车日期',
+                    "service_item"=>'维修/保养/检车项目',
+                    "service_view"=>'维修/保养/检车明细',
+                    "servicer"=>'维修/检车人员',
+                    "service_partne"=>'维修/保养/检车单位',
                     "kilo_num"=>'保养公里数',
                     "next_kilo"=>'下次保养公里数',
                     "service_price"=>'金额',
@@ -814,8 +825,10 @@ class CarServiceController extends CommonController{
                     $list['id']            =($k+1);
                     if ($v->type == 'service') {
                         $list['type']          ='维修';
-                    }else{
+                    }elseif($v->type == 'preserve'){
                         $list['type']          ='保养';
+                    }else{
+                        $list['type']          ='检车';
                     }
                     $list['car_number']    =$v->car_number;
                     $list['trailer_num']   =$v->trailer_num;
