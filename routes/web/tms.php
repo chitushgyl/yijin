@@ -426,6 +426,7 @@ Route::group([
     Route::any('/wages/printWages','WagesController@printWages');//
     Route::any('/wages/printSalary','WagesController@printSalary');//
     Route::any('/wages/editCommission','WagesController@editCommission');//
+    Route::any('/wages/updateSalaryState', 'WagesController@updateSalaryState');//
 
 
 
