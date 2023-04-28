@@ -68,7 +68,7 @@ class DiplasicController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','car_id','car_number','production_date','input_date','service','tips','service_now','service_plan','next_service_plan','create_user_name','create_time','group_code','use_flag'];
+        $select=['self_id','car_id','car_number','production_date','input_date','service','tips','service_now','service_plan','next_service_plan','create_user_name','create_time','group_code','use_flag','img'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsDiplasic::where($where)->count(); //总的数据量
@@ -119,7 +119,7 @@ class DiplasicController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $select=['self_id','car_id','car_number','production_date','input_date','service','tips','service_now','service_plan','next_service_plan','create_user_name','create_time','group_code','use_flag'];
+        $select=['self_id','car_id','img','car_number','production_date','input_date','service','tips','service_now','service_plan','next_service_plan','create_user_name','create_time','group_code','use_flag'];
         $data['info']=TmsDiplasic::where($where)->select($select)->first();
         if($data['info']){
 
@@ -160,6 +160,7 @@ class DiplasicController extends CommonController{
         $next_service_plan  =$request->input('next_service_plan');//计划维护日期
         $tips               =$request->input('tips');//提示
         $group_code         =$request->input('group_code');//
+        $img                =$request->input('img');//
 
         $rules=[
             'car_number'=>'required',
@@ -200,6 +201,7 @@ class DiplasicController extends CommonController{
             $data['service_plan']         =$service_plan;
             $data['next_service_plan']    =$next_service_plan;
             $data['tips']                 =$tips;
+            $data['img']                  =img_for($img,'in');
             $wheres['self_id']            = $self_id;
             $old_info=TmsDiplasic::where($wheres)->first();
 
@@ -558,7 +560,7 @@ class DiplasicController extends CommonController{
     public function  details(Request $request,Details $details){
         $self_id=$request->input('self_id');
         $table_name='tms_diplasic';
-        $select=['self_id','car_id','car_number','production_date','input_date','service','tips','service_now','service_plan','next_service_plan','create_user_name','create_time','group_code','use_flag'];
+        $select=['self_id','car_id','img','car_number','production_date','input_date','service','tips','service_now','service_plan','next_service_plan','create_user_name','create_time','group_code','use_flag'];
         // $self_id='type_202012290957581187464100';
         $info=$details->details($self_id,$table_name,$select);
 

@@ -222,25 +222,46 @@ class CrondtabController extends Controller {
      * */
     public function getExpireCert(Request $request){
         $now_time = date('Y-m-d H:i:s',time());
-        $select =['self_id','car_number','medallion_change','license_date','tank_validity'];
+        $select =['self_id','car_number','medallion_change','license_date','tank_validity',''];
         $where = [
             ['delete_flag','=','Y'],
             ['use_flag','=','Y'],
         ];
         $car_list=TmsCar::where($where)->orderBy('self_id','desc')->select($select)->get();
         foreach ($car_list as $k => $v){
-            if($now_time >= date('Y-m-d', strtotime(date($v->medallion_change) . ' -1 month'))){
-                $message['self_id'] = generate_id('message_');
-                $message['connect'] = '运输证即将到期';
-                $message['car_number'] = $v->car_number;
-                $message['exprie_time'] =$v->medallion_change;
+            if($v->medallion_change){
+                if($now_time >= date('Y-m-d', strtotime(date($v->medallion_change) . ' -1 month'))){
+                    $message['self_id'] = generate_id('message_');
+                    $message['connect'] = '运输证即将到期';
+                    $message['car_number'] = $v->car_number;
+                    $message['exprie_time'] =$v->medallion_change;
+                }
             }
-            if($now_time >= date('Y-m-d', strtotime(date($v->tank_validity) . ' -1 month'))){
-                $message['self_id'] = generate_id('message_');
-                $message['connect'] = '罐检即将到期';
-                $message['car_number'] = $v->car_number;
-                $message['exprie_time'] =$v->medallion_change;
+            if($v->tank_validity){
+                if($now_time >= date('Y-m-d', strtotime(date($v->tank_validity) . ' -1 month'))){
+                    $message['self_id'] = generate_id('message_');
+                    $message['connect'] = '罐检即将到期';
+                    $message['car_number'] = $v->car_number;
+                    $message['exprie_time'] =$v->tank_validity;
+                }
             }
+            if($v->license_date){
+                if($now_time >= date('Y-m-d', strtotime(date($v->license_date) . ' -1 month'))){
+                    $message['self_id'] = generate_id('message_');
+                    $message['connect'] = '行驶证即将到期';
+                    $message['car_number'] = $v->car_number;
+                    $message['exprie_time'] =$v->license_date;
+                }
+            }
+            if($v->license_date){
+                if($now_time >= date('Y-m-d', strtotime(date($v->license_date) . ' -1 month'))){
+                    $message['self_id'] = generate_id('message_');
+                    $message['connect'] = '行驶证即将到期';
+                    $message['car_number'] = $v->car_number;
+                    $message['exprie_time'] =$v->license_date;
+                }
+            }
+
 
             TmsMessage::insert($message);
         }
