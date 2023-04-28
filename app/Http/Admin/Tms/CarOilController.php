@@ -205,6 +205,15 @@ class CarOilController extends CommonController{
                 return $msg;
             }
 
+            $total_number = TmsOil::where('group_code',$group_name->group_code)->where('use_flag','Y')->where('delete_flag','Y')->where('state','Y')->sum('num');
+            $total_out_number = CarOil::where('group_code',$group_name->group_code)->where('use_flag','Y')->where('delete_flag','Y')->sum('number');
+            $total_jie_number = $total_number -$total_out_number;
+            if ($total_jie_number<$number){
+                $msg['code'] = 302;
+                $msg['msg'] = '库存不足';
+                return $msg;
+            }
+
             $data['car_number']        =$car_number;
             $data['car_id']            =$car_id;
             $data['add_time']          =$add_time;
@@ -470,6 +479,7 @@ class CarOilController extends CommonController{
             $errorNum=50;       //控制错误数据的条数
             $a=2;
             $moneylist =[];
+            $number = 0;
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
 //                if (!check_carnumber($v['car_number'])) {
@@ -522,11 +532,19 @@ class CarOilController extends CommonController{
 
                     $moneylist[]=$money;
 
-//                    $number += $v['number'];
+                    $number += $v['number'];
 
                 }
 
                 $a++;
+            }
+            $total_number = TmsOil::where('group_code',$info->group_code)->where('use_flag','Y')->where('delete_flag','Y')->where('state','Y')->sum('num');
+            $total_out_number = CarOil::where('group_code',$info->group_code)->where('use_flag','Y')->where('delete_flag','Y')->sum('number');
+            $total_jie_number = $total_number -$total_out_number;
+            if ($total_jie_number<$number){
+                $msg['code'] = 302;
+                $msg['msg'] = '库存不足';
+                return $msg;
             }
             $operationing->old_info=null;
             $operationing->new_info=(object)$datalist;
