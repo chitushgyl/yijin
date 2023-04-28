@@ -15,23 +15,23 @@ class UpController extends CommonController{
         $pic			=$request->file('inputfile');
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ="file_warehouse";
-        dd($user_info);
 
-//        $operationing->access_cause     ='上传图片';
-//        $operationing->table            =$table_name;
-//        $operationing->operation_type   ='create';
-//        $operationing->now_time         =$now_time;
+
+        $operationing->access_cause     ='上传图片';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
 
         $browse_type=$request->path();
         $msg=$file->images($pic,$browse_type,$user_info,$now_time);
 
         if($msg['code']==200){
-//            $operationing->table_id=$msg['data']['data_file']['self_id'];
-//            $operationing->new_info=$msg['data']['data_file'];
+            $operationing->table_id=$msg['data']['data_file']['self_id'];
+            $operationing->new_info=$msg['data']['data_file'];
             return $msg;
         }else{
-//            $operationing->table_id=null;
-//            $operationing->new_info=null;
+            $operationing->table_id=null;
+            $operationing->new_info=null;
             return $msg;
 
         }

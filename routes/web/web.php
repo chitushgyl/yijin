@@ -9,7 +9,7 @@ Route::any('/login/loginOut', 'Admin\LoginController@loginOut');
 Route::any('/up/upload_img', 'Admin\UpController@upload_img');			//上传EXECL文件
 Route::any('/up/upload_image', 'Admin\UpController@upload_image');			//上传EXECL文件
 Route::any('/up/uploadImg', 'Admin\UpController@uploadImg');			//上传EXECL文件
-Route::any('/up/img', 'Admin\UpController@img');			//上传EXECL文件
+//Route::any('/up/img', 'Admin\UpController@img');			//上传EXECL文件
 /******公用文件触发器*******/
 Route::group([
     "middleware"=>['loginCheck','group'],'prefix' => '','namespace'  => 'Admin',
@@ -18,7 +18,7 @@ Route::group([
     Route::group([
         "middleware"=>['daily'],
     ], function(){
-//        Route::any('/up/img', 'UpController@img');				//上传图片
+        Route::any('/up/img', 'UpController@img');				//上传图片
         Route::any('/up/execl', 'UpController@execl');			//上传EXECL文件
 
     });
