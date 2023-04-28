@@ -1022,7 +1022,7 @@ class CarController extends CommonController{
                     $list['volume']             = $v['volume'];
                     $list['tank_validity']      = $v['tank_validity'];
                     $list['weight']             = $v['weight'];
-                    $list['medallion_num']      = $v['medallion_num'];
+                    $list['medallion_num']      = $v['medallion_num']."\t";
                     $list['curb_weight']        = $v['curb_weight'] ;
                     $list['all_weight']         = $v['all_weight'];
                     $list['medallion_change']   = $v['medallion_change'];
