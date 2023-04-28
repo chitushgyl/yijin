@@ -1055,6 +1055,7 @@ class CarOilController extends CommonController{
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'=','name'=>'use_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'state','value'=>'Y'],
             ['type'=>'like','name'=>'good_name','value'=>$good_name],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'>=','name'=>'enter_time','value'=>$start_time],
@@ -1103,7 +1104,7 @@ class CarOilController extends CommonController{
             //统计本期内入库总量
             $res['in_num'] += $v->num;
         }
-        $res['initial_num'] = TmsOil::where('group_code',$group_code)->where('enter_time','>',$start_time)->sum('num');
+        $res['initial_num'] = TmsOil::where('state','Y')->where('group_code',$group_code)->where('enter_time','>',$start_time)->sum('num');
         $res['out_num'] = CarOil::where('group_code',$group_code)->where('add_time','>=',$start_time)->where('add_time','<=',$end_time)->sum('number');
         $res['jie_num'] = $res['in_num'] - $res['out_num'];
         $res['group_code'] = $user_info->group_code;
