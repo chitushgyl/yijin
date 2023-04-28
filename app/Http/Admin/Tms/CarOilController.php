@@ -522,6 +522,8 @@ class CarOilController extends CommonController{
 
                     $moneylist[]=$money;
 
+//                    $number += $v['number'];
+
                 }
 
                 $a++;
