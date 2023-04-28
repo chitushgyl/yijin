@@ -3,6 +3,7 @@ namespace App\Http\Admin\Crondtab;
 
 use App\Http\Admin\Tms\MessageController;
 use App\Models\Tms\TmsCar;
+use App\Models\Tms\TmsMessage;
 use App\Models\Tms\TmsOrder;
 use App\Models\Tms\TmsWages;
 use App\Models\Tms\DriverCommission;
@@ -221,14 +222,27 @@ class CrondtabController extends Controller {
      * */
     public function getExpireCert(Request $request){
         $now_time = date('Y-m-d H:i:s',time());
-        $select =['self_id','car_number','medallion_change'];
+        $select =['self_id','car_number','medallion_change','license_date','tank_validity'];
         $where = [
             ['delete_flag','=','Y'],
             ['use_flag','=','Y'],
         ];
         $car_list=TmsCar::where($where)->orderBy('self_id','desc')->select($select)->get();
         foreach ($car_list as $k => $v){
-//            TmsMessage
+            if($now_time >= date('Y-m-d', strtotime(date($v->medallion_change) . ' -1 month'))){
+                $message['self_id'] = generate_id('message_');
+                $message['connect'] = '运输证即将到期';
+                $message['car_number'] = $v->car_number;
+                $message['exprie_time'] =$v->medallion_change;
+            }
+            if($now_time >= date('Y-m-d', strtotime(date($v->tank_validity) . ' -1 month'))){
+                $message['self_id'] = generate_id('message_');
+                $message['connect'] = '罐检即将到期';
+                $message['car_number'] = $v->car_number;
+                $message['exprie_time'] =$v->medallion_change;
+            }
+
+            TmsMessage::insert($message);
         }
     }
 

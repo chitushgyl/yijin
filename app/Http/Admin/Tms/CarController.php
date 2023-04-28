@@ -935,6 +935,7 @@ class CarController extends CommonController{
                     "all_weight"=>'总质量',
                     "medallion_change"=>'运输证到期时间',
                     "license_begin"=>'行驶证注册日期',
+                    "license_date"=>'行驶证到期日期',
                     "production_date"=>'出厂日期',
                     "scrap_date"=>'强制报废日期',
                     "business_scope"=>'经营范围',
@@ -1026,6 +1027,7 @@ class CarController extends CommonController{
                     $list['all_weight']         = $v['all_weight'];
                     $list['medallion_change']   = $v['medallion_change'];
                     $list['license_begin']      = $v['license_begin'];
+                    $list['license_date']       = $v['license_date'];
                     $list['production_date']    = $v['production_date'];
                     $list['scrap_date']         = $v['scrap_date'];
                     $list['business_scope']     = $v['business_scope'];
