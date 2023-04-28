@@ -23,7 +23,7 @@ class UpController extends CommonController{
 
         $browse_type=$request->path();
         $msg=$file->images($pic,$browse_type,$user_info,$now_time);
-        
+
         if($msg['code']==200){
             $operationing->table_id=$msg['data']['data_file']['self_id'];
             $operationing->new_info=$msg['data']['data_file'];
