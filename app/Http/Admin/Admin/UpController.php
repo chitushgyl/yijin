@@ -15,6 +15,7 @@ class UpController extends CommonController{
         $pic			=$request->file('inputfile');
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ="file_warehouse";
+        dd($user_info);
 
 //        $operationing->access_cause     ='上传图片';
 //        $operationing->table            =$table_name;
