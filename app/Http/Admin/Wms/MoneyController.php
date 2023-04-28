@@ -7,6 +7,7 @@ use App\Models\Tms\TmsMoneyCount;
 use App\Models\Tms\TmsCostMoney;
 use App\Models\Group\SystemGroup;
 use App\Models\Tms\TmsReceipt;
+use App\Models\Tms\TmsWages;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\DB;
@@ -1298,6 +1299,8 @@ class MoneyController extends CommonController{
             return $msg;
         }
     }
+
+
 
 
 }

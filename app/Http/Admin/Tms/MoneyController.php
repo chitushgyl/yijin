@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Admin\Tms;
 use App\Models\Tms\TmsOrderCost;
+use App\Models\Tms\TmsWages;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
 use Illuminate\Support\Facades\Input;
@@ -351,6 +352,8 @@ class MoneyController extends CommonController{
             return $msg;
         }
     }
+
+
 
 
 

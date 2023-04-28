@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Admin\Tms;
+use App\Models\Tms\TmsMoney;
 use App\Models\Tms\TmsWages;
 use App\Models\Tms\TmsWares;
 use App\Models\Tms\TmsOrder;
@@ -57,7 +58,7 @@ class WagesController extends CommonController{
         $group_code     =$request->input('group_code');
         $start_time     =$request->input('start_time');
         $end_time       =$request->input('end_time');
-     
+
         $user_name      =$request->input('user_name');
         $user_id      =$request->input('user_id');
         $listrows       =$num;
@@ -83,9 +84,9 @@ class WagesController extends CommonController{
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'name','value'=>$user_name],
             ['type'=>'=','name'=>'self_id','value'=>$user_id],
-           
+
         ];
-       
+
         $where=get_list_where($search);
 
         $search1=[
@@ -95,9 +96,9 @@ class WagesController extends CommonController{
             ['type'=>'>=','name'=>'leave_time','value'=>$start_time],
             ['type'=>'<=','name'=>'leave_time','value'=>$end_time],
 
-           
+
         ];
-       
+
         $where1=get_list_where($search1);
         $select3 =['self_id','name','salary','live_cost','social_money','safe_reward','group_code','group_name','use_flag','delete_flag'];
         $select=['self_id','driver_id','user_name','escort','escort_name','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag','leave_time','pay_id'];
@@ -145,10 +146,10 @@ class WagesController extends CommonController{
             $v->date = UserExamine::where('start_time','>=',$start_time)->where('end_time','<=',$end_time)->where('user_id',$v->self_id)->sum('date_num');
             $v->water_money = 0.00;
             $v->income_tax = 0.00;
-            
+
         }
-        
-        
+
+
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
@@ -270,7 +271,7 @@ class WagesController extends CommonController{
                 //dd(1111);
                 $data['update_time']=$now_time;
                 $id=TmsWages::where($wheres)->update($data);
-                
+
                 $operationing->access_cause='修改工资';
                 $operationing->operation_type='update';
 
@@ -743,7 +744,7 @@ class WagesController extends CommonController{
             ['type'=>'>=','name'=>'leave_time','value'=>$start_time],
             ['type'=>'<=','name'=>'leave_time','value'=>$end_time],
         ];
-       
+
         $where=get_list_where($search);
 
         $select=['self_id','driver_id','driver_name','leave_time','use_flag','delete_flag','group_code','group_name','money','order_id','create_time','update_time'
@@ -787,13 +788,13 @@ class WagesController extends CommonController{
         return $msg;
     }
 
-    //编辑提成 
+    //编辑提成
     public function editCommission(Request $request){
         $now_time   =date('Y-m-d H:i:s',time());
         $group_code=$request->input('group_code');
         $order_id = $request->input('self_id');
         $money     =$request->input('money');
-        
+
         $update['money'] = $money;
         $update['update_time'] = $now_time;
         $id=DriverCommission::where('self_id',$order_id)->update($update);
@@ -806,7 +807,7 @@ class WagesController extends CommonController{
           $msg['msg']="编辑失败";
           return $msg;
         }
-        
+
     }
 
     public function getCommissionOrder(Request $request){
@@ -852,7 +853,7 @@ class WagesController extends CommonController{
         $data['total_money'] = DriverCommission::where($where)
                     ->whereIn('self_id',explode(',',$order_id))->orderBy('leave_time', 'asc')
                     ->sum('money');
-        
+
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
@@ -879,7 +880,7 @@ class WagesController extends CommonController{
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
-    
+
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
@@ -888,7 +889,7 @@ class WagesController extends CommonController{
             ['type'=>'>=','name'=>'leave_time','value'=>$start_time.' 00:00:00'],
             ['type'=>'<=','name'=>'leave_time','value'=>$start_time.' 23:59:59'],
         ];
-       
+
         $where=get_list_where($search);
 
         $search1=[
@@ -897,7 +898,7 @@ class WagesController extends CommonController{
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'=','name'=>'driver_id','value'=>$driver_id],
         ];
-       
+
         $where1=get_list_where($search1);
         $select3 =['self_id','name','salary'];
         $select=['self_id','driver_id','user_name','escort','escort_name','car_number','send_time','order_weight','upload_weight','send_id','send_name','gather_id','gather_name','good_name','group_code','delete_flag','use_flag','leave_time','pay_id'];
@@ -955,7 +956,7 @@ class WagesController extends CommonController{
                 break;
         }
         $date = getDateFromRange($start_time,$end_time);
-        
+
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
@@ -996,8 +997,9 @@ class WagesController extends CommonController{
         $group_code     =$request->input('group_code');
         $salary_time    =$request->input('salary_time');
         $type           =$request->input('type');
-        
-     
+        $state           =$request->input('state');
+
+
         $user_name      =$request->input('user_name');
         $user_id      =$request->input('user_id');
         $listrows       =$num;
@@ -1010,14 +1012,15 @@ class WagesController extends CommonController{
             ['type'=>'like','name'=>'user_name','value'=>$user_name],
             ['type'=>'=','name'=>'self_id','value'=>$user_id],
             ['type'=>'=','name'=>'salary_time','value'=>$salary_time],
-            ['type'=>'=','name'=>'type','value'=>$type]
-           
+            ['type'=>'=','name'=>'type','value'=>$type],
+            ['type'=>'=','name'=>'state','value'=>$state]
+
         ];
-       
+
         $where=get_list_where($search);
-       
+
         $select =['self_id','user_id','user_name','salary_time','company_fine','money','water_money','income_tax','salary','live_cost','social_money','safe_reward','reward_price','salary_fine','money_award','group_code','group_name','use_flag','delete_flag','total_money','date_num','remark','type'];
-        
+
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=TmsWages::where($where)->count(); //总的数据量
@@ -1050,14 +1053,14 @@ class WagesController extends CommonController{
                 $data['group_show']='Y';
                 break;
         }
-        
+
         foreach($data['items'] as $k => $v){
-            
+
             $v->button_info = $button_info;
             $v->type               =$user_type[$v->type]??null;
         }
-        
-        
+
+
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
@@ -1078,15 +1081,15 @@ class WagesController extends CommonController{
 
         $where=get_list_where($search);
         $select = ['self_id','user_id','user_name','salary_time','company_fine','money','water_money','income_tax','salary','live_cost','social_money','safe_reward','reward_price','salary_fine','money_award','group_code','group_name','use_flag','delete_flag','total_money','date_num','remark'];
-    
+
         $data['items']=TmsWages::where($where)
                     ->whereIn('self_id',explode(',',$order_id))
                     ->select($select)->get();
-        
+
         $data['total_money'] = TmsWages::where($where)
                     ->whereIn('self_id',explode(',',$order_id))
                     ->sum('total_money');
-        
+
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
@@ -1123,7 +1126,7 @@ class WagesController extends CommonController{
             $where=get_list_where($search);
 
             $select=['self_id','driver_id','driver_name','leave_time','use_flag','delete_flag','group_code','group_name','money','order_id','create_time','update_time'];
-           
+
             $info=DriverCommission::where($where)->whereIn('self_id',explode(',',$order_id))
                     ->select($select)->orderBy('leave_time','asc')->get();
 //dd($info);
@@ -1170,6 +1173,100 @@ class WagesController extends CommonController{
             return $msg;
         }
 
+    }
+
+
+    /**
+     * 实发工资审核 审核后计入费用表
+     * */
+    public function updateSalaryState(Request $request){
+        $operationing   = $request->get('operationing');//接收中间件产生的参数
+        $now_time       =date('Y-m-d H:i:s',time());
+        $table_name     ='tms_wages';
+
+        $operationing->access_cause     ='创建/修改入库状态';
+        $operationing->table            =$table_name;
+        $operationing->operation_type   ='create';
+        $operationing->now_time         =$now_time;
+
+        $user_info = $request->get('user_info');//接收中间件产生的参数
+        $input              =$request->all();
+
+        /** 接收数据*/
+        $self_id            =$request->input('self_id');
+
+        $rules=[
+            'self_id'=>'required',
+
+        ];
+        $message=[
+            'self_id.required'=>'请选择审核条目！',
+        ];
+        $validator=Validator::make($input,$rules,$message);
+
+        //操作的表
+        if($validator->passes()){
+            $wheres['self_id'] = $self_id;
+            $old_info=TmsWages::whereIn('self_id',explode(',',$self_id))->get();
+            foreach ($old_info as $k => $v){
+                if($v->state == 'Y'){
+                    $msg['code'] = 303;
+                    $msg['msg'] = "已审核，不可修改！";
+                    return $msg;
+                }
+            }
+
+
+            $data['state'] = 'Y';
+            $data['update_time']   = $now_time;
+            $id = TmsWages::whereIn('self_id',explode(',',$self_id))->update($data);
+            $moneylist = [];
+            foreach ($old_info as $k =>$v){
+                $money['pay_type']           = 'salary';
+                $money['money']              = $v->total_money;
+                $money['pay_state']          = 'Y';
+                $money['user_id']            = $v->user_id;
+                $money['user_name']          = $v->user_name;
+                $money['process_state']      = 'Y';
+                $money['type_state']         = 'out';
+                $money['self_id']            = generate_id('money_');
+                $money['group_code']         = $v->group_code;
+                $money['group_name']         = $v->group_name;
+                $money['create_user_id']     = $user_info->admin_id;
+                $money['create_user_name']   = $user_info->name;
+                $money['create_time']        = $money['update_time']=$now_time;
+                $moneylist[]=$money;
+            }
+            TmsMoney::insert($moneylist);
+
+
+            $operationing->access_cause='费用作废';
+            $operationing->operation_type='create';
+            $operationing->table_id=$old_info?$self_id:$data['self_id'];
+            $operationing->old_info=$old_info;
+            $operationing->new_info=$data;
+
+            if($id){
+                $msg['code'] = 200;
+                $msg['msg'] = "操作成功";
+                return $msg;
+            }else{
+                $msg['code'] = 302;
+                $msg['msg'] = "操作失败";
+                return $msg;
+            }
+
+        }else{
+            //前端用户验证没有通过
+            $erro=$validator->errors()->all();
+            $msg['code']=300;
+            $msg['msg']=null;
+            foreach ($erro as $k => $v){
+                $kk=$k+1;
+                $msg['msg'].=$kk.'：'.$v.'</br>';
+            }
+            return $msg;
+        }
     }
 
 
