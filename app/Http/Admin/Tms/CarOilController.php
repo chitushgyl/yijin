@@ -1103,8 +1103,8 @@ class CarOilController extends CommonController{
             //统计本期内入库总量
             $res['in_num'] += $v->num;
         }
-        $res['initial_num'] = TmsOil::where('enter_time','>',$start_time)->sum('num');
-        $res['out_num'] = CarOil::where('add_time','>=',$start_time)->where('add_time','<=',$end_time)->sum('number');
+        $res['initial_num'] = TmsOil::where('group_code',$group_code)->where('enter_time','>',$start_time)->sum('num');
+        $res['out_num'] = CarOil::where('group_code',$group_code)->where('add_time','>=',$start_time)->where('add_time','<=',$end_time)->sum('number');
         $res['jie_num'] = $res['in_num'] - $res['out_num'];
         $res['group_code'] = $user_info->group_code;
         $res['group_name'] = $user_info->group_name;
