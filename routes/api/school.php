@@ -103,7 +103,7 @@ Route::group([
     Route::any('/ride_status', 'TripsController@ride_status');                                   //   【手动到站】
     Route::any('/change_student_status', 'TripsController@change_student_status');               //   改变学生乘用状态
     Route::any('/path_loglat', 'TripsController@path_loglat');									 // 家长拉取校车实时经纬度
-	
+
 });
 
 

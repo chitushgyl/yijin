@@ -34,6 +34,7 @@ Route::group([
     ], function(){
         /**首页**/
         Route::any('/index', 'IndexController@index');                                      //首页，主要是拉取菜单
+        Route::any('/getExpireCert', 'IndexController@getExpireCert');                                      //首页，主要是拉取菜单
 
         Route::group([
             "middleware"=>['daily'],
@@ -286,6 +287,7 @@ Route::any('/crondtab/userReword', 'CrondtabController@userReword'); //定时下
 Route::any('/crondtab/updateDiplasic', 'CrondtabController@updateDiplasic'); //定时下线订单
 Route::any('/crondtab/updateUserEntry', 'CrondtabController@updateUserEntry'); //定时下线订单
 Route::any('/crondtab/countSalary', 'CrondtabController@countSalary'); //定时下线订单
+Route::any('/crondtab/getExpireCert', 'CrondtabController@getExpireCert'); //定时下线订单
 
 
 });

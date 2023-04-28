@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Admin\Admin;
-use App\Models\Tms\TmsLine;
-use App\Models\Tms\TmsOrder;
+use App\Models\Group\SystemUser;use App\Models\Tms\TmsCar;use App\Models\Tms\TmsLine;
+use App\Models\Tms\TmsMessage;use App\Models\Tms\TmsOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\CommonController;
@@ -181,6 +181,103 @@ class IndexController extends CommonController{
             return $msg;
         }
 
+    }
+
+     /**
+     * 查询即将到期的证件
+     * */
+    public function getExpireCert(Request $request)
+    {
+        $group_code = $request->input('group_code');
+        $now_time = date('Y-m-d H:i:s', time());
+        $select = ['self_id', 'car_number', 'medallion_change', 'license_date', 'tank_validity', 'inspect_annually', 'sgs_date', 'compulsory_end',
+            'commercial_end', 'carrier_end', 'group_code', 'group_name'];
+        $where = [
+            ['delete_flag', '=', 'Y'],
+            ['use_flag', '=', 'Y'],
+            ['group_code', '=', $group_code],
+        ];
+        $car_list = TmsCar::where($where)->orderBy('self_id', 'desc')->select($select)->get();
+        $user_list = SystemUser::where($where)->orderBy('self_id', 'desc')->get();
+        $message_list = [];
+        foreach ($car_list as $k => $v) {
+            if ($v->medallion_change) {
+                if ($now_time >= date('Y-m-d', strtotime(date($v->medallion_change) . ' -1 month'))) {
+                    $medallion['connect'] = '运输证即将到期';
+                    $medallion['car_number'] = $v->car_number;
+                    $medallion['exprie_time'] = $v->medallion_change;
+                    $message_list[] = $medallion;
+                }
+            }
+            if ($v->tank_validity) {
+                if ($now_time >= date('Y-m-d', strtotime(date($v->tank_validity) . ' -1 month'))) {
+                    $tank['connect'] = '罐检即将到期';
+                    $tank['car_number'] = $v->car_number;
+                    $tank['exprie_time'] = $v->tank_validity;
+                    $message_list[] = $tank;
+
+                }
+            }
+            if ($v->license_date) {
+                if ($now_time >= date('Y-m-d', strtotime(date($v->license_date) . ' -1 month'))) {
+                    $license['connect'] = '行驶证即将到期';
+                    $license['car_number'] = $v->car_number;
+                    $license['exprie_time'] = $v->license_date;
+                    $message_list[] = $license;
+
+                }
+            }
+            if ($v->sgs_date) {
+                if ($now_time >= date('Y-m-d', strtotime(date($v->sgs_date) . ' -1 month'))) {
+                    $sgs['connect'] = 'SGS证即将到期';
+                    $sgs['car_number'] = $v->car_number;
+                    $sgs['exprie_time'] = $v->sgs_date;
+                    $message_list[] = $sgs;
+
+                }
+            }
+            if ($v->inspect_annually) {
+                if ($now_time >= date('Y-m-d', strtotime(date($v->inspect_annually) . ' -3 month'))) {
+                    $inspect_annually['connect'] = '年检即将到期';
+                    $inspect_annually['car_number'] = $v->car_number;
+                    $inspect_annually['exprie_time'] = $v->inspect_annually;
+                    $message_list[] = $inspect_annually;
+
+                }
+            }
+            if ($v->compulsory_end) {
+                if ($now_time >= date('Y-m-d', strtotime(date($v->compulsory_end) . ' -1 month'))) {
+                    $compulsory['connect'] = '交强险即将到期';
+                    $compulsory['car_number'] = $v->car_number;
+                    $compulsory['exprie_time'] = $v->compulsory_end;
+                    $message_list[] = $compulsory;
+
+                }
+            }
+            if ($v->carrier_end) {
+                if ($now_time >= date('Y-m-d', strtotime(date($v->carrier_end) . ' -1 month'))) {
+                    $carrier_end['connect'] = '承运险即将到期';
+                    $carrier_end['car_number'] = $v->car_number;
+                    $carrier_end['exprie_time'] = $v->carrier_end;
+                    $message_list[] = $carrier_end;
+
+                }
+            }
+            if ($v->commercial_end) {
+                if ($now_time >= date('Y-m-d', strtotime(date($v->commercial_end) . ' -1 month'))) {
+                    $commercial_end['connect'] = '商业险即将到期';
+                    $commercial_end['car_number'] = $v->car_number;
+                    $commercial_end['exprie_time'] = $v->commercial_end;
+                    $message_list[] = $commercial_end;
+
+                }
+            }
+
+        }
+        $msg['code'] = '200';
+        $msg['msg']  = '获取成功！';
+        $msg['data'] = $message_list;
+        return $msg;
     }
 
 
