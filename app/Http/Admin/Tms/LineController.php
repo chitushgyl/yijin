@@ -53,7 +53,7 @@ class LineController extends CommonController{
         $send_name     =$request->input('send_name');
         $gather_name   =$request->input('gather_name');
         $pay_type       =$request->input('pay_type');
-        
+
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
 
@@ -64,7 +64,7 @@ class LineController extends CommonController{
             ['type'=>'like','name'=>'send_name','value'=>$send_name],
             ['type'=>'like','name'=>'gather_name','value'=>$gather_name],
             ['type'=>'=','name'=>'pay_type','value'=>$pay_type],
-           
+
         ];
 
         $where=get_list_where($search);
@@ -181,7 +181,7 @@ class LineController extends CommonController{
                'gather_name.required'=>'请填写卸车点',
             ];
         }
-        
+
 
         $validator=Validator::make($input,$rules,$message);
         if($validator->passes()) {
@@ -203,9 +203,9 @@ class LineController extends CommonController{
                 return $msg;
             }
                 }
-              
+
             }
-            
+
 
             $data['send_id']          =$send_id;
             $data['send_name']        =$send_name;
@@ -409,7 +409,7 @@ class LineController extends CommonController{
             $shuzu=[
                 '车牌号' =>['Y','Y','10','car_number'],
                 '装车点' =>['Y','Y','20','send_name'],
-                '卸车点' =>['N','Y','64','gather_name'], 
+                '卸车点' =>['N','Y','64','gather_name'],
             ];
             $ret=arr_check($shuzu,$info_check);
 
@@ -606,7 +606,7 @@ class LineController extends CommonController{
         if($info){
 
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
-            
+
             $data['info']=$info;
             $log_flag='Y';
             $data['log_flag']=$log_flag;
@@ -666,9 +666,9 @@ class LineController extends CommonController{
                 $row = [[
                     "id"=>'ID',
                     "send_name"=>'装车点',
-                    "gather_name"=>'卸车点', 
-                    "pay_type"=>'结算方式', 
-                    "base_pay"=>'基本提成',   
+                    "gather_name"=>'卸车点',
+                    "pay_type"=>'结算方式',
+                    "base_pay"=>'基本提成',
                     "once_price"=>'每车奖励',
                     "car_number"=>'车牌号',
                     "car_num"=>'车数',
@@ -682,15 +682,20 @@ class LineController extends CommonController{
                     $list=[];
 
                     $list['id']=($k+1);
-                 
+
                     $list['send_name']       = $v['send_name'];
                     $list['gather_name']     = $v['gather_name'];
-                    $list['pay_type']        = $v['pay_type'];
+                    if($v['pay_type']== 'A'){
+                        $list['pay_type']        = '线路结算';
+                    }else{
+                        $list['pay_type']        = '整车结算';
+                    }
+
                     $list['base_pay']        = $v['base_pay'];
                     $list['once_price']      = $v['once_price'];
                     $list['car_number']      = $v['car_number'];
                     $list['car_num']         = $v['car_num'];
-                   
+
                     $data_execl[]=$list;
                 }
                 /** 调用EXECL导出公用方法，将数据抛出来***/
