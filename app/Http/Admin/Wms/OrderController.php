@@ -714,12 +714,12 @@ class OrderController extends CommonController{
         ->select($order_select)->first();
 
         if($info){
+            $info->voucher = img_for($info->voucher,'more');
             $list=[];
             $list2=[];
             $quhuo_list=[];
             $out_list=[];
             foreach ($info->wmsOutOrderList as $k=>$v){
-                    $v->voucher = img_for($v->voucher,'more');
                     $v->out_library_state_show  = $out_store_status[$v->out_library_state] ?? null;
                 if($v->quehuo == 'Y'){
                     $data['quehuo_flag']         ='Y';
