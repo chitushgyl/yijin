@@ -114,7 +114,7 @@ class ServiceGroupController extends CommonController{
     /***    业务公司创建      /tms/serviceGroup/createServiceGroup
      */
     public function createServiceGroup(Request $request){
-        $data['type']    =config('tms.company_type');
+        $data['type']        =config('tms.service_type');
         $service_type    =array_column(config('tms.service_type'),'name','key');
         /** 接收数据*/
         $self_id=$request->input('self_id');
