@@ -881,7 +881,7 @@ class LibraryController extends CommonController{
         ];
 
         $select=['self_id','grounding_status','order_status','type','create_user_name','create_time','group_name','check_time','grounding_status','count',
-            'purchase','operator','accepted','voucher','type','warehouse_id','warehouse_name','enter_time','purchase_date'];
+            'purchase','operator','accepted','voucher','type','warehouse_id','warehouse_name','enter_time','purchase_date','voucher'];
 
 		$WmsLibrarySigeSelect=[
             'self_id','grounding_status','in_library_state','grounding_type','good_remark','good_lot','order_id','external_sku_id','good_name','spec',
@@ -898,7 +898,7 @@ class LibraryController extends CommonController{
 
         if($info){
             $info->type_show=$wms_order_type_show[$info->type];
-
+            $info->voucher = img_for($info->voucher,'more');
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
             foreach ($info->wmsLibrarySige as $k => $v){
                 if ($v->area && $v->row && $v->column){
@@ -1020,7 +1020,7 @@ class LibraryController extends CommonController{
         ];
 
         $select=['self_id','grounding_status','order_status','type','create_user_name','create_time','group_name','check_time','grounding_status','count',
-            'purchase','operator','accepted','voucher','type','warehouse_id','warehouse_name','enter_time','purchase_date'];
+            'purchase','operator','accepted','voucher','type','warehouse_id','warehouse_name','enter_time','purchase_date','voucher'];
 
         $WmsLibrarySigeSelect=[
             'self_id','grounding_status','in_library_state','grounding_type','good_remark','good_lot','order_id','external_sku_id','good_name','spec',
@@ -1036,7 +1036,7 @@ class LibraryController extends CommonController{
 
         if($info){
             $info->type_show=$wms_order_type_show[$info->type];
-
+            $info->voucher = img_for($info->voucher,'more');
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
             foreach ($info->wmsLibrarySige as $k => $v){
                 if ($v->area && $v->row && $v->column){
