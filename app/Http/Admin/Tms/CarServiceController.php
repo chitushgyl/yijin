@@ -3,6 +3,7 @@ namespace App\Http\Admin\Tms;
 use App\Http\Controllers\FileController as File;
 use App\Models\Group\SystemUser;
 use App\Models\Tms\CarService;
+use App\Models\Tms\TmsCommonInfo;
 use App\Models\Tms\TmsMoney;
 use Illuminate\Http\Request;
 use App\Http\Controllers\CommonController;
@@ -292,6 +293,15 @@ class CarServiceController extends CommonController{
                 $data['create_time']        =$data['update_time']=$now_time;
 
                 $id=CarService::insert($data);
+                $common_info['self_id']    = generate_id('common_');
+                $common_info['car_number'] =  $car_number;
+                $common_info['trailer_num'] = $trailer_num;
+                $common_info['driver_id']   = $driver_id;
+                $common_info['driver_name'] = $driver_name;
+                $common_info['group_code'] = $group_code;
+                $common_info['group_name'] = $group_name;
+                $common_info['create_time'] = $common_info['update_time'] = $now_time;
+                TmsCommonInfo::insert($common_info);
                 // if($service_price){
                 //     $money['self_id']            = generate_id('money_');
                 //     $money['group_code']         = $group_code;
@@ -332,6 +342,28 @@ class CarServiceController extends CommonController{
             return $msg;
         }
 
+    }
+
+    public function getCommonInfo(Request $request){
+        $group_code=$request->input('group_code');
+        $car_number=$request->input('car_number');
+
+//        $input['group_code'] =  $group_code = '1234';
+        $search=[
+            ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'use_flag','value'=>'Y'],
+            ['type'=>'=','name'=>'group_code','value'=>$group_code],
+            ['type'=>'=','name'=>'car_number','value'=>$car_number],
+        ];
+
+        $where=get_list_where($search);
+        $select = ['self_id','car_number','car_id','group_code','use_flag','delete_flag','group_code','group_name','driver_id','driver_name','trailer_num'];
+        $data['info']=TmsCommonInfo::where($where)->orderBy('create_time','desc')->select($select)->first();
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
     }
 
     //维修保养审核

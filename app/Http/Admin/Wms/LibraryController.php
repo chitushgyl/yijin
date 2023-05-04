@@ -718,7 +718,7 @@ class LibraryController extends CommonController{
         $operator           = $request->input('operator');//经办人
         $accepted           = $request->input('accepted');//验收人
         $enter_time         = $request->input('enter_time');//入库时间
-        $purchase_date         = $request->input('purchase_date');//采购时间
+        $purchase_date      = $request->input('purchase_date');//采购时间
         $voucher            = json_decode($request->input('voucher'),true);//凭证
 
         /*** 虚拟数据

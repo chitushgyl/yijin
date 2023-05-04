@@ -217,7 +217,7 @@ class OrderController extends CommonController{
         $operator           = $request->input('operator');
         $purchase           = $request->input('purchase');
         $out_time           = $request->input('out_time');
-        $voucher            = $request->input('voucher');
+        $voucher            = json_decode($request->input('voucher'),true);//凭证
         $self_id            = $request->input('self_id');
         $good_list          = json_decode($request->input('good_list'),true);//产品ID集合
         $group_code         = $request->input('group_code');

@@ -298,6 +298,7 @@ Route::group([
     Route::any('/carService/import','CarServiceController@import');
     Route::any('/carService/excel','CarServiceController@excel');
     Route::any('/carService/serviceSettle','CarServiceController@serviceSettle');
+    Route::any('/carService/getCommonInfo','CarServiceController@getCommonInfo');
 
     /**车辆加油记录***/
     Route::any('/carOil/carList','CarOilController@carList');
@@ -428,7 +429,13 @@ Route::group([
     Route::any('/wages/editCommission','WagesController@editCommission');//
     Route::any('/wages/updateSalaryState', 'WagesController@updateSalaryState');//
 
-
+    Route::any('/serviceGroup/serviceGroupList', 'ServiceGroupController@serviceGroupList');//
+    Route::any('/serviceGroup/serviceGroupPage', 'ServiceGroupController@serviceGroupPage');//
+    Route::any('/serviceGroup/createServiceGroup', 'ServiceGroupController@createServiceGroup');//
+    Route::any('/serviceGroup/addServiceGroup', 'ServiceGroupController@addServiceGroup');//
+    Route::any('/serviceGroup/groupUseFlag', 'ServiceGroupController@groupUseFlag');//
+    Route::any('/serviceGroup/groupDelFlag', 'ServiceGroupController@groupDelFlag');//
+    Route::any('/serviceGroup/getServiceGroup', 'ServiceGroupController@getServiceGroup');//
 
 
 

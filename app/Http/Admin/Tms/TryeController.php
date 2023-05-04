@@ -2,6 +2,7 @@
 namespace App\Http\Admin\Tms;
 
 use App\Models\Group\SystemGroup;
+use App\Models\Tms\TmsCommonInfo;
 use App\Models\Tms\TmsMoney;
 use App\Models\Tms\TmsTrye;
 use App\Models\Tms\TmsTryeCount;
@@ -1083,6 +1084,15 @@ class TryeController extends CommonController{
                 $data['group_name']         = $user_info->group_name;
                 $id=TmsTrye::insert($data);
 
+                $common_info['self_id']    = generate_id('common_');
+                $common_info['car_number'] =  $car_number;
+                $common_info['trailer_num'] = $trailer_num;
+                $common_info['driver_id']   = $user_id;
+                $common_info['driver_name'] = $driver_name;
+                $common_info['group_code'] = $user_info->group_code;
+                $common_info['group_name'] = $user_info->group_name;
+                $common_info['create_time'] = $common_info['update_time'] = $now_time;
+                TmsCommonInfo::insert($common_info);
                 $operationing->access_cause='新建入库';
                 $operationing->operation_type='create';
             }

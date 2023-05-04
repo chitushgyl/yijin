@@ -1,5 +1,6 @@
 <?php
 namespace App\Http\Admin\Tms;
+use App\Models\Tms\TmsServiceGroup;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Validator;
@@ -33,13 +34,13 @@ class ServiceGroupController extends CommonController{
         return $msg;
     }
 
-    /***    业务公司分页      /tms/group/groupPage
+    /***    业务公司分页      /tms/serviceGroup/serviceGroupPage
      */
     public function serviceGroupPage(Request $request){
         /** 接收中间件参数**/
         $group_info         = $request->get('group_info');//接收中间件产生的参数
         $button_info        = $request->get('anniu');//接收中间件产生的参数
-        $tms_group_type     =array_column(config('tms.company_type'),'name','key');
+        $service_type    =array_column(config('tms.service_type'),'name','key');
         $now_time       =date('Y-m-d H:i:s',time());
         $ago_time       =date('Y-m-d H:i:s',strtotime("$now_time-1 month+1 day"));
         /**接收数据*/
@@ -47,10 +48,8 @@ class ServiceGroupController extends CommonController{
         $page           =$request->input('page')??1;
         $use_flag       =$request->input('use_flag');
         $group_code     =$request->input('group_code');
-        $cost_type      =$request->input('cost_type');
         $type           =$request->input('type');
-        $contacts       =$request->input('contacts');
-        $tel            =$request->input('tel');
+        $contacts       =$request->input('connact');
         $company_name   =$request->input('company_name');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
@@ -59,78 +58,64 @@ class ServiceGroupController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
-            ['type'=>'=','name'=>'cost_type','value'=>$cost_type],
+
             ['type'=>'like','name'=>'type','value'=>$type],
             ['type'=>'like','name'=>'company_name','value'=>$company_name],
-            ['type'=>'like','name'=>'contacts','value'=>$contacts],
-            ['type'=>'like','name'=>'tel','value'=>$tel],
+            ['type'=>'like','name'=>'connact','value'=>$contacts],
         ];
 
         $where=get_list_where($search);
 
-        $select=['self_id','company_name','create_user_name','group_name','company_name','agreement_date','agreement',
-            'cost_type','contacts','address','tel','use_flag','group_code','bank','bank_number','remark'];
+        $select=['self_id','company_name','create_user_name','group_name','connact','type','contacts','use_flag','group_code'];
 
         switch ($group_info['group_id']){
             case 'all':
-                $data['total']=TmsGroup::where($where)->count(); //总的数据量
-                $data['items']=TmsGroup::where($where)
+                $data['total']=TmsServiceGroup::where($where)->count(); //总的数据量
+                $data['items']=TmsServiceGroup::where($where)
                     ->offset($firstrow)->limit($listrows)
-//                    ->orderByRaw(DB::raw("CASE WHERE $ago_time <agreement_date< $now_time then 3000-01-01 else  end"))
-                    ->orderBy('agreement_date', 'desc')
+                    ->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
 
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
-                $data['total']=TmsGroup::where($where)->count(); //总的数据量
-                $data['items']=TmsGroup::where($where)
+                $data['total']=TmsServiceGroup::where($where)->count(); //总的数据量
+                $data['items']=TmsServiceGroup::where($where)
                     ->offset($firstrow)->limit($listrows)
-//                    ->orderByRaw(DB::raw("CASE WHERE $ago_time <agreement_date< $now_time then 3000-01-01 else  end"))
-                    ->orderBy('agreement_date', 'desc')
+                    ->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
 
             case 'more':
-                $data['total']=TmsGroup::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=TmsGroup::where($where)->whereIn('group_code',$group_info['group_code'])
+                $data['total']=TmsServiceGroup::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
+                $data['items']=TmsServiceGroup::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)
-//                    ->orderByRaw(DB::raw("CASE WHERE $ago_time <agreement_date< $now_time then 3000-01-01 else  end"))
-                    ->orderBy('agreement_date', 'desc')
+                    ->orderBy('create_time', 'desc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
         }
-//dump($wms_cost_type_show);
 
         foreach ($data['items'] as $k=>$v) {
-//            $v->total_money = number_format($v->total_money/100, 2);
-            $company_type = [];
-            foreach (explode(',',$v->type) as $kk => $vv){
-                $company_type[] = $tms_group_type[$vv]??null;
-            }
-			$v->type_show=implode('/',$company_type);
-			$v->cost_type_show=$tms_cost_type[$v->cost_type]??null;
             $v->button_info=$button_info;
-//
+            $v->type = $service_type[$v->type];
         }
-
-        // dump($data['items']->toArray());
 
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
         $msg['data']=$data;
-//        dd($msg);
+
         return $msg;
 
     }
 
-    /***    业务公司创建      /tms/group/createGroup
+    /***    业务公司创建      /tms/serviceGroup/createServiceGroup
      */
-    public function createGroup(Request $request){
+    public function createServiceGroup(Request $request){
         $data['type']    =config('tms.company_type');
+        $service_type    =array_column(config('tms.service_type'),'name','key');
         /** 接收数据*/
         $self_id=$request->input('self_id');
 //        $self_id = 'company_202101151011516789650525';
@@ -138,10 +123,9 @@ class ServiceGroupController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $data['info']=TmsGroup::where($where)->first();
+        $data['info']=TmsServiceGroup::where($where)->first();
         if ($data['info']){
-            if ($data['info']->type != 'driver'){
-            }
+            $data['info']->type = $service_type[$data['info']->type];
         }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
@@ -152,9 +136,9 @@ class ServiceGroupController extends CommonController{
 
     }
 
-    /***    业务公司添加进入数据库      /tms/group/addGroup
+    /***    业务公司添加进入数据库      /tms/serviceGroup/addServiceGroup
      */
-    public function addGroup(Request $request){
+    public function addServiceGroup(Request $request){
         $operationing   = $request->get('operationing');//接收中间件产生的参数
         $now_time       =date('Y-m-d H:i:s',time());
         $table_name     ='tms_group';
@@ -170,34 +154,23 @@ class ServiceGroupController extends CommonController{
         $self_id            =$request->input('self_id');
         $company_name       =$request->input('company_name');
         $group_code         =$request->input('group_code');
-        $contacts           =$request->input('contacts');
-        $tel       	        =$request->input('tel');
-        $address            =$request->input('address');
+        $contacts           =$request->input('connact');
         $type               =$request->input('type');
-        $cost_type          =$request->input('cost_type');
-        $bank               =$request->input('bank');
-        $bank_number        =$request->input('bank_number');
-        $tax_id             =$request->input('tax_id');
-        $remark             =$request->input('remark');
-        $agreement          =$request->input('agreement');
-        $agreement_date     =$request->input('agreement_date');
 
         /*** 虚拟数据
         $input['self_id']           =$self_id='group_202006040950004008768595';
         $input['company_name']      =$company_name='A公司';
         $input['group_code']           =$group_code='1234';
         $input['contacts']             =$contacts     ='pull';
-        $input['tel']              =$tel   ='152';
-        $input['address']          =$address  ='pull';
         $input['type']             =$type  ='客户';
-        $input['cost_type']        =$cost_type  ='月结';
+
 ***/
 //        dd($input);
         $rules=[
             'company_name'=>'required',
         ];
         $message=[
-            'company_name.required'=>'客户名称不能为空',
+            'company_name.required'=>'公司名称不能为空',
         ];
         $validator=Validator::make($input,$rules,$message);
 
@@ -210,22 +183,12 @@ class ServiceGroupController extends CommonController{
             }
 
             $data['company_name']               = $company_name;
-            $data['contacts']                   = $contacts;
-            $data['address']                    = $address;
-            $data['tel']                        = $tel;
-            $data['cost_type']      		    = $cost_type;
-            $data['bank']      		            = $bank;
-            $data['bank_number']      		    = $bank_number;
-            $data['tax_id']      		        = $tax_id;
+            $data['connact']                   = $contacts;
             $data['type']      		            = $type;
-            $data['remark']      		        = $remark;
-            $data['agreement']      		    = $agreement;
-            $data['agreement_date']      	    = $agreement_date;
             $wheres['self_id'] = $self_id;
-            $old_info=TmsGroup::where($wheres)->first();
+            $old_info=TmsServiceGroup::where($wheres)->first();
 
             if($old_info){
-                //dd(1111);
                 $where_check = [
                    ['group_code','=',$group_code],
                    ['type','=',$type],
@@ -234,14 +197,14 @@ class ServiceGroupController extends CommonController{
                    ['delete_flag','=','Y'],
 
                 ];
-                $group_check=TmsGroup::where($where_check)->first();
+                $group_check=TmsServiceGroup::where($where_check)->first();
                 if ($group_check) {
                     $msg['code'] = 302;
                     $msg['msg'] = "公司名称已存在";
                     return $msg;
                 }
                 $data['update_time']=$now_time;
-                $id=TmsGroup::where($wheres)->update($data);
+                $id=TmsServiceGroup::where($wheres)->update($data);
 
                 $operationing->access_cause='修改客户公司';
                 $operationing->operation_type='update';
@@ -249,7 +212,7 @@ class ServiceGroupController extends CommonController{
                 $where_check['group_code'] = $group_code;
                 $where_check['type'] = $type;
                 $where_check['company_name'] = $company_name;
-                $group_check=TmsGroup::where($where_check)->first();
+                $group_check=TmsServiceGroup::where($where_check)->first();
                 if ($group_check) {
                     $msg['code'] = 302;
                     $msg['msg'] = "公司名称已存在";
@@ -263,7 +226,7 @@ class ServiceGroupController extends CommonController{
                 $data['create_user_name']   =$user_info->name;
                 $data['create_time']        =$data['update_time']=$now_time;
 
-                $id=TmsGroup::insert($data);
+                $id=TmsServiceGroup::insert($data);
                 $operationing->access_cause='新建客户公司';
                 $operationing->operation_type='create';
 
@@ -297,13 +260,13 @@ class ServiceGroupController extends CommonController{
 
     }
 
-    /***    业务公司启用禁用      /tms/group/groupUseFlag
+    /***    业务公司启用禁用      /tms/serviceGroup/groupUseFlag
      */
     public function groupUseFlag(Request $request,Status $status){
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='tms_group';
-        $medol_name='TmsGroup';
+        $table_name='tms_service_group';
+        $medol_name='TmsServiceGroup';
         $self_id=$request->input('self_id');
         $flag='useFlag';
         //$self_id='group_202007311841426065800243';
@@ -325,22 +288,21 @@ class ServiceGroupController extends CommonController{
         return $msg;
     }
 
-    /***    业务公司删除      /tms/group/groupDelFlag
+    /***    业务公司删除      /tms/serviceGroup/groupDelFlag
      */
     public function groupDelFlag(Request $request,Status $status){
 
         $now_time=date('Y-m-d H:i:s',time());
         $operationing = $request->get('operationing');//接收中间件产生的参数
-        $table_name='tms_group';
+        $table_name='tms_service_group';
         $self_id=$request->input('self_id');
         $flag='delete_flag';
-//        $self_id='company_2021030315204691392271';
-        $old_info = TmsGroup::where('self_id',$self_id)->select('group_code','group_name','use_flag','delete_flag','update_time')->first();
+
+        $old_info = TmsServiceGroup::where('self_id',$self_id)->select('group_code','group_name','use_flag','delete_flag','update_time')->first();
         $update['delete_flag'] = 'N';
         $update['update_time'] = $now_time;
-        $id = TmsGroup::where('self_id',$self_id)->update($update);
-//        dd($id);
-//        $status_info=$status->changeFlag($table_name,$self_id,$flag,$now_time);
+        $id = TmsServiceGroup::where('self_id',$self_id)->update($update);
+
         $operationing->access_cause='删除';
         $operationing->table=$table_name;
         $operationing->table_id=$self_id;
@@ -361,9 +323,9 @@ class ServiceGroupController extends CommonController{
 
 
     }
-    /***    业务公司获取     /tms/group/getCompany
+    /***    业务公司获取     /tms/serviceGroup/getServiceGroup
      */
-	public function getCompany(Request $request){
+	public function getServiceGroup(Request $request){
 		$group_code=$request->input('group_code');
 		$type=$request->input('type');
         $company_name=$request->input('company_name');
@@ -374,7 +336,7 @@ class ServiceGroupController extends CommonController{
             ['type'=>'like','name'=>'company_name','value'=>$company_name],
         ];
         $where=get_list_where($search);
-        $data['info']=TmsGroup::where($where)->get()->toArray();
+        $data['info']=TmsServiceGroup::where($where)->get()->toArray();
 
 	    $msg['code']=200;
         $msg['msg']="数据拉取成功";
