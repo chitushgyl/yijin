@@ -87,7 +87,7 @@ class OrderController extends CommonController{
         $where = get_list_where($search);
 
         $select = ['self_id','status','count','total_flag','create_time','create_user_name','out_time',
-            'fuhe_flag','file_id','warehouse_name','group_name','picker','operator','purchase','car_num'];
+            'fuhe_flag','file_id','warehouse_name','group_name','picker','operator','purchase','car_num','voucher'];
         $order_list_select= ['self_id','good_name','good_unit','spec','num','order_id','external_sku_id','remarks','price','total_price','out_library_state'];
         switch ($group_info['group_id']) {
             case 'all':
@@ -217,6 +217,7 @@ class OrderController extends CommonController{
         $operator           = $request->input('operator');
         $purchase           = $request->input('purchase');
         $out_time           = $request->input('out_time');
+        $voucher            = $request->input('voucher');
         $self_id            = $request->input('self_id');
         $good_list          = json_decode($request->input('good_list'),true);//产品ID集合
         $group_code         = $request->input('group_code');
@@ -277,6 +278,7 @@ class OrderController extends CommonController{
             $order_2['operator']            =$operator;
             $order_2['purchase']            =$purchase;
             $order_2['out_time']            =$out_time;
+            $order_2['voucher']             =img_for($voucher,'one');
             $order_2['status']              =2;
             $order_2['bill_flag']           =$bill_flag;
 
@@ -697,7 +699,7 @@ class OrderController extends CommonController{
             ['delete_flag','=','Y'],
         ];
         $order_select = ['self_id','status','create_user_name','create_time','group_name','warehouse_name','total_flag','total_time',
-            'picker','operator','purchase','car_num','delivery_time','out_time'];
+            'picker','operator','purchase','car_num','delivery_time','out_time','voucher'];
         $order_list_select= ['self_id','good_name','good_unit','spec','num','order_id','external_sku_id','remarks','price','total_price','out_library_state'];
         $wms_out_sige_select= ['order_list_id','num','good_unit','good_target_unit','good_scale','good_english_name'];
 
@@ -717,6 +719,7 @@ class OrderController extends CommonController{
             $quhuo_list=[];
             $out_list=[];
             foreach ($info->wmsOutOrderList as $k=>$v){
+                    $v->voucher = img_for($v->voucher,'no-json');
                     $v->out_library_state_show  = $out_store_status[$v->out_library_state] ?? null;
                 if($v->quehuo == 'Y'){
                     $data['quehuo_flag']         ='Y';
@@ -1463,6 +1466,7 @@ class OrderController extends CommonController{
         $operator           = $request->input('operator');
         $purchase           = $request->input('purchase');
         $out_time           = $request->input('out_time');
+        $voucher            = $request->input('voucher');
 
 
         /***
@@ -1523,6 +1527,7 @@ class OrderController extends CommonController{
             $order_2['operator']            =$operator;
             $order_2['purchase']            =$purchase;
             $order_2['out_time']            =$out_time;
+            $order_2['voucher']             =img_for($voucher,'one');
             $order_2['status']              =2;
 
             $list=[];
