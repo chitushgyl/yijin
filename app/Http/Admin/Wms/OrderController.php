@@ -278,7 +278,7 @@ class OrderController extends CommonController{
             $order_2['operator']            =$operator;
             $order_2['purchase']            =$purchase;
             $order_2['out_time']            =$out_time;
-            $order_2['voucher']             =img_for($voucher,'one');
+            $order_2['voucher']             =img_for($voucher,'in');
             $order_2['status']              =2;
             $order_2['bill_flag']           =$bill_flag;
 
@@ -719,7 +719,7 @@ class OrderController extends CommonController{
             $quhuo_list=[];
             $out_list=[];
             foreach ($info->wmsOutOrderList as $k=>$v){
-                    $v->voucher = img_for($v->voucher,'no-json');
+                    $v->voucher = img_for($v->voucher,'more');
                     $v->out_library_state_show  = $out_store_status[$v->out_library_state] ?? null;
                 if($v->quehuo == 'Y'){
                     $data['quehuo_flag']         ='Y';
@@ -1527,7 +1527,7 @@ class OrderController extends CommonController{
             $order_2['operator']            =$operator;
             $order_2['purchase']            =$purchase;
             $order_2['out_time']            =$out_time;
-            $order_2['voucher']             =img_for($voucher,'one');
+            $order_2['voucher']             =img_for($voucher,'in');
             $order_2['status']              =2;
 
             $list=[];
