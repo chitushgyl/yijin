@@ -100,7 +100,7 @@ class ServiceGroupController extends CommonController{
 
         foreach ($data['items'] as $k=>$v) {
             $v->button_info=$button_info;
-            $v->type = $service_type[$v->type];
+            $v->type = $service_type[$v->type]??null;
         }
 
         $msg['code']=200;
@@ -125,7 +125,7 @@ class ServiceGroupController extends CommonController{
         ];
         $data['info']=TmsServiceGroup::where($where)->first();
         if ($data['info']){
-            $data['info']->type = $service_type[$data['info']->type];
+            $data['info']->type = $service_type[$data['info']->type]??null;
         }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
