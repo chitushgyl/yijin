@@ -73,7 +73,7 @@ class CarServiceController extends CommonController{
 
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
-            ['type'=>'=','name'=>'use_flag','value'=>'Y'],
+//            ['type'=>'=','name'=>'use_flag','value'=>'Y'],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
             ['type'=>'like','name'=>'trailer_num','value'=>$trailer_num],
@@ -96,7 +96,7 @@ class CarServiceController extends CommonController{
                 $data['items']=CarService::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
-                $data['price']=CarService::where($where)->sum('service_price');
+                $data['price']=CarService::where($where)->where('use_flag','Y')->sum('service_price');
                 $data['group_show']='Y';
                 break;
 
@@ -106,7 +106,7 @@ class CarServiceController extends CommonController{
                 $data['items']=CarService::where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
-                $data['price']=CarService::where($where)->sum('service_price');
+                $data['price']=CarService::where($where)->where('use_flag','Y')->sum('service_price');
                 $data['group_show']='N';
                 break;
 
@@ -115,7 +115,7 @@ class CarServiceController extends CommonController{
                 $data['items']=CarService::where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
-                $data['price']=CarService::where($where)->whereIn('group_code',$group_info['group_code'])->sum('service_price');
+                $data['price']=CarService::where($where)->where('use_flag','Y')->whereIn('group_code',$group_info['group_code'])->sum('service_price');
                 $data['group_show']='Y';
                 break;
         }
