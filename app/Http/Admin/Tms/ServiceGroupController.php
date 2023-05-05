@@ -667,8 +667,8 @@ class ServiceGroupController extends CommonController{
         $self_id=$request->input('self_id');
         $table_name='tms_group';
         $select=['self_id','group_code','group_name','use_flag','create_user_name','create_time',
-            'company_name','contacts','address','tel','remark','agreement_date','agreement',
-            'type','cost_type'];
+            'company_name','connact',
+            'type'];
         // $self_id='company_202012291153523141320375';
         $info=$details->details($self_id,$table_name,$select);
 
