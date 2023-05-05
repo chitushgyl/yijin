@@ -66,7 +66,7 @@ class ServiceGroupController extends CommonController{
 
         $where=get_list_where($search);
 
-        $select=['self_id','company_name','create_user_name','group_name','connact','type','contacts','use_flag','group_code'];
+        $select=['self_id','company_name','create_user_name','group_name','connact','type','connact','use_flag','group_code'];
 
         switch ($group_info['group_id']){
             case 'all':
@@ -661,14 +661,13 @@ class ServiceGroupController extends CommonController{
 
     }
 
-    /***    业务公司详情     /tms/group/details
+    /***    业务公司详情     /tms/serviceGroup/details
      */
     public function  details(Request $request,Details $details){
         $self_id=$request->input('self_id');
-        $table_name='tms_group';
+        $table_name='tms_service_group';
         $select=['self_id','group_code','group_name','use_flag','create_user_name','create_time',
-            'company_name','connact',
-            'type'];
+            'company_name','connact','type'];
         // $self_id='company_202012291153523141320375';
         $info=$details->details($self_id,$table_name,$select);
 
