@@ -674,12 +674,8 @@ class ServiceGroupController extends CommonController{
 
         if($info){
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
-            $tms_group_type    =array_column(config('tms.tms_group_type'),'name','key');
-            $tms_cost_type    =array_column(config('tms.tms_cost_type'),'name','key');
-
-            $info->type_show=$tms_group_type[$info->type]??null;
-            $info->cost_type_show=$tms_cost_type[$info->cost_type]??null;
-
+            $service_type    =array_column(config('tms.service_type'),'name','key');
+            $info->type_show=$service_type[$info->type]??null;
 
             $data['info']=$info;
             $log_flag='Y';
