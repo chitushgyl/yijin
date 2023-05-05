@@ -73,7 +73,7 @@ class CarServiceController extends CommonController{
 
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
-            ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
+            ['type'=>'=','name'=>'use_flag','value'=>'Y'],
             ['type'=>'=','name'=>'group_code','value'=>$group_code],
             ['type'=>'like','name'=>'car_number','value'=>$car_number],
             ['type'=>'like','name'=>'trailer_num','value'=>$trailer_num],
