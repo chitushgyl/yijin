@@ -217,6 +217,9 @@ class CrondtabController extends Controller {
             }
 
         }
+        $msg['code'] = '200';
+        $msg['msg']  = '生成成功！';
+        return $msg;
     }
 
     /**
