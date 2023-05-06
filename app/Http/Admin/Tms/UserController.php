@@ -587,8 +587,8 @@ class UserController extends CommonController{
                 }else{
                     $social_flag = 'N';
                 }
-                if(preg_match("/^[1-9]([0-9a-zA-Z]{17}|[0-9a-zA-Z]{14})$/",$v['identity_num'])){
-                    $list['identity_num']=trim($v['identity_num']);
+                if(preg_match("/^[1-9]([0-9a-zA-Z]{17}|[0-9a-zA-Z]{14})$/",trim($v['identity_num']))){
+                    $list['identity_num']=$v['identity_num'];
                 }else{
                     if($abcd<$errorNum){
                         $strs .= '数据中的第'.$a."行身份证号填写错误".'</br>';
