@@ -925,7 +925,7 @@ class UserController extends CommonController{
                     }
                     $list['sex']=$sex;
                     $list['nation'] = $v->nation;
-                    $list['identity_num']=$v->identity_num."\t";
+                    $list['identity_num']=$v->identity_num." ";
                     $list['birthday']=$v->birthday;
                     $list['age']=$v->age;
                     $list['tel']=$v->tel;
