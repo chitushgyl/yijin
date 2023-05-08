@@ -497,7 +497,7 @@ class UserController extends CommonController{
                 $info_check=$res[0];
             }
 
-            dd($info_check);
+//            dump($info_check);
 
             /**  定义一个数组，需要的数据和必须填写的项目
             键 是EXECL顶部文字，
