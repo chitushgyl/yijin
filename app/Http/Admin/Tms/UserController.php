@@ -497,7 +497,7 @@ class UserController extends CommonController{
                 $info_check=$res[0];
             }
 
-//            dump($info_check);
+            dd($info_check);
 
             /**  定义一个数组，需要的数据和必须填写的项目
             键 是EXECL顶部文字，
@@ -551,7 +551,7 @@ class UserController extends CommonController{
             $errorNum=50;       //控制错误数据的条数
             $a=2;
 
-             dd($info_wait);
+//             dd($info_wait);
             /** 现在开始处理$car***/
             foreach($info_wait as $k => $v){
                 $where=[
