@@ -465,7 +465,7 @@ class GroupController extends CommonController{
                 '公司名称' =>['Y','N','100','company_name'],
                 '联系人' =>['Y','Y','50','contacts'],
                 '联系电话' =>['Y','Y','50','tel'],
-                '联系地址' =>['N','Y','50','address'],
+                '联系地址' =>['N','Y','200','address'],
                 '税务登记号' =>['N','Y','50','tax_id'],
                 '开户银行' =>['N','Y','50','bank'],
                 '银行账号' =>['N','Y','50','bank_number'],
