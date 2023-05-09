@@ -461,7 +461,7 @@ class GroupController extends CommonController{
 
 
             $shuzu=[
-                '单位类型' =>['Y','N','100','type'],
+                '单位类型' =>['Y','Y','100','type'],
                 '公司名称' =>['Y','N','100','company_name'],
                 '联系人' =>['Y','Y','50','contacts'],
                 '联系电话' =>['Y','Y','50','tel'],
