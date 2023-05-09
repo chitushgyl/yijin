@@ -808,7 +808,7 @@ class UserController extends CommonController{
             $info->driver_nvq         =img_for($info->driver_nvq,'no_json');
             $info->type_show               =$user_type[$info->type]??null;
 //            $info->education_background    =$background[$info->education_background]??null;
-            $info->department_name    =$info->department_name??$info->SystemSection->section_name;
+            $info->department_name    =$info->department_name??$info->SystemSection->section_name??null;
             $data['info']=$info;
             $log_flag='Y';
             $data['log_flag']=$log_flag;
