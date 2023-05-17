@@ -930,7 +930,7 @@ class UserController extends CommonController{
                     $list['age']=$v->age;
                     $list['tel']=$v->tel;
                     $list['education_background']=$background[$v->education_background]??null;;
-                    $list['department']=$v->SystemSection->section_name;
+                    $list['department']=$v->SystemSection->section_name??null;
                     $list['type']=$type;
                     $list['entry_time']=$v->entry_time;
                     $list['working_age']=$v->working_age;
