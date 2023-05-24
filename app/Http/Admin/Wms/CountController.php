@@ -77,7 +77,7 @@ class CountController extends CommonController{
 
         $where=get_list_where($search);
         $where1 = get_list_where($search1);
-        $select=['self_id','good_name','good_english_name','wms_unit','wms_target_unit','wms_scale','wms_spec',
+        $select=['self_id','good_name','good_english_name','wms_unit','wms_target_unit','wms_scale','wms_spec','use_flag','delete_flag',
             'group_name','use_flag','external_sku_id'];
 
         $Signselect=['sku_id','production_date','expire_time','can_use','create_time','warehouse_name','area','row','column','tier','storage_number','initial_num','now_num','warehouse_sign_id','entry_time'];
@@ -90,7 +90,7 @@ class CountController extends CommonController{
 //                    $query->where('now_num','>','0');
                     $query->select($Signselect);
                 }])->where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('external_sku_id','asc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('external_sku_id')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
@@ -102,7 +102,7 @@ class CountController extends CommonController{
                     $query->where($where1);
                     $query->select($Signselect);
                 }])->where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('external_sku_id','asc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('external_sku_id')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
@@ -113,7 +113,7 @@ class CountController extends CommonController{
                     $query->where($where1);
                     $query->select($Signselect);
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
-                    ->offset($firstrow)->limit($listrows)->orderBy('external_sku_id','asc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('external_sku_id')
                     ->select($select)
                     ->get();
                 $data['group_show']='Y';
