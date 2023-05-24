@@ -85,12 +85,12 @@ class CountController extends CommonController{
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=ErpShopGoodsSku::where($where)->count(); //总的数据量
-                $data['items']=ErpShopGoodsSku::with(['wmsLibrarySige' => function($query)use($Signselect,$where1) {
+                $data['items']=ErpShopGoodsSku::orderBy('external_sku_id','ASC')->with(['wmsLibrarySige' => function($query)use($Signselect,$where1) {
                     $query->where($where1);
 //                    $query->where('now_num','>','0');
                     $query->select($Signselect);
                 }])->where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('external_sku_id','ASC')->orderBy('self_id','desc')
+                    ->offset($firstrow)->limit($listrows)
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
@@ -98,22 +98,22 @@ class CountController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=ErpShopGoodsSku::where($where)->count(); //总的数据量
-                $data['items']=ErpShopGoodsSku::with(['wmsLibrarySige' => function($query)use($Signselect,$where1) {
+                $data['items']=ErpShopGoodsSku::orderBy('external_sku_id','ASC')->with(['wmsLibrarySige' => function($query)use($Signselect,$where1) {
                     $query->where($where1);
                     $query->select($Signselect);
                 }])->where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('external_sku_id','ASC')->orderBy('self_id','desc')
+                    ->offset($firstrow)->limit($listrows)
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
 
             case 'more':
                 $data['total']=ErpShopGoodsSku::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=ErpShopGoodsSku::with(['wmsLibrarySige' => function($query)use($Signselect,$where1) {
+                $data['items']=ErpShopGoodsSku::orderBy('external_sku_id','ASC')->with(['wmsLibrarySige' => function($query)use($Signselect,$where1) {
                     $query->where($where1);
                     $query->select($Signselect);
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
-                    ->offset($firstrow)->limit($listrows)->orderBy('external_sku_id','ASC')->orderBy('self_id','desc')
+                    ->offset($firstrow)->limit($listrows)
                     ->select($select)
                     ->get();
                 $data['group_show']='Y';
