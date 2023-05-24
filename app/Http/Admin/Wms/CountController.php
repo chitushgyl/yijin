@@ -90,7 +90,7 @@ class CountController extends CommonController{
 //                    $query->where('now_num','>','0');
                     $query->select($Signselect);
                 }])->where($where)
-                    ->sortBy('external_sku_id','asc')
+                    ->orderByRaw('external_sku_id','asc')
                     ->offset($firstrow)->limit($listrows)
                     ->select($select)
                     ->get();
@@ -104,7 +104,7 @@ class CountController extends CommonController{
                     $query->where($where1);
                     $query->select($Signselect);
                 }])->where($where)
-                    ->sortBy('external_sku_id','asc')
+                    ->orderByRaw('external_sku_id','asc')
                     ->offset($firstrow)->limit($listrows)
                     ->select($select)
                     ->get();
@@ -117,7 +117,7 @@ class CountController extends CommonController{
                     $query->where($where1);
                     $query->select($Signselect);
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
-                    ->sortBy('external_sku_id','asc')
+                    ->orderByRaw('external_sku_id','asc')
                     ->offset($firstrow)->limit($listrows)
                     ->select($select)
                     ->get();
