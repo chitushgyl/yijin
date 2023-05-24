@@ -54,7 +54,7 @@ class CountController extends CommonController{
         if ($end_time) {
             $end_time = $end_time.' 23:59:59';
         }
-        
+
         $search=[
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'=','name'=>'use_flag','value'=>'Y'],
@@ -90,7 +90,7 @@ class CountController extends CommonController{
 //                    $query->where('now_num','>','0');
                     $query->select($Signselect);
                 }])->where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('external_sku_id', 'asc')
                     ->select($select)->get();
                 $data['group_show']='Y';
                 break;
@@ -102,7 +102,7 @@ class CountController extends CommonController{
                     $query->where($where1);
                     $query->select($Signselect);
                 }])->where($where)
-                    ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')
+                    ->offset($firstrow)->limit($listrows)->orderBy('external_sku_id', 'asc')
                     ->select($select)->get();
                 $data['group_show']='N';
                 break;
@@ -113,6 +113,7 @@ class CountController extends CommonController{
                     $query->where($where1);
                     $query->select($Signselect);
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
+                    ->offset($firstrow)->limit($listrows)->orderBy('external_sku_id', 'asc')
                     ->select($select)
                     ->get();
                 $data['group_show']='Y';
@@ -174,7 +175,7 @@ class CountController extends CommonController{
         }else{
             $msg['code']=300;
         $msg['msg']='请选择开始时间';
-        
+
 //        dd($msg);
         return $msg;
         }
@@ -183,7 +184,7 @@ class CountController extends CommonController{
         }else{
             $msg['code']=300;
         $msg['msg']='请选择结束时间';
-        
+
 //        dd($msg);
         return $msg;
         }
