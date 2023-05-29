@@ -285,11 +285,11 @@ class OrderController extends CommonController{
             DB::beginTransaction();
             try{
                 /***有产品信息 说明是编辑 先删除之前添加的数据 **/
-                if (count($good_list)>0){
+                if (count($good_list)>0 && $self_id){
                     $order_update['delete_flag'] = 'N';
                     $order_update['update_time'] = $now_time;
                     WmsOutOrderList::where('order_id',$self_id)->update($order_update);
-                    TmsMoney::where('order_id',$self_id)->update($order_update);
+                    TmsMoney::where('order_id',$self_id)->where('pay_type','delivery_fee')->update($order_update);
                 }
                 /***处理本次添加或修改的产品数据**/
                 $list=[];
@@ -699,7 +699,7 @@ class OrderController extends CommonController{
             ['delete_flag','=','Y'],
         ];
         $order_select = ['self_id','status','create_user_name','create_time','group_name','warehouse_name','total_flag','total_time',
-            'picker','operator','purchase','car_num','delivery_time','out_time','voucher','picker_id'];
+            'picker','operator','purchase','car_num','delivery_time','out_time','voucher','picker_id','bill_flag'];
         $order_list_select= ['self_id','good_name','good_unit','spec','num','order_id','external_sku_id','remarks','price','total_price','out_library_state'];
         $wms_out_sige_select= ['order_list_id','num','good_unit','good_target_unit','good_scale','good_english_name'];
 
