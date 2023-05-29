@@ -247,11 +247,9 @@ class OrderController extends CommonController{
          * **/
         $rules = [
             'goods' => 'required',
-            'bill_fiag' => 'required',
         ];
         $message = [
             'goods.required' => '请选择要出库的产品',
-            'bill_fiag.required' => '请选择有无发票',
         ];
         $validator = Validator::make($input, $rules, $message);
 
