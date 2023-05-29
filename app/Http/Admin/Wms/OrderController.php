@@ -1013,7 +1013,7 @@ class OrderController extends CommonController{
             $res = WmsOutOrder::where('self_id',$self_id)->update($update);
             WmsOutOrderList::where('order_id',$self_id)->update($update);
             if($wms_order->status == 1){
-                TmsMoney::where('order_id',$self_id)->update($update);
+                TmsMoney::where('order_id',$self_id)->where('pay_type','delivery_fee')->update($update);
             }
             DB::commit();
             if ($res){
