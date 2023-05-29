@@ -373,9 +373,7 @@ class OrderController extends CommonController{
                 }
                 if($id){
                     WmsOutOrderList::insert($datalist);
-                    if ($bill_flag == 'Y'){
-                        TmsMoney::insert($moneylist);
-                    }
+                    TmsMoney::insert($moneylist);
 
                     DB::commit();
                     $msg['code']=200;
