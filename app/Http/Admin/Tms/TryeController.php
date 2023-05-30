@@ -668,8 +668,9 @@ class TryeController extends CommonController{
         $price              =$request->input('price');//更换位置
         $supplier           =$request->input('supplier');//供应商
         $trye_name          =$request->input('trye_name');//供应商
-        $trye_sku_id          =$request->input('trye_sku_id');//轮胎产品编号
+        $trye_sku_id        =$request->input('trye_sku_id');//轮胎产品编号
         $remark             =$request->input('remark');
+        $img                =$request->input('img');
 
         /**
         $trye_list = [[
@@ -700,9 +701,10 @@ class TryeController extends CommonController{
             $data['price']             =$price;
             $data['supplier']          =$supplier;
             $data['trye_name']         =$trye_name;
-            $data['trye_sku_id']         =$trye_sku_id;
+            $data['trye_sku_id']       =$trye_sku_id;
             $data['state']             ='N';
             $data['remark']            =$remark;
+            $data['img']               =$img;
 
              $search=[
             ['type'=>'=','name'=>'model','value'=>$model],
