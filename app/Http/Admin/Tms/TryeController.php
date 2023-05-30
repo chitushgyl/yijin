@@ -257,14 +257,14 @@ class TryeController extends CommonController{
             ['delete_flag','=','Y'],
             ['self_id','=',$self_id],
         ];
-        $select=['self_id','car_number','price','car_number','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag','state','user_id','trailer_num','remark','trye_name'];
+        $select=['self_id','car_number','price','car_number','model','supplier','num','trye_num','operator','type','in_time','driver_name','change','create_user_name','create_time','group_code','use_flag','state','user_id','trailer_num','remark','trye_name','img'];
         $select1=['self_id','kilo','price','trye_img','change','order_id','model','num','trye_num','change','create_user_name','create_time','group_code','use_flag','trye_name','sku_id','trye_sku_id'];
         $data['info']=TmsTrye::with(['TryeOutList'=>function($query)use($select1){
             $query->where('delete_flag','Y');
              $query->select($select1);
         }])->where($where)->select($select)->first();
         if($data['info']){
-
+              $data['info']->img = img_for($data['info']->img,'more')??null;
         }
         $msg['code']=200;
         $msg['msg']="数据拉取成功";
@@ -304,6 +304,7 @@ class TryeController extends CommonController{
         $change             =$request->input('change');//更换位置
         $trye_list          =$request->input('trye_list');//更换位置
         $trye_sku_id        =$request->input('trye_sku_id');//产品编号
+        $img                =$request->input('img');//
 
         /**
          $trye_list = [[
@@ -329,6 +330,7 @@ class TryeController extends CommonController{
                     $data['type']        =$type;
                     $data['model']       =$model;
                     $data['num']         =$num;
+                    $data['img']         =img_for($img,'in');
                     break;
                 case 'out':
                     $data['type']              =$type;
