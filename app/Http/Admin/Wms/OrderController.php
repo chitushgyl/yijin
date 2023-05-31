@@ -326,26 +326,26 @@ class OrderController extends CommonController{
                     $datalist[]=$list;
 
                     /***保存费用**/
-                    if ($bill_flag == 'Y'){
-                        $money['pay_type']           = 'delivery_fee';
-                        $money['money']              = $v['total_price'];
-                        $money['pay_state']          = 'Y';
-                        $money['order_id']           = $order_id;
-//                    $money['car_id']             = $car_id;
-                        $money['car_number']         = $car_num;
-                        $money['user_id']            = $user_id;
-                        $money['user_name']          = $picker;
-                        $money['process_state']      = 'Y';
-                        $money['type_state']         = 'out';
-                        $money['use_flag']           = 'N';
-                        $money['self_id']            = generate_id('money_');
-                        $money['group_code']         = $group_code;
-                        $money['group_name']         = $group_name;
-                        $money['create_user_id']     = $user_info->admin_id;
-                        $money['create_user_name']   = $user_info->name;
-                        $money['create_time']        =$money['update_time']=$out_time;
-                        $moneylist[]=$money;
-                    }
+
+                    $money['pay_type']           = 'delivery_fee';
+                    $money['money']              = $v['total_price'];
+                    $money['pay_state']          = 'Y';
+                    $money['order_id']           = $order_id;
+//                   $money['car_id']             = $car_id;
+                    $money['car_number']         = $car_num;
+                    $money['user_id']            = $user_id;
+                    $money['user_name']          = $picker;
+                    $money['process_state']      = 'Y';
+                    $money['type_state']         = 'out';
+                    $money['use_flag']           = 'N';
+                    $money['self_id']            = generate_id('money_');
+                    $money['group_code']         = $group_code;
+                    $money['group_name']         = $group_name;
+                    $money['create_user_id']     = $user_info->admin_id;
+                    $money['create_user_name']   = $user_info->name;
+                    $money['create_time']        =$money['update_time']=$out_time;
+                    $moneylist[]=$money;
+
 
                 }
                 $wheres['self_id'] = $self_id;
