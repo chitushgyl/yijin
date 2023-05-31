@@ -196,10 +196,9 @@ class MoneyController extends CommonController{
 
         $info=TmsMoney::where($where)->select($select)->first();
 
-
         if($info){
             /** 如果需要对数据进行处理，请自行在下面对 $$info 进行处理工作*/
-            $info->money = number_format($info->money, 2);
+
             $info->receipt = img_for($info->receipt,'more');
             $data['info']=$info;
 
