@@ -1220,7 +1220,7 @@ class MoneyController extends CommonController{
             ];
             $where=get_list_where($search);
 
-            $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name','trailer_num',
+            $select=['self_id','pay_type','money','create_time','update_time','create_user_id','create_user_name','group_code','group_name','trailer_num','submit_connect',
             'delete_flag','use_flag','pay_state','car_id','car_number','user_id','user_name','process_state','type_state','before_money','bill_flag','receipt','receipt_flag'];
             $info=TmsMoney::where($where)->whereIn('self_id',explode(',',$ids))->orderBy('create_time', 'desc')->select($select)->get();
 //dd($info);
@@ -1237,6 +1237,7 @@ class MoneyController extends CommonController{
                     "pay_state"=>'收支类型',
                     "use_flag"=>'是否作废',
                     "receipt_flag"=>'有无发票',
+                    "submit_connect"=>'报销内容',
                 ]];
 
                 /** 现在根据查询到的数据去做一个导出的数据**/
@@ -1272,7 +1273,7 @@ class MoneyController extends CommonController{
                         $receipt_flag = '无';
                     }
                     $list['receipt_flag']    = $receipt_flag;
-
+                    $list['submit_connect']    = $v['submit_connect'];
                     $data_execl[]=$list;
                 }
                 /** 调用EXECL导出公用方法，将数据抛出来***/
