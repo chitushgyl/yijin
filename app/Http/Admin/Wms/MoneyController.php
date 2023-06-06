@@ -950,6 +950,7 @@ class MoneyController extends CommonController{
         $settle_money       =$request->input('settle_money');//未收费用
         $receive_time       =$request->input('receive_time');//收款时间
         $price              =$request->input('price');
+        $remark             =$request->input('remark');
 
         $rules=[
             'self_id'=>'required',
@@ -972,6 +973,7 @@ class MoneyController extends CommonController{
 
             $cost_money['receive_money']  = $price;
             $cost_money['receive_time']   = $receive_time;
+            $cost_money['remark']         = $remark;
             $cost_money['money_id']       = $self_id;
             $cost_money['self_id']        = generate_id('cost_');
             $cost_money['group_code']     = $old_info->group_code;
