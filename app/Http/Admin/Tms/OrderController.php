@@ -1098,6 +1098,7 @@ class OrderController extends CommonController{
         $order_id                 = $request->input('order_id');//订单ID
         $carriage_id              = $request->input('carriage_id');//订单ID
         $carriage_name            = $request->input('carriage_name');//订单ID
+        $price                    = $request->input('price');//订单ID
 
         $rules=[
             'order_id' => 'required',
@@ -1111,9 +1112,9 @@ class OrderController extends CommonController{
            $total_money = TmsOrder::whereIn('self_id',explode(',',$order_id))->sum('total_money');
            //保存运费结算表
            $settle['self_id']   = generate_id('settle_');
-           $settle['money']     = $total_money;
-           $settle['total_money'] =$total_money;
-           $settle['settle_money']=$total_money;
+           $settle['money']     = $price;
+           $settle['total_money'] =$price;
+           $settle['settle_money']=$price;
            $settle['receive_money'] = 0;
            $settle['carriage_id'] =$carriage_id;
            $settle['carriage_name'] =$carriage_name;
@@ -4336,34 +4337,34 @@ $user_info  = $request->get('user_info');//接收中间件产生的参数
     }
 
 
-//    public function countOrder(Request $request){
-//        $settle_flag=$request->input('settle_flag');
-//        $carriage_id=$request->input('carriage_id');
-//        $order_type=$request->input('order_type');
-//
-//
-//        $where_check=[
-//            ['delete_flag','=','Y'],
-//            ['settle_flag','=',$settle_flag],
-//            ['carriage_id','=',$carriage_id],
-//            ['order_type','=',$order_type],
-//        ];
-//        $select = ['self_id','carriage_id','carriage_name','group_name','group_code','use_flag','delete_flag'];
-//        $data['info']=TmsOrder::where($where_check)->select('self_id')->get()->toArray();
-//        $money=TmsOrder::where($where_check)->sum('total_money');
-//
-//        $abc = [];
-//        foreach ($data['info'] as $k => $v){
-//
-//            array_push($abc,$v['self_id']);
-//        }
-//        $bcd = implode(',',$abc);
-//        dd($bcd,$money);
-//        $msg['code']=200;
-//        $msg['msg']="数据拉取成功";
-//        $msg['data']=$data;
-//        return $msg;
-//    }
+    public function countOrder(Request $request){
+        $settle_flag=$request->input('settle_flag');
+        $carriage_id=$request->input('carriage_id');
+        $order_type=$request->input('order_type');
+
+
+        $where_check=[
+            ['delete_flag','=','Y'],
+            ['settle_flag','=',$settle_flag],
+            ['carriage_id','=',$carriage_id],
+            ['order_type','=',$order_type],
+        ];
+        $select = ['self_id','carriage_id','carriage_name','group_name','group_code','use_flag','delete_flag'];
+        $data['info']=TmsOrder::where($where_check)->select('self_id')->get()->toArray();
+        $money=TmsOrder::where($where_check)->sum('total_money');
+
+        $abc = [];
+        foreach ($data['info'] as $k => $v){
+
+            array_push($abc,$v['self_id']);
+        }
+        $bcd = implode(',',$abc);
+        dd($bcd,$money);
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
 
 
 }
