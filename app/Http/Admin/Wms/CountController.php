@@ -280,8 +280,8 @@ class CountController extends CommonController{
                 $v->count +=$vv->now_num;
             }
 //            $v->jie_count = $v->in_count - $v->out_count;
-            $v->in_initial_count = WmsLibraryChange::where('inout_time','<',$start_time)->where('type','preentry')->where('sku_id',$v->self_id)->sum('change_num');
-            $v->out_initial_count = WmsLibraryChange::where('inout_time','<',$start_time)->where('type','out')->where('sku_id',$v->self_id)->sum('change_num');
+            $v->in_initial_count = WmsLibraryChange::where('inout_time','<',$start_time)->where('type','preentry')->where('delete_flag','Y')->where('sku_id',$v->self_id)->sum('change_num');
+            $v->out_initial_count = WmsLibraryChange::where('inout_time','<',$start_time)->where('type','out')->where('delete_flag','Y')->where('sku_id',$v->self_id)->sum('change_num');
             $v->initial_count = $v->in_initial_count - $v->out_initial_count;
             $v->jie_count = $v->in_count + $v->initial_count - $v->out_count;
 
