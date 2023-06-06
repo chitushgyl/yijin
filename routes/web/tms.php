@@ -152,6 +152,7 @@ Route::group([
     Route::any('/order/orderTwoExcel','OrderController@orderTwoExcel');//跟单结算
     Route::any('/order/orderWasteImport','OrderController@orderWasteImport');//跟单结算
     Route::any('/order/orderWasteExcel','OrderController@orderWasteExcel');//跟单结算
+    Route::any('/order/countOrder','OrderController@countOrder');//跟单结算
 
 
     Route::any('/order/editOrder_ti','OrderController@editOrder_ti');//跟单结算

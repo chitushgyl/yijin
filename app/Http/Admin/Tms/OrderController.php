@@ -4336,7 +4336,30 @@ $user_info  = $request->get('user_info');//接收中间件产生的参数
     }
 
 
+    public function countOrder(Request $request){
+        $settle_flag=$request->input('settle_flag');
+        $carriage_id=$request->input('carriage_id');
+        $order_type=$request->input('order_type');
 
+
+        $where_check=[
+            ['delete_flag','=','Y'],
+            ['settle_flag','=',$settle_flag],
+            ['carriage_id','=',$carriage_id],
+            ['order_type','=',$order_type],
+        ];
+        $select = ['self_id','carriage_id','carriage_name','group_name','group_code','use_flag','delete_flag'];
+        $data['info']=TmsOrder::where($where_check)->value('self_id');
+        dd($data['info']);
+        foreach ($data['info'] as $k => $v){
+            $v->receipt_show = img_for($v->receipt,'more');
+        }
+
+        $msg['code']=200;
+        $msg['msg']="数据拉取成功";
+        $msg['data']=$data;
+        return $msg;
+    }
 
 
 }
