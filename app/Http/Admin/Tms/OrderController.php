@@ -161,6 +161,7 @@ class OrderController extends CommonController{
         $user_name      =$request->input('user_name');
         $escort_name    =$request->input('escort_name');
         $order_state    =$request->input('order_state');
+        $settle_flag    =$request->input('settle_flag');
         $listrows       =$num;
         $firstrow       =($page-1)*$listrows;
         if ($start_time) {
@@ -186,6 +187,7 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'user_name','value'=>$user_name],
             ['type'=>'=','name'=>'escort_name','value'=>$escort_name],
             ['type'=>'=','name'=>'order_type','value'=>$order_type],
+            ['type'=>'=','name'=>'settle_flag','value'=>$settle_flag],
         ];
 
 
