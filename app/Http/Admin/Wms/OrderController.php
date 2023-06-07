@@ -61,7 +61,8 @@ class OrderController extends CommonController{
         $good_name          = $request->input('good_name');
         $spec               = $request->input('spec');
         $number             = $request->input('number');
-        $order_id             = $request->input('order_id');
+        $order_id           = $request->input('order_id');
+        $warehouse_id       = $request->input('warehouse_id');
         $listrows           = $num;
         $firstrow           = ($page - 1) * $listrows;
 
@@ -82,11 +83,12 @@ class OrderController extends CommonController{
             ['type'=>'>=','name'=>'out_time','value'=>$start_time],
             ['type'=>'<=','name'=>'out_time','value'=>$end_time],
             ['type'=>'=','name'=>'self_id','value'=>$order_id],
+            ['type'=>'=','name'=>'warehouse_id','value'=>$warehouse_id],
         ];
 
         $where = get_list_where($search);
 
-        $select = ['self_id','status','count','total_flag','create_time','create_user_name','out_time',
+        $select = ['self_id','status','count','total_flag','create_time','create_user_name','out_time','warehouse_id',
             'fuhe_flag','file_id','warehouse_name','group_name','picker','operator','purchase','car_num','voucher'];
         $order_list_select= ['self_id','good_name','good_unit','spec','num','order_id','external_sku_id','remarks','price','total_price','out_library_state'];
         switch ($group_info['group_id']) {

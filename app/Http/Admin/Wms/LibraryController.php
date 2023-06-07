@@ -102,6 +102,7 @@ class LibraryController extends CommonController{
         $end_time           =$request->input('end_time');
         $good_name          =$request->input('good_name');
         $order_id           =$request->input('order_id');
+        $warehouse_name     =$request->input('warehouse_name');
         $listrows           =$num;
         $firstrow           =($page-1)*$listrows;
 
@@ -115,13 +116,14 @@ class LibraryController extends CommonController{
             ['type'=>'=','name'=>'delete_flag','value'=>'Y'],
             ['type'=>'all','name'=>'use_flag','value'=>$use_flag],
             ['type'=>'all','name'=>'grounding_status','value'=>$grounding_status],
-            ['type'=>'like','name'=>'warehouse_id','value'=>$warehouse_id],
+            ['type'=>'=','name'=>'warehouse_id','value'=>$warehouse_id],
 			['type'=>'like','name'=>'group_code','value'=>$group_code],
 			['type'=>'=','name'=>'order_status','value'=>$order_status],
 			['type'=>'like','name'=>'purchase','value'=>$purchase],
 			['type'=>'>=','name'=>'enter_time','value'=>$start_time],
 			['type'=>'<=','name'=>'enter_time','value'=>$end_time],
             ['type'=>'=','name'=>'self_id','value'=>$order_id],
+            ['type'=>'like','name'=>'warehouse_name','value'=>$warehouse_name],
 
         ];
 
