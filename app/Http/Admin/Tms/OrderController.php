@@ -441,7 +441,7 @@ class OrderController extends CommonController{
             $data['car_tel']                 = $car_tel;
             $data['pick_time']               = $pick_time;
             $data['pack_type']               = $pack_type;
-
+            $data['pay_id']                  = null;
             $pay_type = TmsLine::where('use_flag','Y')->where('delete_flag','Y')->where('group_code',$group_info->group_code)->get();
             foreach($pay_type as $k =>$v){
                 if (in_array($send_name,explode(',',$v->line_list)) && in_array($gather_name,explode(',',$v->line_list))) {
