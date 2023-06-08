@@ -164,7 +164,10 @@ class CarServiceController extends CommonController{
             }else{
                 $v->button_info = $button_info1;
             }
-            $v->driver_name = null?$v->driver_name:$v->SystemUser->name;
+            if ($v->SystemUser){
+                $v->driver_name = null?$v->driver_name:$v->SystemUser->name;
+            }
+
 
         }
 
