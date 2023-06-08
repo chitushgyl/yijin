@@ -451,7 +451,6 @@ class OrderController extends CommonController{
                     $data['pay_id'] = $v->self_id;
                 }
             }
-            dd($data['pay_id']);
             if($data['pay_id']){
 
             }else{
