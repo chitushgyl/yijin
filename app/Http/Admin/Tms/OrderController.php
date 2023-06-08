@@ -182,7 +182,7 @@ class OrderController extends CommonController{
             ['type'=>'=','name'=>'enter_time','value'=>$enter_time],
             ['type'=>'=','name'=>'leave_time','value'=>$leave_time],
             ['type'=>'=','name'=>'car_number','value'=>$car_number],
-            ['type'=>'=','name'=>'send_name','value'=>$send_name],
+            ['type'=>'like','name'=>'send_name','value'=>$send_name],
             ['type'=>'=','name'=>'gather_name','value'=>$gather_name],
             ['type'=>'=','name'=>'user_name','value'=>$user_name],
             ['type'=>'=','name'=>'escort_name','value'=>$escort_name],
@@ -450,6 +450,14 @@ class OrderController extends CommonController{
                 if($car_number == $v->car_number){
                     $data['pay_id'] = $v->self_id;
                 }
+            }
+
+            if($data['pay_id']){
+
+            }else{
+                $msg['code'] = 301;
+                $msg['msg'] = '线路不存在';
+                return $msg;
             }
 
             $old_info = TmsOrder::where('self_id',$self_id)->first();
