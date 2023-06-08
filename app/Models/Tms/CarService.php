@@ -53,7 +53,7 @@ class CarService extends Model{
  public function SystemUser(){
         //参数：关联模型名称，外键，主键
         //如果主键是id可以省略
-        return $this->hasMany('App\Models\Group\SystemUser','self_id','driver_id');
+        return $this->hasOne('App\Models\Group\SystemUser','self_id','driver_id');
      }
 
 
