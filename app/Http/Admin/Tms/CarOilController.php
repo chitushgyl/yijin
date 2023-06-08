@@ -205,8 +205,8 @@ class CarOilController extends CommonController{
                 return $msg;
             }
 
-            $total_number = TmsOil::where('group_code',$group_name->group_code)->where('use_flag','Y')->where('delete_flag','Y')->where('state','Y')->sum('num');
-            $total_out_number = CarOil::where('group_code',$group_name->group_code)->where('use_flag','Y')->where('delete_flag','Y')->sum('number');
+            $total_number = TmsOil::where('group_code',$group_code)->where('use_flag','Y')->where('delete_flag','Y')->where('state','Y')->sum('num');
+            $total_out_number = CarOil::where('group_code',$group_code)->where('use_flag','Y')->where('delete_flag','Y')->sum('number');
             $total_jie_number = $total_number -$total_out_number;
             if ($total_jie_number<$number){
                 $msg['code'] = 302;
