@@ -91,13 +91,16 @@ class CarServiceController extends CommonController{
             ['delete_flag','=','Y'],
 //            ['use_flag','=','Y'],
         ];
+
         $select=['self_id','car_number','car_id','brand','kilo_num','service_time','reason','service_price','service_partne','service_partne','driver_name','contact','operator','settle_flag','trailer_num',
             'remark','create_time','update_time','use_flag','delete_flag','group_code','fittings','warranty_time','service_view','type','driver_id','service_item','servicer','next_kilo'];
+        $select1 = ['self_id','name'];
         switch ($group_info['group_id']){
             case 'all':
                 $data['total']=CarService::where($where)->count(); //总的数据量
-                $data['items']=CarService::with(['SystemUser' => function($query)use($where1){
+                $data['items']=CarService::with(['SystemUser' => function($query)use($where1,$select1){
                     $query->where($where1);
+                    $query->select($select1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
@@ -108,8 +111,9 @@ class CarServiceController extends CommonController{
             case 'one':
                 $where[]=['group_code','=',$group_info['group_code']];
                 $data['total']=CarService::where($where)->count(); //总的数据量
-                $data['items']=CarService::with(['SystemUser' => function($query)use($where1){
+                $data['items']=CarService::with(['SystemUser' => function($query)use($where1,$select1){
                     $query->where($where1);
+                    $query->select($select1);
                 }])->where($where)
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
@@ -119,8 +123,9 @@ class CarServiceController extends CommonController{
 
             case 'more':
                 $data['total']=CarService::where($where)->whereIn('group_code',$group_info['group_code'])->count(); //总的数据量
-                $data['items']=CarService::with(['SystemUser' => function($query)use($where1){
+                $data['items']=CarService::with(['SystemUser' => function($query)use($where1,$select1){
                     $query->where($where1);
+                    $query->select($select1);
                 }])->where($where)->whereIn('group_code',$group_info['group_code'])
                     ->offset($firstrow)->limit($listrows)->orderBy('create_time', 'desc')->orderBy('self_id','desc')
                     ->select($select)->get();
