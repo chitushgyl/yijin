@@ -857,7 +857,7 @@ class OrderController extends CommonController{
             $data['sale_price']              = $sale_price;
 
 
-            $old_info = TmsOrder::where('self_id',$self_id)->select('self_id','car_id','car_number','carriage_id','carriage_name','group_code','group_name','use_flag','driver_id','user_name','leave_time')->first();
+            $old_info = TmsOrder::where('self_id',$self_id)->select('self_id','car_id','car_number','sale_price','carriage_id','carriage_name','group_code','group_name','use_flag','driver_id','user_name','leave_time')->first();
 
             $data['update_time']=$now_time;
             DB::beginTransaction();
@@ -960,7 +960,7 @@ class OrderController extends CommonController{
 
             }
 
-                    if($old_info->leave_time != $leave_time){
+                    if($old_info->leave_time != $leave_time || $old_info->sale_price != $sale_price){
                      $old_order = TmsOrder::with(['tmsLine' => function($query) use($select1){
                         $query->where('delete_flag','Y');
                         $query->select($select1);
