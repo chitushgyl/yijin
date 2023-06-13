@@ -196,7 +196,7 @@ class LineController extends CommonController{
 
             }else{
                 if($pay_type == 'A'){
-                      $old_line = TmsLine::where('gather_name',$gather_name)->where('send_name',$send_name)->first();
+                      $old_line = TmsLine::where('gather_name',$gather_name)->where('send_name',$send_name)->where('delete_flag','Y')->first();
             if($old_line){
                 $msg['code'] = 301;
                 $msg['msg'] = '该线路已存在！';
