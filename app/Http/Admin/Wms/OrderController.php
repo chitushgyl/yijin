@@ -332,7 +332,12 @@ class OrderController extends CommonController{
                     $money['pay_type']           = 'delivery_fee';
                     $money['money']              = $v['total_price'];
                     $money['pay_state']          = 'Y';
-                    $money['order_id']           = $order_id;
+                    if ($self_id){
+                        $money['order_id']           = $self_id;
+                    }else{
+                        $money['order_id']           = $order_id;
+                    }
+//                    $money['order_id']           = $order_id;
 //                   $money['car_id']             = $car_id;
                     $money['car_number']         = $car_num;
                     $money['user_id']            = $user_id;
