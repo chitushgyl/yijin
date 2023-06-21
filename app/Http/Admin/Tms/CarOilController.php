@@ -197,7 +197,7 @@ class CarOilController extends CommonController{
 
         $validator=Validator::make($input,$rules,$message);
         if($validator->passes()) {
-
+            $id = generate_id('oil_');
             $group_name     =SystemGroup::where('group_code','=',$group_code)->value('group_name');
             if(empty($group_name)){
                 $msg['code'] = 301;
@@ -229,6 +229,11 @@ class CarOilController extends CommonController{
             $money['pay_state']          = 'Y';
             $money['car_id']             = $car_id;
             $money['car_number']         = $car_number;
+            if($self_id){
+                $money['order_id']         = $self_id;
+            }else{
+                $money['order_id']         = $id;
+            }
             $money['process_state']      = 'Y';
             $money['type_state']         = 'out';
 
@@ -238,11 +243,12 @@ class CarOilController extends CommonController{
             if($old_info){
                 $data['update_time']=$now_time;
                 $id=CarOil::where($wheres)->update($data);
+                TmsMoney::where('order_id',$self_id)->update($money);
                 $operationing->access_cause='修改加油记录';
                 $operationing->operation_type='update';
 
             }else{
-                $data['self_id']            =generate_id('oil_');
+                $data['self_id']            =$id;
                 $data['group_code']         = $group_code;
                 $data['group_name']         = $group_name;
                 $data['create_user_id']     =$user_info->admin_id;
