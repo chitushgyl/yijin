@@ -133,7 +133,7 @@ class LibraryController extends CommonController{
             'check_time','create_time','accepted','purchase','operator','enter_time','purchase_date'];
         $WmsLibrarySigeSelect=[
             'self_id','grounding_status','in_library_state','grounding_type','good_remark','good_lot','order_id','external_sku_id','good_name','spec',
-            'production_date','expire_time','initial_num as now_num','good_unit','good_target_unit','good_scale','can_use', 'delete_flag'
+            'production_date','expire_time','initial_num as now_num','good_unit','good_target_unit','good_scale','can_use', 'delete_flag','price','total_price'
         ];
         switch ($group_info['group_id']){
             case 'all':
